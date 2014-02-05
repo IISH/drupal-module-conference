@@ -1,0 +1,45 @@
+name = IISH Conference Base (REQUIRED)
+description = The base conference module that is required by all other modules in this package
+package = IISH Conference
+core = 7.x
+version = 7.x-0.0.3
+configure = admin/settings/iishconference-base
+
+files[] = ConferenceMisc.class.php
+files[] = EasyProtection.class.php
+files[] = Highlighter.class.php
+
+files[] = api/AccessTokenApi.class.php
+files[] = api/ApiCriteriaBuilder.class.php
+files[] = api/CachedConferenceApi.class.php
+files[] = api/ConferenceApiClient.class.php
+files[] = api/CRUDApiClient.class.php
+files[] = api/CRUDApiMisc.class.php
+files[] = api/CRUDApiResults.class.php
+files[] = api/LoggedInUserDetails.class.php
+files[] = api/SendEmailApi.class.php
+files[] = api/SettingsApi.class.php
+
+files[] = api/domain/CountryApi.class.php
+files[] = api/domain/DayApi.class.php
+files[] = api/domain/EquipmentApi.class.php
+files[] = api/domain/ExtraApi.class.php
+files[] = api/domain/FeeAmountApi.class.php
+files[] = api/domain/FeeStateApi.class.php
+files[] = api/domain/NetworkApi.class.php
+files[] = api/domain/PaperApi.class.php
+files[] = api/domain/PaperStateApi.class.php
+files[] = api/domain/ParticipantDateApi.class.php
+files[] = api/domain/ParticipantStateApi.class.php
+files[] = api/domain/ParticipantTypeApi.class.php
+files[] = api/domain/ParticipantVolunteeringApi.class.php
+files[] = api/domain/RoomApi.class.php
+files[] = api/domain/SentEmailApi.class.php
+files[] = api/domain/SessionApi.class.php
+files[] = api/domain/SessionDateTimeApi.class.php
+files[] = api/domain/SessionParticipantApi.class.php
+files[] = api/domain/SessionRoomDateTimeApi.class.php
+files[] = api/domain/SessionStateApi.class.php
+files[] = api/domain/UserApi.class.php
+
+stylesheets[all][] = iishconference.css

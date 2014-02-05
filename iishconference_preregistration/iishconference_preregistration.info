@@ -1,0 +1,6 @@
+name = Pre-registration
+description = Allows users to pre-register for the conference
+package = IISH Conference
+core = 7.x
+version = 7.x-0.0.1
+dependencies[] = iishconference_basemodule

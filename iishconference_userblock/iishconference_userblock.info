@@ -1,0 +1,6 @@
+name = User block
+description = A block that allows users to see whether they are logged in or not
+package = IISH Conference
+core = 7.x
+version = 7.x-0.0.1
+dependencies[] = iishconference_basemodule

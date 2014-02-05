@@ -1,0 +1,64 @@
+<?php
+
+/**
+ * Implements hook_help()
+ */
+function iishconference_program_help($path, $arg) {
+	switch ($path) {
+		// Module help for the block module
+		case "admin/help#iishconference_program":
+			return '<p><strong>About the \'Show Conference Program\' module</strong><br><br>...</p>';
+			break;
+	}
+}
+
+/**
+ * Implements hook_menu()
+ */
+function iishconference_program_menu() {
+	$items = array();
+
+	$extraPath = getSetting('pathForMenu');
+
+	$items[$extraPath . 'program'] = array(
+		'title'           => getSetting('onlineprogram_header'),
+		'description'     => 'Program ...description...',
+		'page callback'   => 'iishconference_program',
+		'access callback' => true,
+		'file'            => 'program.inc.php',
+	);
+
+	$items[$extraPath . 'program/download-paper/%'] = array(
+		'title'           => 'Download paper',
+		'description'     => 'Allows a participant to download a paper',
+		'page callback'   => 'conference_download_paper',
+		'page arguments'  => array(3),
+		'access callback' => true,
+		'file'            => 'download_paper.inc.php',
+	);
+
+	return $items;
+}
+
+/**
+ * Implements hook_theme()
+ */
+function iishconference_program_theme() {
+	return array(
+		'iishconference_program' => array(
+			'template'  => 'iishconference_program',
+			'variables' => array(
+				'form'           => null,
+				'days'           => null,
+				'date-times'     => null,
+				'types'          => null,
+				'program'        => null,
+				'paper'          => null,
+				'back-url-query' => null,
+				'networkId'      => null,
+				'roomId'         => null,
+				'textsearch'     => null,
+			),
+		),
+	);
+}

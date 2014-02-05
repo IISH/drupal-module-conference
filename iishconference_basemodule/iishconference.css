@@ -1,0 +1,162 @@
+.login_halfwidth {
+	border: 1px solid;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	padding: 10px;
+	float: left;
+	width: 43%;
+}
+
+.rightmargin {
+	margin-right: 10px;
+}
+
+.bottommargin {
+	margin-bottom: 20px;
+}
+
+.topmargin {
+	margin-top: 20px;
+}
+
+.largertopmargin {
+	margin-top: 27px;
+}
+
+.eca_halfwidth {
+	width: 43%;
+}
+
+.preregister_fullwidth {
+	border: 1px solid;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	padding: 10px;
+	margin-bottom: 20px;
+	float: left;
+	width: 100%;
+}
+
+.step {
+	font-weight: bold;
+	font-size: 120%;
+	display: block;
+	margin-bottom: 10px;
+	text-align: right;
+}
+
+.header_login, .header_personalpage, .header_preregister {
+	font-weight: bold;
+	font-size: 120%;
+	display: block;
+	margin-bottom: 10px;
+}
+
+.extra_uitleg {
+	font-style: italic;
+}
+
+.form-type-textfield {
+	width: 200px;
+}
+
+.label_personalpage {
+	font-weight: bold;
+}
+
+.eca_remark {
+    display: inline-block;
+	color: blue;
+    margin-bottom: 15px;
+}
+
+.eca_warning {
+    display: inline-block;
+	color: #E61A3C;
+    margin-bottom: 15px;
+}
+
+.heavy {
+	font-weight: bold;
+}
+
+.eca_ul {
+	type: circle;
+	margin-bottom: 30px;
+}
+
+.hh {
+	color: green;
+}
+
+table.noborder {
+	width: 100%;
+}
+
+td.noborder {
+	border: 1px solid white;
+}
+
+th.chairs_and_volunteers {
+	font-weight: bold;
+}
+
+ol.maillist li {
+	margin-bottom: 20px;
+}
+
+table.program {
+	width: 100%;
+	padding: 20;
+	border-collapse: collapse;
+}
+
+td.program {
+	border: 1px solid white;
+}
+
+.program_day {
+	font-weight: bold;
+	margin-bottom: 25px;
+	font-size: 125%;
+}
+
+.program_hr {
+	margin-top: 20px;
+	margin-bottom: 40px;
+	background-color: #E61A3C;
+	border-color: #E61A3C;
+	height: 1px;
+}
+
+#final-registration-overview {
+    margin-bottom: 10px;
+}
+
+.final-registration-overview-header {
+    margin: 10px 0;
+    display: block;
+    font-weight: bold;
+}
+
+.final-registration-overview-total {
+    font-weight: bold;
+}
+
+#payment-buttons {
+    display: inline-block;
+    margin-left: 50px;
+}
+
+#edit-back {
+    vertical-align: top;
+}
+
+#payment-buttons input {
+    display: block;
+    margin-bottom: 10px;
+}
+
+div.container-inline form {
+    display: inline-block;
+}

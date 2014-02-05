@@ -1,0 +1,37 @@
+<?php
+require_once 'networksforchairs.inc.php';
+
+/**
+ * Implements hook_help()
+ */
+function iishconference_networksforchairs_help($path, $arg) {
+	switch ($path) {
+		// Module help for the block module
+		case "admin/help#iishconference_networksforchairs":
+			return '<p><strong>About the \'Show Network, Sessions & Participants to Network Chairs\' module</strong><br><br>...</p>';
+			break;
+	}
+}
+
+/**
+ * Implements hook_menu()
+ */
+function iishconference_networksforchairs_menu() {
+	$items = array();
+
+	$extraPath = getSetting('pathForMenu');
+
+	$a = array(
+		'title'           => 'Networks, Sessions & Participants',
+		'description'     => 'Networks, Sessions & Participants ...description...',
+		'page callback'   => 'drupal_get_form',
+		'page arguments'  => array('iishconference_networksforchairs_form'),
+//		'access arguments' => array('access content'),
+//		'type' => MENU_CALLBACK, //?
+		'access callback' => true,
+	);
+	$items[$extraPath . 'networksforchairs'] = $a;
+	$items['networksforchairs'] = $a;
+
+	return $items;
+}

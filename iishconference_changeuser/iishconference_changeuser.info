@@ -1,0 +1,7 @@
+name = Change user
+description = Allows the crew to change of user account
+package = IISH Conference
+core = 7.x
+version = 7.x-0.0.1
+files[] = UserInfoApi.class.php
+dependencies[] = iishconference_basemodule

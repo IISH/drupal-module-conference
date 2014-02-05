@@ -1,0 +1,6 @@
+name = Show participants and their proposed networks
+description = Allows network chairs and crew to see participants and their proposed networks
+package = IISH Conference
+core = 7.x
+version = 7.x-0.0.2
+dependencies[] = iishconference_basemodule

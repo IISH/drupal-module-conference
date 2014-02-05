@@ -1,0 +1,159 @@
+<?php
+
+require_once 'class_conference_user.inc.php';
+require_once 'class_conference_country.inc.php';
+require_once 'class_conference_day.inc.php';
+require_once 'class_conference_days.inc.php';
+require_once 'class_conference_email.inc.php';
+require_once 'class_conference_equipment.inc.php';
+require_once 'class_conference_extra.inc.php';
+require_once 'class_conference_extras.inc.php';
+require_once 'class_conference_fee_amount.inc.php';
+require_once 'class_conference_fee_amounts.inc.php';
+require_once 'class_conference_fee_state.inc.php';
+require_once 'class_conference_misc.inc.php';
+require_once 'class_conference_network.inc.php';
+require_once 'class_conference_networks.inc.php';
+require_once 'class_conference_paper.inc.php';
+require_once 'class_conference_paperstate.inc.php';
+require_once 'class_conference_participant_state.inc.php';
+require_once 'class_conference_participantdate.inc.php';
+require_once 'class_conference_participantpaper.inc.php';
+require_once 'class_conference_participantsession.inc.php';
+require_once 'class_conference_participanttype.inc.php';
+require_once 'class_conference_room.inc.php';
+require_once 'class_conference_session.inc.php';
+require_once 'class_conference_sessiondatetime.inc.php';
+require_once 'class_conference_sessiondatetimes.inc.php';
+require_once 'class_conference_sessions.inc.php';
+require_once 'class_conference_sessionstate.inc.php';
+require_once 'class_conference_sent_email.inc.php';
+
+require_once 'misc.inc.php';
+
+/**
+ * TODOEXPLAIN
+ */
+function iishconference_basemodule_help($path, $arg) {
+	switch ($path) {
+		// Module help for the block module
+		case "admin/help#iishconference_basemodule":
+			return '<p><strong>About the Base module</strong><br><br>...</p>';
+			break;
+	}
+}
+
+/**
+ * TODOEXPLAIN
+ */
+function iishconference_basemodule_menu() {
+	$items = array();
+
+	$items['admin/settings/iishconference-base'] = array(
+		'title'            => 'IISH conference settings',
+		'description'      => 'Change the IISH conference settings',
+		'page callback'    => 'drupal_get_form',
+		'page arguments'   => array('iishconference_basemodule_settings_form'),
+		'access arguments' => array('access administration pages'),
+		'file'             => 'iishconference_basemodule_settings.inc.php',
+		'type'             => MENU_CALLBACK,
+	);
+
+	return $items;
+}
+
+/**
+ * Implements hook_theme()
+ */
+function iishconference_basemodule_theme() {
+	return array(
+		'iishconference_container'        => array(
+			'variables' => array(
+				'fields' => array(),
+			),
+		),
+		'iishconference_container_header' => array(
+			'variables' => array(
+				'text' => null,
+			),
+		),
+		'iishconference_container_inline' => array(
+			'variables' => array(
+				'inline' => array(),
+			),
+		),
+		'iishconference_container_field'  => array(
+			'variables' => array(
+				'label'          => null,
+				'value'          => null,
+				'valueOnNewLine' => false,
+				'valueIsHTML'    => false,
+			),
+		),
+	);
+}
+
+/**
+ * Implements hook_cron()
+ */
+function iishconference_basemodule_cron() {
+	CachedConferenceApi::updateAll();
+}
+
+/**
+ * Returns HTML for an information container
+ */
+function theme_iishconference_container($variables) {
+	$output = '<div class="preregister_fullwidth">';
+	foreach ($variables['fields'] as $field) {
+		$output .= $field;
+	}
+	$output .= '</div>';
+
+	return $output;
+}
+
+/**
+ * Returns the HTML for an header text in a container
+ */
+function theme_iishconference_container_header($variables) {
+	return '<span class="header_personalpage">' . trim($variables['text']) . '</span>';
+}
+
+/**
+ * Returns the HTML for an inline field in a container
+ */
+function theme_iishconference_container_inline($variables) {
+	$output = '<div class="container-inline">';
+	foreach ($variables['inline'] as $inline) {
+		$output .= $inline;
+	}
+	$output .= '</div>';
+
+	return $output;
+}
+
+/**
+ * Returns the HTML for a field in a container
+ */
+function theme_iishconference_container_field($variables) {
+	$value = ConferenceMisc::getCleanHTML($variables['value'], $variables['valueIsHTML']);
+
+	if ($variables['valueOnNewLine']) {
+		return theme_iishconference_container_inline(array(
+			'inline' => array(
+				'<span class="label_personalpage">' .
+				t(trim($variables['label'])) . ' </span>'
+			)
+		)) . $value;
+	}
+	else {
+		return theme_iishconference_container_inline(array(
+			'inline' => array(
+				'<span class="label_personalpage">' .
+				t(trim($variables['label'])) . ' </span>',
+				$value
+			)
+		));
+	}
+}

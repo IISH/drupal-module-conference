@@ -1,0 +1,7 @@
+name = Networks and their participants
+description = Allows network chairs and crew to download Excel files with the contact details of all the participants in a network
+package = IISH Conference
+core = 7.x
+version = 7.x-0.0.1
+files[] = ParticipantsInNetworkApi.class.php
+dependencies[] = iishconference_basemodule

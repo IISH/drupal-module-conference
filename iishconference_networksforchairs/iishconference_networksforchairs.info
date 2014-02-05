@@ -1,0 +1,6 @@
+name = Show networks, sessions and participants
+description = Show networks, sessions and participants
+package = IISH Conference
+core = 7.x
+version = 7.x-0.0.2
+dependencies[] = iishconference_basemodule

@@ -1,0 +1,123 @@
+<?php
+/**
+ * @file
+ * Allows participants to browse through their emails
+ */
+
+/**
+ * Requests the emails for the current page and displays them
+ *
+ * @return string The HTML for a table with the emails
+ */
+function conference_emails() {
+	if (!LoggedInUserDetails::isLoggedIn()) {
+		// redirect to login page
+		Header("Location: /" . getSetting('pathForMenu') . "login/?backurl=" . urlencode($_SERVER["REQUEST_URI"]));
+		die('Go to <a href="/' . getSetting('pathForMenu') . 'login/?backurl=' . urlencode($_SERVER["REQUEST_URI"]) .
+			'">login</a> page.');
+	}
+
+	$ecaSettings = CachedConferenceApi::getSettings();
+	$maxTries = intval($ecaSettings[SettingsApi::EMAIL_MAX_NUM_TRIES]);
+
+	$props = new ApiCriteriaBuilder();
+	$emailsNotSent = SentEmailApi::getListWithCriteria(
+		$props
+			->eq('user_id', LoggedInUserDetails::getId())
+			->eq('dateTimeSent', null)
+			->sort('dateTimeCreated', 'desc')
+			->get()
+	)->getResults();
+
+	$props = new ApiCriteriaBuilder();
+	$emailsSent = SentEmailApi::getListWithCriteria(
+		$props
+			->eq('user_id', LoggedInUserDetails::getId())
+			->ge('dateTimeSent', strtotime('-18 month'))
+			->sort('dateTimeSent', 'desc')
+			->get()
+	)->getResults();
+
+	$rowsNotSent = array();
+	foreach ($emailsNotSent as $email) {
+		$rowsNotSent[] = array(
+			array(
+				'data' => l($email->getSubject(), getSetting('pathForMenu') . 'emails/' . $email->getId())
+			),
+			array(
+				'data' => (is_null($email->getDateTimeCreated())) ? null :
+						date('j F Y H:i:s', $email->getDateTimeCreated())
+			),
+			array(
+				'data' => ($email->getNumTries() >= $maxTries) ?
+						'<font color="red">' . t('Sending failed') . '</font>' : t('Not sent yet')
+			),
+		);
+	}
+
+	$rowsSent = array();
+	foreach ($emailsSent as $email) {
+		$rowsSent[] = array(
+			array(
+				'data' => l($email->getSubject(), getSetting('pathForMenu') . 'emails/' . $email->getId())
+			),
+			array(
+				'data' => (is_null($email->getDateTimeSent())) ? null :
+						date('j F Y H:i:s', $email->getDateTimeSent())
+			),
+		);
+	}
+
+	$tableNotSent = theme_table(
+		array(
+			"header"     => array(
+				array('data' => t('Email subject')),
+				array('data' => t('Date/time created')),
+				array('data' => t('Sending status')),
+			),
+			"rows"       => $rowsNotSent,
+			"attributes" => array(),
+			"sticky"     => true,
+			"caption"    => null,
+			"colgroups"  => array(),
+			"empty"      => t('No emails found!'),
+		)
+	);
+
+	$tableSent = theme_table(
+		array(
+			"header"     => array(
+				array('data' => t('Email subject')),
+				array('data' => t('Date/time sent')),
+			),
+			"rows"       => $rowsSent,
+			"attributes" => array(),
+			"sticky"     => true,
+			"caption"    => null,
+			"colgroups"  => array(),
+			"empty"      => t('No emails found!'),
+		)
+	);
+
+	$emailsPage = l(t('Go back to your personal page'), getSetting('pathForMenu') . 'personal-page') . '<br /><br />';
+	$emailsPage .= theme('iishconference_container',
+		array(
+			'fields' => array(
+				theme('iishconference_container_header',
+					array('text' => t('Emails that have not been sent to you yet'))),
+				$tableNotSent
+			)
+		)
+	);
+	$emailsPage .= theme('iishconference_container',
+		array(
+			'fields' => array(
+				theme('iishconference_container_header',
+					array('text' => t('Emails that have been sent to you'))),
+				$tableSent
+			)
+		)
+	);
+
+	return $emailsPage;
+}

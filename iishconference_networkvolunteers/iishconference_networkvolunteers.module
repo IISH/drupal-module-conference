@@ -1,0 +1,35 @@
+<?php
+require_once 'networkvolunteers.inc.php';
+
+/**
+ * Implements hook_help()
+ */
+function iishconference_networkvolunteers_help($path, $arg) {
+	switch ($path) {
+		// Module help for the block module
+		case "admin/help#iishconference_networkvolunteers":
+			return '<p><strong>About the \'Show Networks and their Volunteers\' module</strong><br><br>...</p>';
+			break;
+	}
+}
+
+/**
+ * Implements hook_menu()
+ */
+function iishconference_networkvolunteers_menu() {
+	$items = array();
+
+	$extraPath = getSetting('pathForMenu');
+
+	$items[$extraPath . 'networkvolunteers'] = array(
+		'title'           => 'Networks & Volunteers',
+		'description'     => 'Networks & their volunteers ...description...',
+		'page callback'   => 'drupal_get_form',
+		'page arguments'  => array('iishconference_networkvolunteers_form'),
+//		'access arguments' => array('access content'),
+//		'type' => MENU_CALLBACK, //?
+		'access callback' => true,
+	);
+
+	return $items;
+}

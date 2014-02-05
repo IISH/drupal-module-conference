@@ -1,0 +1,45 @@
+<?php
+
+/**
+ * Implements hook_help
+ */
+function iishconference_networkparticipants_help($path, $arg) {
+	switch ($path) {
+		// Module help for the block module
+		case "admin/help#iishconference_networkparticipants":
+			return '<p><strong>About the \'Show all "accepted" participants (participanting in accepted sessions) in specific network\' module</strong><br><br>...</p>';
+			break;
+	}
+}
+
+/**
+ * Implements hook_menu
+ */
+function iishconference_networkparticipants_menu() {
+	$items = array();
+
+	$extraPath = getSetting('pathForMenu');
+
+	$items[$extraPath . 'networkparticipants'] = array(
+		'title'            => 'Networks and their Participants',
+		'description'      => 'Networks and their Participants ...description...',
+		'page callback'    => 'iishconference_networkparticipants_main',
+		'access arguments' => array('access content'),
+		'type'             => MENU_CALLBACK,
+		'access callback'  => true,
+		'file'             => 'networkparticipants.inc.php',
+	);
+
+	$items[$extraPath . 'networkparticipants/%'] = array(
+		'title'            => 'Network and its participants',
+		'description'      => 'Network and its participants ...description...',
+		'page callback'    => 'iishconference_networkparticipants_detail',
+		'page arguments'   => array(2),
+		'access arguments' => array('access content'),
+		'type'             => MENU_CALLBACK,
+		'access callback'  => true,
+		'file'             => 'networkparticipants.inc.php',
+	);
+
+	return $items;
+}

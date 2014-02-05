@@ -1,0 +1,33 @@
+<?php
+
+/**
+ * Implements hook_help()
+ */
+function iishconference_changeuser_help($path, $arg) {
+	switch ($path) {
+		// Module help for the block module
+		case "admin/help#iishconference_emails":
+			return '<p><strong>About the module</strong><br><br>...</p>';
+			break;
+	}
+}
+
+/**
+ * Implements hook_menu()
+ */
+function iishconference_changeuser_menu() {
+	$items = array();
+
+	$extraAdminPath = getSetting('pathForAdminMenu');
+
+	$items[$extraAdminPath . 'change-user'] = array(
+		'title'           => 'Change user',
+		'description'     => 'change user page ...description...',
+		'page callback'   => 'drupal_get_form',
+		'page arguments'  => array('conference_changeuser_form'),
+		'access callback' => true,
+		'file'            => 'changeuser.inc.php',
+	);
+
+	return $items;
+}

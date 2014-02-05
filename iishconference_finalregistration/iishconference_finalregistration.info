@@ -1,0 +1,8 @@
+name = Final registration
+description = Allows participants to finalize their registration by performing a payment
+package = IISH Conference
+core = 7.x
+version = 7.x-0.0.1
+configure = admin/settings/iishconference-finalregistration
+files[] = PayWayMessage.class.php
+dependencies[] = iishconference_basemodule

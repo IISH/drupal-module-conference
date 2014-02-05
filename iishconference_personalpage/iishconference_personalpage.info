@@ -1,0 +1,7 @@
+name = Personal page
+description = Starting page of participants and allows participants to see all of their data on one single page
+package = IISH Conference
+core = 7.x
+version = 7.x-0.0.1
+files[] = RemovePaperApi.class.php
+dependencies[] = iishconference_basemodule

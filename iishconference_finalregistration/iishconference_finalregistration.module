@@ -1,0 +1,96 @@
+<?php
+/**
+ * @file
+ * The 'Final registration' module
+ */
+
+/**
+ * Implements hook_help()
+ */
+function iishconference_finalregistration_help($path, $arg) {
+	switch ($path) {
+		case "admin/help#iishconference_finalregistration":
+			$output = '<h3>' . t('About') . '</h3>';
+			$output .= '<p>' . t('The \'Final registration and Payment\' module allows conference users to finalize their registration by making a payment.') . ' ';
+			$output .= t('In order to make payments possible, the module communicates with the \'PayWay\' API, which in turn communicates with \'Ogone\'.') . '</p>';
+			return $output;
+	}
+}
+
+/**
+ * Implements hook_menu()
+ */
+function iishconference_finalregistration_menu() {
+	$extraPath = getSetting('pathForMenu');
+
+	$items[$extraPath . 'final-registration'] = array(
+		'title' => 'Final registration and payment for the ' . getSetting('code_year') . ' conference',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('iishconference_finalregistration_main_form'),
+		'access arguments' => array('access content'),
+		'file' => 'iishconference_finalregistration_main.inc.php',
+		'type' => MENU_CALLBACK,
+	);
+
+	$items[$extraPath . 'final-registration/bank-transfer'] = array(
+		'title' => 'Bank transfer information',
+		'page callback' => 'iishconference_finalregistration_bank_transfer',
+		'access arguments' => array('access content'),
+		'file' => 'iishconference_finalregistration_bank_transfer.inc.php',
+		'type' => MENU_CALLBACK,
+	);
+
+	$items[$extraPath . 'final-registration/accept'] = array(
+		'title' => 'Thank you for finishing your registration',
+		'page callback' => 'iishconference_finalregistration_accept',
+		'access arguments' => array('access content'),
+		'file' => 'iishconference_finalregistration_callback.inc.php',
+		'type' => MENU_CALLBACK,
+	);
+
+	$items[$extraPath . 'final-registration/decline'] = array(
+		'title' => 'Your payment was declined',
+		'page callback' => 'iishconference_finalregistration_decline',
+		'access arguments' => array('access content'),
+		'file' => 'iishconference_finalregistration_callback.inc.php',
+		'type' => MENU_CALLBACK,
+	);
+
+	$items[$extraPath . 'final-registration/exception'] = array(
+		'title' => 'Something went wrong with your payment',
+		'page callback' => 'iishconference_finalregistration_exception',
+		'access arguments' => array('access content'),
+		'file' => 'iishconference_finalregistration_callback.inc.php',
+		'type' => MENU_CALLBACK,
+	);
+
+	$items['admin/settings/iishconference-finalregistration'] = array(
+		'title' => 'Final registration settings',
+		'description' => 'Change the final registration settings',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('iishconference_finalregistration_settings_form'),
+		'access arguments' => array('access administration pages'),
+		'file' => 'iishconference_finalregistration_settings.inc.php',
+		'type' => MENU_CALLBACK,
+	);
+
+	return $items;
+}
+
+/**
+ * Implements hook_theme()
+ */
+function iishconference_finalregistration_theme() {
+	return array(
+		'iishconference_finalregistration_main_form' => array(
+			'render element' => 'form',
+			'file' => 'iishconference_finalregistration_theme.inc.php',
+			'template' => 'iishconference_finalregistration_main_page',
+		),
+		'iishconference_finalregistration_overview_form' => array(
+			'render element' => 'form',
+			'file' => 'iishconference_finalregistration_theme.inc.php',
+			'template' => 'iishconference_finalregistration_overview_page',
+		),
+	);
+}

@@ -1,0 +1,61 @@
+<?php
+
+/**
+ * Implements hook_help()
+ */
+function iishconference_networks_help($path, $arg) {
+	switch ($path) {
+		// Module help for the block module
+		case "admin/help#iishconference_networks":
+			return '<p><strong>About the module</strong><br><br>...</p>';
+			break;
+	}
+}
+
+/**
+ * Implements hook_menu()
+ */
+function iishconference_networks_menu() {
+	$items = array();
+
+	$extraPath = getSetting('pathForMenu');
+
+	$items[$extraPath . 'networks'] = array(
+		'title'            => 'Networks',
+		'page callback'    => 'iishconference_networks',
+		'access arguments' => array('access content'),
+		'type'             => MENU_CALLBACK,
+		'file'             => 'networks.inc.php',
+	);
+
+	$items[$extraPath . 'networks/%'] = array(
+		'title'            => 'Networks',
+		'page callback'    => 'iishconference_network_detail',
+		'page arguments'   => array(2),
+		'access arguments' => array('access content'),
+		'type'             => MENU_CALLBACK,
+		'file'             => 'networks.inc.php',
+	);
+
+	return $items;
+}
+
+/**
+ * Implements hook_theme()
+ */
+function iishconference_networks_theme() {
+	return array(
+		'conference_networks' => array(
+			'template'  => 'conference_networks',
+			'variables' => array(
+				'networks' => array(),
+			),
+		),
+		'conference_network_detail' => array(
+			'template'  => 'conference_network_detail',
+			'variables' => array(
+				'network' => null,
+			),
+		),
+	);
+}

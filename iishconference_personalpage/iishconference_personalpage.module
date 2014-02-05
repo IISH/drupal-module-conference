@@ -1,0 +1,62 @@
+<?php
+
+/**
+ * Implements hook_help()
+ */
+function iishconference_personalpage_help($path, $arg) {
+	switch ($path) {
+		// Module help for the block module
+		case "admin/help#iishconference_personalpage":
+			return '<p><strong>About the module</strong><br><br>...</p>';
+			break;
+	}
+}
+
+/**
+ * Implements hook_menu()
+ */
+function iishconference_personalpage_menu() {
+	$items = array();
+
+	$extraPath = getSetting('pathForMenu');
+
+	$a = array(
+		'title'           => 'Personal page',
+		'description'     => 'personal page ...description...',
+		'page callback'   => 'conference_personalpage_main',
+		'file'            => 'personalpage.inc.php',
+		'access callback' => true,
+	);
+	$items[$extraPath . 'personal-page'] = $a;
+	$items[substr($extraPath, 0, strlen($extraPath) - 1)] = $a;
+
+	$items[$extraPath . 'personal-page/upload-paper/%'] = array(
+		'title'           => 'Upload paper',
+		'description'     => 'Allows a participant to upload a paper',
+		'page callback'   => 'conference_upload_paper',
+		'page arguments'  => array(3),
+		'access callback' => true,
+		'file'            => 'upload_paper.inc.php',
+	);
+
+	return $items;
+}
+
+/**
+ * Implements hook_theme()
+ */
+function iishconference_personalpage_theme() {
+	return array(
+		'conference_upload_paper' => array(
+			'template'  => 'conference_upload_paper',
+			'variables' => array(
+				'paper'               => null,
+				'paper-download-link' => null,
+				'actionUrl'           => null,
+				'maxSize'             => null,
+				'extensions'          => null,
+				'form'                => null,
+			),
+		),
+	);
+}

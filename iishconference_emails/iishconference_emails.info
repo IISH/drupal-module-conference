@@ -1,0 +1,7 @@
+name = Emails sent
+description = Allows users to see which emails have been sent to them and which emails have to be resend
+package = IISH Conference
+core = 7.x
+version = 7.x-0.0.7
+files[] = ResendEmailApi.class.php
+dependencies[] = iishconference_basemodule

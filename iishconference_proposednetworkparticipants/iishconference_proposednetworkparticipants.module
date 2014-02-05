@@ -1,0 +1,36 @@
+<?php
+require_once 'proposednetworkparticipants.inc.php';
+
+/**
+ * Implements hook_help()
+ */
+function iishconference_proposednetworkparticipants_help($path, $arg) {
+	switch ($path) {
+		// Module help for the block module
+		case "admin/help#iishconference_proposednetworkparticipants":
+			return '<p><strong>About the \'Show Participants and their proposed network\' module</strong><br><br>...</p>';
+			break;
+	}
+}
+
+/**
+ * Implements hook_menu()
+ */
+function iishconference_proposednetworkparticipants_menu() {
+	$items = array();
+
+	$extraPath = getSetting('pathForMenu');
+
+	$a = array(
+		'title'           => 'Participants and their proposed network',
+		'description'     => 'Networks & their participants ...description...',
+		'page callback'   => 'drupal_get_form',
+		'page arguments'  => array('iishconference_proposednetworkparticipants_form'),
+//		'access arguments' => array('access content'),
+//		'type' => MENU_CALLBACK, //?
+		'access callback' => true,
+	);
+	$items[$extraPath . 'proposednetworkparticipants'] = $a;
+
+	return $items;
+}

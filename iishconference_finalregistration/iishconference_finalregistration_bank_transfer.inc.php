@@ -1,0 +1,69 @@
+<?php
+/**
+ * @file
+ * This page gives the user information about a payment by bank transfer
+ */
+
+/**
+ * Gives the user information about their bank transfer order
+ *
+ * @return string Bank transfer information
+ */
+function iishconference_finalregistration_bank_transfer() {
+	if (!LoggedInUserDetails::isLoggedIn()) {
+		// redirect to login page
+		Header("Location: /" . getSetting('pathForMenu') . "login/?backurl=" . urlencode($_SERVER["REQUEST_URI"]));
+		die('Go to <a href="/' . getSetting('pathForMenu') . 'login/?backurl=' . urlencode($_SERVER["REQUEST_URI"]) .
+			'">login</a> page.');
+	}
+
+	if (LoggedInUserDetails::isAParticipant() && LoggedInUserDetails::getParticipant()->getPaymentId()) {
+		$participant = LoggedInUserDetails::getParticipant();
+		$orderDetails = new PayWayMessage(array('orderid' => $participant->getPaymentId()));
+		$order = $orderDetails->send('orderDetails');
+
+		if (!empty($order)) {
+			if ($order->get('payed') == 1) {
+				drupal_set_message(t('You have already completed your final registration and payment.'), 'status');
+
+				return '';
+			}
+			else if ($order->get('willpaybybank')) {
+				$ecaSettings = CachedConferenceApi::getSettings();
+				$bankTransferInfo = $ecaSettings[SettingsApi::BANK_TRANSFER_INFO];
+				$amount = ConferenceMisc::getReadableAmount($order->get('amount'), true);
+				$finalDate =
+					date('l j F Y', $participant->getBankTransferFinalDate($order->getDateTime('createdat')));
+
+				$bankTransferInfo = str_replace('[PaymentNumber]', $order->get('orderid'), $bankTransferInfo);
+				$bankTransferInfo = str_replace('[PaymentAmount]', $amount, $bankTransferInfo);
+				$bankTransferInfo = str_replace('[PaymentDescription]', $order->get('com'), $bankTransferInfo);
+				$bankTransferInfo = str_replace('[PaymentFinalDate]', $finalDate, $bankTransferInfo);
+				$bankTransferInfo =
+					str_replace('[NameParticipant]', LoggedInUserDetails::getUser()->getFullName(),
+						$bankTransferInfo);
+
+				return ConferenceMisc::getCleanHTML($bankTransferInfo);
+			}
+			else {
+				drupal_set_message(t('You have chosen another payment method. !link to change your payment method.',
+						array('!link' => l(t('Click here'), getSetting('pathForMenu') . 'final-registration'))),
+					'error');
+
+				return '';
+			}
+		}
+		else {
+			drupal_set_message(t('Currently it is not possible to obtain your payment information. Please try again later...'),
+				'error');
+
+			return '';
+		}
+	}
+	else {
+		drupal_set_message(t('You have not finished the final registration. !link.',
+			array('!link' => l(t('Click here'), getSetting('pathForMenu') . 'final-registration'))), 'error');
+
+		return '';
+	}
+}

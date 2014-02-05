@@ -1,0 +1,6 @@
+name = Show networks and their volunteers
+description = Allows network chairs and crew to see who volunteer and in which network
+package = IISH Conference
+core = 7.x
+version = 7.x-0.0.2
+dependencies[] = iishconference_basemodule

@@ -1,0 +1,7 @@
+name = Networks
+description = Gives users an overview of the networks
+package = IISH Conference
+core = 7.x
+version = 7.x-0.0.1
+dependencies[] = iishconference_basemodule
+stylesheets[all][] = conference_networks.css

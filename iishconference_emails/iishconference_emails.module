@@ -1,0 +1,40 @@
+<?php
+
+/**
+ * Implements hook_help()
+ */
+function iishconference_emails_help( $path, $arg ) {
+	switch ( $path ) {
+		// Module help for the block module
+		case "admin/help#iishconference_emails":
+			return '<p><strong>About the module</strong><br><br>...</p>';
+			break;
+	}
+}
+
+/**
+ * Implements hook_menu()
+ */
+function iishconference_emails_menu() {
+	$items = array();
+	$extraPath = getSetting('pathForMenu');
+
+	$items[$extraPath . 'emails'] = array(
+		'title'           => 'Emails',
+		'description'     => 'Allows a participant to read all their emails concerning the conference and resend them',
+		'page callback'   => 'conference_emails',
+		'access callback' => true,
+		'file'            => 'emails.inc.php',
+	);
+
+	$items[$extraPath . 'emails/%'] = array(
+		'title'           => 'Email',
+		'description'     => 'Allows a participant to read and resend an email previously sent to them',
+		'page callback'   => 'conference_email_main',
+		'page arguments'  => array(2),
+		'access callback' => true,
+		'file'            => 'email.inc.php',
+	);
+
+	return $items;
+}
