@@ -3,7 +3,6 @@
  * Primary form builder.
  */
 function preregister_form( $form, &$form_state ) {
-
 	$user_id = getIdLoggedInUser();
 	if ( $user_id == '' || $user_id == '0' ) {
 		$loggedin = false;
@@ -14,6 +13,10 @@ function preregister_form( $form, &$form_state ) {
 		$firstpage = 'preregister_personalinfo_edit_form';
 	}
 
+
+    // load eca settings
+    $eca_dbsettings = loadEcaSettings();
+
 	// Check if user is already registered for the current conference, if so, show message no changes possible
 	if ( $loggedin && isUserRegistered($user_id) ) {
 
@@ -22,7 +25,23 @@ function preregister_form( $form, &$form_state ) {
 			'#markup' => '<span class="eca_warning">You are already pre-registered for the ' . getSetting('long_code_year') . ' conference. It is not allowed to modify online your data after your data has been checked by the conference organization. If you would like to make some changes please send an e-mail to ' . getSetting('code') . '. Please go to your <a href="personal-page">personal page</a> to check the data.</span>',
 		);
 
-	} else {
+    // Check if preregistration is closed
+    } elseif ( isset( $eca_dbsettings["preregistration_closes_on"] ) && $eca_dbsettings["preregistration_closes_on"] != '' && date("Y-m-d") >= $eca_dbsettings["preregistration_closes_on"] ) {
+
+        $form['ct1'] = array(
+            '#type' => 'markup',
+            '#markup' => '<span class="eca_warning">' . $eca_dbsettings["preregistration_closes_on_message"] . '</span>',
+        );
+
+    // Check if preregistration has started
+    } elseif ( isset( $eca_dbsettings["preregistration_starts_on"] ) && $eca_dbsettings["preregistration_starts_on"] != '' && date("Y-m-d") < $eca_dbsettings["preregistration_starts_on"] ) {
+
+        $form['ct1'] = array(
+            '#type' => 'markup',
+            '#markup' => '<span class="eca_warning">' . $eca_dbsettings["preregistration_starts_on_message"] . '</span>',
+        );
+
+    } else {
 
 		// Initialize.
 		if ( $form_state['rebuild'] ) {

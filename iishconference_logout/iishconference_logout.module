@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Implements hook_help()
+ */
 function iishconference_logout_help($path, $arg) {
 	switch ($path) {
 		// Module help for the block module
@@ -9,6 +12,9 @@ function iishconference_logout_help($path, $arg) {
 	}
 }
 
+/**
+ * Implements hook_menu()
+ */
 function iishconference_logout_menu() {
 	$items = array();
 
@@ -20,6 +26,7 @@ function iishconference_logout_menu() {
 		'page callback'   => 'drupal_get_form',
 		'page arguments'  => array('conference_logout_form'),
 		'access callback' => true,
+		'type'            => MENU_NORMAL_ITEM,
 		'file'            => 'logout.inc.php',
 	);
 

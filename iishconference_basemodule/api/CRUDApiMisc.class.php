@@ -48,26 +48,4 @@ class CRUDApiMisc {
 				->get()
 		);
 	}
-
-	/**
-	 * Returns the filesize in a human readable format
-	 *
-	 * @param null|int $filesize The filesize in bytes
-	 *
-	 * @return string The filesize in bytes, KB or MB
-	 */
-	public static function getReadableFileSize($filesize) {
-		if (is_null($filesize) || ($filesize == 0)) {
-			return "0 bytes";
-		}
-
-		if ($filesize/1024 > 1) {
-			if ($filesize/1048576 > 1) {
-				return round($filesize/1048576, 2) . ' MB';
-			}
-			return round($filesize/1024, 2) . ' KB';
-		}
-
-		return $filesize . ' bytes';
-	}
 } 

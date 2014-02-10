@@ -1,5 +1,4 @@
 <?php
-require_once 'networkvolunteers.inc.php';
 
 /**
  * Implements hook_help()
@@ -24,11 +23,20 @@ function iishconference_networkvolunteers_menu() {
 	$items[$extraPath . 'networkvolunteers'] = array(
 		'title'           => 'Networks & Volunteers',
 		'description'     => 'Networks & their volunteers ...description...',
-		'page callback'   => 'drupal_get_form',
-		'page arguments'  => array('iishconference_networkvolunteers_form'),
-//		'access arguments' => array('access content'),
-//		'type' => MENU_CALLBACK, //?
+		'page callback'   => 'iishconference_networkvolunteers_main',
 		'access callback' => true,
+		'type'            => MENU_NORMAL_ITEM,
+		'file'            => 'networkvolunteers.inc.php',
+	);
+
+	$items[$extraPath . 'networkvolunteers/%'] = array(
+		'title'           => 'Network and its volunteers',
+		'description'     => 'Network and its volunteers ...description...',
+		'page callback'   => 'iishconference_networkvolunteers_detail',
+		'page arguments'  => array(2),
+		'access callback' => true,
+		'type'            => MENU_CALLBACK,
+		'file'            => 'networkvolunteers.inc.php',
 	);
 
 	return $items;

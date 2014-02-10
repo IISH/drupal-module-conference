@@ -87,23 +87,10 @@ class ConferenceMisc {
 	public static function getCleanHTML($text, $isHTML = false) {
 		$filter = new stdClass();
 		$filter->callback = '_filter_url';
-		$filter->settings = array(
-			'filter_url_length' => 300,
-		);
+		$filter->settings = array('filter_url_length' => 300);
 
-		if (($text === null) || (strlen(trim($text)) === 0)) {
-			$text = '-';
-		}
-		else {
-			$text = trim($text);
-		}
-
-		if ($isHTML) {
-			$text = filter_xss_admin($text);
-		}
-		else {
-			$text = check_plain($text);
-		}
+		$text = (($text === null) || (strlen(trim($text)) === 0)) ? '-' : trim($text);
+		$text = ($isHTML) ? filter_xss_admin($text) : check_plain($text);
 
 		return _filter_url(nl2br($text), $filter);
 	}
@@ -255,5 +242,42 @@ document.write('<a hr'+'ef=\"'+'mai'+'lto:'+w+'@'+h1+'.'+h2+'\">'+w+'@'+h1+'.'+h
 		$ret = str_replace('::LABEL::', $label, $ret);
 
 		return $ret;
+	}
+
+	/**
+	 * Create a single line enumeration
+	 *
+	 * @param array  $items        The items to enumerate
+	 * @param string $seperator    The default seperator to use
+	 * @param string $seperatorEnd The last seperator to use
+	 *
+	 * @return string A single line enumeration
+	 */
+	public static function getEnumSingleLine(array $items, $seperator = ', ', $seperatorEnd = ' and ') {
+		$line = '';
+		$items = array_values($items);
+		foreach ($items as $i => $item) {
+			if ($i > 0) {
+				$line .= ($i < (count($items) - 1)) ? $seperator : $seperatorEnd;
+			}
+			$line .= $item;
+		}
+
+		return $line;
+	}
+
+	/**
+	 * Only returns the first part of a long piece of text, with (...) indicating that the original is longer.
+	 * If nothing was cut, the (...) will not appear
+	 *
+	 * @param string $text          The text to cut
+	 * @param int    $numberOfWords The number of allowed words from the start
+	 *
+	 * @return string The first part of the text
+	 */
+	public static function getFirstPartOfText($text, $numberOfWords = 50) {
+		$newText = implode(' ', array_slice(explode(' ', $text), 0, $numberOfWords));
+
+		return (strlen($newText) < strlen($text)) ? $newText . ' ...' : $newText;
 	}
 } 

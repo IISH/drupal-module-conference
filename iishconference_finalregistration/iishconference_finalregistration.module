@@ -27,41 +27,41 @@ function iishconference_finalregistration_menu() {
 		'title' => 'Final registration and payment for the ' . getSetting('code_year') . ' conference',
 		'page callback' => 'drupal_get_form',
 		'page arguments' => array('iishconference_finalregistration_main_form'),
-		'access arguments' => array('access content'),
+		'access callback' => true,
+		'type' => MENU_NORMAL_ITEM,
 		'file' => 'iishconference_finalregistration_main.inc.php',
-		'type' => MENU_CALLBACK,
 	);
 
 	$items[$extraPath . 'final-registration/bank-transfer'] = array(
 		'title' => 'Bank transfer information',
 		'page callback' => 'iishconference_finalregistration_bank_transfer',
-		'access arguments' => array('access content'),
-		'file' => 'iishconference_finalregistration_bank_transfer.inc.php',
+		'access callback' => true,
 		'type' => MENU_CALLBACK,
+		'file' => 'iishconference_finalregistration_bank_transfer.inc.php',
 	);
 
 	$items[$extraPath . 'final-registration/accept'] = array(
 		'title' => 'Thank you for finishing your registration',
 		'page callback' => 'iishconference_finalregistration_accept',
-		'access arguments' => array('access content'),
-		'file' => 'iishconference_finalregistration_callback.inc.php',
+		'access callback' => true,
 		'type' => MENU_CALLBACK,
+		'file' => 'iishconference_finalregistration_callback.inc.php',
 	);
 
 	$items[$extraPath . 'final-registration/decline'] = array(
 		'title' => 'Your payment was declined',
 		'page callback' => 'iishconference_finalregistration_decline',
-		'access arguments' => array('access content'),
-		'file' => 'iishconference_finalregistration_callback.inc.php',
+		'access callback' => true,
 		'type' => MENU_CALLBACK,
+		'file' => 'iishconference_finalregistration_callback.inc.php',
 	);
 
 	$items[$extraPath . 'final-registration/exception'] = array(
 		'title' => 'Something went wrong with your payment',
 		'page callback' => 'iishconference_finalregistration_exception',
-		'access arguments' => array('access content'),
-		'file' => 'iishconference_finalregistration_callback.inc.php',
+		'access callback' => true,
 		'type' => MENU_CALLBACK,
+		'file' => 'iishconference_finalregistration_callback.inc.php',
 	);
 
 	$items['admin/settings/iishconference-finalregistration'] = array(
@@ -71,7 +71,6 @@ function iishconference_finalregistration_menu() {
 		'page arguments' => array('iishconference_finalregistration_settings_form'),
 		'access arguments' => array('access administration pages'),
 		'file' => 'iishconference_finalregistration_settings.inc.php',
-		'type' => MENU_CALLBACK,
 	);
 
 	return $items;

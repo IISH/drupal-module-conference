@@ -12,12 +12,42 @@ class SessionApi extends CRUDApiClient {
 	protected $addedBy_id;
 
 	private $sessionState;
-	private $types;
 	private $networks;
 	private $addedBy;
+	private $sessionParticipants;
 
 	public static function getListWithCriteria(array $properties, $showDrupalMessage = true) {
 		return parent::getListWithCriteriaForClass(__CLASS__, $properties, $showDrupalMessage);
+	}
+
+	/**
+	 * Allows the creation of a session via an array with details
+	 *
+	 * @param array $session An array with session details
+	 *
+	 * @return SessionApi A session object
+	 */
+	public static function getSessionFromArray(array $session) {
+		return self::createNewInstance(__CLASS__, $session);
+	}
+
+	/**
+	 * Returns all the planned days of the listed sessions
+	 *
+	 * @param SessionApi[] $sessions The sessions in question
+	 *
+	 * @return DayApi[] The planned days
+	 */
+	public static function getAllPlannedDaysForSessions($sessions) {
+		$daysPlanned = array();
+		foreach ($sessions as $session) {
+			$daysPlanned[] =
+				CRUDApiMisc::getFirstWherePropertyEquals(new SessionRoomDateTimeApi(), 'session_id', $session->getId())
+					->getDay();
+		}
+		sort($daysPlanned);
+
+		return array_unique($daysPlanned);
 	}
 
 	/**
@@ -30,12 +60,15 @@ class SessionApi extends CRUDApiClient {
 	}
 
 	/**
-	 * The user id of the user who created this session
+	 * Set the abstract for this paper
 	 *
-	 * @return int The user id of the user who created this session
+	 * @param string $abstr The abstract
 	 */
-	public function getAddedById() {
-		return $this->addedBy_id;
+	public function setAbstr($abstr) {
+		$abstr = (($abstr !== null) && strlen(trim($abstr)) > 0) ? trim($abstr) : null;
+
+		$this->abstr = $abstr;
+		$this->toSave['abstr'] = $abstr;
 	}
 
 	/**
@@ -48,12 +81,15 @@ class SessionApi extends CRUDApiClient {
 	}
 
 	/**
-	 * Returns a list with ids of all networks to which this session belongs
+	 * Set the name for this paper
 	 *
-	 * @return int[] The network ids
+	 * @param string $name The name
 	 */
-	public function getNetworksId() {
-		return $this->networks_id;
+	public function setName($name) {
+		$name = (($name !== null) && strlen(trim($name)) > 0) ? trim($name) : null;
+
+		$this->name = $name;
+		$this->toSave['name'] = $name;
 	}
 
 	/**
@@ -115,39 +151,67 @@ class SessionApi extends CRUDApiClient {
 	}
 
 	/**
+	 * Returns a list with ids of all networks to which this session belongs
+	 *
+	 * @return int[] The network ids
+	 */
+	public function getNetworksId() {
+		return $this->networks_id;
+	}
+
+	/**
 	 * Returns the user that created this session
 	 *
 	 * @return UserApi The user that created this session
 	 */
 	public function getAddedBy() {
 		if (!$this->addedBy && is_int($this->getAddedById())) {
-			$props = new ApiCriteriaBuilder();
-			$this->addedBy = UserApi::getListWithCriteria(
-				$props
-					->eq('id', $this->getAddedById())
-					->get()
-			)->getFirstResult();
+			$this->addedBy = CRUDApiMisc::getById(new UserApi(), 'id', $this->getAddedById());
 		}
 
 		return $this->addedBy;
 	}
 
 	/**
-	 * Returns all the planned days of the listed sessions
+	 * Set the user who added this session
 	 *
-	 * @param SessionApi[] $sessions The sessions in question
-	 *
-	 * @return DayApi[] The planned days
+	 * @param int|UserApi $addedBy The user (id)
 	 */
-	public static function getAllPlannedDaysForSessions($sessions) {
-		$daysPlanned = array();
-		foreach ($sessions as $session) {
-			$daysPlanned[] =
-				CRUDApiMisc::getFirstWherePropertyEquals(new SessionRoomDateTimeApi(), 'session_id', $session->getId())
-					->getDay();
+	public function setAddedBy($addedBy) {
+		if ($addedBy instanceof UserApi) {
+			$addedBy = $addedBy->getId();
 		}
-		sort($daysPlanned);
 
-		return array_unique($daysPlanned);
+		$this->addedBy = null;
+		$this->addedBy_id = $addedBy;
+		$this->toSave['addedBy.id'] = $addedBy;
+	}
+
+	/**
+	 * The user id of the user who created this session
+	 *
+	 * @return int The user id of the user who created this session
+	 */
+	public function getAddedById() {
+		return $this->addedBy_id;
+	}
+
+	/**
+	 * Returns session participants information of this session
+	 *
+	 * @return SessionParticipantApi[] The session participant information
+	 */
+	public function getSessionParticipantInfo() {
+		if (!$this->sessionParticipants) {
+			$this->sessionParticipants =
+				CRUDApiMisc::getAllWherePropertyEquals(new SessionParticipantApi(), 'session_id', $this->getId())
+					->getResults();
+		}
+
+		return $this->sessionParticipants;
+	}
+
+	public function __toString() {
+		return $this->getName();
 	}
 } 

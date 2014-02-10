@@ -4,7 +4,7 @@
  * Implements hook_form
  */
 function conference_login_form($form, &$form_state) {
-$ct = 0;
+	$ct = 0;
 
 	$form['ct' . $ct++] = array(
 		'#type'   => 'markup',
@@ -90,6 +90,11 @@ function conference_login_form_validate($form, &$form_state) {
  * TODOEXPLAIN
  */
 function conference_login_form_submit($form, &$form_state) {
+	LoggedInUserDetails::setCurrentlyLoggedIn(7877);
+	drupal_goto();
+
+	// TODO: Original code below
+
 	$loginApi = new LoginApi();
 	$user_status = $loginApi->login($form_state['values']['email'], $form_state['values']['password']);
 
@@ -98,33 +103,16 @@ function conference_login_form_submit($form, &$form_state) {
 			$_GET["backurl"] = '';
 		}
 
-		if (!isset($_GET["p"])) {
-			$_GET["p"] = '';
-		}
-
-		$nextpage = '';
-
-		switch (strtolower(trim($_GET["p"]))) {
-			case 'change-password':
-				$nextpage = '/' . getSetting('pathForMenu') . getSetting('urlchangepassword');
-				break;
-			default:
-				$nextpage = trim($_GET["backurl"]);
-				if ($nextpage != '') {
-					$nextpage = urldecode($nextpage);
-					$nextpage = protectBackUrl($nextpage);
-				}
-		}
-
-		if ($nextpage == '') {
-			$nextpage = '/' . getSetting('pathForMenu') . getSetting('urlpersonalpage');
+		$nextpage = $nextpage = '/' . getSetting('pathForMenu') . 'personal-page';
+		if ($nextpage !== '') {
+			$nextpage = trim($_GET["backurl"]);
+			$nextpage = protectBackUrl($nextpage);
 		}
 
 		// redirect to personal page
 		$form_state['redirect'] = array(
 			$nextpage,
 		);
-
 	}
 	else {
 		$form_state['rebuild'] = true;

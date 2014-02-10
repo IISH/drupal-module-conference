@@ -16,6 +16,7 @@ files[] = api/ConferenceApiClient.class.php
 files[] = api/CRUDApiClient.class.php
 files[] = api/CRUDApiMisc.class.php
 files[] = api/CRUDApiResults.class.php
+files[] = api/EmptyApi.class.php
 files[] = api/LoggedInUserDetails.class.php
 files[] = api/SendEmailApi.class.php
 files[] = api/SettingsApi.class.php
@@ -41,5 +42,6 @@ files[] = api/domain/SessionParticipantApi.class.php
 files[] = api/domain/SessionRoomDateTimeApi.class.php
 files[] = api/domain/SessionStateApi.class.php
 files[] = api/domain/UserApi.class.php
+files[] = api/domain/VolunteeringApi.class.php
 
 stylesheets[all][] = iishconference.css

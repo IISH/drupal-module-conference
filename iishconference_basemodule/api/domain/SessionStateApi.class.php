@@ -8,7 +8,7 @@ class SessionStateApi extends CRUDApiClient {
 	const SESSION_ACCEPTED = 2;
 	const SESSION_NOT_ACCEPTED = 3;
 	const SESSION_IN_CONSIDERATION = 4;
-	
+
 	protected $description;
 	protected $shortDescription;
 
@@ -32,6 +32,15 @@ class SessionStateApi extends CRUDApiClient {
 	 */
 	public function getShortDescription() {
 		return $this->shortDescription;
+	}
+
+	/**
+	 * Returns a simple version of the description, so 'Session Accepted' becomes 'Accepted'
+	 *
+	 * @return string The simple description
+	 */
+	public function getSimpleDescription() {
+		return trim(str_replace('Session', '', $this->getDescription()));
 	}
 
 	public function __toString() {

@@ -5,16 +5,27 @@
  */
 class ParticipantTypeApi extends CRUDApiClient {
 	const CHAIR_ID = 6;
-    const ORGANIZER_ID = 7;
-    const AUTHOR_ID = 8;
-    const CO_AUTHOR_ID = 9;
-    const DISCUSSANT_ID = 10;
+	const ORGANIZER_ID = 7;
+	const AUTHOR_ID = 8;
+	const CO_AUTHOR_ID = 9;
+	const DISCUSSANT_ID = 10;
 
 	protected $type;
 	protected $withPaper;
 
 	public static function getListWithCriteria(array $properties, $showDrupalMessage = true) {
 		return parent::getListWithCriteriaForClass(__CLASS__, $properties, $showDrupalMessage);
+	}
+
+	/**
+	 * Allows the creation of a participant type via an array with details
+	 *
+	 * @param array $type An array with participant type details
+	 *
+	 * @return ParticipantTypeApi A participant type object
+	 */
+	public static function getParticipantTypeFromArray(array $type) {
+		return self::createNewInstance(__CLASS__, $type);
 	}
 
 	/**

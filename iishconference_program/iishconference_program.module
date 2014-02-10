@@ -25,16 +25,8 @@ function iishconference_program_menu() {
 		'description'     => 'Program ...description...',
 		'page callback'   => 'iishconference_program',
 		'access callback' => true,
+		'type'            => MENU_NORMAL_ITEM,
 		'file'            => 'program.inc.php',
-	);
-
-	$items[$extraPath . 'program/download-paper/%'] = array(
-		'title'           => 'Download paper',
-		'description'     => 'Allows a participant to download a paper',
-		'page callback'   => 'conference_download_paper',
-		'page arguments'  => array(3),
-		'access callback' => true,
-		'file'            => 'download_paper.inc.php',
 	);
 
 	return $items;

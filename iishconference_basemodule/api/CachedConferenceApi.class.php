@@ -15,6 +15,7 @@ class CachedConferenceApi {
 	private static $nameEquipmentCache = 'iishconference_equipment';
 	private static $nameRoomsCache = 'iishconference_rooms';
 	private static $nameExtrasCache = 'iishconference_extras';
+	private static $nameVolunteeringCache = 'iishconference_volunteering';
 	private static $nameSettingsCache = 'iishconference_settings';
 
 	/**
@@ -32,6 +33,7 @@ class CachedConferenceApi {
 		self::setEquipment();
 		self::setRooms();
 		self::setExtras();
+		self::setVolunteering();
 		self::setSettings();
 	}
 
@@ -52,19 +54,6 @@ class CachedConferenceApi {
 
 	public static function setCountries() {
 		return self::set(self::$nameCountriesCache, 'CountryApi');
-	}
-
-	private static function set($cacheName, $apiClassName) {
-		$prop = new ApiCriteriaBuilder();
-		$rm = new ReflectionMethod($apiClassName, 'getListWithCriteria');
-		$results = $rm->invoke(null, $prop->get());
-		if ($results != null) {
-			cache_set($cacheName, $results->getResults(), 'cache', CACHE_PERMANENT);
-
-			return $results->getResults();
-		}
-
-		return null;
 	}
 
 	public static function setDays() {
@@ -99,21 +88,16 @@ class CachedConferenceApi {
 		return self::set(self::$nameEquipmentCache, 'EquipmentApi');
 	}
 
+	public static function setVolunteering() {
+		return self::set(self::$nameVolunteeringCache, 'VolunteeringApi');
+	}
+
 	public static function setRooms() {
 		return self::set(self::$nameRoomsCache, 'RoomApi');
 	}
 
 	public static function getRooms() {
 		return self::get(self::$nameRoomsCache, 'RoomApi');
-	}
-
-	private static function get($cacheName, $apiClassName) {
-		if ($result = cache_get($cacheName, 'cache')) {
-			return $result->data;
-		}
-		else {
-			return self::set($cacheName, $apiClassName);
-		}
 	}
 
 	public static function getNetworks() {
@@ -161,6 +145,10 @@ class CachedConferenceApi {
 		return self::get(self::$nameEquipmentCache, 'EquipmentApi');
 	}
 
+	public static function getVolunteering() {
+		return self::get(self::$nameVolunteeringCache, 'VolunteeringApi');
+	}
+
 	public static function getSettings() {
 		if ($result = cache_get(self::$nameSettingsCache, 'cache')) {
 			return $result->data;
@@ -176,5 +164,27 @@ class CachedConferenceApi {
 		cache_set(self::$nameSettingsCache, $settings, 'cache', CACHE_PERMANENT);
 
 		return $settings;
+	}
+
+	private static function set($cacheName, $apiClassName) {
+		$prop = new ApiCriteriaBuilder();
+		$rm = new ReflectionMethod($apiClassName, 'getListWithCriteria');
+		$results = $rm->invoke(null, $prop->get());
+		if ($results != null) {
+			cache_set($cacheName, $results->getResults(), 'cache', CACHE_PERMANENT);
+
+			return $results->getResults();
+		}
+
+		return null;
+	}
+
+	private static function get($cacheName, $apiClassName) {
+		if ($result = cache_get($cacheName, 'cache')) {
+			return $result->data;
+		}
+		else {
+			return self::set($cacheName, $apiClassName);
+		}
 	}
 } 

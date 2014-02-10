@@ -35,6 +35,8 @@ class SessionDateTimeApi extends CRUDApiClient {
 	/**
 	 * Returns the period between which the time slot takes place
 	 *
+	 * @param bool $extraSpacing Whether there has to be extra spacing between the dash and the start and end time
+	 *
 	 * @return string The period
 	 */
 	public function getPeriod($extraSpacing = false) {
@@ -57,7 +59,7 @@ class SessionDateTimeApi extends CRUDApiClient {
 			$days = CachedConferenceApi::getDays();
 
 			foreach ($days as $day) {
-				if ($day->getId() == $this->day_id()) {
+				if ($day->getId() == $this->day_id) {
 					$this->day = $day;
 					break;
 				}

@@ -3,4 +3,5 @@ description = Show networks, sessions and participants
 package = IISH Conference
 core = 7.x
 version = 7.x-0.0.2
+files[] = ParticipantsInSessionApi.class.php
 dependencies[] = iishconference_basemodule

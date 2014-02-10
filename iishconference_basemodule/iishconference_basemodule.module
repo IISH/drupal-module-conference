@@ -32,7 +32,7 @@ require_once 'class_conference_sent_email.inc.php';
 require_once 'misc.inc.php';
 
 /**
- * TODOEXPLAIN
+ * Implements hook_help()
  */
 function iishconference_basemodule_help($path, $arg) {
 	switch ($path) {
@@ -44,7 +44,7 @@ function iishconference_basemodule_help($path, $arg) {
 }
 
 /**
- * TODOEXPLAIN
+ * Implements hook_menu()
  */
 function iishconference_basemodule_menu() {
 	$items = array();
@@ -88,6 +88,14 @@ function iishconference_basemodule_theme() {
 				'value'          => null,
 				'valueOnNewLine' => false,
 				'valueIsHTML'    => false,
+			),
+		),
+		'iishconference_navigation'       => array(
+			'variables' => array(
+				'list'     => array(),
+				'current'  => null,
+				'prevLink' => null,
+				'curUrl'   => null,
 			),
 		),
 	);
@@ -156,4 +164,29 @@ function theme_iishconference_container_field($variables) {
 			)
 		));
 	}
+}
+
+/**
+ * Returns the HTML for a navigational header
+ */
+function theme_iishconference_navigation($variables) {
+	$prevNext = CRUDApiClient::getPrevNext($variables['list'], $variables['current']);
+	$prev = '« ' . t('prev');
+	$next = t('next') . ' »';
+
+	if ($prevNext[0] !== null) {
+		$prev = l($prev, $variables['curUrl'] . $prevNext[0]->getId(), array('attributes' => array(
+			'alt'   => t('previous'),
+			'title' => t('previous'),
+		)));
+	}
+	if ($prevNext[1] !== null) {
+		$next = l($next, $variables['curUrl'] . $prevNext[1]->getId(), array('attributes' => array(
+			'alt'   => t('next'),
+			'title' => t('next'),
+		)));
+	}
+
+	return '<table class="noborder"><tr><td class="noborder"><strong>' . $variables['prevLink'] . '</strong></td>' .
+	'<td align=right class="noborder">' . $prev . ' &nbsp; ' . $next . '</td></tr></table><br />';
 }

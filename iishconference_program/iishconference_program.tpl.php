@@ -148,7 +148,7 @@
 						</table>
 
 						<?php foreach ($participantsWithPaper as $participant) : ?>
-							<?php print $variables['highlight']->highlight($participant['participantName']); ?><?php if (!is_null($participant['coAuthors']) && (strlen(trim($participant['coAuthors'])) > 0)) : ?>, <?php print $participant['coAuthors']; ?><?php endif; ?>:
+							<?php print $variables['highlight']->highlight($participant['participantName']); ?><?php if (!is_null($participant['coAuthors']) && (strlen(trim($participant['coAuthors'])) > 0)) : ?>, <?php print $variables['highlight']->highlight($participant['coAuthors']); ?><?php endif; ?>:
 
 							<?php if (is_int($variables['networkId'])) : ?>
 								<a href="?day=<?php print $session['dayId']; ?>&amp;time=<?php print $session['timeId']; ?>&amp;paper=<?php print $participant['paperId'] ?>&amp;network=<?php print $variables['networkId'] ?>">

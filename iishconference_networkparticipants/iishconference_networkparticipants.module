@@ -21,24 +21,22 @@ function iishconference_networkparticipants_menu() {
 	$extraPath = getSetting('pathForMenu');
 
 	$items[$extraPath . 'networkparticipants'] = array(
-		'title'            => 'Networks and their Participants',
-		'description'      => 'Networks and their Participants ...description...',
-		'page callback'    => 'iishconference_networkparticipants_main',
-		'access arguments' => array('access content'),
-		'type'             => MENU_CALLBACK,
-		'access callback'  => true,
-		'file'             => 'networkparticipants.inc.php',
+		'title'           => 'Networks and their Participants',
+		'description'     => 'Networks and their Participants ...description...',
+		'page callback'   => 'iishconference_networkparticipants_main',
+		'access callback' => true,
+		'type'            => MENU_NORMAL_ITEM,
+		'file'            => 'networkparticipants.inc.php',
 	);
 
 	$items[$extraPath . 'networkparticipants/%'] = array(
-		'title'            => 'Network and its participants',
-		'description'      => 'Network and its participants ...description...',
-		'page callback'    => 'iishconference_networkparticipants_detail',
-		'page arguments'   => array(2),
-		'access arguments' => array('access content'),
-		'type'             => MENU_CALLBACK,
-		'access callback'  => true,
-		'file'             => 'networkparticipants.inc.php',
+		'title'           => 'Network and its participants',
+		'description'     => 'Network and its participants ...description...',
+		'page callback'   => 'iishconference_networkparticipants_detail',
+		'page arguments'  => array(2),
+		'access callback' => true,
+		'type'            => MENU_CALLBACK,
+		'file'            => 'networkparticipants.inc.php',
 	);
 
 	return $items;

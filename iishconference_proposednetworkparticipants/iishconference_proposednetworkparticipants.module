@@ -1,5 +1,4 @@
 <?php
-require_once 'proposednetworkparticipants.inc.php';
 
 /**
  * Implements hook_help()
@@ -21,16 +20,24 @@ function iishconference_proposednetworkparticipants_menu() {
 
 	$extraPath = getSetting('pathForMenu');
 
-	$a = array(
+	$items[$extraPath . 'proposednetworkparticipants'] = array(
 		'title'           => 'Participants and their proposed network',
 		'description'     => 'Networks & their participants ...description...',
-		'page callback'   => 'drupal_get_form',
-		'page arguments'  => array('iishconference_proposednetworkparticipants_form'),
-//		'access arguments' => array('access content'),
-//		'type' => MENU_CALLBACK, //?
+		'page callback'   => 'iishconference_proposednetworkparticipants_main',
+		'type'            => MENU_NORMAL_ITEM,
 		'access callback' => true,
+		'file'            => 'proposednetworkparticipants.inc.php',
 	);
-	$items[$extraPath . 'proposednetworkparticipants'] = $a;
+
+	$items[$extraPath . 'proposednetworkparticipants/%'] = array(
+		'title'           => 'Participants and their proposed network',
+		'description'     => 'Networks & their participants ...description...',
+		'page callback'   => 'iishconference_proposednetworkparticipants_detail',
+		'page arguments'  => array(2),
+		'type'            => MENU_NORMAL_ITEM,
+		'access callback' => true,
+		'file'            => 'proposednetworkparticipants.inc.php',
+	);
 
 	return $items;
 }

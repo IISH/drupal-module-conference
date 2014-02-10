@@ -13,6 +13,15 @@ class FeeStateApi extends CRUDApiClient {
 	}
 
 	/**
+	 * Returns the default fee state, if there is one
+	 *
+	 * @return FeeStateAPI|null The default fee state, if found
+	 */
+	public static function getDefaultFee() {
+		return CRUDApiMisc::getFirstWherePropertyEquals(new FeeStateApi(), 'isDefaultFee', true);
+	}
+
+	/**
 	 * Returns the name of the fee state
 	 *
 	 * @return string The fee state name
@@ -37,15 +46,6 @@ class FeeStateApi extends CRUDApiClient {
 	 */
 	public function isDefaultFee() {
 		return $this->isDefaultFee;
-	}
-
-	/**
-	 * Returns the default fee state, if there is one
-	 *
-	 * @return FeeStateAPI|null The default fee state, if found
-	 */
-	public static function getDefaultFee() {
-		return CRUDApiMisc::getFirstWherePropertyEquals(new FeeStateApi(), 'isDefaultFee', true);
 	}
 
 	public function __toString() {

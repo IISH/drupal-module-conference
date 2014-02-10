@@ -21,6 +21,7 @@ function iishconference_login_menu() {
 		'page callback'   => 'drupal_get_form',
 		'page arguments'  => array('conference_login_form'),
 		'access callback' => true,
+		'type'            => MENU_NORMAL_ITEM,
 		'file'            => 'login.inc.php',
 	);
 

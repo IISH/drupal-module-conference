@@ -14,28 +14,36 @@ class RoomApi extends CRUDApiClient {
 	}
 
 	/**
-	 * @return mixed
+	 * Returns comments about this room
+	 *
+	 * @return string The comments about this room
 	 */
 	public function getComment() {
 		return $this->comment;
 	}
 
 	/**
-	 * @return mixed
+	 * Returns the number of available seats in this room
+	 *
+	 * @return int The number of seats
 	 */
 	public function getNoOfSeats() {
 		return $this->noOfSeats;
 	}
 
 	/**
-	 * @return mixed
+	 * Returns the name of the room
+	 *
+	 * @return string The name of the room
 	 */
 	public function getRoomName() {
 		return $this->roomName;
 	}
 
 	/**
-	 * @return mixed
+	 * Returns the room number
+	 *
+	 * @return string The room number
 	 */
 	public function getRoomNumber() {
 		return $this->roomNumber;

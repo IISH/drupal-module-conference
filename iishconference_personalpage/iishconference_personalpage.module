@@ -20,15 +20,14 @@ function iishconference_personalpage_menu() {
 
 	$extraPath = getSetting('pathForMenu');
 
-	$a = array(
+	$items[$extraPath . 'personal-page'] = array(
 		'title'           => 'Personal page',
 		'description'     => 'personal page ...description...',
 		'page callback'   => 'conference_personalpage_main',
-		'file'            => 'personalpage.inc.php',
 		'access callback' => true,
+		'type'            => MENU_NORMAL_ITEM,
+		'file'            => 'personalpage.inc.php',
 	);
-	$items[$extraPath . 'personal-page'] = $a;
-	$items[substr($extraPath, 0, strlen($extraPath) - 1)] = $a;
 
 	$items[$extraPath . 'personal-page/upload-paper/%'] = array(
 		'title'           => 'Upload paper',
@@ -36,6 +35,7 @@ function iishconference_personalpage_menu() {
 		'page callback'   => 'conference_upload_paper',
 		'page arguments'  => array(3),
 		'access callback' => true,
+		'type'            => MENU_CALLBACK,
 		'file'            => 'upload_paper.inc.php',
 	);
 

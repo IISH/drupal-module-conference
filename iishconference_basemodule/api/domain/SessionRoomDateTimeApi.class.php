@@ -58,7 +58,7 @@ class SessionRoomDateTimeApi extends CRUDApiClient {
 	}
 
 	/**
-	 * Returns the timeslot index number the session is currently planned
+	 * Returns the time slot index number the session is currently planned
 	 *
 	 * @return int The index number
 	 */

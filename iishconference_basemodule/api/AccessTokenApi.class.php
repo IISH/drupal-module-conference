@@ -1,7 +1,7 @@
 <?php
 
 /**
- * API that returns a token for a specific user, to access recources in the CMS
+ * API that returns a token for a specific user, to access resources in the CMS
  */
 class AccessTokenApi {
 	private $client;

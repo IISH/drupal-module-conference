@@ -3,8 +3,8 @@
 /**
  * Implements hook_help()
  */
-function iishconference_emails_help( $path, $arg ) {
-	switch ( $path ) {
+function iishconference_emails_help($path, $arg) {
+	switch ($path) {
 		// Module help for the block module
 		case "admin/help#iishconference_emails":
 			return '<p><strong>About the module</strong><br><br>...</p>';
@@ -24,6 +24,7 @@ function iishconference_emails_menu() {
 		'description'     => 'Allows a participant to read all their emails concerning the conference and resend them',
 		'page callback'   => 'conference_emails',
 		'access callback' => true,
+		'type'            => MENU_NORMAL_ITEM,
 		'file'            => 'emails.inc.php',
 	);
 
@@ -33,6 +34,7 @@ function iishconference_emails_menu() {
 		'page callback'   => 'conference_email_main',
 		'page arguments'  => array(2),
 		'access callback' => true,
+		'type'            => MENU_CALLBACK,
 		'file'            => 'email.inc.php',
 	);
 

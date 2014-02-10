@@ -1,5 +1,4 @@
 <?php
-require_once 'networksforchairs.inc.php';
 
 /**
  * Implements hook_help()
@@ -21,17 +20,34 @@ function iishconference_networksforchairs_menu() {
 
 	$extraPath = getSetting('pathForMenu');
 
-	$a = array(
+	$items[$extraPath . 'networksforchairs'] = array(
 		'title'           => 'Networks, Sessions & Participants',
 		'description'     => 'Networks, Sessions & Participants ...description...',
-		'page callback'   => 'drupal_get_form',
-		'page arguments'  => array('iishconference_networksforchairs_form'),
-//		'access arguments' => array('access content'),
-//		'type' => MENU_CALLBACK, //?
+		'page callback'   => 'iishconference_networksforchairs_main',
 		'access callback' => true,
+		'type'            => MENU_NORMAL_ITEM,
+		'file'            => 'networksforchairs.inc.php',
 	);
-	$items[$extraPath . 'networksforchairs'] = $a;
-	$items['networksforchairs'] = $a;
+
+	$items[$extraPath . 'networksforchairs/%'] = array(
+		'title'           => 'Networks, Sessions & Participants',
+		'description'     => 'Networks, Sessions & Participants ...description...',
+		'page callback'   => 'iishconference_networksforchairs_sessions',
+		'page arguments'  => array(2),
+		'access callback' => true,
+		'type'            => MENU_CALLBACK,
+		'file'            => 'networksforchairs.inc.php',
+	);
+
+	$items[$extraPath . 'networksforchairs/%/%'] = array(
+		'title'           => 'Networks, Sessions & Participants',
+		'description'     => 'Networks, Sessions & Participants ...description...',
+		'page callback'   => 'iishconference_networksforchairs_papers',
+		'page arguments'  => array(2, 3),
+		'access callback' => true,
+		'type'            => MENU_CALLBACK,
+		'file'            => 'networksforchairs.inc.php',
+	);
 
 	return $items;
 }

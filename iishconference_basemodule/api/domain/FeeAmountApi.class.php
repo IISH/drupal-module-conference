@@ -94,7 +94,6 @@ class FeeAmountApi extends CRUDApiClient {
 	}
 
 	public function __toString() {
-		$days = '';
 		if ($this->numDaysStart == $this->numDaysEnd) {
 			$days = $this->numDaysStart . ' ' . t('day');
 		}

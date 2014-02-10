@@ -26,7 +26,7 @@ function iishconference_userblock_block_info() {
 function iishconference_userblock_block_view($delta = '') {
 	switch ($delta) {
 		case 'user_block':
-			$block['subject'] = t('Logged in?');
+			$block['subject'] = '<none>';
 			$block['content'] = ConferenceMisc::getCleanHTML(iishconference_userblock_block_content(), true);
 
 			return $block;
@@ -41,12 +41,12 @@ function iishconference_userblock_block_view($delta = '') {
  */
 function iishconference_userblock_block_content() {
 	if (LoggedInUserDetails::isLoggedIn()) {
-		return t('Welcome') . ' ' .
+		return '<span class="conference-userblock">' . t('Welcome') . ' ' .
 		l(LoggedInUserDetails::getUser()->getFullName(), getSetting('pathForMenu') . 'personal-page') . ' | ' .
-		l(t('Log out'), getSetting('pathForMenu') . 'logout');
+		l(t('Log out'), getSetting('pathForMenu') . 'logout') . '</span>';
 	}
 	else {
-		return t('You are not logged in. Please !link.',
-			array('!link' => l(t('log in'), getSetting('pathForMenu') . 'login')));
+		return '<span class="conference-userblock">' . t('Please !link.',
+			array('!link' => l(t('log in'), getSetting('pathForMenu') . 'login'))) . '</span>';
 	}
 }

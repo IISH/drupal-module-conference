@@ -40,12 +40,11 @@ function iishconference_preregistration_menu() {
 	$extraPath = getSetting('pathForMenu');
 
 	$items[$extraPath . 'pre-registration'] = array(
-		'title'            => 'Pre-registration for the ' . getSetting('long_code_year') . ' conference',
-		'page callback'    => 'drupal_get_form',
-		'page arguments'   => array('preregister_form'),
-		'access arguments' => array('access content'),
-		'type'             => MENU_CALLBACK, //?
-//		'access callback' => TRUE,
+		'title'           => 'Pre-registration for the ' . getSetting('long_code_year') . ' conference',
+		'page callback'   => 'drupal_get_form',
+		'page arguments'  => array('preregister_form'),
+		'access callback' => true,
+		'type'            => MENU_NORMAL_ITEM,
 	);
 
 	return $items;

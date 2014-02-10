@@ -26,6 +26,7 @@ function iishconference_changeuser_menu() {
 		'page callback'   => 'drupal_get_form',
 		'page arguments'  => array('conference_changeuser_form'),
 		'access callback' => true,
+		'type'            => MENU_CALLBACK,
 		'file'            => 'changeuser.inc.php',
 	);
 

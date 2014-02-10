@@ -27,7 +27,7 @@ class DayApi extends CRUDApiClient {
 	 *
 	 * @return string This day in a more human-friendly readable format
 	 */
-	public function getDayFormatted($format = "Y-m-d") {
+	public function getDayFormatted($format = 'Y-m-d') {
 		return date($format, $this->getDay());
 	}
 

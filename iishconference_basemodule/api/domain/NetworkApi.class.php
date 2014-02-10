@@ -93,22 +93,12 @@ class NetworkApi extends CRUDApiClient {
 	public function getChairs() {
 		if (!$this->chairs) {
 			$this->chairs = array();
-
 			foreach ($this->chairs_chair_id as $id) {
-				$prop = new ApiCriteriaBuilder();
-				$this->chairs[] = UserApi::getListWithCriteria(
-					$prop
-						->eq('id', $id)
-						->get()
-				)->getFirstResult();
+				$this->chairs[] = CRUDApiMisc::getById(new UserApi(), $id);
 			}
 		}
 
 		return $this->chairs;
-	}
-
-	public function __toString() {
-		return $this->getName();
 	}
 
 	/**
@@ -118,5 +108,9 @@ class NetworkApi extends CRUDApiClient {
 	 */
 	public function getName() {
 		return $this->name;
+	}
+
+	public function __toString() {
+		return $this->getName();
 	}
 } 

@@ -15,6 +15,23 @@ class CountryApi extends CRUDApiClient {
 	}
 
 	/**
+	 * Returns the country where the current event takes place
+	 *
+	 * @return CountryApi|null The country where the event takes place or null if not found
+	 */
+	public static function getCountryOfEvent() {
+		$countryId = 14; // TODO: Where to store country id?
+		$countries = CachedConferenceApi::getCountries();
+		foreach ($countries as $country) {
+			if ($country->getId() == $countryId) {
+				return $country;
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * Returns the top level domain of this country
 	 *
 	 * @return string The top level domain
@@ -42,6 +59,15 @@ class CountryApi extends CRUDApiClient {
 	}
 
 	/**
+	 * The English name of this country
+	 *
+	 * @return string The name in English
+	 */
+	public function getNameEnglish() {
+		return $this->nameEnglish;
+	}
+
+	/**
 	 * Returns the ids of all countries that are exempted for invitation letter requests
 	 *
 	 * @return int[] All excempted countries ids
@@ -52,31 +78,5 @@ class CountryApi extends CRUDApiClient {
 
 	public function __toString() {
 		return $this->getNameEnglish();
-	}
-
-	/**
-	 * The English name of this country
-	 *
-	 * @return string The name in English
-	 */
-	public function getNameEnglish() {
-		return $this->nameEnglish;
-	}
-
-	/**
-	 * Returns the country where the current event takes place
-	 *
-	 * @return CountryApi|null The country where the event takes place or null if not found
-	 */
-	public static function getCountryOfEvent() {
-		$countryId = 14; // TODO: Where to store country id?
-		$countries = CachedConferenceApi::getCountries();
-		foreach ($countries as $country) {
-			if ($country->getId() == $countryId) {
-				return $country;
-			}
-		}
-
-		return null;
 	}
 } 

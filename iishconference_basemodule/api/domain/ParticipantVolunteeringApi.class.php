@@ -9,12 +9,44 @@ class ParticipantVolunteeringApi extends CRUDApiClient {
 	protected $network_id;
 	protected $volunteering;
 	protected $network;
+	protected $participantDate;
+	protected $participantDate_user;
 
 	private $volunteeringInstance;
 	private $networkInstance;
+	private $participantDateInstance;
+	private $userInstance;
 
 	public static function getListWithCriteria(array $properties, $showDrupalMessage = true) {
 		return parent::getListWithCriteriaForClass(__CLASS__, $properties, $showDrupalMessage);
+	}
+
+	/**
+	 * Filter out the list with participant volunteerings based on a certain volunteering type
+	 *
+	 * @param ParticipantVolunteeringApi[] $participantVolunteerings The list to filter
+	 * @param int                          $volunteeringId           The volunteering id to filter on
+	 *
+	 * @return ParticipantVolunteeringApi[] The filtered list with participant volunteerings
+	 */
+	public static function getAllNetworksForVolunteering($participantVolunteerings, $volunteeringId) {
+		$networks = array();
+		foreach ($participantVolunteerings as $participantVolunteering) {
+			if ($participantVolunteering->getVolunteeringId() == $volunteeringId) {
+				$networks[] = $participantVolunteering->getNetwork();
+			}
+		}
+
+		return $networks;
+	}
+
+	/**
+	 * The type of volunteering id this participant signed up for
+	 *
+	 * @return int The volunteering id
+	 */
+	public function getVolunteeringId() {
+		return $this->volunteering_id;
 	}
 
 	/**
@@ -28,6 +60,22 @@ class ParticipantVolunteeringApi extends CRUDApiClient {
 		}
 
 		return $this->networkInstance;
+	}
+
+	/**
+	 * Set the network for which the volunteering holds
+	 *
+	 * @param int|NetworkApi $network The network (id)
+	 */
+	public function setNetwork($network) {
+		if ($network instanceof NetworkApi) {
+			$network = $network->getId();
+		}
+
+		$this->network = null;
+		$this->networkInstance = null;
+		$this->network_id = $network;
+		$this->toSave['network.id'] = $network;
 	}
 
 	/**
@@ -49,9 +97,40 @@ class ParticipantVolunteeringApi extends CRUDApiClient {
 	}
 
 	/**
+	 * The participant details for this volunteering
+	 *
+	 * @return ParticipantDateAPI The participant
+	 */
+	public function getParticipantDate() {
+		if (!$this->participantDateInstance) {
+			$this->participantDateInstance = $this->createNewInstance('ParticipantDateApi', $this->participantDate);
+		}
+
+		return $this->participantDateInstance;
+	}
+
+	/**
+	 * Set the participant that made the volunteering offer
+	 *
+	 * @param int|ParticipantDateApi $participantDate The participant (id)
+	 */
+	public function setParticipantDate($participantDate) {
+		if ($participantDate instanceof ParticipantDateApi) {
+			$participantDate = $participantDate->getId();
+		}
+
+		$this->participantDate = null;
+		$this->participantDateInstance = null;
+		$this->participantDate_user = null;
+		$this->userInstance = null;
+		$this->participantDate_id = $participantDate;
+		$this->toSave['$participantDate.id'] = $participantDate;
+	}
+
+	/**
 	 * The type of volunteering this participant signed up for
 	 *
-	 * @return VolunteeringApi[] The volunteering type
+	 * @return VolunteeringApi The volunteering type
 	 */
 	public function getVolunteering() {
 		if (!$this->volunteeringInstance) {
@@ -62,30 +141,45 @@ class ParticipantVolunteeringApi extends CRUDApiClient {
 	}
 
 	/**
-	 * The type of volunteering id this participant signed up for
+	 * Set the volunteering type that was offered
 	 *
-	 * @return int The volunteering id
+	 * @param int|VolunteeringApi $volunteering The volunteering (id)
 	 */
-	public function getVolunteeringId() {
-		return $this->volunteering_id;
+	public function setVolunteering($volunteering) {
+		if ($volunteering instanceof VolunteeringApi) {
+			$volunteering = $volunteering->getId();
+		}
+
+		$this->volunteering = null;
+		$this->volunteeringInstance = null;
+		$this->volunteering_id = $volunteering;
+		$this->toSave['volunteering.id'] = $volunteering;
 	}
 
 	/**
-	 * Filter out the list with participant volunteerings based on a certain volunteering type
+	 * The user details for this volunteering
 	 *
-	 * @param ParticipantVolunteering[] $participantVolunteerings The list to filter
-	 * @param int                       $volunteeringId           The volunteering id to filter on
-	 *
-	 * @return ParticipantVolunteering[] The filtered list with participant volunteerings
+	 * @return UserAPI The user
 	 */
-	public static function getAllNetworksForVolunteering($participantVolunteerings, $volunteeringId) {
-		$networks = array();
-		foreach ($participantVolunteerings as $participantVolunteering) {
-			if ($participantVolunteering->getVolunteeringId() == $volunteeringId) {
-				$networks[] = $participantVolunteering->getNetwork();
-			}
+	public function getUser() {
+		if (!$this->userInstance) {
+			$this->userInstance = $this->createNewInstance('UserApi', $this->participantDate_user);
 		}
 
-		return $networks;
+		return $this->userInstance;
+	}
+
+	/**
+	 * Compare two participant volunteering by their name, by last name, then by first name
+	 *
+	 * @param ParticipantVolunteeringApi $instance Compare this instance with the given instance
+	 *
+	 * @return int &lt; 0 if <i>$instA</i> is less than
+	 * <i>$instB</i>; &gt; 0 if <i>$instA</i>
+	 * is greater than <i>$instB</i>, and 0 if they are
+	 * equal.
+	 */
+	protected function compareWith($instance) {
+		return $this->getUser()->compareWith($instance->getUser());
 	}
 }

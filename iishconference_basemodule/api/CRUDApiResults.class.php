@@ -7,7 +7,7 @@ class CRUDApiResults {
 	private $totalSize;
 	private $results;
 
-	public function __construct($totalSize, $results = array()) {
+	public function __construct($totalSize, array $results = array()) {
 		$this->totalSize = $totalSize;
 		$this->results = $results;
 	}
@@ -17,7 +17,7 @@ class CRUDApiResults {
 	 *
 	 * @param CRUDApiClient[] $results
 	 */
-	public function setResults($results) {
+	public function setResults(array $results) {
 		$this->results = $results;
 	}
 

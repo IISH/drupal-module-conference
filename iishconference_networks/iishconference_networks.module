@@ -21,20 +21,20 @@ function iishconference_networks_menu() {
 	$extraPath = getSetting('pathForMenu');
 
 	$items[$extraPath . 'networks'] = array(
-		'title'            => 'Networks',
-		'page callback'    => 'iishconference_networks',
-		'access arguments' => array('access content'),
-		'type'             => MENU_CALLBACK,
-		'file'             => 'networks.inc.php',
+		'title'           => 'Networks',
+		'page callback'   => 'iishconference_networks',
+		'access callback' => true,
+		'type'            => MENU_NORMAL_ITEM,
+		'file'            => 'networks.inc.php',
 	);
 
 	$items[$extraPath . 'networks/%'] = array(
-		'title'            => 'Networks',
-		'page callback'    => 'iishconference_network_detail',
-		'page arguments'   => array(2),
-		'access arguments' => array('access content'),
-		'type'             => MENU_CALLBACK,
-		'file'             => 'networks.inc.php',
+		'title'           => 'Networks',
+		'page callback'   => 'iishconference_network_detail',
+		'page arguments'  => array(2),
+		'access callback' => true,
+		'type'            => MENU_CALLBACK,
+		'file'            => 'networks.inc.php',
 	);
 
 	return $items;
@@ -45,7 +45,7 @@ function iishconference_networks_menu() {
  */
 function iishconference_networks_theme() {
 	return array(
-		'conference_networks' => array(
+		'conference_networks'       => array(
 			'template'  => 'conference_networks',
 			'variables' => array(
 				'networks' => array(),

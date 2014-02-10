@@ -1,397 +1,283 @@
-<?php 
-// TODOLATER testen registratie single paper
-// TODOLATER testen registratie sessie
+<?php
+
 /**
- * TODOEXPLAIN
+ * Returns a list of networks to choose from
+ *
+ * @return string The HTML for a list of networks
  */
-function iishconference_networksforchairs_form( $form, &$form_state ) {
-	$date_id = getSetting('date_id');
-	$ct=0;
-
-	$oUser = new class_conference_user( getIdLoggedInUser() );
-
-	// check user logged in
-	if ( !isUserLoggedIn() ) {
-
+function iishconference_networksforchairs_main() {
+	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		Header("Location: /" . getSetting('pathForMenu') . "login/?backurl=" . urlencode($_SERVER["REQUEST_URI"]) );
-		die('Go to <a href="/' . getSetting('pathForMenu') . 'login/?backurl=' . urlencode($_SERVER["REQUEST_URI"]) . '">login</a> page.');
-
-	} elseif ( !$oUser->isCrew() && !$oUser->isNetworkChair() ) {
-
-		drupal_set_message("Access denied. You are not a network chair.", 'error');
-
-	} else {
-
-		$network = 0;
-		$session = 0;
-
-		$url = $_SERVER["REQUEST_URI"];
-
-		//TODOLATER
-		$url = str_replace(getSetting('pathForMenu'), '', $url);
-
-		$url = str_replace(array('/', '\\'), ' ', $url);
-		$url = trim($url);
-		$arrUrl = explode(' ', $url);
-
-		if ( count($arrUrl) > 2 ) {
-			$session = $arrUrl[2];
-		}
-
-		if ( count($arrUrl) > 1 ) {
-			$network = $arrUrl[1];
-		}
-
-		$network = intval($network);
-		$session = intval($session);
-
-		if ( $network !== 0 && $session !== 0 ) {
-			// show single session
-			iishconference_networksforchairs_listofparticipants($form, $ct, $network, $session);
-		} elseif ( $network !== 0 && $session === 0) {
-			// show single network with sessions
-			iishconference_networksforchairs_listofsessions($form, $ct, $network);
-		} else {
-			// show list of all networks
-			iishconference_networksforchairs_listofnetworks($form, $ct, getIdLoggedInUser());
-		}
-
+		Header("Location: /" . getSetting('pathForMenu') . "login/?backurl=" . urlencode($_SERVER["REQUEST_URI"]));
+		die('Go to <a href="/' . getSetting('pathForMenu') . 'login/?backurl=' . urlencode($_SERVER["REQUEST_URI"]) .
+			'">login</a> page.');
 	}
 
-	return $form;
+	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
+		drupal_set_message(t('Access denied. You are not a network chair.'), 'error');
+
+		return '';
+	}
+
+	$allNetworks = CachedConferenceApi::getNetworks();
+	$output = '';
+
+	if (LoggedInUserDetails::isNetworkChair()) {
+		$networks = NetworkApi::getOnlyNetworksOfChair($allNetworks, LoggedInUserDetails::getUser());
+		$links = array();
+		foreach ($networks as $network) {
+			$links[] = l($network->getName(), getSetting('pathForMenu') . 'networksforchairs/' . $network->getId());
+		}
+
+		$output .= theme('item_list', array(
+			'title' => t('Your network(s)'),
+			'items' => $links,
+		));
+	}
+
+	$links = array();
+	foreach ($allNetworks as $network) {
+		$links[] = l($network->getName(), getSetting('pathForMenu') . 'networksforchairs/' . $network->getId());
+	}
+
+	$output .= theme('item_list', array(
+		'title' => t('All network(s)'),
+		'items' => $links,
+	));
+
+	return $output;
 }
 
 /**
- * TODOEXPLAIN
+ * Returns a list of session in the chosen network to choose from
+ *
+ * @param int $networkId The chosen network id
+ *
+ * @return string The HTML for a list of sessions
  */
-function iishconference_networksforchairs_listofnetworks( &$form, &$ct, $userId ) {
-
-	$oPart = new class_conference_participantdate($userId);
-	$arrNetworks = $oPart->getNetworkObjectsWhereChair();
-
-	if ( count($arrNetworks) > 0 ) {
-		$form['ct'.$ct++] = array(
-				'#type' => 'markup',
-				'#markup' => '<strong>Your network(s)</strong><br>',
-				);
-
-		// show networks
-		for ( $i = 0; $i < count($arrNetworks); $i++ ) {
-
-			$netw = $arrNetworks[$i];
-			$form['ct'.$ct++] = array(
-					'#type' => 'markup',
-					'#markup' => '<a href="/' . getSetting('pathForMenu') . 'networksforchairs/' . $netw->getNetworkId() . '">' . $netw->getNetworkName() . '</a><br>',
-					);
-
-		}
-
-		$form['ct'.$ct++] = array(
-				'#type' => 'markup',
-				'#markup' => '<br>',
-				);
+function iishconference_networksforchairs_sessions($networkId) {
+	if (!LoggedInUserDetails::isLoggedIn()) {
+		// redirect to login page
+		Header("Location: /" . getSetting('pathForMenu') . "login/?backurl=" . urlencode($_SERVER["REQUEST_URI"]));
+		die('Go to <a href="/' . getSetting('pathForMenu') . 'login/?backurl=' . urlencode($_SERVER["REQUEST_URI"]) .
+			'">login</a> page.');
 	}
 
-	//
-	$oNetworks = new class_conference_networks( getSetting('date_id') );
-	$arrNetworks = $oNetworks->getNetworkObjects();
+	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
+		drupal_set_message(t('Access denied. You are not a network chair.'), 'error');
 
-	$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => '<strong>All networks</strong><br>',
-			);
-
-	if ( count($arrNetworks) > 0 ) {
-
-		// show networks
-		for ( $i = 0; $i < count($arrNetworks); $i++ ) {
-
-			$netw = $arrNetworks[$i];
-			$form['ct'.$ct++] = array(
-					'#type' => 'markup',
-					'#markup' => '<a href="/' . getSetting('pathForMenu') . 'networksforchairs/' . $netw->getNetworkId() . '">' . $netw->getNetworkName() . '</a><br>',
-					);
-
-		}
-
-	} else {
-		$form['ct'.$ct++] = array(
-				'#type' => 'markup',
-				'#markup' => 'No networks found...<br>',
-				);
+		return '';
 	}
 
+	$networkId = EasyProtection::easyIntegerProtection($networkId);
+	$network = CRUDApiMisc::getById(new NetworkApi(), $networkId);
+
+	if (!$network) {
+		drupal_set_message(t('The network does not exist.'), 'error');
+
+		return '';
+	}
+
+	$header = theme('iishconference_navigation', array(
+		'list'     => CachedConferenceApi::getNetworks(),
+		'current'  => $network,
+		'prevLink' => l('« ' . t('Go back to networks list'), getSetting('pathForMenu') . 'networksforchairs'),
+		'curUrl'   => getSetting('pathForMenu') . 'networksforchairs/',
+	));
+
+	$chairLinks = array();
+	foreach ($network->getChairs() as $chair) {
+		$chairLinks[] = l($chair->getFullName(), 'mailto:' . $chair->getEmail(), array('absolute' => true));
+	}
+
+	$title = theme('iishconference_container_field', array(
+		'label' => t('Network'),
+		'value' => $network->getName(),
+	));
+	$title .= theme('iishconference_container_field', array(
+		'label'       => t('Network chairs'),
+		'value'       => ConferenceMisc::getEnumSingleLine($chairLinks),
+		'valueIsHTML' => true,
+	));
+
+	$props = new ApiCriteriaBuilder();
+	$sessions = SessionApi::getListWithCriteria(
+		$props
+			->eq('networks_id', $network->getId())
+			->sort('name', 'asc')
+			->get()
+	)->getResults();
+
+	$links = array();
+	foreach ($sessions as $session) {
+		$links[] = l($session->getName(),
+				getSetting('pathForMenu') . 'networksforchairs/' . $network->getId() . '/' . $session->getId()) .
+			' <em>(' . $session->getState()->getSimpleDescription() .
+			')</em>';
+	}
+	$links[] = l(t('... Individual paper proposals ...'),
+		getSetting('pathForMenu') . 'networksforchairs/' . $network->getId() . '/-1');
+
+	$sessionLinks = theme('item_list', array(
+		'title' => t('Sessions'),
+		'type'  => 'ol',
+		'items' => $links,
+	));
+
+	return $header . $title . '<br /><hr /><br />' . $sessionLinks;
 }
 
 /**
- * TODOEXPLAIN
+ * Returns all participants and papers in the given session
+ *
+ * @param int $networkId The chosen network id
+ * @param int $sessionId The chosen session id
+ *
+ * @return string The HTML listing the participants and their papers
  */
-function iishconference_networksforchairs_listofsessions( &$form, &$ct, $networkId ) {
-	$oNetwork = new class_conference_network($networkId);
-
-	$prevNext = $oNetwork->getPrevNext();
-	$prev = '&laquo; prev';
-	$next = 'next &raquo;';
-	if ( $prevNext[0] != 0 ) {
-		$prev = '<a href="/' . getSetting('pathForMenu') . 'networksforchairs/' . $prevNext[0] . '" alt="previous network" title="previous network">' . $prev . '</a>';
-	}
-	if ( $prevNext[1] != 0 ) {
-		$next = '<a href="/' . getSetting('pathForMenu') . 'networksforchairs/' . $prevNext[1] . '" alt="next network " title="next network">' . $next . '</a>';
+function iishconference_networksforchairs_papers($networkId, $sessionId) {
+	if (!LoggedInUserDetails::isLoggedIn()) {
+		// redirect to login page
+		Header("Location: /" . getSetting('pathForMenu') . "login/?backurl=" . urlencode($_SERVER["REQUEST_URI"]));
+		die('Go to <a href="/' . getSetting('pathForMenu') . 'login/?backurl=' . urlencode($_SERVER["REQUEST_URI"]) .
+			'">login</a> page.');
 	}
 
-	$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => '<table class="noborder"><tr><td class="noborder"><strong><a href="/' . getSetting('pathForMenu') . 'networksforchairs">&laquo; Go back to networks list</a></strong></td><td align=right class="noborder">' . $prev . ' &nbsp; ' . $next . '</td></tr></table><br>',
-			);
+	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
+		drupal_set_message(t('Access denied. You are not a network chair.'), 'error');
 
-	$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => '<strong>Network:</strong> ' . $oNetwork->getNetworkName() . '<br>',
-			);
-
-	$arrChairs = $oNetwork->getChairs();
-	$chairs = '';
-	$separator = '';
-	for ( $i = 0; $i < count($arrChairs); $i++ ) {
-		$p = $arrChairs[$i];
-		$chairs .= $separator . '<a href="mailto:' . $p->getEmail() . '">' . $p->getFirstName() . ' ' . $p->getLastName() . '</a>';
-		if ( $i < count($arrChairs)-2 ) {
-			$separator = ', ';
-		} else {
-			$separator = ' and ';
-		}
+		return '';
 	}
 
-	$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => '<strong>Network chairs:</strong> ' . $chairs . '<br><br>',
-			);
+	$networkId = EasyProtection::easyIntegerProtection($networkId);
+	$network = CRUDApiMisc::getById(new NetworkApi(), $networkId);
 
-	$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => '<strong>Sessions</strong><br><ol>',
-			);
-
-	// list of sessions (all)
-	$arrSessions = $oNetwork->getSessions(true);
-	for ( $i = 0; $i < count($arrSessions); $i++ ) {
-
-		$session = $arrSessions[$i];
-
-		$startstrike = '';
-		$endstrike = '';
-		if ( $session->getDeleted() == 1 ) {
-			$startstrike = '<strike>';
-			$endstrike = '</strike> <sup><i>(<a alt="Session is deleted" title="Session is deleted">?</a>)</i></sup>';
-		}
-
-		if ( $session->getDeleted() ) {
-			$sessionState = 'Session Deleted';
-		} else {
-			$sessionState = $session->getState()->getDescription();
-		}
-		$sessionState = trim(str_replace('Session', '', $sessionState));
-		$form['ct'.$ct++] = array(
-				'#type' => 'markup',
-				'#markup' => '<li>' . $startstrike . '<a href="/' . getSetting('pathForMenu') . 'networksforchairs/' . $networkId . '/' . $session->getId() . '">' . $session->getName() . '</a>' . $endstrike . ' <em>(' . $sessionState . ')</em></li>',
-				);
+	$sessionId = EasyProtection::easyIntegerProtection($sessionId);
+	$session = null;
+	if ($sessionId > 0) {
+		$session = CRUDApiMisc::getById(new SessionApi(), $sessionId);
 	}
 
-	$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => '<li><a href="/' . getSetting('pathForMenu') . 'networksforchairs/' . $networkId . '/-1">...Individual paper proposals...</a></li>',
-			);
+	if (!$network || ($session && !in_array($network->getId(), $session->getNetworksId()))) {
+		drupal_set_message(t('The network and/or session do not exist'), 'error');
 
-	$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => '<ol>',
-			);
-
-}
-
-/**
- * TODOEXPLAIN
- */
-function iishconference_networksforchairs_listofparticipants( &$form, &$ct, $networkId, $sessionId ) {
-	$oNetwork = new class_conference_network($networkId);
-
-	$oSession = new class_conference_session($sessionId, true);
-
-	$prevNext = $oSession->getPrevNext($networkId, true, -1);
-	$prev = '&laquo; prev';
-	$next = 'next &raquo;';
-	if ( $prevNext[0] != 0 ) {
-		$prev = '<a href="/' . getSetting('pathForMenu') . 'networksforchairs/' . $networkId . '/' . $prevNext[0] . '" alt="previous session" title="previous session">' . $prev . '</a>';
-	}
-	if ( $prevNext[1] != 0 ) {
-		$next = '<a href="/' . getSetting('pathForMenu') . 'networksforchairs/' . $networkId . '/' . $prevNext[1] . '" alt="next session" title="next session">' . $next . '</a>';
+		return '';
 	}
 
-	$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => '<table class="noborder"><tr><td class="noborder"><strong><a href="/' . getSetting('pathForMenu') . 'networksforchairs/' . $networkId . '">&laquo; Go back to sessions list</a></strong></td><td align=right class="noborder">' . $prev . ' &nbsp; ' . $next . '</td></tr></table><br>',
-			);
+	$props = new ApiCriteriaBuilder();
+	$sessions = SessionApi::getListWithCriteria(
+		$props
+			->eq('networks_id', $network->getId())
+			->sort('name', 'asc')
+			->get()
+	)->getResults();
+	$sessions[] = new EmptyApi();
 
-	$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => '<strong>Network:</strong> ' . $oNetwork->getNetworkName() . '<br>',
-			);
+	$header = theme('iishconference_navigation', array(
+		'list'     => $sessions,
+		'current'  => ($session === null) ? new EmptyApi() : $session,
+		'prevLink' => l('« ' . t('Go back to sessions list'),
+			getSetting('pathForMenu') . 'networksforchairs/' . $network->getId()),
+		'curUrl'   => getSetting('pathForMenu') . 'networksforchairs/' . $network->getId() . '/',
+	));
 
-	$arrChairs = $oNetwork->getChairs();
-	$chairs = '';
-	$separator = '';
-	for ( $i = 0; $i < count($arrChairs); $i++ ) {
-		$p = $arrChairs[$i];
-		$chairs .= $separator . '<a href="mailto:' . $p->getEmail() . '">' . $p->getFirstName() . ' ' . $p->getLastName() . '</a>';
-		if ( $i < count($arrChairs)-2 ) {
-			$separator = ', ';
-		} else {
-			$separator = ' and ';
-		}
+	$chairLinks = array();
+	foreach ($network->getChairs() as $chair) {
+		$chairLinks[] = l($chair->getFullName(), 'mailto:' . $chair->getEmail(), array('absolute' => true));
 	}
 
-	$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => '<strong>Network chairs:</strong> ' . $chairs . '<br><br>',
-			);
+	$title = theme('iishconference_container_field', array(
+		'label' => t('Network'),
+		'value' => $network->getName(),
+	));
+	$title .= theme('iishconference_container_field', array(
+		'label'       => t('Network chairs'),
+		'value'       => ConferenceMisc::getEnumSingleLine($chairLinks),
+		'valueIsHTML' => true,
+	));
+	$title .= '<br />';
+	$title .= theme('iishconference_container_field', array(
+		'label' => t('Session'),
+		'value' => ($session === null) ? t('... Individual paper proposals ...') : $session->getName(),
+	));
 
-	$startstrike = '';
-	$endstrike = '';
+	if ($session !== null) {
+		$title .= theme('iishconference_container_field', array(
+			'label' => t('Session state'),
+			'value' => $session->getState()->getDescription(),
+		));
 
-	if ( $sessionId < 0 ) {
-		// NO SESSION
-		$sessionname = '...Individual paper proposals...';
-	} else {
-		// SESSION
-		$sessionname = $oSession->getName();
-
-		if ( $oSession->getDeleted() == 1 ) {
-			$startstrike = '<strike>';
-			$endstrike = '</strike> <sup><i>(<a alt="Session is deleted" title="Session is deleted">?</a>)</i></sup>';
+		if ($session->getAddedBy() !== null) {
+			$title .= theme('iishconference_container_field', array(
+				'label'       => t('Session added by'),
+				'value'       => l($session->getAddedBy()->getFullName(),
+					'mailto:' . $session->getAddedBy()->getEmail(),
+					array('absolute' => true)),
+				'valueIsHTML' => true,
+			));
 		}
+
+		$title .= theme('iishconference_container_field', array(
+			'label'          => t('Session abstract'),
+			'value'          => $session->getAbstr(),
+			'valueOnNewLine' => true,
+		));
 	}
 
-	$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => '<strong>Session:</strong> ' . $startstrike . $sessionname . $endstrike . '<br>',
-			);
+	$title .= '<br />';
 
-	if ( $sessionId > 0 ) {
-		if ( $oSession->getDeleted() == 1 ) {
-			$form['ct'.$ct++] = array(
-					'#type' => 'markup',
-					'#markup' => '<strong>Session state:</strong> Session deleted<br>',
-					);
-		} else {
-			$form['ct'.$ct++] = array(
-					'#type' => 'markup',
-					'#markup' => '<strong>Session state:</strong> ' . $oSession->getState()->getDescription() . '<br>',
-					);
+	$participantsInSessionApi = new ParticipantsInSessionApi();
+	$participantsInSession = $participantsInSessionApi->getParticipantsForSession($network, $session);
+	$participantData = array();
+	foreach ($participantsInSession as $participant) {
+		$user = $participant['user'];
+		$paper = $participant['paper'];
+		$type = $participant['type'];
+
+		$result = theme('iishconference_container_field', array(
+			'label'       => t('Participant'),
+			'value'       => l($user->getFullName(), 'mailto:' . $user->getEmail(), array('absolute' => true)),
+			'valueIsHTML' => true,
+		));
+		$result .= theme('iishconference_container_field', array(
+			'label' => t('Organisation'),
+			'value' => $user->getOrganisation(),
+		));
+
+		if ($type) {
+			$result .= theme('iishconference_container_field', array(
+				'label' => t('Type'),
+				'value' => $type->getType(),
+			));
 		}
 
-		$oAddedBy = $oSession->getAddedBy();
-		if ( $oAddedBy->getId() > 0 ) {
-			$form['ct'.$ct++] = array(
-					'#type' => 'markup',
-					'#markup' => '<strong>Session added by:</strong> <a href="mailto:' . $oAddedBy->getEmail() . '">' . $oAddedBy->getFirstName() . ' ' . $oAddedBy->getLastName() . '</a><br>',
-					);
+		if ($paper) {
+			$result .= '<br />';
+			$result .= theme('iishconference_container_field', array(
+				'label' => t('Paper'),
+				'value' => $paper->getTitle(),
+			));
+			$result .= theme('iishconference_container_field', array(
+				'label' => t('Paper state'),
+				'value' => $paper->getState(),
+			));
+			$result .= theme('iishconference_container_field', array(
+				'label'          => t('Paper abstract'),
+				'value'          => $paper->getAbstr(),
+				'valueOnNewLine' => true,
+			));
 		}
 
-		$form['ct'.$ct++] = array(
-				'#type' => 'markup',
-				'#markup' => '<strong>Session abstract:</strong><br>' . $oSession->getAbstract() . '<br>',
-				);
+		$result .= '<br />';
+		$participantData[] = $result;
 	}
 
-	if ( $sessionId < 0 ) {
-		// NO SESSION
-		$arrParticipants = $oSession->getParticipantsWithoutSession($networkId, true);
-	} else {
-		// SESSION
-		$arrParticipants = $oSession->getParticipants( true );
+	$seperator = '<br/><hr /><br/>';
+
+	if (count($participantData) > 0) {
+		return $header . $title . $seperator . implode($seperator, $participantData);
 	}
-//echo count($arrParticipants);
-
-	for ( $i = 0; $i < count($arrParticipants); $i++ ) {
-
-		$form['ct'.$ct++] = array(
-				'#type' => 'markup',
-				'#markup' => '<br><hr><br>',
-				);
-
-		$participant = $arrParticipants[$i];
-		$participantdate = new class_conference_participantdate($participant->getId(), true);
-
-		$startstrike = '';
-		$endstrike = '';
-		if ( $participant->getDeleted() == 1 || $participantdate->getDeleted() == 1 ) {
-			$startstrike = '<strike>';
-			$endstrike = '</strike> <sup><i>(<a alt="Participant is deleted" title="Participant is deleted">?</a>)</i></sup>';
-		}
-
-		$form['ct'.$ct++] = array(
-				'#type' => 'markup',
-				'#markup' => '<strong>Participant:</strong> <a href="mailto:' . $participant->getEmail() . '">' . $startstrike . $participant->getFirstName() . ' ' . $participant->getLastName() . $endstrike . '</a><br>',
-				);
-		$form['ct'.$ct++] = array(
-				'#type' => 'markup',
-				'#markup' => '<strong>Organisation:</strong> ' . $participant->getOrganisation() . '<br>',
-				);
-
-		if ( $sessionId >= 0 ) {
-			// SESSION
-			$form['ct'.$ct++] = array(
-					'#type' => 'markup',
-					'#markup' => '<strong>Type:</strong> ' . $participantdate->getSessionType( $sessionId ) . '<br><br>',
-					);
-		}
-
-		if ( $sessionId < 0 ) {
-			// NO SESSION
-			$oPaper = new class_conference_participantsession( $participant->getId(), 0, $networkId, true );
-		} else {
-			// SESSION
-			$oPaper = new class_conference_participantpaper( $participant->getId(), $sessionId, 0, true );
-		}
-
-		if ( $oPaper->getId() != 0 ) {
-
-			$startstrike = '';
-			$endstrike = '';
-			if ( $oPaper->getDeleted() == 1 ) {
-				$startstrike = '<strike>';
-				$endstrike = '</strike> <sup><i>(<a alt="Paper is deleted" title="Paper is deleted">?</a>)</i></sup>';
-			}
-
-			$form['ct'.$ct++] = array(
-					'#type' => 'markup',
-					'#markup' => '<strong>Paper:</strong> ' . $startstrike . $oPaper->getTitle() . $endstrike . '<br>',
-					);
-
-			if ( $oPaper->getCoAuthors() != '' ) {
-				$form['ct'.$ct++] = array(
-						'#type' => 'markup',
-						'#markup' => '<strong>Co-author(s):</strong> ' . $oPaper->getCoAuthors() . '<br>',
-						);
-			}
-
-			$state = $oPaper->getState()->getDescription();
-			$form['ct'.$ct++] = array(
-					'#type' => 'markup',
-					'#markup' => '<strong>Paper state:</strong> ' . $state . '<br>',
-					);
-
-			$form['ct'.$ct++] = array(
-					'#type' => 'markup',
-					'#markup' => '<strong>Paper abstract:</strong><br>' . $oPaper->getAbstract() . '<br>',
-					);
-
-			$form['ct'.$ct++] = array(
-					'#type' => 'markup',
-					'#markup' => '<br>',
-					);
-		}
-
+	else {
+		return $header . $title;
 	}
 }

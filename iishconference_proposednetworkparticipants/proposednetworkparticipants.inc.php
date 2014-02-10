@@ -1,230 +1,167 @@
-<?php 
+<?php
+
 /**
- * TODOEXPLAIN
+ * Returns a list of networks to choose from
+ *
+ * @return string The HTML for a list of networks
  */
-function iishconference_proposednetworkparticipants_form( $form, &$form_state ) {
-	$date_id = getSetting('date_id');
-	$ct=0;
-
-	$oUser = new class_conference_user( getIdLoggedInUser() );
-
-	// check user logged in
-	if ( !isUserLoggedIn() ) {
-
+function iishconference_proposednetworkparticipants_main() {
+	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		Header("Location: /" . getSetting('pathForMenu') . "login/?backurl=" . urlencode($_SERVER["REQUEST_URI"]) );
-		die('Go to <a href="/' . getSetting('pathForMenu') . 'login/?backurl=' . urlencode($_SERVER["REQUEST_URI"]) . '">login</a> page.');
-
-	} elseif ( !$oUser->isCrew() && !$oUser->isNetworkChair() ) {
-
-		drupal_set_message("Access denied. You are not a network chair.", 'error');
-
-	} else {
-
-		$network = 0;
-
-		$url = $_SERVER["REQUEST_URI"];
-		$url = str_replace(array(getSetting('pathForMenu')), '', $url);
-		$url = str_replace(array('/', '\\'), ' ', $url);
-		$url = trim($url);
-		$arrUrl = explode(' ', $url);
-
-		if ( count($arrUrl) > 1 ) {
-			$network = $arrUrl[1];
-		}
-
-		$network = intval($network);
-
-		if ( $network !== 0 ) {
-			// show single session
-			iishconference_proposednetworkparticipants_listofparticipants($form, $ct, $network);
-		} else {
-			// show list of all networks
-			iishconference_proposednetworkparticipants_listofnetworks($form, $ct, getIdLoggedInUser());
-		}
-
+		Header("Location: /" . getSetting('pathForMenu') . "login/?backurl=" . urlencode($_SERVER["REQUEST_URI"]));
+		die('Go to <a href="/' . getSetting('pathForMenu') . 'login/?backurl=' . urlencode($_SERVER["REQUEST_URI"]) .
+			'">login</a> page.');
 	}
 
-	return $form;
+	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
+		drupal_set_message(t('Access denied. You are not a network chair.'), 'error');
+
+		return '';
+	}
+
+	$allNetworks = CachedConferenceApi::getNetworks();
+	$output = '';
+
+	if (LoggedInUserDetails::isNetworkChair()) {
+		$networks = NetworkApi::getOnlyNetworksOfChair($allNetworks, LoggedInUserDetails::getUser());
+		$links = array();
+		foreach ($networks as $network) {
+			$links[] =
+				l($network->getName(), getSetting('pathForMenu') . 'proposednetworkparticipants/' . $network->getId());
+		}
+
+		$output .= theme('item_list', array(
+			'title' => t('Your network(s)'),
+			'items' => $links,
+		));
+	}
+
+	$links = array();
+	foreach ($allNetworks as $network) {
+		$links[] =
+			l($network->getName(), getSetting('pathForMenu') . 'proposednetworkparticipants/' . $network->getId());
+	}
+
+	$output .= theme('item_list', array(
+		'title' => t('All network(s)'),
+		'items' => $links,
+	));
+
+	return $output;
 }
 
 /**
- * TODOEXPLAIN
+ * Returns a list of all proposed papers of participants for the given network
+ *
+ * @param int $networkId The id of the network in question
+ *
+ * @return string The HTML listing all participants and their papers
  */
-function iishconference_proposednetworkparticipants_listofnetworks( &$form, &$ct, $userId ) {
+function iishconference_proposednetworkparticipants_detail($networkId) {
+	if (!LoggedInUserDetails::isLoggedIn()) {
+		// redirect to login page
+		Header("Location: /" . getSetting('pathForMenu') . "login/?backurl=" . urlencode($_SERVER["REQUEST_URI"]));
+		die('Go to <a href="/' . getSetting('pathForMenu') . 'login/?backurl=' . urlencode($_SERVER["REQUEST_URI"]) .
+			'">login</a> page.');
+	}
 
-	$oPart = new class_conference_participantdate($userId);
-	$arrNetworks = $oPart->getNetworkObjectsWhereChair();
+	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
+		drupal_set_message(t('Access denied. You are not a network chair.'), 'error');
 
-	if ( count($arrNetworks) > 0 ) {
-		$form['ct'.$ct++] = array(
-				'#type' => 'markup',
-				'#markup' => '<strong>Your network(s)</strong><br>',
-				);
+		return '';
+	}
 
-		// show networks
-		for ( $i = 0; $i < count($arrNetworks); $i++ ) {
+	$networkId = EasyProtection::easyIntegerProtection($networkId);
+	$network = CRUDApiMisc::getById(new NetworkApi(), $networkId);
 
-			$netw = $arrNetworks[$i];
-			$form['ct'.$ct++] = array(
-					'#type' => 'markup',
-					'#markup' => '<a href="/' . getSetting('pathForMenu') . 'proposednetworkparticipants/' . $netw->getNetworkId() . '">' . $netw->getNetworkName() . '</a><br>',
-					);
+	if (!$network) {
+		drupal_set_message(t('The network does not exist.'), 'error');
 
+		return '';
+	}
+
+	$header = theme('iishconference_navigation', array(
+		'list'     => CachedConferenceApi::getNetworks(),
+		'current'  => $network,
+		'prevLink' => l('« ' . t('Go back to networks list'),
+			getSetting('pathForMenu') . 'proposednetworkparticipants'),
+		'curUrl'   => getSetting('pathForMenu') . 'proposednetworkparticipants/',
+	));
+
+	$chairLinks = array();
+	foreach ($network->getChairs() as $chair) {
+		$chairLinks[] = l($chair->getFullName(), 'mailto:' . $chair->getEmail(), array('absolute' => true));
+	}
+
+	$title = theme('iishconference_container_field', array(
+		'label' => t('Network'),
+		'value' => $network->getName(),
+	));
+	$title .= theme('iishconference_container_field', array(
+		'label'       => t('Network chairs'),
+		'value'       => ConferenceMisc::getEnumSingleLine($chairLinks),
+		'valueIsHTML' => true,
+	));
+
+	$title .= '<br />';
+
+	$participantsInProposedNetworkApi = new ParticipantsInProposedNetworkApi();
+	$participantsInProposedNetwork = $participantsInProposedNetworkApi->getParticipantsInProposedNetwork($network);
+	$participantData = array();
+	foreach ($participantsInProposedNetwork as $participant) {
+		$user = $participant['user'];
+		$paper = $participant['paper'];
+		$session = $participant['session'];
+
+		$result = theme('iishconference_container_field', array(
+			'label'       => '',
+			'value'       => l($user->getFullName(), 'mailto:' . $user->getEmail(), array('absolute' => true)),
+			'valueIsHTML' => true,
+		));
+		$result .= theme('iishconference_container_field', array(
+			'label'       => '',
+			'value'       => (($user->getOrganisation() !== null) && (strlen(trim($user->getOrganisation())) > 0)) ?
+					$user->getOrganisation() :
+					'<em>(' . t('Unknown affiliation') . ')</em>',
+			'valueIsHTML' => ($user->getOrganisation() === null),
+		));
+		$result .= theme('iishconference_container_field', array(
+			'label' => t('Paper name'),
+			'value' => $paper->getTitle(),
+		));
+
+		if (($paper->getCoAuthors() !== null) && (strlen(trim($paper->getCoAuthors())) > 0)) {
+			$result .= theme('iishconference_container_field', array(
+				'label' => t('Co-authors'),
+				'value' => $paper->getCoAuthors(),
+			));
 		}
 
-		$form['ct'.$ct++] = array(
-				'#type' => 'markup',
-				'#markup' => '<br>',
-				);
+		$result .= theme('iishconference_container_field', array(
+			'label' => t('Paper state'),
+			'value' => $paper->getState(),
+		));
+		$result .= theme('iishconference_container_field', array(
+			'label'       => t('Session name'),
+			'value'       => ($session !== null) ? $session->getName() : '<em>(' . t('No session yet') . ')</em>',
+			'valueIsHTML' => ($session === null),
+		));
+		$result .= theme('iishconference_container_field', array(
+			'label'          => t('Paper abstract'),
+			'value'          => ConferenceMisc::getFirstPartOfText($paper->getAbstr()),
+			'valueOnNewLine' => true,
+		));
+
+		$result .= '<br />';
+		$participantData[] = $result;
 	}
 
-	//
-	$oNetworks = new class_conference_networks( getSetting('date_id') );
-	$arrNetworks = $oNetworks->getNetworkObjects();
+	$seperator = '<br /><hr /><br />';
 
-	$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => '<strong>All networks</strong><br>',
-			);
-
-	if ( count($arrNetworks) > 0 ) {
-
-		// show networks
-		for ( $i = 0; $i < count($arrNetworks); $i++ ) {
-
-			$netw = $arrNetworks[$i];
-			$form['ct'.$ct++] = array(
-					'#type' => 'markup',
-					'#markup' => '<a href="/' . getSetting('pathForMenu') . 'proposednetworkparticipants/' . $netw->getNetworkId() . '">' . $netw->getNetworkName() . '</a><br>',
-					);
-
-		}
-
-	} else {
-		$form['ct'.$ct++] = array(
-				'#type' => 'markup',
-				'#markup' => 'No networks found...<br>',
-				);
+	if (count($participantData) > 0) {
+		return $header . $title . $seperator . implode($seperator, $participantData);
 	}
-
-}
-
-/**
- * TODOEXPLAIN
- */
-function iishconference_proposednetworkparticipants_listofparticipants( &$form, &$ct, $networkId ) {
-	$oNetwork = new class_conference_network($networkId);
-
-	$prevNext = $oNetwork->getPrevNext();
-	$prev = '&laquo; prev';
-	$next = 'next &raquo;';
-	if ( $prevNext[0] != 0 ) {
-		$prev = '<a href="/' . getSetting('pathForMenu') . 'proposednetworkparticipants/' . $prevNext[0] . '" alt="previous network" title="previous network">' . $prev . '</a>';
-	}
-	if ( $prevNext[1] != 0 ) {
-		$next = '<a href="/' . getSetting('pathForMenu') . 'proposednetworkparticipants/' . $prevNext[1] . '" alt="next network " title="next network">' . $next . '</a>';
-	}
-
-	$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => '<table class="noborder"><tr><td class="noborder"><strong><a href="/' . getSetting('pathForMenu') . 'proposednetworkparticipants/">&laquo; Go back to networks list</a></strong></td><td align=right class="noborder">' . $prev . ' &nbsp; ' . $next . '</td></tr></table><br>',
-			);
-
-	$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => '<strong>Network:</strong> ' . $oNetwork->getNetworkName() . '<br>',
-			);
-
-	$arrChairs = $oNetwork->getChairs();
-	$chairs = '';
-	$separator = '';
-	for ( $i = 0; $i < count($arrChairs); $i++ ) {
-		$p = $arrChairs[$i];
-		$chairs .= $separator . '<a href="mailto:' . $p->getEmail() . '">' . $p->getFirstName() . ' ' . $p->getLastName() . '</a>';
-		if ( $i < count($arrChairs)-2 ) {
-			$separator = ', ';
-		} else {
-			$separator = ' and ';
-		}
-	}
-
-	$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => '<strong>Network chairs:</strong> ' . $chairs . '<br><br>',
-			);
-
-	$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => '<hr><br>',
-			);
-
-	//
-	$arrParticipants = $oNetwork->getParticipantsProposedNetwork();
-	if ( count($arrParticipants) == 0 ) {
-		$form['ct'.$ct++] = array(
-				'#type' => 'markup',
-				'#markup' => 'No participants found in network<br><br>',
-				);
-	} else {
-		iishconference_proposednetworkparticipants_listofparticipants_details($form, $ct, $arrParticipants, $oNetwork->getNetworkId());
-	}
-}
-
-/**
- * TODOEXPLAIN
- */
-function iishconference_proposednetworkparticipants_listofparticipants_details( &$form, &$ct, $arrParticipants, $proposedNetworkId ) {
-
-	$separator = '';
-
-	foreach ( $arrParticipants as $oParticipant ) {
-
-		$form['ct'.$ct++] = array(
-				'#type' => 'markup',
-				'#markup' => $separator . "<a href=\"mailto:" . $oParticipant->getEmail() . "\">" . $oParticipant->getFirstname() . " " . $oParticipant->getLastname() . "</a><br>",
-				);
-
-		$form['ct'.$ct++] = array(
-				'#type' => 'markup',
-				'#markup' => ifEmpty($oParticipant->getOrganisation(), '<em>(Unknown affiliation)</em>') . "<br>",
-				);
-
-		$oPaper = new class_conference_participantsession($oParticipant->getId(), -1, $proposedNetworkId, true);
-
-		$form['ct'.$ct++] = array(
-				'#type' => 'markup',
-				'#markup' => '<strong>Paper name:</strong> ' . $oPaper->getTitle() . "<br>",
-				);
-
-		if ( trim( $oPaper->getCoAuthors() ) != '' ) {
-			$form['ct'.$ct++] = array(
-					'#type' => 'markup',
-					'#markup' => '<strong>Co-authors:</strong> ' . $oPaper->getCoAuthors() . "<br>",
-					);
-		}
-
-		$form['ct'.$ct++] = array(
-				'#type' => 'markup',
-				'#markup' => "<strong>Paper state:</strong> " . $oPaper->getState()->getDescription() . "<br>",
-				);
-
-		$oSession = $oPaper->getSession();
-		if ( is_object($oSession) ) {
-			$sessionValue = trim($oSession->getName());
-		} else {
-			$sessionValue = '<em>(NO SESSION YET)</em>';
-		}
-		$form['ct'.$ct++] = array(
-				'#type' => 'markup',
-				'#markup' => '<strong>Session name:</strong> ' . $sessionValue . "<br>",
-				);
-
-		$form['ct'.$ct++] = array(
-				'#type' => 'markup',
-				'#markup' => '<strong>Paper abstract:</strong><br>' . $oPaper->getAbstract(300) . "<br>",
-				);
-
-		$separator = '<br><br>';
+	else {
+		return $header . $title;
 	}
 }

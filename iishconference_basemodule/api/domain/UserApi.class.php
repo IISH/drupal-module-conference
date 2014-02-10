@@ -51,11 +51,13 @@ class UserApi extends CRUDApiClient {
 	}
 
 	/**
-	 * Stores the address of this user
+	 * Set the address of this user
 	 *
-	 * @param string $address The address of this user
+	 * @param string|null $address The address
 	 */
 	public function setAddress($address) {
+		$address = (($address !== null) && strlen(trim($address)) > 0) ? trim($address) : null;
+
 		$this->address = $address;
 		$this->toSave['address'] = $address;
 	}
@@ -70,6 +72,18 @@ class UserApi extends CRUDApiClient {
 	}
 
 	/**
+	 * Set the city of this user
+	 *
+	 * @param string|null $city The city
+	 */
+	public function setCity($city) {
+		$city = (($city !== null) && strlen(trim($city)) > 0) ? trim($city) : null;
+
+		$this->city = $city;
+		$this->toSave['city'] = $city;
+	}
+
+	/**
 	 * Returns the CV of this user
 	 *
 	 * @return string|null The CV
@@ -79,12 +93,36 @@ class UserApi extends CRUDApiClient {
 	}
 
 	/**
+	 * Set the CV of this user
+	 *
+	 * @param string|null $cv The CV
+	 */
+	public function setCv($cv) {
+		$cv = (($cv !== null) && strlen(trim($cv)) > 0) ? trim($cv) : null;
+
+		$this->cv = $cv;
+		$this->toSave['cv'] = $cv;
+	}
+
+	/**
 	 * Returns the email address of this user
 	 *
 	 * @return string The email address
 	 */
 	public function getEmail() {
 		return $this->email;
+	}
+
+	/**
+	 * Set the email of this user
+	 *
+	 * @param string|null $email The email address
+	 */
+	public function setEmail($email) {
+		$email = (($email !== null) && strlen(trim($email)) > 0) ? trim($email) : null;
+
+		$this->email = $email;
+		$this->toSave['email'] = $email;
 	}
 
 	/**
@@ -106,6 +144,18 @@ class UserApi extends CRUDApiClient {
 	}
 
 	/**
+	 * Set the fax of this user
+	 *
+	 * @param string|null $fax The fax number
+	 */
+	public function setFax($fax) {
+		$fax = (($fax !== null) && strlen(trim($fax)) > 0) ? trim($fax) : null;
+
+		$this->fax = $fax;
+		$this->toSave['fax'] = $fax;
+	}
+
+	/**
 	 * Returns the gender of this user ('M' or 'F')
 	 *
 	 * @return string|null The gender
@@ -115,12 +165,36 @@ class UserApi extends CRUDApiClient {
 	}
 
 	/**
+	 * Set the gender of this user
+	 *
+	 * @param string|null $gender The gender
+	 */
+	public function setGender($gender) {
+		$gender = (($gender !== null) && strlen(trim($gender)) > 0) ? trim($gender) : null;
+
+		$this->gender = $gender;
+		$this->toSave['gender'] = $gender;
+	}
+
+	/**
 	 * Returns the mobile number of this user
 	 *
 	 * @return string|null The mobile number of this user
 	 */
 	public function getMobile() {
 		return $this->mobile;
+	}
+
+	/**
+	 * Set the mobile of this user
+	 *
+	 * @param string|null $mobile The mobile number
+	 */
+	public function setMobile($mobile) {
+		$mobile = (($mobile !== null) && strlen(trim($mobile)) > 0) ? trim($mobile) : null;
+
+		$this->mobile = $mobile;
+		$this->toSave['mobile'] = $mobile;
 	}
 
 	/**
@@ -142,12 +216,36 @@ class UserApi extends CRUDApiClient {
 	}
 
 	/**
+	 * Set the phone of this user
+	 *
+	 * @param string|null $phone The phone number
+	 */
+	public function setPhone($phone) {
+		$phone = (($phone !== null) && strlen(trim($phone)) > 0) ? trim($phone) : null;
+
+		$this->phone = $phone;
+		$this->toSave['phone'] = $phone;
+	}
+
+	/**
 	 * Returns the title of this user (Dr., Prof. etc.)
 	 *
 	 * @return string|null The title
 	 */
 	public function getTitle() {
 		return $this->title;
+	}
+
+	/**
+	 * Set the title of this user
+	 *
+	 * @param string|null $title The title
+	 */
+	public function setTitle($title) {
+		$title = (($title !== null) && strlen(trim($title)) > 0) ? trim($title) : null;
+
+		$this->title = $title;
+		$this->toSave['title'] = $title;
 	}
 
 	/**
@@ -181,12 +279,36 @@ class UserApi extends CRUDApiClient {
 	}
 
 	/**
+	 * Set the department of this user
+	 *
+	 * @param string|null $department The department
+	 */
+	public function setDepartment($department) {
+		$department = (($department !== null) && strlen(trim($department)) > 0) ? trim($department) : null;
+
+		$this->department = $department;
+		$this->toSave['department'] = $department;
+	}
+
+	/**
 	 * Returns the organisation of this user
 	 *
 	 * @return string|null The organisation of this user
 	 */
 	public function getOrganisation() {
 		return $this->organisation;
+	}
+
+	/**
+	 * Set the organisation of this user
+	 *
+	 * @param string|null $organisation The organisation
+	 */
+	public function setOrganisation($organisation) {
+		$organisation = (($organisation !== null) && strlen(trim($organisation)) > 0) ? trim($organisation) : null;
+
+		$this->organisation = $organisation;
+		$this->toSave['organisation'] = $organisation;
 	}
 
 	/**
@@ -219,25 +341,84 @@ class UserApi extends CRUDApiClient {
 	}
 
 	/**
+	 * Set the country of this user
+	 *
+	 * @param int|CountryApi $country The country (id)
+	 */
+	public function setCountryId($country) {
+		if ($country instanceof CountryApi) {
+			$country = $country->getId();
+		}
+
+		$this->country = null;
+		$this->country_id = $country;
+		$this->toSave['country.id'] = $country;
+	}
+
+	/**
 	 * Returns session participants information of this user
 	 *
 	 * @return SessionParticipantApi[] The session participant information
 	 */
 	public function getSessionParticipantInfo() {
 		if (!$this->sessionParticipants) {
-			$props = new ApiCriteriaBuilder();
-			$this->sessionParticipants = SessionParticipantApi::getListWithCriteria(
-				$props
-					->eq('user_id', $this->getId())
-					->get()
-			)->getResults();
+			$this->sessionParticipants =
+				CRUDApiMisc::getAllWherePropertyEquals(new SessionParticipantApi(), 'user_id', $this->getId())
+					->getResults();
 		}
 
 		return $this->sessionParticipants;
 	}
 
-	public function __toString() {
-		return $this->getFullName();
+	/**
+	 * Returns the full name of this user
+	 *
+	 * @return string The full name
+	 */
+	public function getFullName() {
+		return trim($this->getFirstName()) . ' ' . trim($this->getLastName());
+	}
+
+	/**
+	 * Returns the first name of this user
+	 *
+	 * @return string The first name
+	 */
+	public function getFirstName() {
+		return $this->firstName;
+	}
+
+	/**
+	 * Set the first name of this user
+	 *
+	 * @param string|null $firstName The first name
+	 */
+	public function setFirstName($firstName) {
+		$firstName = (($firstName !== null) && strlen(trim($firstName)) > 0) ? trim($firstName) : null;
+
+		$this->firstName = $firstName;
+		$this->toSave['firstName'] = $firstName;
+	}
+
+	/**
+	 * Returns the last name of this user
+	 *
+	 * @return string The last name
+	 */
+	public function getLastName() {
+		return $this->lastName;
+	}
+
+	/**
+	 * Set the last name of this user
+	 *
+	 * @param string|null $lastName The last name
+	 */
+	public function setLastName($lastName) {
+		$lastName = (($lastName !== null) && strlen(trim($lastName)) > 0) ? trim($lastName) : null;
+
+		$this->lastName = $lastName;
+		$this->toSave['lastName'] = $lastName;
 	}
 
 	/**
@@ -290,37 +471,38 @@ class UserApi extends CRUDApiClient {
 		return $this->days;
 	}
 
-	/**
-	 * Returns the full name of this user
-	 *
-	 * @return string The full name
-	 */
-	public function getFullName() {
-		return trim($this->getFirstName()) . ' ' . trim($this->getLastName());
-	}
-
-	/**
-	 * Returns the first name of this user
-	 *
-	 * @return string The first name
-	 */
-	public function getFirstName() {
-		return $this->firstName;
-	}
-
-	/**
-	 * Returns the last name of this user
-	 *
-	 * @return string The last name
-	 */
-	public function getLastName() {
-		return $this->lastName;
-	}
-
 	public function save($showDrupalMessage = true) {
-		parent::save($showDrupalMessage);
+		$save = parent::save($showDrupalMessage);
 
 		// Make sure to invalidate the cached user
-		unset($_SESSION['conference']['user']);
+		if ($save) {
+			unset($_SESSION['conference']['user']);
+		}
+
+		return $save;
+	}
+
+	/**
+	 * Compare two users, by last name, then by first name
+	 *
+	 * @param UserApi $instance Compare this instance with the given instance
+	 *
+	 * @return int &lt; 0 if <i>$instA</i> is less than
+	 * <i>$instB</i>; &gt; 0 if <i>$instA</i>
+	 * is greater than <i>$instB</i>, and 0 if they are
+	 * equal.
+	 */
+	protected function compareWith($instance) {
+		$lastNameCmp = strcmp(strtolower($this->getLastName()), strtolower($instance->getLastName()));
+		if ($lastNameCmp === 0) {
+			return strcmp(strtolower($this->getFirstName()), strtolower($instance->getFirstName()));
+		}
+		else {
+			return $lastNameCmp;
+		}
+	}
+
+	public function __toString() {
+		return $this->getFullName();
 	}
 } 

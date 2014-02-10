@@ -44,100 +44,22 @@ class ParticipantDateApi extends CRUDApiClient {
 	}
 
 	/**
+	 * Sets whether this student participates in the award
+	 *
+	 * @param bool $award Whether this student participates in the award or not
+	 */
+	public function setAward($award) {
+		$this->award = (bool) $award;
+		$this->toSave['award'] = $this->award;
+	}
+
+	/**
 	 * Returns the ids of all extras chosen by this participant
 	 *
 	 * @return int[] The ids of all extras chosen by this participant
 	 */
 	public function getExtrasId() {
 		return $this->extras_id;
-	}
-
-	/**
-	 * Returns all extras chosen by this participant
-	 *
-	 * @return ExtraApi[] All extras chosen by this participant
-	 */
-	public function getExtras() {
-		if (!$this->extras) {
-			$this->extras = array();
-			foreach ($this->extras_id as $extraId) {
-				foreach (CachedConferenceApi::getExtras() as $extra) {
-					if ($extra->getId() === $extraId) {
-						$this->extras[] = $extra;
-					}
-				}
-			}
-		}
-
-		return $this->extras;
-	}
-
-	/**
-	 * Set the extras for which this participant signed up
-	 *
-	 * @param int[]|ExtraApi[] $extras The extras (or their ids) to add to this participant
-	 */
-	public function setExtras($extras) {
-		$this->extras = null;
-		$this->extras_id = array();
-
-		foreach ($extras as $extra) {
-			if ($extra instanceof ExtraApi) {
-				$this->extras_id[] = $extra->getId();
-			}
-			else if (is_int($extra)) {
-				$this->extras_id[] = $extra;
-			}
-		}
-
-		$this->toSave['extras.id'] = implode(';', $this->extras_id);
-	}
-
-	/**
-	 * Whether this participant has requested an invitation letter
-	 *
-	 * @param bool $invitationLetter If the participant has requested an invitation letter
-	 */
-	public function setInvitationLetter($invitationLetter) {
-		$this->invitationLetter = (bool)$invitationLetter;
-		$this->toSave['invitationLetter'] = $this->invitationLetter;
-	}
-
-	/**
-	 * The payment id of this partiicpant
-	 *
-	 * @param int $paymentId The payment id
-	 */
-	public function setPaymentId($paymentId) {
-		$this->paymentId = $paymentId;
-		$this->toSave['paymentId'] = $paymentId;
-	}
-
-	/**
-	 * The id of this participants fee state
-	 *
-	 * @return int The fee state id of this participant
-	 */
-	public function getFeeStateId() {
-		if ($this->feeState_id == 0 || $this->feeState_id == null) {
-			$feeState = FeeStateApi::getDefaultFee();
-			if (!empty($feeState)) {
-				$this->setFeeStateId($feeState->getId());
-				$this->save();
-			}
-		}
-
-		return $this->feeState_id;
-	}
-
-	/**
-	 * Changes the fee state of this user
-	 *
-	 * @param int $feeStateId The new fee state id
-	 */
-	public function setFeeStateId($feeStateId) {
-		$this->feeState_id = $feeStateId;
-		$this->toSave['feeState.id'] = $feeStateId;
 	}
 
 	/**
@@ -185,28 +107,37 @@ class ParticipantDateApi extends CRUDApiClient {
 	}
 
 	/**
-	 * Returns the single fee amount to use for this participant
+	 * The id of this participants fee state
 	 *
-	 * @param int|null $date Returns the fee amount for the given date. If no date is given, the current date is used
-	 *
-	 * @return FeeAmountApi The fee amount
+	 * @return int The fee state id of this participant
 	 */
-	public function getFeeAmount($date = null) {
-		if ($date === null) {
-			$date = time();
+	public function getFeeStateId() {
+		if ($this->feeState_id == 0 || $this->feeState_id == null) {
+			$feeState = FeeStateApi::getDefaultFee();
+			if (!empty($feeState)) {
+				$this->setFeeStateId($feeState->getId());
+				$this->save();
+			}
 		}
 
-		$props = new ApiCriteriaBuilder();
+		return $this->feeState_id;
+	}
 
-		return FeeAmountApi::getListWithCriteria(
-			$props
-				->eq('feeState_id', $this->getFeeStateId())
-				->ge('endDate', $date)
-				->le('numDaysStart', count($this->getUser()->getDaysPresentDayId()))
-				->ge('numDaysEnd', count($this->getUser()->getDaysPresentDayId()))
-				->sort('endDate', 'asc')
-				->get()
-		)->getFirstResult();
+	/**
+	 * Changes the fee state of this user
+	 *
+	 * @param int $feeStateId The new fee state id
+	 */
+	public function setFeeStateId($feeStateId) {
+		$this->feeState_id = $feeStateId;
+		$this->toSave['feeState.id'] = $feeStateId;
+	}
+
+	public function save($showDrupalMessage = true) {
+		parent::save($showDrupalMessage);
+
+		// Make sure to invalidate the cached participant
+		unset($_SESSION['conference']['participant']);
 	}
 
 	/**
@@ -219,12 +150,32 @@ class ParticipantDateApi extends CRUDApiClient {
 	}
 
 	/**
+	 * Whether this participant has requested an invitation letter
+	 *
+	 * @param bool $invitationLetter If the participant has requested an invitation letter
+	 */
+	public function setInvitationLetter($invitationLetter) {
+		$this->invitationLetter = (bool) $invitationLetter;
+		$this->toSave['invitationLetter'] = $this->invitationLetter;
+	}
+
+	/**
 	 * Did this participant request a lower fee?
 	 *
 	 * @return bool Whether this participant requested a lower fee
 	 */
 	public function getLowerFeeRequested() {
 		return $this->lowerFeeRequested;
+	}
+
+	/**
+	 * Sets whether this participant requested a lower fee
+	 *
+	 * @param bool $lowerFeeRequested whether this participant requested a lower fee or not
+	 */
+	public function setLowerFeeRequested($lowerFeeRequested) {
+		$this->lowerFeeRequested = (bool) $lowerFeeRequested;
+		$this->toSave['lowerFeeRequested'] = $this->lowerFeeRequested;
 	}
 
 	/**
@@ -243,6 +194,16 @@ class ParticipantDateApi extends CRUDApiClient {
 	 */
 	public function getPaymentId() {
 		return $this->paymentId;
+	}
+
+	/**
+	 * The payment id of this participant
+	 *
+	 * @param int $paymentId The payment id
+	 */
+	public function setPaymentId($paymentId) {
+		$this->paymentId = $paymentId;
+		$this->toSave['paymentId'] = $paymentId;
 	}
 
 	/**
@@ -275,11 +236,16 @@ class ParticipantDateApi extends CRUDApiClient {
 	/**
 	 * Changes the participant state of this participant
 	 *
-	 * @param int $state_id The new participant state
+	 * @param int|ParticipantStateApi $state The new participant state (id)
 	 */
-	public function setStateId($state_id) {
-		$this->state_id = $state_id;
-		$this->toSave['state.id'] = $state_id;
+	public function setState($state) {
+		if ($state instanceof ParticipantStateApi) {
+			$state = $state->getId();
+		}
+
+		$this->state = null;
+		$this->state_id = $state;
+		$this->toSave['state.id'] = $state;
 	}
 
 	/**
@@ -289,6 +255,16 @@ class ParticipantDateApi extends CRUDApiClient {
 	 */
 	public function getStudent() {
 		return $this->student;
+	}
+
+	/**
+	 * Sets whether this participant is a student
+	 *
+	 * @param bool $student Whether this is a student or not
+	 */
+	public function setStudent($student) {
+		$this->student = (bool) $student;
+		$this->toSave['student'] = $this->student;
 	}
 
 	/**
@@ -318,15 +294,19 @@ class ParticipantDateApi extends CRUDApiClient {
 		return $this->user;
 	}
 
-	public function __toString() {
-		return $this->getUser()->__toString();
-	}
+	/**
+	 * Sets the user of this participant
+	 *
+	 * @param int|UserApi $user The user (id) to set
+	 */
+	public function setUser($user) {
+		if ($user instanceof UserApi) {
+			$user = $user->getId();
+		}
 
-	public function save($showDrupalMessage = true) {
-		parent::save($showDrupalMessage);
-
-		// Make sure to invalidate the cached participant
-		unset($_SESSION['conference']['participant']);
+		$this->user = null;
+		$this->user_id = $user;
+		$this->toSave['user.id'] = $user;
 	}
 
 	/**
@@ -341,6 +321,72 @@ class ParticipantDateApi extends CRUDApiClient {
 		}
 
 		return $totalAmount;
+	}
+
+	/**
+	 * Returns the single fee amount to use for this participant
+	 *
+	 * @param int|null $date Returns the fee amount for the given date. If no date is given, the current date is used
+	 *
+	 * @return FeeAmountApi The fee amount
+	 */
+	public function getFeeAmount($date = null) {
+		if ($date === null) {
+			$date = time();
+		}
+
+		$props = new ApiCriteriaBuilder();
+
+		return FeeAmountApi::getListWithCriteria(
+			$props
+				->eq('feeState_id', $this->getFeeStateId())
+				->ge('endDate', $date)
+				->le('numDaysStart', count($this->getUser()->getDaysPresentDayId()))
+				->ge('numDaysEnd', count($this->getUser()->getDaysPresentDayId()))
+				->sort('endDate', 'asc')
+				->get()
+		)->getFirstResult();
+	}
+
+	/**
+	 * Returns all extras chosen by this participant
+	 *
+	 * @return ExtraApi[] All extras chosen by this participant
+	 */
+	public function getExtras() {
+		if (!$this->extras) {
+			$this->extras = array();
+			foreach ($this->extras_id as $extraId) {
+				foreach (CachedConferenceApi::getExtras() as $extra) {
+					if ($extra->getId() === $extraId) {
+						$this->extras[] = $extra;
+					}
+				}
+			}
+		}
+
+		return $this->extras;
+	}
+
+	/**
+	 * Set the extras for which this participant signed up
+	 *
+	 * @param int[]|ExtraApi[] $extras The extras (or their ids) to add to this participant
+	 */
+	public function setExtras($extras) {
+		$this->extras = null;
+		$this->extras_id = array();
+
+		foreach ($extras as $extra) {
+			if ($extra instanceof ExtraApi) {
+				$this->extras_id[] = $extra->getId();
+			}
+			else if (is_int($extra)) {
+				$this->extras_id[] = $extra;
+			}
+		}
+
+		$this->toSave['extras.id'] = implode(';', $this->extras_id);
 	}
 
 	/**
@@ -361,4 +407,9 @@ class ParticipantDateApi extends CRUDApiClient {
 
 		return $finalDate;
 	}
+
+	public function __toString() {
+		return $this->getUser()->__toString();
+	}
 }
+

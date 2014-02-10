@@ -1,233 +1,162 @@
-<?php 
+<?php
+
 /**
- * TODOEXPLAIN
+ * Returns a list of networks to choose from
+ *
+ * @return string The HTML for a list of networks
  */
-function iishconference_networkvolunteers_form( $form, &$form_state ) {
-	$date_id = getSetting('date_id');
-	$ct=0;
-
-	$oUser = new class_conference_user( getIdLoggedInUser() );
-
-	// check user logged in
-	if ( !isUserLoggedIn() ) {
-
+function iishconference_networkvolunteers_main() {
+	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		Header("Location: /" . getSetting('pathForMenu') . "login/?backurl=" . urlencode($_SERVER["REQUEST_URI"]) );
-		die('Go to <a href="/' . getSetting('pathForMenu') . 'login/?backurl=' . urlencode($_SERVER["REQUEST_URI"]) . '">login</a> page.');
-
-	} elseif ( !$oUser->isCrew() && !$oUser->isNetworkChair() ) {
-
-		drupal_set_message("Access denied. You are not a network chair.", 'error');
-
-	} else {
-
-		$network = 0;
-
-		$url = $_SERVER["REQUEST_URI"];
-		$url = str_replace(array(getSetting('pathForMenu')), '', $url);
-		$url = str_replace(array('/', '\\'), ' ', $url);
-		$url = trim($url);
-		$arrUrl = explode(' ', $url);
-
-		if ( count($arrUrl) > 1 ) {
-			$network = $arrUrl[1];
-		}
-
-		$network = intval($network);
-
-		if ( $network !== 0 ) {
-			// show single session
-			iishconference_networkvolunteers_listofparticipants($form, $ct, $network);
-		} else {
-			// show list of all networks
-			iishconference_networkvolunteers_listofnetworks($form, $ct, getIdLoggedInUser());
-		}
-
+		Header("Location: /" . getSetting('pathForMenu') . "login/?backurl=" . urlencode($_SERVER["REQUEST_URI"]));
+		die('Go to <a href="/' . getSetting('pathForMenu') . 'login/?backurl=' . urlencode($_SERVER["REQUEST_URI"]) .
+			'">login</a> page.');
 	}
 
-	return $form;
-}
+	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
+		drupal_set_message(t('Access denied. You are not a network chair.'), 'error');
 
-/**
- * TODOEXPLAIN
- */
-function iishconference_networkvolunteers_listofnetworks( &$form, &$ct, $userId ) {
-
-	$oPart = new class_conference_participantdate($userId);
-	$arrNetworks = $oPart->getNetworkObjectsWhereChair();
-
-	if ( count($arrNetworks) > 0 ) {
-		$form['ct'.$ct++] = array(
-				'#type' => 'markup',
-				'#markup' => '<strong>Your network(s)</strong><br>',
-				);
-
-		// show networks
-		for ( $i = 0; $i < count($arrNetworks); $i++ ) {
-
-			$netw = $arrNetworks[$i];
-			$form['ct'.$ct++] = array(
-					'#type' => 'markup',
-					'#markup' => '<a href="/' . getSetting('pathForMenu') . 'networkvolunteers/' . $netw->getNetworkId() . '">' . $netw->getNetworkName() . '</a><br>',
-					);
-
-		}
-
-		$form['ct'.$ct++] = array(
-				'#type' => 'markup',
-				'#markup' => '<br>',
-				);
+		return '';
 	}
 
-	//
-	$oNetworks = new class_conference_networks( getSetting('date_id') );
-	$arrNetworks = $oNetworks->getNetworkObjects();
-
-	$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => '<strong>All networks</strong><br>',
-			);
-
-	if ( count($arrNetworks) > 0 ) {
-
-		// show networks
-		for ( $i = 0; $i < count($arrNetworks); $i++ ) {
-
-			$netw = $arrNetworks[$i];
-			$form['ct'.$ct++] = array(
-					'#type' => 'markup',
-					'#markup' => '<a href="/' . getSetting('pathForMenu') . 'networkvolunteers/' . $netw->getNetworkId() . '">' . $netw->getNetworkName() . '</a><br>',
-					);
-
-		}
-
-	} else {
-		$form['ct'.$ct++] = array(
-				'#type' => 'markup',
-				'#markup' => 'No networks found...<br>',
-				);
+	$networks = iishconference_networkvolunteers_get_networks();
+	$links = array();
+	foreach ($networks as $network) {
+		$links[] = l($network->getName(), getSetting('pathForMenu') . 'networkvolunteers/' . $network->getId());
 	}
 
-}
-
-/**
- * TODOEXPLAIN
- */
-function iishconference_networkvolunteers_listofparticipants( &$form, &$ct, $networkId ) {
-	$oNetwork = new class_conference_network($networkId);
-
-	$prevNext = $oNetwork->getPrevNext();
-	$prev = '&laquo; prev';
-	$next = 'next &raquo;';
-	if ( $prevNext[0] != 0 ) {
-		$prev = '<a href="/' . getSetting('pathForMenu') . 'networkvolunteers/' . $prevNext[0] . '" alt="previous network" title="previous network">' . $prev . '</a>';
+	if (count($links) > 0) {
+		return theme('item_list', array(
+			'title' => t('Your network(s)'),
+			'items' => $links,
+		));
 	}
-	if ( $prevNext[1] != 0 ) {
-		$next = '<a href="/' . getSetting('pathForMenu') . 'networkvolunteers/' . $prevNext[1] . '" alt="next network " title="next network">' . $next . '</a>';
-	}
+	else {
+		drupal_set_message(t('No networks found!'), 'warning');
 
-	$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => '<table class="noborder"><tr><td class="noborder"><strong><a href="/' . getSetting('pathForMenu') . 'networkvolunteers">&laquo; Go back to networks list</a></strong></td><td align=right class="noborder">' . $prev . ' &nbsp; ' . $next . '</td></tr></table><br>',
-			);
-
-	$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => '<strong>Network:</strong> ' . $oNetwork->getNetworkName() . '<br>',
-			);
-
-	$arrChairs = $oNetwork->getChairs();
-	$chairs = '';
-	$separator = '';
-	for ( $i = 0; $i < count($arrChairs); $i++ ) {
-		$p = $arrChairs[$i];
-		$chairs .= $separator . '<a href="mailto:' . $p->getEmail() . '">' . $p->getFirstName() . ' ' . $p->getLastName() . '</a>';
-		if ( $i < count($arrChairs)-2 ) {
-			$separator = ', ';
-		} else {
-			$separator = ' and ';
-		}
-	}
-
-	$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => '<strong>Network chairs:</strong> ' . $chairs . '<br><br>',
-			);
-
-	$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => '<hr>',
-			);
-
-	$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => '<br><strong>Chair volunteers</strong><br><br>',
-			);
-
-	$arrParticipants = $oNetwork->getChairVolunteers();
-	if ( count($arrParticipants) == 0 ) {
-		$form['ct'.$ct++] = array(
-				'#type' => 'markup',
-				'#markup' => 'No chair volunteers found...<br><br>',
-				);
-	} else {
-		iishconference_networkvolunteers_listofparticipants_details($form, $ct, $arrParticipants);
-	}
-
-	$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => '<hr>',
-			);
-
-	$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => '<br><strong>Discussant volunteers</strong><br><br>',
-			);
-
-	$arrParticipants = $oNetwork->getDiscussantVolunteers();
-	if ( count($arrParticipants) == 0 ) {
-		$form['ct'.$ct++] = array(
-				'#type' => 'markup',
-				'#markup' => 'No discussant volunteers found...<br><br>',
-				);
-	} else {
-		iishconference_networkvolunteers_listofparticipants_details($form, $ct, $arrParticipants);
+		return '';
 	}
 }
 
 /**
- * TODOEXPLAIN
+ * Returns tables with all participant volunteers of the given network
+ *
+ * @param int $networkId The network in question
+ *
+ * @return string The HTML for the page
  */
-function iishconference_networkvolunteers_listofparticipants_details( &$form, &$ct, $arrParticipants ) {
-
-	$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => "<table>
-<tr>
-	<th class=\"chairs_and_volunteers\">Last name</th>
-	<th class=\"chairs_and_volunteers\">First name</th>
-	<th class=\"chairs_and_volunteers\">E-mail</th>
-	<th class=\"chairs_and_volunteers\">Organisation</th>
-</tr>
-",
-			);
-
-	foreach ( $arrParticipants as $oParticipant ) {
-		$form['ct'.$ct++] = array(
-				'#type' => 'markup',
-				'#markup' => "
-<tr>
-	<td>" . $oParticipant->getLastname() . "</td>
-	<td>" . $oParticipant->getFirstname() . "</td>
-	<td><a href=\"mailto:" . $oParticipant->getEmail() . "\">" . $oParticipant->getEmail() . "</a></td>
-	<td>" . $oParticipant->getOrganisation() . "</td>
-</tr>
-",
-				);
+function iishconference_networkvolunteers_detail($networkId) {
+	if (!LoggedInUserDetails::isLoggedIn()) {
+		// redirect to login page
+		Header("Location: /" . getSetting('pathForMenu') . "login/?backurl=" . urlencode($_SERVER["REQUEST_URI"]));
+		die('Go to <a href="/' . getSetting('pathForMenu') . 'login/?backurl=' . urlencode($_SERVER["REQUEST_URI"]) .
+			'">login</a> page.');
 	}
 
-	$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => "</table>\n<br>\n",
-			);
+	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
+		drupal_set_message(t('Access denied. You are not a network chair.'), 'error');
+
+		return '';
+	}
+
+	$networkId = EasyProtection::easyIntegerProtection($networkId);
+	$network = CRUDApiMisc::getById(new NetworkApi(), $networkId);
+
+	$header = theme('iishconference_navigation', array(
+		'list'     => iishconference_networkvolunteers_get_networks(),
+		'current'  => $network,
+		'prevLink' => l('« ' . t('Go back to networks list'), getSetting('pathForMenu') . 'networkvolunteers'),
+		'curUrl'   => getSetting('pathForMenu') . 'networkvolunteers/',
+	));
+
+	$chairLinks = array();
+	foreach ($network->getChairs() as $chair) {
+		$chairLinks[] = l($chair->getFullName(), 'mailto:' . $chair->getEmail(), array('absolute' => true));
+	}
+
+	$title = theme('iishconference_container_field', array(
+		'label' => t('Network'),
+		'value' => $network->getName(),
+	));
+	$title .= theme('iishconference_container_field', array(
+		'label'       => t('Network chairs'),
+		'value'       => ConferenceMisc::getEnumSingleLine($chairLinks),
+		'valueIsHTML' => true,
+	));
+
+	$volunteers = array();
+	foreach (CachedConferenceApi::getVolunteering() as $volunteering) {
+		$volunteers[] = iishconference_networkvolunteers_listofparticipants_details($volunteering, $network);
+	}
+
+	$seperator = '<br/><hr /><br/>';
+
+	return $header . $title . $seperator . implode($seperator, $volunteers);
+}
+
+/**
+ * Returns the participant details for a given volunteering type and network
+ *
+ * @param VolunteeringApi $volunteering Volunteering type in question
+ * @param NetworkApi      $network      The network in question
+ *
+ * @return string The HTML
+ */
+function iishconference_networkvolunteers_listofparticipants_details($volunteering, $network) {
+	$header = theme('iishconference_container_header', array(
+		'text' => t('@name volunteers', array('@name' => $volunteering->getDescription())),
+	));
+
+	$props = new ApiCriteriaBuilder();
+	$participantVolunteering = ParticipantVolunteeringApi::getListWithCriteria(
+		$props
+			->eq('volunteering_id', $volunteering->getId())
+			->eq('network_id', $network->getId())
+			->get()
+	)->getResults();
+
+	CRUDApiClient::sort($participantVolunteering);
+
+	$rows = array();
+	foreach ($participantVolunteering as $participantVolunteer) {
+		$rows[] = array(
+			array('data' => $participantVolunteer->getUser()->getLastName()),
+			array('data' => $participantVolunteer->getUser()->getFirstName()),
+			array('data' => l($participantVolunteer->getUser()->getEmail(),
+				'mailto:' . $participantVolunteer->getUser()->getEmail(),
+				array('absolute' => true))),
+			array('data' => $participantVolunteer->getUser()->getOrganisation()),
+		);
+	}
+
+	return $header . theme_table(
+		array(
+			"header"     => array(
+				array('data' => t('Last name')),
+				array('data' => t('First name')),
+				array('data' => t('E-mail')),
+				array('data' => t('Organisation')),
+			),
+			"rows"       => $rows,
+			"attributes" => array(),
+			"sticky"     => true,
+			"caption"    => null,
+			"colgroups"  => array(),
+			"empty"      => t('No volunteers found!'),
+		)
+	);
+}
+
+/**
+ * Returns all networks, or only those the network chair is chair of
+ *
+ * @return NetworkApi[] Returns the networks
+ */
+function iishconference_networkvolunteers_get_networks() {
+	$networks = CachedConferenceApi::getNetworks();
+	if (LoggedInUserDetails::isChair()) {
+		$networks = NetworkApi::getOnlyNetworksOfChair($networks, LoggedInUserDetails::getUser());
+	}
+
+	return $networks;
 }
