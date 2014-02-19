@@ -28,8 +28,10 @@ function iishconference_networks_menu() {
 		'file'            => 'networks.inc.php',
 	);
 
-	$items[$extraPath . 'networks/%'] = array(
-		'title'           => 'Networks',
+	$items[$extraPath . 'networks/%iishconference_network'] = array(
+		'title'           => 'Network',
+		'title callback' => 'iishconference_networks_network_title',
+		'title arguments' => array(2),
 		'page callback'   => 'iishconference_network_detail',
 		'page arguments'  => array(2),
 		'access callback' => true,
@@ -58,4 +60,19 @@ function iishconference_networks_theme() {
 			),
 		),
 	);
+}
+
+/**
+ * Returns the page title of the network detail page
+ *
+ * @param NetworkApi|null $network The network the called page shows in detail
+ *
+ * @return string The title of this page
+ */
+function iishconference_networks_network_title($network) {
+	if ($network !== null) {
+		return $network->getName();
+	}
+
+	return 'Network';
 }

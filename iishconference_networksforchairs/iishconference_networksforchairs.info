@@ -4,4 +4,5 @@ package = IISH Conference
 core = 7.x
 version = 7.x-0.0.2
 files[] = ParticipantsInSessionApi.class.php
+files[] = SessionsSearchApi.class.php
 dependencies[] = iishconference_basemodule

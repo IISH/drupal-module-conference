@@ -4,6 +4,8 @@
  * Holds a sent email obtained from the API
  */
 class SentEmailApi extends CRUDApiClient {
+	private static $sortOnCreated = false;
+
 	protected $user_id;
 	protected $fromName;
 	protected $fromEmail;
@@ -15,8 +17,26 @@ class SentEmailApi extends CRUDApiClient {
 	protected $sendAsap;
 	protected $numTries;
 
-	public static function getListWithCriteria(array $properties, $showDrupalMessage = true) {
-		return parent::getListWithCriteriaForClass(__CLASS__, $properties, $showDrupalMessage);
+	public static function getListWithCriteria(array $properties, $printErrorMessage = true) {
+		return parent::getListWithCriteriaForClass(__CLASS__, $properties, $printErrorMessage);
+	}
+
+	/**
+	 * Whether to sort on date/time created or on date/time sent
+	 *
+	 * @return boolean True if sorted on date/time created
+	 */
+	public static function getSortOnCreated() {
+		return self::$sortOnCreated;
+	}
+
+	/**
+	 * Set whether to sort on date/time created or on date/time sent
+	 *
+	 * @param boolean $sortOnCreated True if sorted on date/time created
+	 */
+	public static function setSortOnCreated($sortOnCreated) {
+		self::$sortOnCreated = $sortOnCreated;
 	}
 
 	/**
@@ -182,6 +202,32 @@ class SentEmailApi extends CRUDApiClient {
 	 */
 	public function getUserId() {
 		return $this->user_id;
+	}
+
+	/**
+	 * Compare two emails, first by date, then by subject
+	 *
+	 * @param SentEmailApi $instance Compare this instance with the given instance
+	 *
+	 * @return int &lt; 0 if <i>$instA</i> is less than
+	 * <i>$instB</i>; &gt; 0 if <i>$instA</i>
+	 * is greater than <i>$instB</i>, and 0 if they are
+	 * equal.
+	 */
+	protected function compareWith($instance) {
+		if (self::getSortOnCreated()) {
+			$dateCmp = strcmp($instance->getDateTimeCreated(), $this->getDateTimeCreated());
+		}
+		else {
+			$dateCmp = strcmp($instance->getDateTimeSent(), $this->getDateTimeSent());
+		}
+
+		if ($dateCmp === 0) {
+			return strcmp(strtolower($this->getSubject()), strtolower($instance->getSubject()));
+		}
+		else {
+			return $dateCmp;
+		}
 	}
 
 	public function __toString() {

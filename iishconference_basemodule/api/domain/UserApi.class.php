@@ -26,8 +26,8 @@ class UserApi extends CRUDApiClient {
 	private $country;
 	private $days;
 
-	public static function getListWithCriteria(array $properties, $showDrupalMessage = true) {
-		return parent::getListWithCriteriaForClass(__CLASS__, $properties, $showDrupalMessage);
+	public static function getListWithCriteria(array $properties, $printErrorMessage = true) {
+		return parent::getListWithCriteriaForClass(__CLASS__, $properties, $printErrorMessage);
 	}
 
 	/**
@@ -471,8 +471,8 @@ class UserApi extends CRUDApiClient {
 		return $this->days;
 	}
 
-	public function save($showDrupalMessage = true) {
-		$save = parent::save($showDrupalMessage);
+	public function save($printErrorMessage = true) {
+		$save = parent::save($printErrorMessage);
 
 		// Make sure to invalidate the cached user
 		if ($save) {

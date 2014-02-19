@@ -70,6 +70,7 @@ function iishconference_finalregistration_menu() {
 		'page callback' => 'drupal_get_form',
 		'page arguments' => array('iishconference_finalregistration_settings_form'),
 		'access arguments' => array('access administration pages'),
+		'type' => MENU_CALLBACK,
 		'file' => 'iishconference_finalregistration_settings.inc.php',
 	);
 

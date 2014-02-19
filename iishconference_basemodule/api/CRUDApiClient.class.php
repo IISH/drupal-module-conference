@@ -10,6 +10,7 @@ abstract class CRUDApiClient {
 	private static $allowedMethods = array('eq', 'ne', 'gt', 'lt', 'ge', 'le');
 	private static $otherProperties = array('sort', 'order', 'max', 'offset');
 	private static $client;
+
 	protected $id;
 	protected $toSave = array();
 
@@ -75,14 +76,14 @@ abstract class CRUDApiClient {
 	 *
 	 * @param string $class             The name of the class from where the class is made, subclass should use __CLASS__ for this
 	 * @param array  $properties        The criteria
-	 * @param bool   $showDrupalMessage Whether to show a Drupal error message in case of failure
+	 * @param bool   $printErrorMessage Whether to print an error message in case of failure
 	 *
 	 * @return CRUDApiResults|null
 	 */
-	protected static function getListWithCriteriaForClass($class, array $properties, $showDrupalMessage = true) {
+	protected static function getListWithCriteriaForClass($class, array $properties, $printErrorMessage = true) {
 		$apiName = substr($class, 0, -3);
 		$apiResults =
-			self::getClient()->get($apiName, self::transformCRUDParametersToApi($properties), $showDrupalMessage);
+			self::getClient()->get($apiName, self::transformCRUDParametersToApi($properties), $printErrorMessage);
 
 		$results = new CRUDApiResults($apiResults['totalSize']);
 		foreach ($apiResults['results'] as $curInstance) {
@@ -181,21 +182,21 @@ abstract class CRUDApiClient {
 	/**
 	 * Persist all changes made to the database via the API
 	 *
-	 * @param bool $showDrupalMessage Whether to show a Drupal message if something goes wrong
+	 * @param bool $printErrorMessage Whether to show a Drupal message if something goes wrong
 	 *
 	 * @return bool Whether the save was successful or not
 	 */
-	public function save($showDrupalMessage = true) {
+	public function save($printErrorMessage = true) {
 		$apiName = substr(get_class($this), 0, -3);
 		$this->toSave['id'] = $this->getId();
 
 		if ($this->isUpdate()) {
 			$apiResults =
-				self::getClient()->post($apiName, $this->toSave, $showDrupalMessage);
+				self::getClient()->post($apiName, $this->toSave, $printErrorMessage);
 		}
 		else {
 			$apiResults =
-				self::getClient()->put($apiName, $this->toSave, $showDrupalMessage);
+				self::getClient()->put($apiName, $this->toSave, $printErrorMessage);
 
 			// Set the id this instance was given
 			if (is_array($apiResults) && $apiResults['success'] && $apiResults['id']) {
@@ -209,18 +210,18 @@ abstract class CRUDApiClient {
 	/**
 	 * Remove the current instance from the database via the API
 	 *
-	 * @param bool $showDrupalMessage Whether to show a Drupal message if something goes wrong
+	 * @param bool $printErrorMessage Whether to show a Drupal message if something goes wrong
 	 *
 	 * @return bool Whether the deletion was successful or not
 	 */
-	public function delete($showDrupalMessage = true) {
+	public function delete($printErrorMessage = true) {
 		$apiResults = null;
 
 		// New instances are not persisted yet, and thus cannot be deleted
 		if ($this->isUpdate()) {
 			$apiName = substr(get_class($this), 0, -3);
 			$apiResults =
-				self::getClient()->delete($apiName, array('id' => $this->getId()), $showDrupalMessage);
+				self::getClient()->delete($apiName, array('id' => $this->getId()), $printErrorMessage);
 
 			// Remove the id, if the delete was successful
 			if (is_array($apiResults) && $apiResults['success']) {

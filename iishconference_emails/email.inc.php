@@ -7,20 +7,17 @@
 /**
  * The main page for viewing the details of an email message and resending them
  *
- * @param int $emailId The id of the email in question
+ * @param SentEmailApi|null $email The email in question
  *
  * @return string The HTML page
  */
-function conference_email_main($emailId) {
+function conference_email_main($email) {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		Header("Location: /" . getSetting('pathForMenu') . "login/?backurl=" . urlencode($_SERVER["REQUEST_URI"]));
-		die('Go to <a href="/' . getSetting('pathForMenu') . 'login/?backurl=' . urlencode($_SERVER["REQUEST_URI"]) .
-		    '">login</a> page.');
+		header('Location: ' . url(getSetting('pathForMenu') . 'login', array('query' => drupal_get_destination())));
+		die(t('Go to !login page.', array('!login' => l(t('login'), getSetting('pathForMenu') . 'login',
+			array('query' => drupal_get_destination())))));
 	}
-
-	$emailId = EasyProtection::easyIntegerProtection($emailId);
-	$email = CRUDApiMisc::getById(new SentEmailApi(), $emailId);
 
 	if ($email === null) {
 		drupal_set_message(t('Unfortunately, this email does not seem to exist.'), 'error');
@@ -33,7 +30,7 @@ function conference_email_main($emailId) {
 		return '';
 	}
 
-	$form = drupal_get_form('conference_email_form', $emailId);
+	$form = drupal_get_form('conference_email_form', $email);
 
 	$emailPage = theme('iishconference_container_inline', array(
 		'inline' => array(
@@ -49,13 +46,13 @@ function conference_email_main($emailId) {
 			theme('iishconference_container_field', array(
 				'label' => 'Original email sent on',
 				'value' => (!is_null($email->getDateTimeSent()) ?
-						$email->getDateTimeSentFormatted("j F Y H:i:s") :
+						$email->getDateTimeSentFormatted('j F Y H:i:s') :
 						t('Not sent yet'))
 			)),
 			theme('iishconference_container_field', array(
 				'label' => 'Copies of this email sent on',
 				'value' => (!is_null($email->getDateTimesSentCopy()) ?
-						implode(', ', $email->getDateTimesSentCopyFormatted("j F Y H:i:s")) :
+						implode(', ', $email->getDateTimesSentCopyFormatted('j F Y H:i:s')) :
 						t('No copies sent yet'))
 			)),
 			'<br />',
@@ -106,9 +103,9 @@ function conference_email_form($form, &$form_state) {
  * @param array $form_state The form state
  */
 function conference_email_form_submit($form, &$form_state) {
-	$emailId = $form_state['build_info']['args'][0];
+	$email = $form_state['build_info']['args'][0];
 	$resendEmailApi = new ResendEmailApi();
-	if ($resendEmailApi->resendEmail($emailId)) {
+	if ($resendEmailApi->resendEmail($email)) {
 		drupal_set_message(t('Your request for this email has been received and the email has just been sent to you. ' .
 		                     'It can take a while before you will actually receive the email.'), 'status');
 	}

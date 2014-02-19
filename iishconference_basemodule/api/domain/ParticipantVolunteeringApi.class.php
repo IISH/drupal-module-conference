@@ -17,8 +17,8 @@ class ParticipantVolunteeringApi extends CRUDApiClient {
 	private $participantDateInstance;
 	private $userInstance;
 
-	public static function getListWithCriteria(array $properties, $showDrupalMessage = true) {
-		return parent::getListWithCriteriaForClass(__CLASS__, $properties, $showDrupalMessage);
+	public static function getListWithCriteria(array $properties, $printErrorMessage = true) {
+		return parent::getListWithCriteriaForClass(__CLASS__, $properties, $printErrorMessage);
 	}
 
 	/**
@@ -38,6 +38,43 @@ class ParticipantVolunteeringApi extends CRUDApiClient {
 		}
 
 		return $networks;
+	}
+
+	/**
+	 * Returns all users with the given volunteering type in the given network ids
+	 *
+	 * @param int|VolunteeringApi $volunteering The volunteering type (id)
+	 * @param int[]|NetworkApi[] $networks The networks (ids) in question
+	 *
+	 * @return UserApi[] All matching users
+	 */
+	public static function getAllUsersWIthTypeForNetworks($volunteering, array $networks) {
+		if ($volunteering instanceof VolunteeringApi) {
+			$volunteering = $volunteering->getId();
+		}
+
+		$networkIds = array();
+		foreach ($networks as $network) {
+			if ($network instanceof NetworkApi) {
+				$networkIds[] = $network->getId();
+			}
+			else {
+				$networkIds[] = $network;
+			}
+		}
+
+		$participantVolunteering =
+			CRUDApiMisc::getAllWherePropertyEquals(new ParticipantVolunteeringApi(), 'volunteering_id', $volunteering)
+				->getResults();
+
+		$results = array();
+		foreach ($participantVolunteering as $participantVolunteer) {
+			if (in_array($participantVolunteer->getNetworkId(), $networkIds)) {
+				$results[$participantVolunteer->getNetworkId()][] = $participantVolunteer->getUser();
+			}
+		}
+
+		return $results;
 	}
 
 	/**

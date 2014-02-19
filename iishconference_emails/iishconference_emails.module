@@ -28,7 +28,7 @@ function iishconference_emails_menu() {
 		'file'            => 'emails.inc.php',
 	);
 
-	$items[$extraPath . 'emails/%'] = array(
+	$items[$extraPath . 'emails/%iishconference_email'] = array(
 		'title'           => 'Email',
 		'description'     => 'Allows a participant to read and resend an email previously sent to them',
 		'page callback'   => 'conference_email_main',

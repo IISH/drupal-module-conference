@@ -49,7 +49,7 @@ $conference_settings['code_year'] = 'UNKNOWN 2014';
 $conference_settings['long_code_year'] = 'UNKNOWN Conference 2014';
 $conference_settings['with_kind_regards_name'] = "Els Hiemstra\nConference Organizer";
 
-$conference_settings['show_languagecoachpupil'] = 0;
+$conference_settings['show_languagecoachpupil'] = 1;
 $conference_settings['show_cv'] = 0;
 
 $conference_settings['hide_add_single_paper_after'] = '2022-12-31';

@@ -42,12 +42,12 @@ class ConferenceApiClient {
 	 *
 	 * @param string $apiName           The name of the API to call
 	 * @param array  $parameters        The parameters to send with the call
-	 * @param bool   $showDrupalMessage Whether to show a Drupal error message in case of failure
+	 * @param bool   $printErrorMessage Whether to print an error message in case of failure
 	 *
 	 * @return mixed The response message if found, else null is returned
 	 */
-	public function get($apiName, array $parameters, $showDrupalMessage = true) {
-		return $this->call($apiName, $parameters, $showDrupalMessage, Client::HTTP_METHOD_GET);
+	public function get($apiName, array $parameters, $printErrorMessage = true) {
+		return $this->call($apiName, $parameters, $printErrorMessage, Client::HTTP_METHOD_GET);
 	}
 
 	/**
@@ -55,12 +55,12 @@ class ConferenceApiClient {
 	 *
 	 * @param string $apiName           The name of the API to call
 	 * @param array  $parameters        The parameters to send with the call
-	 * @param bool   $showDrupalMessage Whether to show a Drupal error message in case of failure
+	 * @param bool   $printErrorMessage Whether to print an error message in case of failure
 	 * @param string $http_method       The HTTP method to use
 	 *
 	 * @return mixed The response message if found, else null is returned
 	 */
-	private function call($apiName, array $parameters, $showDrupalMessage = true,
+	private function call($apiName, array $parameters, $printErrorMessage = true,
 		$http_method = Client::HTTP_METHOD_GET) {
 		// See if this request was made before
 		$result = $this->requestCache->get($apiName, $parameters, $http_method);
@@ -87,9 +87,7 @@ class ConferenceApiClient {
 				}
 			}
 			catch (Exception $execption) {
-				if ($showDrupalMessage) {
-					/*drupal_set_message(t('There are currently problems obtaining the necessary data. Please try again later. ' .
-						'We are sorry for the inconvenience.'), 'error');*/
+				if ($printErrorMessage) {
 					print t('There are currently problems obtaining the necessary data. Please try again later. ' .
 						'We are sorry for the inconvenience.');
 					drupal_exit();
@@ -120,12 +118,12 @@ class ConferenceApiClient {
 	 *
 	 * @param string $apiName           The name of the API to call
 	 * @param array  $parameters        The parameters to send with the call
-	 * @param bool   $showDrupalMessage Whether to show a Drupal error message in case of failure
+	 * @param bool   $printErrorMessage Whether to print an error message in case of failure
 	 *
 	 * @return mixed The response message if found, else null is returned
 	 */
-	public function post($apiName, array $parameters, $showDrupalMessage = true) {
-		return $this->call($apiName, $parameters, $showDrupalMessage, Client::HTTP_METHOD_POST);
+	public function post($apiName, array $parameters, $printErrorMessage = true) {
+		return $this->call($apiName, $parameters, $printErrorMessage, Client::HTTP_METHOD_POST);
 	}
 
 	/**
@@ -133,12 +131,12 @@ class ConferenceApiClient {
 	 *
 	 * @param string $apiName           The name of the API to call
 	 * @param array  $parameters        The parameters to send with the call
-	 * @param bool   $showDrupalMessage Whether to show a Drupal error message in case of failure
+	 * @param bool   $printErrorMessage Whether to print an error message in case of failure
 	 *
 	 * @return mixed The response message if found, else null is returned
 	 */
-	public function put($apiName, array $parameters, $showDrupalMessage = true) {
-		return $this->call($apiName, $parameters, $showDrupalMessage, Client::HTTP_METHOD_PUT);
+	public function put($apiName, array $parameters, $printErrorMessage = true) {
+		return $this->call($apiName, $parameters, $printErrorMessage, Client::HTTP_METHOD_PUT);
 	}
 
 	/**
@@ -146,11 +144,11 @@ class ConferenceApiClient {
 	 *
 	 * @param string $apiName           The name of the API to call
 	 * @param array  $parameters        The parameters to send with the call
-	 * @param bool   $showDrupalMessage Whether to show a Drupal error message in case of failure
+	 * @param bool   $printErrorMessage Whether to print an error message in case of failure
 	 *
 	 * @return mixed The response message if found, else null is returned
 	 */
-	public function delete($apiName, array $parameters, $showDrupalMessage = true) {
-		return $this->call($apiName, $parameters, $showDrupalMessage, Client::HTTP_METHOD_DELETE);
+	public function delete($apiName, array $parameters, $printErrorMessage = true) {
+		return $this->call($apiName, $parameters, $printErrorMessage, Client::HTTP_METHOD_DELETE);
 	}
 } 

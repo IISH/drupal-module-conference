@@ -29,7 +29,7 @@ function iishconference_personalpage_menu() {
 		'file'            => 'personalpage.inc.php',
 	);
 
-	$items[$extraPath . 'personal-page/upload-paper/%'] = array(
+	$items[$extraPath . 'personal-page/upload-paper/%iishconference_paper'] = array(
 		'title'           => 'Upload paper',
 		'description'     => 'Allows a participant to upload a paper',
 		'page callback'   => 'conference_upload_paper',

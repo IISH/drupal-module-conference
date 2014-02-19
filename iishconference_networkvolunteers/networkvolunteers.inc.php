@@ -8,9 +8,9 @@
 function iishconference_networkvolunteers_main() {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		Header("Location: /" . getSetting('pathForMenu') . "login/?backurl=" . urlencode($_SERVER["REQUEST_URI"]));
-		die('Go to <a href="/' . getSetting('pathForMenu') . 'login/?backurl=' . urlencode($_SERVER["REQUEST_URI"]) .
-			'">login</a> page.');
+		header('Location: ' . url(getSetting('pathForMenu') . 'login', array('query' => drupal_get_destination())));
+		die(t('Go to !login page.', array('!login' => l(t('login'), getSetting('pathForMenu') . 'login',
+			array('query' => drupal_get_destination())))));
 	}
 
 	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
@@ -41,16 +41,16 @@ function iishconference_networkvolunteers_main() {
 /**
  * Returns tables with all participant volunteers of the given network
  *
- * @param int $networkId The network in question
+ * @param NetworkApi|null $network The network in question
  *
  * @return string The HTML for the page
  */
-function iishconference_networkvolunteers_detail($networkId) {
+function iishconference_networkvolunteers_detail($network) {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		Header("Location: /" . getSetting('pathForMenu') . "login/?backurl=" . urlencode($_SERVER["REQUEST_URI"]));
-		die('Go to <a href="/' . getSetting('pathForMenu') . 'login/?backurl=' . urlencode($_SERVER["REQUEST_URI"]) .
-			'">login</a> page.');
+		header('Location: ' . url(getSetting('pathForMenu') . 'login', array('query' => drupal_get_destination())));
+		die(t('Go to !login page.', array('!login' => l(t('login'), getSetting('pathForMenu') . 'login',
+			array('query' => drupal_get_destination())))));
 	}
 
 	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
@@ -59,8 +59,11 @@ function iishconference_networkvolunteers_detail($networkId) {
 		return '';
 	}
 
-	$networkId = EasyProtection::easyIntegerProtection($networkId);
-	$network = CRUDApiMisc::getById(new NetworkApi(), $networkId);
+	if ($network === null) {
+		drupal_set_message(t('The network could not be found.'), 'error');
+
+		return '';
+	}
 
 	$header = theme('iishconference_navigation', array(
 		'list'     => iishconference_networkvolunteers_get_networks(),

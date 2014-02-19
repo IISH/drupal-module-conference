@@ -13,8 +13,8 @@ class ParticipantTypeApi extends CRUDApiClient {
 	protected $type;
 	protected $withPaper;
 
-	public static function getListWithCriteria(array $properties, $showDrupalMessage = true) {
-		return parent::getListWithCriteriaForClass(__CLASS__, $properties, $showDrupalMessage);
+	public static function getListWithCriteria(array $properties, $printErrorMessage = true) {
+		return parent::getListWithCriteriaForClass(__CLASS__, $properties, $printErrorMessage);
 	}
 
 	/**

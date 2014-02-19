@@ -29,7 +29,7 @@ function iishconference_networkvolunteers_menu() {
 		'file'            => 'networkvolunteers.inc.php',
 	);
 
-	$items[$extraPath . 'networkvolunteers/%'] = array(
+	$items[$extraPath . 'networkvolunteers/%iishconference_network'] = array(
 		'title'           => 'Network and its volunteers',
 		'description'     => 'Network and its volunteers ...description...',
 		'page callback'   => 'iishconference_networkvolunteers_detail',

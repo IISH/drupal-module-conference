@@ -19,8 +19,8 @@ class ParticipantDateApi extends CRUDApiClient {
 	private $user;
 	private $extras;
 
-	public static function getListWithCriteria(array $properties, $showDrupalMessage = true) {
-		return parent::getListWithCriteriaForClass(__CLASS__, $properties, $showDrupalMessage);
+	public static function getListWithCriteria(array $properties, $printErrorMessage = true) {
+		return parent::getListWithCriteriaForClass(__CLASS__, $properties, $printErrorMessage);
 	}
 
 	/**
@@ -133,8 +133,8 @@ class ParticipantDateApi extends CRUDApiClient {
 		$this->toSave['feeState.id'] = $feeStateId;
 	}
 
-	public function save($showDrupalMessage = true) {
-		parent::save($showDrupalMessage);
+	public function save($printErrorMessage = true) {
+		parent::save($printErrorMessage);
 
 		// Make sure to invalidate the cached participant
 		unset($_SESSION['conference']['participant']);

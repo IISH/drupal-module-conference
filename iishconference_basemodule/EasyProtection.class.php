@@ -25,13 +25,14 @@ class EasyProtection {
 	/**
 	 * Tries to remove all unwanted characters and only return the integer
 	 *
-	 * @param string $text   The text to obtain the integer from
-	 * @param int    $length The maximum character length of the integer
+	 * @param string $text          The text to obtain the integer from
+	 * @param bool   $allowNegative Whether to allow negative integers
+	 * @param int    $length        The maximum character length of the integer
 	 *
 	 * @return int|null The integer
 	 */
-	public static function easyIntegerProtection($text, $length = 6) {
-		$text = preg_replace("/[^0-9]/", ' ', $text);
+	public static function easyIntegerProtection($text, $allowNegative = false, $length = 6) {
+		$text = $allowNegative ? preg_replace("/[^0-9-]/", ' ', $text) : preg_replace("/[^0-9]/", ' ', $text);
 		$text = trim($text);
 		$text = self::getLeftPart($text, ' ');
 		$text = substr($text, 0, $length);

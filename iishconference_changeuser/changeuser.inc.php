@@ -5,17 +5,19 @@
  */
 function conference_changeuser_form($form, &$form_state) {
 	if (!LoggedInUserDetails::isLoggedIn()) {
-		// if not logged in, redirect to login page
-		Header('Location: /' . getSetting('pathForMenu') . 'login?backurl=' . urlencode($_SERVER["REQUEST_URI"]));
-		die('Go to <a href="/' . getSetting('pathForMenu') . 'login?backurl=' . urlencode($_SERVER["REQUEST_URI"]) .
-		    '">login</a> page.');
+		// redirect to login page
+		header('Location: ' . url(getSetting('pathForMenu') . 'login', array('query' => drupal_get_destination())));
+		die(t('Go to !login page.', array('!login' => l(t('login'), getSetting('pathForMenu') . 'login',
+			array('query' => drupal_get_destination())))));
 	}
 
 	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::hasFullRights()) {
-		drupal_set_message(t("Access denied.") . "<br />" . t("Current user ( @user ) is not a conference crew member.",
-				array('@user' => LoggedInUserDetails::getUser())) . "<br />" . t("Please") . "<a href=\"/" .
-		                   getSetting('pathForMenu') . 'login?backurl=' . urlencode($_SERVER["REQUEST_URI"]) . "\">" .
-		                   t("log out and login") . "</a>" . t("as a crew member."), 'error');
+		drupal_set_message(t('Access denied.') . '<br />' .
+			t('Current user ( @user ) is not a conference crew member.',
+				array('@user' => LoggedInUserDetails::getUser())) . '<br />' .
+			t('Please !login as a crew member.',
+				array('!login' => l(t('log out and login'), getSetting('pathForMenu') . 'login',
+					array('query' => drupal_get_destination())))), 'error');
 
 		return '';
 	}

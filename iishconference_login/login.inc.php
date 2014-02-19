@@ -90,29 +90,11 @@ function conference_login_form_validate($form, &$form_state) {
  * TODOEXPLAIN
  */
 function conference_login_form_submit($form, &$form_state) {
-	LoggedInUserDetails::setCurrentlyLoggedIn(7877);
-	drupal_goto();
-
-	// TODO: Original code below
-
 	$loginApi = new LoginApi();
 	$user_status = $loginApi->login($form_state['values']['email'], $form_state['values']['password']);
 
 	if ($user_status == LoggedInUserDetails::USER_STATUS_EXISTS) {
-		if (!isset($_GET["backurl"])) {
-			$_GET["backurl"] = '';
-		}
-
-		$nextpage = $nextpage = '/' . getSetting('pathForMenu') . 'personal-page';
-		if ($nextpage !== '') {
-			$nextpage = trim($_GET["backurl"]);
-			$nextpage = protectBackUrl($nextpage);
-		}
-
-		// redirect to personal page
-		$form_state['redirect'] = array(
-			$nextpage,
-		);
+		drupal_goto(getSetting('pathForMenu') . 'personal-page');
 	}
 	else {
 		$form_state['rebuild'] = true;

@@ -13,23 +13,19 @@ define('UPLOAD_PAPER_ERROR_EXT_NOT_ALLOWED', 5);
 define('UPLOAD_PAPER_ERROR_OTHER', 6);
 
 /**
- * Allows participants to upload papers through the CMS API
+ * Allows participants to upload paper files through the CMS API
  *
- * @param int $paperId The paper of which a paper will be uploaded
+ * @param PaperApi|null $paper The paper of which a file will be uploaded
  *
- * @return string The HTML for participants to upload their paper
+ * @return string The HTML for participants to upload their paper file
  */
-function conference_upload_paper($paperId) {
+function conference_upload_paper($paper) {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		Header("Location: /" . getSetting('pathForMenu') . "login/?backurl=" . urlencode($_SERVER["REQUEST_URI"]));
-		die('Go to <a href="/' . getSetting('pathForMenu') . 'login/?backurl=' . urlencode($_SERVER["REQUEST_URI"]) .
-			'">login</a> page.');
+		header('Location: ' . url(getSetting('pathForMenu') . 'login', array('query' => drupal_get_destination())));
+		die(t('Go to !login page.', array('!login' => l(t('login'), getSetting('pathForMenu') . 'login',
+			array('query' => drupal_get_destination())))));
 	}
-
-	$ecaSettings = CachedConferenceApi::getSettings();
-	$paperId = EasyProtection::easyIntegerProtection($paperId);
-	$paper = CRUDApiMisc::getById(new PaperApi(), $paperId);
 
 	if ($paper === null) {
 		drupal_set_message(t('Unfortunately, this paper does not seem to exist.'), 'error');
@@ -49,11 +45,12 @@ function conference_upload_paper($paperId) {
 			variable_get('conference_date_code') . '/' . 'userApi/uploadPaper?access_token=' . $token;
 
 		$paperDownloadLink = variable_get('conference_base_url') . variable_get('conference_event_code') . '/' .
-			variable_get('conference_date_code') . '/' . 'userApi/downloadPaper/' . $paperId;
+			variable_get('conference_date_code') . '/' . 'userApi/downloadPaper/' . $paper->getId();
 
+		$ecaSettings = CachedConferenceApi::getSettings();
 		$allowedExtensions = $ecaSettings[SettingsApi::ALLOWED_PAPER_EXTENSIONS];
 		$maxSize = $ecaSettings[SettingsApi::MAX_UPLOAD_SIZE_PAPER];
-		$form = drupal_get_form('conference_upload_paper_form', $paperId);
+		$form = drupal_get_form('conference_upload_paper_form', $paper);
 
 		$params = drupal_get_query_parameters();
 		if (isset($params['e'])) {
@@ -115,10 +112,10 @@ function conference_upload_paper_form($form, &$form_state) {
  * Implements hook_submit()
  */
 function conference_upload_paper_form_submit($form, &$form_state) {
-	$paperId = $form_state['build_info']['args'][0];
+	$paper = $form_state['build_info']['args'][0];
 
 	$removePaperApi = new RemovePaperApi();
-	if ($removePaperApi->removePaper($paperId)) {
+	if ($removePaperApi->removePaper($paper)) {
 		drupal_set_message(t('Your paper has been successfully removed!'), 'status');
 	}
 }

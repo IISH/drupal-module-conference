@@ -96,6 +96,7 @@ function iishconference_basemodule_theme() {
 				'current'  => null,
 				'prevLink' => null,
 				'curUrl'   => null,
+				'curQuery' => array(),
 			),
 		),
 	);
@@ -170,23 +171,81 @@ function theme_iishconference_container_field($variables) {
  * Returns the HTML for a navigational header
  */
 function theme_iishconference_navigation($variables) {
-	$prevNext = CRUDApiClient::getPrevNext($variables['list'], $variables['current']);
-	$prev = '« ' . t('prev');
-	$next = t('next') . ' »';
+	$prevNextHtml = '';
+	if ($variables['current'] !== null) {
+		$prevNext = CRUDApiClient::getPrevNext($variables['list'], $variables['current']);
+		$prev = '« ' . t('prev');
+		$next = t('next') . ' »';
 
-	if ($prevNext[0] !== null) {
-		$prev = l($prev, $variables['curUrl'] . $prevNext[0]->getId(), array('attributes' => array(
-			'alt'   => t('previous'),
-			'title' => t('previous'),
-		)));
-	}
-	if ($prevNext[1] !== null) {
-		$next = l($next, $variables['curUrl'] . $prevNext[1]->getId(), array('attributes' => array(
-			'alt'   => t('next'),
-			'title' => t('next'),
-		)));
+		if ($prevNext[0] !== null) {
+			$prev = l($prev, $variables['curUrl'] . $prevNext[0]->getId(), array('attributes' => array(
+				'alt'   => t('previous'),
+				'title' => t('previous'),
+			), 'query' => $variables['curQuery']));
+		}
+		if ($prevNext[1] !== null) {
+			$next = l($next, $variables['curUrl'] . $prevNext[1]->getId(), array('attributes' => array(
+				'alt'   => t('next'),
+				'title' => t('next'),
+			), 'query' => $variables['curQuery']));
+		}
+
+		$prevNextHtml = '<td align="right" class="noborder">' . $prev . ' &nbsp; ' . $next . '</td>';
 	}
 
 	return '<table class="noborder"><tr><td class="noborder"><strong>' . $variables['prevLink'] . '</strong></td>' .
-	'<td align=right class="noborder">' . $prev . ' &nbsp; ' . $next . '</td></tr></table><br />';
+	$prevNextHtml . '</tr></table><br />';
+}
+
+/**
+ * Fetches a network based on a network id
+ *
+ * @param mixed $id The network id
+ *
+ * @return NetworkApi|null The network in question, or null if not found
+ */
+function iishconference_network_load($id) {
+	$id = EasyProtection::easyIntegerProtection($id);
+	$networks = CachedConferenceApi::getNetworks();
+
+	foreach ($networks as $network) {
+		if ($network->getId() == $id) {
+			return $network;
+		}
+	}
+
+	return null;
+}
+
+/**
+ * Fetches a session based on a session id
+ *
+ * @param mixed $id The session id
+ *
+ * @return SessionApi|null The session in question, or null if not found
+ */
+function iishconference_session_load($id) {
+	return CRUDApiMisc::getById(new SessionApi(), EasyProtection::easyIntegerProtection($id));
+}
+
+/**
+ * Fetches an email based on an email id
+ *
+ * @param mixed $id The email id
+ *
+ * @return SentEmailApi|null The email in question, or null if not found
+ */
+function iishconference_email_load($id) {
+	return CRUDApiMisc::getById(new SentEmailApi(), EasyProtection::easyIntegerProtection($id));
+}
+
+/**
+ * Fetches a paper based on a paper id
+ *
+ * @param mixed $id The paper id
+ *
+ * @return PaperApi|null The paper in question, or null if not found
+ */
+function iishconference_paper_load($id) {
+	return CRUDApiMisc::getById(new PaperApi(), EasyProtection::easyIntegerProtection($id));
 }

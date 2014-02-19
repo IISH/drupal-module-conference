@@ -14,12 +14,12 @@ class NetworkApi extends CRUDApiClient {
 
 	private $chairs;
 
-	public static function getListWithCriteria(array $properties, $showDrupalMessage = true) {
+	public static function getListWithCriteria(array $properties, $printErrorMessage = true) {
 		// Make sure we only obtain networks that can be shown online
 		$prop = new ApiCriteriaBuilder();
 		$properties = array_merge($prop->eq('showOnline', true)->get(), $properties);
 
-		return parent::getListWithCriteriaForClass(__CLASS__, $properties, $showDrupalMessage);
+		return parent::getListWithCriteriaForClass(__CLASS__, $properties, $printErrorMessage);
 	}
 
 	/**
@@ -109,6 +109,21 @@ class NetworkApi extends CRUDApiClient {
 	public function getName() {
 		return $this->name;
 	}
+
+	/**
+	 * Compare two networks, by name
+	 *
+	 * @param NetworkApi $instance Compare this instance with the given instance
+	 *
+	 * @return int &lt; 0 if <i>$instA</i> is less than
+	 * <i>$instB</i>; &gt; 0 if <i>$instA</i>
+	 * is greater than <i>$instB</i>, and 0 if they are
+	 * equal.
+	 */
+	protected function compareWith($instance) {
+		return strcmp(strtolower($this->getName()), strtolower($instance->getName()));
+	}
+
 
 	public function __toString() {
 		return $this->getName();

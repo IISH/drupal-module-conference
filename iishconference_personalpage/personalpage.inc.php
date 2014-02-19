@@ -4,13 +4,6 @@
  * Creates the personal page
  */
 function conference_personalpage_main() {
-	/*if (!LoggedInUserDetails::isLoggedIn()) {
-		// redirect to login page
-		Header("Location: /" . getSetting('pathForMenu') . "login/?backurl=" . urlencode($_SERVER["REQUEST_URI"]));
-		die('Go to <a href="/' . getSetting('pathForMenu') . 'login/?backurl=' . urlencode($_SERVER["REQUEST_URI"]) .
-			'">login</a> page.');
-	}*/
-
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
 		header('Location: ' . url(getSetting('pathForMenu') . 'login', array('query' => drupal_get_destination())));
@@ -28,73 +21,61 @@ function conference_personalpage_main() {
 
 	$personalInfoContent = array(theme('iishconference_container_header', array('text' => t('Personal Info'))));
 
-	$personalInfoContent[] = theme('iishconference_container_field',
-		array(
-			'label' => 'First name',
-			'value' => $userDetails->getFirstName()
-		));
-	$personalInfoContent[] = theme('iishconference_container_field',
-		array(
-			'label' => 'Last name',
-			'value' => $userDetails->getLastName()
-		));
-	$personalInfoContent[] = theme('iishconference_container_field',
-		array(
-			'label' => 'Gender',
-			'value' => ConferenceMisc::getGender($userDetails->getGender())
-		));
-	$personalInfoContent[] = theme('iishconference_container_field',
-		array(
-			'label' => 'Organisation',
-			'value' => $userDetails->getOrganisation()
-		));
-	$personalInfoContent[] = theme('iishconference_container_field',
-		array(
-			'label' => 'Department',
-			'value' => $userDetails->getDepartment()
-		));
-	$personalInfoContent[] = theme('iishconference_container_field',
-		array(
-			'label' => 'E-mail',
-			'value' => $userDetails->getEmail()
-		));
+	$personalInfoContent[] = theme('iishconference_container_field', array(
+		'label' => 'First name',
+		'value' => $userDetails->getFirstName()
+	));
+	$personalInfoContent[] = theme('iishconference_container_field', array(
+		'label' => 'Last name',
+		'value' => $userDetails->getLastName()
+	));
+	$personalInfoContent[] = theme('iishconference_container_field', array(
+		'label' => 'Gender',
+		'value' => ConferenceMisc::getGender($userDetails->getGender())
+	));
+	$personalInfoContent[] = theme('iishconference_container_field', array(
+		'label' => 'Organisation',
+		'value' => $userDetails->getOrganisation()
+	));
+	$personalInfoContent[] = theme('iishconference_container_field', array(
+		'label' => 'Department',
+		'value' => $userDetails->getDepartment()
+	));
+	$personalInfoContent[] = theme('iishconference_container_field', array(
+		'label' => 'E-mail',
+		'value' => $userDetails->getEmail()
+	));
 
 	if (LoggedInUserDetails::isAParticipant()) {
-		$personalInfoContent[] = theme('iishconference_container_field',
-			array(
-				'label' => '(PhD) Student?',
-				'value' => ConferenceMisc::getYesOrNo($participantDateDetails->getStudent())
-			));
+		$personalInfoContent[] = theme('iishconference_container_field', array(
+			'label' => '(PhD) Student?',
+			'value' => ConferenceMisc::getYesOrNo($participantDateDetails->getStudent())
+		));
 	}
 
-	$personalInfoContent[] = theme('iishconference_container_field',
-		array(
-			'label' => 'City',
-			'value' => $userDetails->getCity()
-		));
-	$personalInfoContent[] = theme('iishconference_container_field',
-		array(
-			'label' => 'Country',
-			'value' => $userDetails->getCountry()->getNameEnglish()
-		));
-	$personalInfoContent[] = theme('iishconference_container_field',
-		array(
-			'label' => 'Phone number',
-			'value' => $userDetails->getPhone()
-		));
-	$personalInfoContent[] = theme('iishconference_container_field',
-		array(
-			'label' => 'Mobile number',
-			'value' => $userDetails->getMobile()
-		));
+	$personalInfoContent[] = theme('iishconference_container_field', array(
+		'label' => 'City',
+		'value' => $userDetails->getCity()
+	));
+	$personalInfoContent[] = theme('iishconference_container_field', array(
+		'label' => 'Country',
+		'value' => $userDetails->getCountry()->getNameEnglish()
+	));
+	$personalInfoContent[] = theme('iishconference_container_field', array(
+		'label' => 'Phone number',
+		'value' => $userDetails->getPhone()
+	));
+	$personalInfoContent[] = theme('iishconference_container_field', array(
+		'label' => 'Mobile number',
+		'value' => $userDetails->getMobile()
+	));
 
 	if (getSetting('show_cv') == 1) {
-		$personalInfoContent[] = theme('iishconference_container_field',
-			array(
-				'label'          => 'Curriculum Vitae',
-				'value'          => $userDetails->getCV(),
-				'valueOnNewLine' => true
-			));
+		$personalInfoContent[] = theme('iishconference_container_field', array(
+			'label'          => 'Curriculum Vitae',
+			'value'          => $userDetails->getCV(),
+			'valueOnNewLine' => true
+		));
 	}
 
 	// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
@@ -169,54 +150,47 @@ function conference_personalpage_main() {
 			$sessionPapers = PaperApi::getPapersWithSession($papers, $session->getId());
 
 			foreach ($networks as $network) {
-				$sessionContainer[] = theme('iishconference_container_field',
-					array(
-						'label' => 'Network name',
-						'value' => $network->getName()
-					));
-				$sessionContainer[] = theme('iishconference_container_field',
-					array(
-						'label' => 'Network chairs',
-						'value' => implode(', ', $network->getChairs())
-					));
+				$sessionContainer[] = theme('iishconference_container_field', array(
+					'label' => 'Network name',
+					'value' => $network->getName()
+				));
+				$sessionContainer[] = theme('iishconference_container_field', array(
+					'label' => 'Network chairs',
+					'value' => implode(', ', $network->getChairs())
+				));
 			}
 
 			$sessionName = $session->getName() . ' <em>(' . $session->getState()->getDescription() . ')</em>';
-			$sessionContainer[] = theme('iishconference_container_field',
-				array(
-					'label'       => 'Session name',
-					'value'       => $sessionName,
-					'valueIsHTML' => true
-				));
+			$sessionContainer[] = theme('iishconference_container_field', array(
+				'label'       => 'Session name',
+				'value'       => $sessionName,
+				'valueIsHTML' => true
+			));
 
 			$plannedText = '<span class="eca_warning heavy">' . $planned->getDay()
 					->getDayFormatted("l d F Y") . ' / ' . $planned->getDateTimePeriod() . ' / ' .
 				$planned->getRoomName() . '</span>';
-			$sessionContainer[] = theme('iishconference_container_field',
-				array(
-					'label'       => 'Session Date / Time / Room',
-					'value'       => $plannedText,
-					'valueIsHTML' => true
-				));
+			$sessionContainer[] = theme('iishconference_container_field', array(
+				'label'       => 'Session Date / Time / Room',
+				'value'       => $plannedText,
+				'valueIsHTML' => true
+			));
 
 			$submittedBy = (is_object($session->getAddedBy())) ? $session->getAddedBy()->getFullName() : null;
-			$sessionContainer[] = theme('iishconference_container_field',
-				array(
-					'label' => 'Session submitted by',
-					'value' => $submittedBy
-				));
+			$sessionContainer[] = theme('iishconference_container_field', array(
+				'label' => 'Session submitted by',
+				'value' => $submittedBy
+			));
 
-			$sessionContainer[] = theme('iishconference_container_field',
-				array(
-					'label' => 'Your function in session',
-					'value' => implode(', ', $functionsInSession)
-				));
-			$sessionContainer[] = theme('iishconference_container_field',
-				array(
-					'label'          => 'Session abstract',
-					'value'          => $session->getAbstr(),
-					'valueOnNewLine' => true
-				));
+			$sessionContainer[] = theme('iishconference_container_field', array(
+				'label' => 'Your function in session',
+				'value' => implode(', ', $functionsInSession)
+			));
+			$sessionContainer[] = theme('iishconference_container_field', array(
+				'label'          => 'Session abstract',
+				'value'          => $session->getAbstr(),
+				'valueOnNewLine' => true
+			));
 
 			// show paper info
 			if (count($sessionPapers) > 0) {
@@ -263,34 +237,33 @@ function conference_personalpage_main() {
 		$networksAsDiscussant = ParticipantVolunteeringApi::getAllNetworksForVolunteering($allVolunteering,
 			getSetting('volunteering_discussant'));
 
+		CRUDApiClient::sort($networksAsChair);
+		CRUDApiClient::sort($networksAsDiscussant);
+
 		$chairDiscussantContainer =
 			array(theme('iishconference_container_header', array('text' => t('Chair / Discussant pool'))));
-		$chairDiscussantContainer[] = theme('iishconference_container_field',
-			array(
-				'label' => 'I would like to volunteer as Chair?',
-				'value' => ConferenceMisc::getYesOrNo(count($networksAsChair) > 0)
-			));
+		$chairDiscussantContainer[] = theme('iishconference_container_field', array(
+			'label' => 'I would like to volunteer as Chair?',
+			'value' => ConferenceMisc::getYesOrNo(count($networksAsChair) > 0)
+		));
 
 		if ((getSetting('show_network') == 1) && (count($networksAsChair) > 0)) {
-			$chairDiscussantContainer[] = theme('iishconference_container_field',
-				array(
-					'label' => 'Network(s)',
-					'value' => implode(', ', $networksAsChair)
-				));
+			$chairDiscussantContainer[] = theme('iishconference_container_field', array(
+				'label' => 'Network(s)',
+				'value' => implode(', ', $networksAsChair)
+			));
 		}
 
-		$chairDiscussantContainer[] = theme('iishconference_container_field',
-			array(
-				'label' => 'I would like to volunteer as Discussant?',
-				'value' => ConferenceMisc::getYesOrNo(count($networksAsDiscussant) > 0)
-			));
+		$chairDiscussantContainer[] = theme('iishconference_container_field', array(
+			'label' => 'I would like to volunteer as Discussant?',
+			'value' => ConferenceMisc::getYesOrNo(count($networksAsDiscussant) > 0)
+		));
 
 		if ((getSetting('show_network') == 1) && (count($networksAsDiscussant) > 0)) {
-			$chairDiscussantContainer[] = theme('iishconference_container_field',
-				array(
-					'label' => 'Network(s)',
-					'value' => implode(', ', $networksAsDiscussant)
-				));
+			$chairDiscussantContainer[] = theme('iishconference_container_field', array(
+				'label' => 'Network(s)',
+				'value' => implode(', ', $networksAsDiscussant)
+			));
 		}
 
 		$volunteeringContainers[] = $chairDiscussantContainer;
@@ -304,39 +277,59 @@ function conference_personalpage_main() {
 			$networksAsPupil = ParticipantVolunteeringApi::getAllNetworksForVolunteering($allVolunteering,
 				getSetting('volunteering_languagepupil'));
 
+			CRUDApiClient::sort($networksAsCoach);
+			CRUDApiClient::sort($networksAsPupil);
+
 			$languageFound = false;
 			$languageContainer =
 				array(theme('iishconference_container_header', array('text' => t('English Language Coach'))));
 
 			if (count($networksAsCoach) > 0) {
 				$languageFound = true;
-				$languageContainer[] = theme('iishconference_container_field',
-					array(
-						'label' => ConferenceMisc::getLanguageCoachPupil('coach')
-					));
-				$languageContainer[] = theme('iishconference_container_field',
-					array(
-						'label' => 'Network(s)',
-						'value' => implode(', ', $networksAsCoach)
-					));
+				$languageContainer[] = theme('iishconference_container_field', array(
+					'label'          => 'I would like to be an English Language Coach in the following network(s):',
+					'value'          => str_replace("\n", '', theme('item_list', array('items' => $networksAsCoach))),
+					'valueIsHTML'    => true,
+					'valueOnNewLine' => true
+				));
 			}
 
 			if (count($networksAsPupil) > 0) {
 				$languageFound = true;
-				$languageContainer[] =
-					theme('iishconference_container_field',
-						array('label' => ConferenceMisc::getLanguageCoachPupil('pupil')));
-				$languageContainer[] = theme('iishconference_container_field',
-					array(
-						'label' => 'Network(s)',
-						'value' => implode(', ', $networksAsPupil)
-					));
+				$networksAndUsers = ParticipantVolunteeringApi::getAllUsersWIthTypeForNetworks(
+					getSetting('volunteering_languagecoach'), $networksAsPupil);
+
+				$list = array();
+				foreach ($networksAsPupil as $network) {
+					CRUDApiClient::sort($networksAndUsers[$network->getId()]);
+					$emailList = array();
+					foreach ($networksAndUsers[$network->getId()] as $user) {
+						$emailList[] =
+							l($user->getFullName(), 'mailto:' . $user->getEmail(), array('absolute' => true));
+					}
+
+					if (count($emailList) > 0) {
+						$list[] = '<strong>' . $network->getName() . '</strong>: ' .
+							ConferenceMisc::getEnumSingleLine($emailList) . '';
+					}
+					else {
+						$list[] =
+							'<strong>' . $network->getName() . '</strong>: <em>' .
+							t('No language coaches found in this network!') . '</em>';
+					}
+				}
+
+				$languageContainer[] = theme('iishconference_container_field', array(
+					'label'          => 'I need some help from one of the following English Language Coaches in each chosen network:',
+					'value'          => str_replace("\n", '', theme('item_list', array('items' => $list))),
+					'valueIsHTML'    => true,
+					'valueOnNewLine' => true
+				));
 			}
 
-			if ($languageFound) {
-				$languageContainer[] =
-					theme('iishconference_container_field',
-						array('label' => ConferenceMisc::getLanguageCoachPupil((''))));
+			if (!$languageFound) {
+				$languageContainer[] = theme('iishconference_container_field',
+					array('label' => ConferenceMisc::getLanguageCoachPupil('')));
 			}
 
 			$volunteeringContainers[] = $languageContainer;
@@ -448,47 +441,43 @@ function conference_personalpage_main() {
 function conference_personalpage_paper(&$container, $paper, $participant) {
 	$container[] = theme('iishconference_container_header', array('text' => t('Paper')));
 
-	$container[] = theme('iishconference_container_field', array('label' => 'Title', 'value' => $paper->getTitle()));
-	$container[] = theme('iishconference_container_field',
-		array(
-			'label' => 'Paper state',
-			'value' => $paper->getState()->getDescription()
-		));
-	$container[] = theme('iishconference_container_field',
-		array(
-			'label'          => 'Abstract',
-			'value'          => $paper->getAbstr(),
-			'valueOnNewLine' => true
-		));
-	$container[] = theme('iishconference_container_field',
-		array(
-			'label' => 'Co-author(s)',
-			'value' => $paper->getCoAuthors()
-		));
+	$container[] = theme('iishconference_container_field', array(
+		'label' => 'Title',
+		'value' => $paper->getTitle())
+	);
+	$container[] = theme('iishconference_container_field', array(
+		'label' => 'Paper state',
+		'value' => $paper->getState()->getDescription()
+	));
+	$container[] = theme('iishconference_container_field', array(
+		'label'          => 'Abstract',
+		'value'          => $paper->getAbstr(),
+		'valueOnNewLine' => true
+	));
+	$container[] = theme('iishconference_container_field', array(
+		'label' => 'Co-author(s)',
+		'value' => $paper->getCoAuthors()
+	));
 
 	if ((getSetting('show_award') == 1) && $participant->getStudent()) {
 		$awardText = ConferenceMisc::getYesOrNo($participant->getAward());
 		$awardText .= '&nbsp; <em>(' . l(t('more about the award'), 'award') . ')</em>';
-		$container[] = theme('iishconference_container_field',
-			array(
-				'label'       => getSetting('award_name') . ' award?',
-				'value'       => $awardText,
-				'valueIsHTML' => true
-			));
+		$container[] = theme('iishconference_container_field', array(
+			'label'       => getSetting('award_name') . ' award?',
+			'value'       => $awardText,
+			'valueIsHTML' => true
+		));
 	}
 
-	$container[] = theme('iishconference_container_field',
-		array(
-			'label' => 'Audio/visual equipment',
-			'value' => implode(', ', $paper->getEquipment())
-		));
-	$container[] = theme('iishconference_container_field',
-		array(
-			'label' => 'Extra audio/visual request',
-			'value' => $paper->getEquipmentComment()
-		));
+	$container[] = theme('iishconference_container_field', array(
+		'label' => 'Audio/visual equipment',
+		'value' => implode(', ', $paper->getEquipment())
+	));
+	$container[] = theme('iishconference_container_field', array(
+		'label' => 'Extra audio/visual request',
+		'value' => $paper->getEquipmentComment()
+	));
 
-	$container[] =
-		'<br /><b> ' .
+	$container[] = '<br /><b> ' .
 		l(t('Upload paper'), getSetting('pathForMenu') . 'personal-page/upload-paper/' . $paper->getId()) . '</b>';
 }

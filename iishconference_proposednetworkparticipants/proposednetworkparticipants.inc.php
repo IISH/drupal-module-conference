@@ -8,9 +8,9 @@
 function iishconference_proposednetworkparticipants_main() {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		Header("Location: /" . getSetting('pathForMenu') . "login/?backurl=" . urlencode($_SERVER["REQUEST_URI"]));
-		die('Go to <a href="/' . getSetting('pathForMenu') . 'login/?backurl=' . urlencode($_SERVER["REQUEST_URI"]) .
-			'">login</a> page.');
+		header('Location: ' . url(getSetting('pathForMenu') . 'login', array('query' => drupal_get_destination())));
+		die(t('Go to !login page.', array('!login' => l(t('login'), getSetting('pathForMenu') . 'login',
+			array('query' => drupal_get_destination())))));
 	}
 
 	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
@@ -53,16 +53,16 @@ function iishconference_proposednetworkparticipants_main() {
 /**
  * Returns a list of all proposed papers of participants for the given network
  *
- * @param int $networkId The id of the network in question
+ * @param NetworkApi|null $network The network in question
  *
  * @return string The HTML listing all participants and their papers
  */
-function iishconference_proposednetworkparticipants_detail($networkId) {
+function iishconference_proposednetworkparticipants_detail($network) {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		Header("Location: /" . getSetting('pathForMenu') . "login/?backurl=" . urlencode($_SERVER["REQUEST_URI"]));
-		die('Go to <a href="/' . getSetting('pathForMenu') . 'login/?backurl=' . urlencode($_SERVER["REQUEST_URI"]) .
-			'">login</a> page.');
+		header('Location: ' . url(getSetting('pathForMenu') . 'login', array('query' => drupal_get_destination())));
+		die(t('Go to !login page.', array('!login' => l(t('login'), getSetting('pathForMenu') . 'login',
+			array('query' => drupal_get_destination())))));
 	}
 
 	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
@@ -70,9 +70,6 @@ function iishconference_proposednetworkparticipants_detail($networkId) {
 
 		return '';
 	}
-
-	$networkId = EasyProtection::easyIntegerProtection($networkId);
-	$network = CRUDApiMisc::getById(new NetworkApi(), $networkId);
 
 	if (!$network) {
 		drupal_set_message(t('The network does not exist.'), 'error');
