@@ -1,0 +1,28 @@
+<?php
+
+/**
+ * Implements hook_help()
+ */
+function iishconference_electionadvisory_help($path, $arg) {
+	switch ($path) {
+		case "admin/help#iishconference_electionadvisory":
+			return '<p><strong>About the module</strong><br><br>...</p>';
+	}
+}
+
+/**
+ * Implements hook_menu()
+ */
+function iishconference_electionadvisory_menu() {
+	$extraPath = getSetting('pathForMenu');
+
+	$items[$extraPath . 'election-advisory-board'] = array(
+		'title'           => 'Election \'Advisory board\'',
+		'page callback'   => 'iishconference_electionadvisory_main',
+		'access callback' => true,
+		'type'            => MENU_NORMAL_ITEM,
+		'file'            => 'iishconference_electionadvisory_main.inc.php',
+	);
+
+	return $items;
+}

@@ -11,6 +11,7 @@ class SettingsApi {
 	const MAX_UPLOAD_SIZE_PAPER = 'max_upload_size_paper';
 	const ALLOWED_PAPER_EXTENSIONS = 'allowed_paper_extensions';
 	const EMAIL_MAX_NUM_TRIES = 'email_max_num_tries';
+	const NUM_CANDIDATE_VOTES_ADVISORY_BOARD = 'num_candidate_votes_advisory_board';
 
 	// Email templates
 	const BANK_TRANSFER_EMAIL_TEMPLATE_ID = 'bank_transfer_email_template_id';

@@ -308,10 +308,21 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 			'value'       => l($user->getFullName(), 'mailto:' . $user->getEmail(), array('absolute' => true)),
 			'valueIsHTML' => true,
 		));
-		$result .= theme('iishconference_container_field', array(
-			'label' => t('Organisation'),
-			'value' => $user->getOrganisation(),
-		));
+
+		if (($user->getOrganisation() !== null) && (strlen($user->getOrganisation()) > 0)) {
+			$result .= theme('iishconference_container_field', array(
+				'label' => t('Organisation'),
+				'value' => $user->getOrganisation(),
+			));
+		}
+
+		if ((getSetting('show_cv') == 1) && ($user->getCv() !== null) && (strlen($user->getCv()) > 0)) {
+			$result .= theme('iishconference_container_field', array(
+				'label'          => t('CV'),
+				'value'          => $user->getCv(),
+				'valueOnNewLine' => true,
+			));
+		}
 
 		if ($type) {
 			$result .= theme('iishconference_container_field', array(

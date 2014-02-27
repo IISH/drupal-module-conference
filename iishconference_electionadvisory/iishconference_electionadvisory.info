@@ -1,0 +1,7 @@
+name = Election advisory board
+description = Allows network chairs to vote for persons on the advisory board
+core = 7.x
+version = 7.x-0.0.1
+package = IISH Conference
+
+dependencies[] = iishconference_basemodule

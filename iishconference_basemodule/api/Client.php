@@ -20,6 +20,9 @@
  * This client is based on the OAuth2 specification draft v2.15
  * http://tools.ietf.org/html/draft-ietf-oauth-v2-15
  *
+ * Note: The original version only worked with PHP 5.3 and higher.
+ * This is an adapted version to make it work with PHP 5.2 as well.
+ *
  * @author      Pierrick Charron <pierrick@webstart.fr>
  * @author      Anis Berejeb <anis.berejeb@gmail.com>
  * @version     1.2-dev

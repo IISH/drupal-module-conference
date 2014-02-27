@@ -23,11 +23,13 @@ files[] = api/SettingsApi.class.php
 
 files[] = api/domain/CountryApi.class.php
 files[] = api/domain/DayApi.class.php
+files[] = api/domain/ElectionsAdvisoryBoardApi.class.php
 files[] = api/domain/EquipmentApi.class.php
 files[] = api/domain/ExtraApi.class.php
 files[] = api/domain/FeeAmountApi.class.php
 files[] = api/domain/FeeStateApi.class.php
 files[] = api/domain/NetworkApi.class.php
+files[] = api/domain/NetworkChairApi.class.php
 files[] = api/domain/PaperApi.class.php
 files[] = api/domain/PaperStateApi.class.php
 files[] = api/domain/ParticipantDateApi.class.php

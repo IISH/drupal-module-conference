@@ -88,7 +88,7 @@ class NetworkApi extends CRUDApiClient {
 	/**
 	 * Returns a list with all the chairs of this network
 	 *
-	 * @return UserApi[] A list of chairs
+	 * @return UserApi[] A list of users who are chairs
 	 */
 	public function getChairs() {
 		if (!$this->chairs) {

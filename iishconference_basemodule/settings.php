@@ -1,13 +1,5 @@
 <?php
-// TODOTODO
-if ( $_SERVER["SERVER_NAME"] == 'esshc.socialhistory.org' || $_SERVER["SERVER_NAME"] == 'backend2.esshc.socialhistory.org' || $_SERVER["SERVER_NAME"] == 'backend1.esshc.socialhistory.org' ) {
-//echo $_SERVER["SERVER_NAME"] . 'LIVE<BR>';
-	$conference_settings['live'] = 1;
-} else {
-//echo $_SERVER["SERVER_NAME"] . 'TEST<BR>';
-	$conference_settings['live'] = 0;
-}
-
+$conference_settings['live'] = 0;
 $conference_settings['db_connection'] = 'conference';
 $conference_settings['date_id'] = 1;
 $conference_settings['event_id'] = 1;
@@ -22,8 +14,8 @@ $conference_settings['urlpersonalpage'] = 'personal-page';
 $conference_settings['urlchangepassword'] = 'change-password';
 $conference_settings['urllogin'] = 'login';
 
-$conference_settings['email_fromname'] = 'Els Hiemstra';
-$conference_settings['email_frompersonname'] = "Els Hiemstra\nConference Organizer";
+$conference_settings['email_fromname'] = 'From name';
+$conference_settings['email_frompersonname'] = "From name\nConference Organizer";
 $conference_settings['email_fromemail'] = 'email@from.com';
 $conference_settings['password_criteria'] = '<br>The new password must be at least 8 characters long and contain at least one lowercase character, one upper case character and one digit.';
 $conference_settings['equipment_beamer_id'] = 5;
@@ -47,7 +39,7 @@ $conference_settings['default_network'] = '';
 $conference_settings['code'] = 'UNKNOWN';
 $conference_settings['code_year'] = 'UNKNOWN 2014';
 $conference_settings['long_code_year'] = 'UNKNOWN Conference 2014';
-$conference_settings['with_kind_regards_name'] = "Els Hiemstra\nConference Organizer";
+$conference_settings['with_kind_regards_name'] = "From name\nConference Organizer";
 
 $conference_settings['show_languagecoachpupil'] = 1;
 $conference_settings['show_cv'] = 0;

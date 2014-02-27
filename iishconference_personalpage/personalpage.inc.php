@@ -70,10 +70,10 @@ function conference_personalpage_main() {
 		'value' => $userDetails->getMobile()
 	));
 
-	if (getSetting('show_cv') == 1) {
+	if (TRUE || getSetting('show_cv') == 1) {
 		$personalInfoContent[] = theme('iishconference_container_field', array(
 			'label'          => 'Curriculum Vitae',
-			'value'          => $userDetails->getCV(),
+			'value'          => $userDetails->getCv(),
 			'valueOnNewLine' => true
 		));
 	}
@@ -399,6 +399,10 @@ function conference_personalpage_main() {
 		if (module_exists('iishconference_proposednetworkparticipants')) {
 			$linksNetworkContainer[] = '&bull; ' . l(t('Participants and their proposed networks'),
 					getSetting('pathForMenu') . 'proposednetworkparticipants') . '<br />';
+		}
+		if (module_exists('iishconference_electionadvisory')) {
+			$linksNetworkContainer[] = '&bull; ' . l(t('Election \'Advisory board\''),
+					getSetting('pathForMenu') . 'election-advisory-board') . '<br />';
 		}
 	}
 
