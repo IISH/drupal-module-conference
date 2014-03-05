@@ -8,8 +8,8 @@
 function iishconference_networkvolunteers_main() {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		header('Location: ' . url(getSetting('pathForMenu') . 'login', array('query' => drupal_get_destination())));
-		die(t('Go to !login page.', array('!login' => l(t('login'), getSetting('pathForMenu') . 'login',
+		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
+		die(t('Go to !login page.', array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 			array('query' => drupal_get_destination())))));
 	}
 
@@ -22,7 +22,7 @@ function iishconference_networkvolunteers_main() {
 	$networks = iishconference_networkvolunteers_get_networks();
 	$links = array();
 	foreach ($networks as $network) {
-		$links[] = l($network->getName(), getSetting('pathForMenu') . 'networkvolunteers/' . $network->getId());
+		$links[] = l($network->getName(), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'networkvolunteers/' . $network->getId());
 	}
 
 	if (count($links) > 0) {
@@ -48,8 +48,8 @@ function iishconference_networkvolunteers_main() {
 function iishconference_networkvolunteers_detail($network) {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		header('Location: ' . url(getSetting('pathForMenu') . 'login', array('query' => drupal_get_destination())));
-		die(t('Go to !login page.', array('!login' => l(t('login'), getSetting('pathForMenu') . 'login',
+		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
+		die(t('Go to !login page.', array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 			array('query' => drupal_get_destination())))));
 	}
 
@@ -68,8 +68,8 @@ function iishconference_networkvolunteers_detail($network) {
 	$header = theme('iishconference_navigation', array(
 		'list'     => iishconference_networkvolunteers_get_networks(),
 		'current'  => $network,
-		'prevLink' => l('« ' . t('Go back to networks list'), getSetting('pathForMenu') . 'networkvolunteers'),
-		'curUrl'   => getSetting('pathForMenu') . 'networkvolunteers/',
+		'prevLink' => l('« ' . t('Go back to networks list'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'networkvolunteers'),
+		'curUrl'   => SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'networkvolunteers/',
 	));
 
 	$chairLinks = array();

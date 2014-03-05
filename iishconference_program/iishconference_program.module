@@ -18,10 +18,10 @@ function iishconference_program_help($path, $arg) {
 function iishconference_program_menu() {
 	$items = array();
 
-	$extraPath = getSetting('pathForMenu');
+	$extraPath = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU);
 
 	$items[$extraPath . 'program'] = array(
-		'title'           => getSetting('onlineprogram_header'),
+		'title'           => SettingsApi::getSetting(SettingsApi::ONLINE_PROGRAM_HEADER),
 		'description'     => 'Program ...description...',
 		'page callback'   => 'iishconference_program',
 		'access callback' => true,

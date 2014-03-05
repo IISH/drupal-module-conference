@@ -147,7 +147,7 @@ abstract class CRUDApiClient {
 	 *
 	 * @return ConferenceApiClient The conference client
 	 */
-	private static function getClient() {
+	protected static function getClient() {
 		if (!self::$client) {
 			self::$client = new ConferenceApiClient();
 		}

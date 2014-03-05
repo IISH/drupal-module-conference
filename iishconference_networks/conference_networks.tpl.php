@@ -1,5 +1,5 @@
 <?php foreach ($variables['networks'] as $network) : ?>
-	<h3><?php print l($network->getName(), getSetting('pathForMenu') . 'networks/' . $network->getId()); ?></h3>
+	<h3><?php print l($network->getName(), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'networks/' . $network->getId()); ?></h3>
 
 	<div class="network">
 		<p><?php print ConferenceMisc::getCleanHTML($network->getComment()); ?></p>

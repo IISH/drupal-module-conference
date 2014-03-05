@@ -42,11 +42,11 @@ function iishconference_userblock_block_view($delta = '') {
 function iishconference_userblock_block_content() {
 	if (LoggedInUserDetails::isLoggedIn()) {
 		return '<span class="conference-userblock">' . t('Welcome') . ' ' .
-		l(LoggedInUserDetails::getUser()->getFullName(), getSetting('pathForMenu') . 'personal-page') . ' | ' .
-		l(t('Log out'), getSetting('pathForMenu') . 'logout') . '</span>';
+		l(LoggedInUserDetails::getUser()->getFullName(), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page') . ' | ' .
+		l(t('Log out'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'logout') . '</span>';
 	}
 	else {
 		return '<span class="conference-userblock">' . t('Please !link.',
-			array('!link' => l(t('log in'), getSetting('pathForMenu') . 'login'))) . '</span>';
+			array('!link' => l(t('log in'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login'))) . '</span>';
 	}
 }

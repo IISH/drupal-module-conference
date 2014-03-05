@@ -30,7 +30,7 @@ function preregister_chairdiscussantpool_edit_form( $form, &$form_state ) {
 		'#default_value' => isset( $_SESSION['storage']['preregister_chairdiscussantpool_volunteerchair'] ) ? $_SESSION['storage']['preregister_chairdiscussantpool_volunteerchair'] : array(), 
 		);
 
-if ( getSetting('show_network') == 1 ) {
+if ( SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1 ) {
 
 	// netwerken
 	$list_of_networks = getArrayOfNetworks();
@@ -60,7 +60,7 @@ if ( getSetting('show_network') == 1 ) {
 			'#title' => 'Proposed network',
 			'#prefix' => '</span><div style="display:none;">', 
 			'#suffix' => '</div></div>', 
-			'#default_value' => getSetting('default_network'), 
+			'#default_value' => SettingsApi::getSetting(SettingsApi::DEFAULT_NETWORK_ID),
 			);
 
 }
@@ -74,7 +74,7 @@ if ( getSetting('show_network') == 1 ) {
 		'#default_value' => isset( $_SESSION['storage']['preregister_chairdiscussantpool_volunteerdiscussant'] ) ? $_SESSION['storage']['preregister_chairdiscussantpool_volunteerdiscussant'] : array(), 
 		);
 
-if ( getSetting('show_network') == 1 ) {
+if ( SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1 ) {
 
 	$form['volunteerdiscussant_networks'] = array(
 		'#type' => 'select',
@@ -101,7 +101,7 @@ if ( getSetting('show_network') == 1 ) {
 			'#title' => 'Proposed network',
 			'#prefix' => '</span><div style="display:none;">', 
 			'#suffix' => '</div></div>', 
-			'#default_value' => getSetting('default_network'), 
+			'#default_value' => SettingsApi::getSetting(SettingsApi::DEFAULT_NETWORK_ID),
 			);
 
 }
@@ -115,7 +115,7 @@ if ( getSetting('show_network') == 1 ) {
 
 	// ENGLISH LANGUAGE COACH
 
-if ( getSetting('show_languagecoachpupil') == 1 ) {
+if ( SettingsApi::getSetting(SettingsApi::SHOW_LANGUAGE_COACH_PUPIL) == 1 ) {
 
 	$form['ct'.$ct++] = array(
 		'#type' => 'markup',

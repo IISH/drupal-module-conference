@@ -8,8 +8,8 @@
 function iishconference_networksforchairs_main() {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		header('Location: ' . url(getSetting('pathForMenu') . 'login', array('query' => drupal_get_destination())));
-		die(t('Go to !login page.', array('!login' => l(t('login'), getSetting('pathForMenu') . 'login',
+		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
+		die(t('Go to !login page.', array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 			array('query' => drupal_get_destination())))));
 	}
 
@@ -23,7 +23,7 @@ function iishconference_networksforchairs_main() {
 	$search = (isset($params['search']) && (strlen(trim($params['search'])) > 0)) ?
 		EasyProtection::easyStringProtection($params['search']) : null;
 	if ($search !== null) {
-		drupal_goto(getSetting('pathForMenu') . 'networksforchairs/-1', array('query' => array('search' => $search)));
+		drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'networksforchairs/-1', array('query' => array('search' => $search)));
 	}
 
 	$form = drupal_get_form('iishconference_networksforchairs_form');
@@ -34,7 +34,7 @@ function iishconference_networksforchairs_main() {
 		$networks = NetworkApi::getOnlyNetworksOfChair($allNetworks, LoggedInUserDetails::getUser());
 		$links = array();
 		foreach ($networks as $network) {
-			$links[] = l($network->getName(), getSetting('pathForMenu') . 'networksforchairs/' . $network->getId());
+			$links[] = l($network->getName(), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'networksforchairs/' . $network->getId());
 		}
 
 		$output .= theme('item_list', array(
@@ -45,7 +45,7 @@ function iishconference_networksforchairs_main() {
 
 	$links = array();
 	foreach ($allNetworks as $network) {
-		$links[] = l($network->getName(), getSetting('pathForMenu') . 'networksforchairs/' . $network->getId());
+		$links[] = l($network->getName(), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'networksforchairs/' . $network->getId());
 	}
 
 	$output .= theme('item_list', array(
@@ -66,8 +66,8 @@ function iishconference_networksforchairs_main() {
 function iishconference_networksforchairs_sessions($networkId) {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		header('Location: ' . url(getSetting('pathForMenu') . 'login', array('query' => drupal_get_destination())));
-		die(t('Go to !login page.', array('!login' => l(t('login'), getSetting('pathForMenu') . 'login',
+		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
+		die(t('Go to !login page.', array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 			array('query' => drupal_get_destination())))));
 	}
 
@@ -137,7 +137,7 @@ function iishconference_networksforchairs_sessions($networkId) {
 		}
 
 		$links[] = l($name,
-				getSetting('pathForMenu') . 'networksforchairs/' . $networkId . '/' . $session->getId(),
+				SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'networksforchairs/' . $networkId . '/' . $session->getId(),
 				array('query' => array('search' => $search), 'html' => true)) .
 			' <em>(' . $session->getState()->getSimpleDescription() .
 			')</em>';
@@ -145,14 +145,14 @@ function iishconference_networksforchairs_sessions($networkId) {
 
 	if ($network !== null) {
 		$links[] = l(t('... Individual paper proposals ...'),
-			getSetting('pathForMenu') . 'networksforchairs/' . $networkId . '/-1');
+			SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'networksforchairs/' . $networkId . '/-1');
 	}
 
 	$header = theme('iishconference_navigation', array(
 		'list'     => CachedConferenceApi::getNetworks(),
 		'current'  => $network,
-		'prevLink' => l('« ' . t('Go back to networks list'), getSetting('pathForMenu') . 'networksforchairs'),
-		'curUrl'   => getSetting('pathForMenu') . 'networksforchairs/',
+		'prevLink' => l('« ' . t('Go back to networks list'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'networksforchairs'),
+		'curUrl'   => SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'networksforchairs/',
 	));
 
 	$hrLine = '';
@@ -180,8 +180,8 @@ function iishconference_networksforchairs_sessions($networkId) {
 function iishconference_networksforchairs_papers($networkId, $sessionId) {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		header('Location: ' . url(getSetting('pathForMenu') . 'login', array('query' => drupal_get_destination())));
-		die(t('Go to !login page.', array('!login' => l(t('login'), getSetting('pathForMenu') . 'login',
+		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
+		die(t('Go to !login page.', array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 			array('query' => drupal_get_destination())))));
 	}
 
@@ -240,9 +240,9 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 		'list'     => $sessions,
 		'current'  => ($session === null) ? new EmptyApi() : $session,
 		'prevLink' => l('« ' . t('Go back to sessions list'),
-			getSetting('pathForMenu') . 'networksforchairs/' . $networkId,
+			SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'networksforchairs/' . $networkId,
 			array('query' => array('search' => $search))),
-		'curUrl'   => getSetting('pathForMenu') . 'networksforchairs/' . $networkId . '/',
+		'curUrl'   => SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'networksforchairs/' . $networkId . '/',
 		'curQuery' => array('search' => $search),
 	));
 
@@ -316,7 +316,7 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 			));
 		}
 
-		if ((getSetting('show_cv') == 1) && ($user->getCv() !== null) && (strlen($user->getCv()) > 0)) {
+		if ((SettingsApi::getSetting(SettingsApi::SHOW_CV) == 1) && ($user->getCv() !== null) && (strlen($user->getCv()) > 0)) {
 			$result .= theme('iishconference_container_field', array(
 				'label'          => t('CV'),
 				'value'          => $user->getCv(),

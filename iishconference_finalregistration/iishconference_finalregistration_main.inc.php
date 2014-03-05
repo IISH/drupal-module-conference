@@ -18,15 +18,15 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		header('Location: ' . url(getSetting('pathForMenu') . 'login', array('query' => drupal_get_destination())));
-		die(t('Go to !login page.', array('!login' => l(t('login'), getSetting('pathForMenu') . 'login',
+		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
+		die(t('Go to !login page.', array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 			array('query' => drupal_get_destination())))));
 	}
 
 	if (!LoggedInUserDetails::isAParticipant()) {
 		drupal_set_message(t('You are not registered for the @conference conference. Please go to !link.',
-				array('@conference' => getSetting('long_code_year'),
-				      '!link' => l(t('Pre-registration form'), getSetting('pathForMenu') . 'pre-registration'))),
+				array('@conference' => CachedConferenceApi::getEventDate()->getLongCodeAndYear(),
+				      '!link' => l(t('Pre-registration form'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'pre-registration'))),
 			'warning');
 
 		return '';
@@ -44,7 +44,7 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 
 	if (count($feeAmounts) === 0) {
 		drupal_set_message(t('Something is wrong with your fee, please contact @email .',
-			array('@email' => getSetting('admin_email'))), 'error');
+			array('@email' => SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL))), 'error');
 
 		return '';
 	}
@@ -58,8 +58,8 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 				drupal_set_message(t('You already finished the final registration for the @conference conference.') .
 					'<br />' .
 					t('If you have questions please contact the secretariat at @email .',
-						array('@conference' => getSetting('long_code_year'),
-						      '@email'      => getSetting('email_fromemail'))));
+						array('@conference' => CachedConferenceApi::getEventDate()->getLongCodeAndYear(),
+						      '@email'      => SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL))));
 
 				return '';
 			}
@@ -70,7 +70,7 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 						'<span class="eca_warning">' .
 						t('You chose to finish your final registration by bank transfer.') . '<br />' .
 						t('!link for the bank transfer information.', array('!link' => l(t('Click here'),
-							getSetting('pathForMenu') . 'final-registration/bank-transfer'))) .
+							SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration/bank-transfer'))) .
 						'<br />' . t('Please continue if you want to choose a different payment method.') .
 						'</span>',
 				);

@@ -34,7 +34,7 @@ class class_conference_email {
 			$this->sendername = $record->sender;
 		}
 
-		$this->senderemail = getSetting('email_fromemail');
+		$this->senderemail = SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL);
 
 		db_set_active();
 	}

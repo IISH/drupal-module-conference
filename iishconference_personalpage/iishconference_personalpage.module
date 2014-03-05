@@ -18,7 +18,7 @@ function iishconference_personalpage_help($path, $arg) {
 function iishconference_personalpage_menu() {
 	$items = array();
 
-	$extraPath = getSetting('pathForMenu');
+	$extraPath = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU);
 
 	$items[$extraPath . 'personal-page'] = array(
 		'title'           => 'Personal page',

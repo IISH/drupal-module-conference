@@ -11,21 +11,21 @@ function preregister_completed_form( $form, &$form_state ) {
 
 	$form['ct'.$ct++] = array(
 		'#type' => 'markup',
-		'#markup' => '<span class="eca_remark heavy">Completed. You are now pre-registered for the ' . getSetting('long_code_year') . ' conference. In a few minutes you will receive by e-mail a copy of your pre-registration.<br><br></span>',
+		'#markup' => '<span class="eca_remark heavy">Completed. You are now pre-registered for the ' . CachedConferenceApi::getEventDate()->getLongCodeAndYear() . ' conference. In a few minutes you will receive by e-mail a copy of your pre-registration.<br><br></span>',
 		'#prefix' => '<div class="container-inline">', 
 		'#suffix' => '</div>',
 		);
 
 	$form['ct'.$ct++] = array(
 		'#type' => 'markup',
-		'#markup' => '<span class="eca_warning heavy">It is not possible to modify your pre-registration anymore. If you would like to modify your registration please send an email to ' . encryptEmailAddress(getSetting('email_fromemail')) . '.<br><br></span>',
+		'#markup' => '<span class="eca_warning heavy">It is not possible to modify your pre-registration anymore. If you would like to modify your registration please send an email to ' . encryptEmailAddress(SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL)) . '.<br><br></span>',
 		'#prefix' => '<div class="container-inline">', 
 		'#suffix' => '</div>',
 		);
 
 	$form['ct'.$ct++] = array(
 		'#type' => 'markup',
-		'#markup' => '<span class="eca_remark heavy">Go to your <a href="/' . getSetting('pathForMenu') . getSetting('urlpersonalpage') . '">personal page</a>.<br><br></span>',
+		'#markup' => '<span class="eca_remark heavy">Go to your <a href="/' . SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . getSetting('urlpersonalpage') . '">personal page</a>.<br><br></span>',
 		'#prefix' => '<div class="container-inline">', 
 		'#suffix' => '</div>',
 		);

@@ -52,7 +52,7 @@ function conference_login_form($form, &$form_state) {
 	// lost password url
 	$form['ct' . $ct++] = array(
 		'#type'   => 'markup',
-		'#markup' => '<div class="largertopmargin">' . l(t('Lost password'), getSetting('pathForMenu') .
+		'#markup' => '<div class="largertopmargin">' . l(t('Lost password'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) .
 				'lost-password') . '</div>',
 	);
 
@@ -60,7 +60,7 @@ function conference_login_form($form, &$form_state) {
 	$form['ct' . $ct++] = array(
 		'#type'   => 'markup',
 		'#markup' => '<div class="largertopmargin">' . t('If you don\'t have an account please go to !link.',
-				array('!link' => l(t('Pre-registration form'), getSetting('pathForMenu') . 'pre-registration'))) .
+				array('!link' => l(t('Pre-registration form'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'pre-registration'))) .
 			'</div>',
 	);
 
@@ -94,7 +94,7 @@ function conference_login_form_submit($form, &$form_state) {
 	$user_status = $loginApi->login($form_state['values']['email'], $form_state['values']['password']);
 
 	if ($user_status == LoggedInUserDetails::USER_STATUS_EXISTS) {
-		drupal_goto(getSetting('pathForMenu') . 'personal-page');
+		drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page');
 	}
 	else {
 		$form_state['rebuild'] = true;

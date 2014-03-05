@@ -187,9 +187,11 @@ class ConferenceMisc {
 	 * @return string The HTML generating an info block
 	 */
 	public static function getInfoBlock($emptyRows = 2) {
-		return '<span class="eca_warning">' . str_repeat('<br />', $emptyRows) . getSetting('general_questions') .
-		self::encryptEmailAddress(getSetting('email_fromemail')) . '<br/ > ' . t('Errors/bugs please contact') . ': ' .
-		self::encryptEmailAddress(getSetting('jira_email')) . '</span>';
+		return
+			'<span class="eca_warning">' . str_repeat('<br />', $emptyRows) . t('General questions please contact: ') .
+			self::encryptEmailAddress(SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL)) . '<br/ > ' .
+			t('Errors/bugs please contact: ') .
+			self::encryptEmailAddress(SettingsApi::getSetting(SettingsApi::JIRA_EMAIL)) . '</span>';
 	}
 
 	/**

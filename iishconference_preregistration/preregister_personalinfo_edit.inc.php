@@ -1,254 +1,182 @@
-<?php 
+<?php
+
 /**
- * TODOEXPLAIN
+ * Implements hook_form()
  */
-function preregister_personalinfo_edit_form( $form, &$form_state ) {
-	$ct=0;
+function preregister_personalinfo_edit_form($form, &$form_state) {
+	/**
+	 * TODO:
+	 * <style>
+	 * <!--
+	 * #edit-email {
+	 * border: 0px;
+	 * }
+	 * // -->
+	 * </style>
+	 */
 
-	// PERSONAL INFO
+	$form['personal_info'] = array(
+		'#type'  => 'fieldset',
+		'#title' => t('Personal info'),
+	);
 
-	$tmpIs = ( isset($_SESSION['storage']['isexistinguser']) ? $_SESSION['storage']['isexistinguser'] : 'NULL');
+	$form['personal_info']['firstname'] = array(
+		'#type'          => 'textfield',
+		'#title'         => 'First name',
+		'#size'          => 40,
+		'#maxlength'     => 255,
+		'#required'      => true,
+		'#default_value' => isset($form_state['storage']['preregister_personalinfo_firstname']) ?
+				$form_state['storage']['preregister_personalinfo_firstname'] : null,
+	);
 
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => "
-<style>
-<!--
-#edit-email {
-	border: 0px;
-}
-// -->
-</style>
-",
+	$form['personal_info']['lastname'] = array(
+		'#type'          => 'textfield',
+		'#title'         => 'Last name',
+		'#size'          => 40,
+		'#maxlength'     => 255,
+		'#required'      => true,
+		'#default_value' => isset($form_state['storage']['preregister_personalinfo_lastname']) ?
+				$form_state['storage']['preregister_personalinfo_lastname'] : null,
+	);
+
+	$form['personal_info']['gender'] = array(
+		'#title'         => 'Gender',
+		'#type'          => 'select',
+		'#options'       => ConferenceMisc::getGenders(),
+		'#default_value' => isset($form_state['storage']['preregister_personalinfo_gender']) ?
+				$form_state['storage']['preregister_personalinfo_gender'] : null,
+	);
+
+	$form['personal_info']['organisation'] = array(
+		'#type'          => 'textfield',
+		'#title'         => 'Organisation',
+		'#size'          => 40,
+		'#maxlength'     => 255,
+		'#required'      => true,
+		'#default_value' => isset($form_state['storage']['preregister_personalinfo_organisation']) ?
+				$form_state['storage']['preregister_personalinfo_organisation'] : null,
+	);
+
+	$form['personal_info']['department'] = array(
+		'#type'          => 'textfield',
+		'#title'         => 'Department',
+		'#size'          => 40,
+		'#maxlength'     => 255,
+		'#required'      => true,
+		'#default_value' => isset($form_state['storage']['preregister_personalinfo_department']) ?
+				$form_state['storage']['preregister_personalinfo_department'] : null,
+	);
+
+	$form['personal_info']['email'] = array(
+		'#type'          => 'textfield',
+		'#title'         => 'E-mail',
+		'#size'          => 40,
+		'#maxlength'     => 100,
+		'#default_value' => $form_state['pre-registration']['user_email'],
+		'#attributes'    => array('readonly' => 'readonly'),
+	);
+
+	$form['personal_info']['student'] = array(
+		'#type'          => 'checkboxes',
+		'#options'       => array(
+			'y' => t('Please check if you are a (PhD) student'),
+		),
+		'#default_value' => isset($form_state['storage']['preregister_personalinfo_student']) ?
+				$form_state['storage']['preregister_personalinfo_student'] : array(),
+	);
+
+	if (SettingsApi::getSetting(SettingsApi::SHOW_CV) == 1) {
+		$form['personal_info']['cv'] = array(
+			'#type'          => 'textarea',
+			'#title'         => 'Curriculum Vitae',
+			'#description'   => '<em>' . t('(max. 200 words)') . '</em>',
+			'#rows'          => 2,
+			'#default_value' => isset($form_state['storage']['preregister_personalinfo_cv']) ?
+					$form_state['storage']['preregister_personalinfo_cv'] : null,
 		);
-
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '<div class="step">Step 2 of ' . getSetting('steps') . '</div>',
-		);
-
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '<div class="preregister_fullwidth">',
-		);
-
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '<span class="header_personalpage">Personal info</span>',
-		);
-
-	$form['firstname'] = array(
-		'#type' => 'textfield',
-		'#title' => 'First name',
-		'#size' => 40,
-		'#maxlength' => 255,
-		'#required' => TRUE,
-		'#prefix' => '<div class="container-inline">', 
-		'#suffix' => '</div>', 
-		'#default_value' => isset( $_SESSION['storage']['preregister_personalinfo_firstname'] ) ? $_SESSION['storage']['preregister_personalinfo_firstname'] : NULL, 
-		);
-
-	$form['lastname'] = array(
-		'#type' => 'textfield',
-		'#title' => 'Last name',
-		'#size' => 40,
-		'#maxlength' => 255,
-		'#required' => TRUE,
-		'#prefix' => '<div class="container-inline">', 
-		'#suffix' => '</div>', 
-		'#default_value' => isset( $_SESSION['storage']['preregister_personalinfo_lastname'] ) ? $_SESSION['storage']['preregister_personalinfo_lastname'] : NULL, 
-		);
-
-	$gender_options = getArrayOfGender();
-
-	$form['gender'] = array(
-		'#title' => 'Gender',
-		'#type' => 'select',
-		'#options' => $gender_options,
-		'#prefix' => '<div class="container-inline">', 
-		'#suffix' => '</div>', 
-		'#default_value' => isset( $_SESSION['storage']['preregister_personalinfo_gender'] ) ? $_SESSION['storage']['preregister_personalinfo_gender'] : NULL, 
-		);
-
-	$form['organisation'] = array(
-		'#type' => 'textfield',
-		'#title' => 'Organisation',
-		'#size' => 40,
-		'#maxlength' => 255,
-		'#required' => TRUE,
-		'#prefix' => '<div class="container-inline">', 
-		'#suffix' => '</div>', 
-		'#default_value' => isset( $_SESSION['storage']['preregister_personalinfo_organisation'] ) ? $_SESSION['storage']['preregister_personalinfo_organisation'] : NULL, 
-		);
-
-	$form['department'] = array(
-		'#type' => 'textfield',
-		'#title' => 'Department',
-		'#size' => 40,
-		'#maxlength' => 255,
-		'#required' => TRUE,
-		'#prefix' => '<div class="container-inline">', 
-		'#suffix' => '</div>', 
-		'#default_value' => isset( $_SESSION['storage']['preregister_personalinfo_department'] ) ? $_SESSION['storage']['preregister_personalinfo_department'] : NULL, 
-		);
-
-	$form['email'] = array(
-		'#type' => 'textfield',
-		'#title' => 'E-mail',
-		'#size' => 40,
-		'#maxlength' => 100,
-		'#prefix' => '<div class="container-inline">', 
-		'#suffix' => '</div>', 
-		'#default_value' => trim($_SESSION["conference"]["user_email"]), 
-		'#attributes' => array('readonly' => 'readonly'), 
-		);
-
-	$form['student'] = array(
-		'#type' => 'checkboxes',
-		'#options' => array(
-						'y' => 'Please check if you are a (PhD) student',
-						),
-		'#default_value' => isset( $_SESSION['storage']['preregister_personalinfo_student'] ) ? $_SESSION['storage']['preregister_personalinfo_student'] : array(), 
-		);
-
-	if ( getSetting('show_cv') == 1 ) {
-		$form['cv'] = array(
-			'#type' => 'textarea',
-			'#title' => 'Curriculum Vitae',
-			'#description' => '<em>(max. 200 words)</em>',
-			'#rows' => 2,
-			'#default_value' => isset( $_SESSION['storage']['preregister_personalinfo_cv'] ) ? $_SESSION['storage']['preregister_personalinfo_cv'] : NULL, 
-			);
 	}
 
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '</div>',
-		);
+	$form['address'] = array(
+		'#type'  => 'fieldset',
+		'#title' => t('Address'),
+	);
 
-	// + + + + + + + + + + + + + + + + + + + + + + + +
+	$form['address']['city'] = array(
+		'#type'          => 'textfield',
+		'#title'         => 'City',
+		'#size'          => 40,
+		'#maxlength'     => 255,
+		'#required'      => true,
+		'#default_value' => isset($form_state['storage']['preregister_personalinfo_city']) ?
+				$form_state['storage']['preregister_personalinfo_city'] : null,
+	);
 
-	// ADDRESS
+	$form['address']['country'] = array(
+		'#title'         => 'Country',
+		'#type'          => 'select',
+		'#options'       => CRUDApiClient::getAsKeyValueArray(CachedConferenceApi::getCountries()),
+		'#required'      => true,
+		'#default_value' => isset($form_state['storage']['preregister_personalinfo_country']) ?
+				$form_state['storage']['preregister_personalinfo_country'] : null,
+	);
 
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '<div class="preregister_fullwidth">',
-		);
+	$form['communication_means'] = array(
+		'#type'  => 'fieldset',
+		'#title' => t('Communication Means'),
+	);
 
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '<span class="header_personalpage">Address</span>',
-		);
+	$form['communication_means']['phone'] = array(
+		'#type'          => 'textfield',
+		'#title'         => 'Phone number',
+		'#size'          => 40,
+		'#maxlength'     => 100,
+		'#default_value' => isset($form_state['storage']['preregister_personalinfo_phone']) ?
+				$form_state['storage']['preregister_personalinfo_phone'] : null,
+	);
 
-	$form['city'] = array(
-		'#type' => 'textfield',
-		'#title' => 'City',
-		'#size' => 40,
-		'#maxlength' => 255,
-		'#required' => TRUE,
-		'#prefix' => '<div class="container-inline">', 
-		'#suffix' => '</div>', 
-		'#default_value' => isset( $_SESSION['storage']['preregister_personalinfo_city'] ) ? $_SESSION['storage']['preregister_personalinfo_city'] : NULL, 
-		);
+	$form['communication_means']['mobile'] = array(
+		'#type'          => 'textfield',
+		'#title'         => 'Mobile number',
+		'#size'          => 40,
+		'#maxlength'     => 100,
+		'#default_value' => isset($form_state['storage']['preregister_personalinfo_mobile']) ?
+				$form_state['storage']['preregister_personalinfo_mobile'] : null,
+	);
 
-	$list_of_countries = getArrayOfCountries();
-
-	$form['country'] = array(
-		'#title' => 'Country',
-		'#type' => 'select',
-		'#options' => $list_of_countries,
-		'#required' => TRUE,
-		'#prefix' => '<div class="container-inline">', 
-		'#suffix' => '</div>', 
-		'#default_value' => isset( $_SESSION['storage']['preregister_personalinfo_country'] ) ? $_SESSION['storage']['preregister_personalinfo_country'] : NULL, 
-		);
-
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '</div>',
-		);
-
-	// + + + + + + + + + + + + + + + + + + + + + + + +
-
-	// COMMUNICATION MEANS
-
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '<div class="preregister_fullwidth">',
-		);
-
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '<span class="header_personalpage">Communication Means</span>',
-		);
-
-	$form['phone'] = array(
-		'#type' => 'textfield',
-		'#title' => 'Phone number',
-		'#size' => 40,
-		'#maxlength' => 100,
-		'#prefix' => '<div class="container-inline">', 
-		'#suffix' => '</div>', 
-		'#default_value' => isset( $_SESSION['storage']['preregister_personalinfo_phone'] ) ? $_SESSION['storage']['preregister_personalinfo_phone'] : NULL, 
-		);
-
-	$form['mobile'] = array(
-		'#type' => 'textfield',
-		'#title' => 'Mobile number',
-		'#size' => 40,
-		'#maxlength' => 100,
-		'#prefix' => '<div class="container-inline">', 
-		'#suffix' => '</div>', 
-		'#default_value' => isset( $_SESSION['storage']['preregister_personalinfo_mobile'] ) ? $_SESSION['storage']['preregister_personalinfo_mobile'] : NULL, 
-		);
-
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '<span class="extra_uitleg">Please enter international numbers (including country prefix etc.)</span>',
-		);
-
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '</div>',
-		);
+	$form['communication_means']['extra_info'] = array(
+		'#type'   => 'markup',
+		'#markup' => '<span class="extra_uitleg">' .
+			t('Please enter international numbers (including country prefix etc.)') .
+			'</span>',
+	);
 
 	// + + + + + + + + + + + + + + + + + + + + + + + +
 
 	$form['submit'] = array(
-		'#type' => 'submit',
+		'#type'  => 'submit',
 		'#value' => 'Next'
-		);
-
-	// EXISTING USERS
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '<br><br><br><br>',
-		);
+	);
 
 	return $form;
 }
 
 /**
- * TODOEXPLAIN
+ * Implements hook_form_submit()
  */
-function preregister_personalinfo_edit_form_submit( $form, &$form_state ) {
-	// Trigger multistep, there are more steps.
-	$form_state['rebuild'] = TRUE;
-
-	$_SESSION['storage']['preregister_personalinfo_firstname'] = $form_state['values']["firstname"];
-	$_SESSION['storage']['preregister_personalinfo_lastname'] = $form_state['values']["lastname"];
-	$_SESSION['storage']['preregister_personalinfo_gender'] = $form_state['values']["gender"];
-	$_SESSION['storage']['preregister_personalinfo_organisation'] = $form_state['values']["organisation"];
-	$_SESSION['storage']['preregister_personalinfo_department'] = $form_state['values']["department"];
-	$_SESSION['storage']['preregister_personalinfo_city'] = $form_state['values']["city"];
-	$_SESSION['storage']['preregister_personalinfo_country'] = $form_state['values']["country"];
-	$_SESSION['storage']['preregister_personalinfo_phone'] = $form_state['values']["phone"];
-	$_SESSION['storage']['preregister_personalinfo_mobile'] = $form_state['values']["mobile"];
-	$_SESSION['storage']['preregister_personalinfo_student'] = $form_state['values']["student"];
-	if ( getSetting('show_cv') == 1 ) {
-		$_SESSION['storage']['preregister_personalinfo_cv'] = $form_state['values']["cv"];
+function preregister_personalinfo_edit_form_submit($form, &$form_state) {
+	$form_state['storage']['preregister_personalinfo_firstname'] = $form_state['values']["firstname"];
+	$form_state['storage']['preregister_personalinfo_lastname'] = $form_state['values']["lastname"];
+	$form_state['storage']['preregister_personalinfo_gender'] = $form_state['values']["gender"];
+	$form_state['storage']['preregister_personalinfo_organisation'] = $form_state['values']["organisation"];
+	$form_state['storage']['preregister_personalinfo_department'] = $form_state['values']["department"];
+	$form_state['storage']['preregister_personalinfo_city'] = $form_state['values']["city"];
+	$form_state['storage']['preregister_personalinfo_country'] = $form_state['values']["country"];
+	$form_state['storage']['preregister_personalinfo_phone'] = $form_state['values']["phone"];
+	$form_state['storage']['preregister_personalinfo_mobile'] = $form_state['values']["mobile"];
+	$form_state['storage']['preregister_personalinfo_student'] = $form_state['values']["student"];
+	if (SettingsApi::getSetting(SettingsApi::SHOW_CV) == 1) {
+		$form_state['storage']['preregister_personalinfo_cv'] = $form_state['values']["cv"];
 	}
-
-	$form_state['storage']['step'] = 'preregister_personalinfo_preview_form';
 }
 

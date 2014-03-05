@@ -28,7 +28,7 @@
 			Please enter which days you will be present and the total conference fee will be computed automatically.
 			You can pay with your CreditCard/iDeal or via bank transfer.
 			If the process is completely finished, (including payment) you will receive a confirmation email from our payment provider and a confirmation email from the @conference.',
-			array('@conference' => getSetting('code')));
+			array('@conference' => CachedConferenceApi::getEventDate()->getEvent()->getCode()));
 		?>
 	</div>
 <?php endif; ?>

@@ -14,8 +14,8 @@
 function conference_email_main($email) {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		header('Location: ' . url(getSetting('pathForMenu') . 'login', array('query' => drupal_get_destination())));
-		die(t('Go to !login page.', array('!login' => l(t('login'), getSetting('pathForMenu') . 'login',
+		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
+		die(t('Go to !login page.', array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 			array('query' => drupal_get_destination())))));
 	}
 
@@ -34,9 +34,9 @@ function conference_email_main($email) {
 
 	$emailPage = theme('iishconference_container_inline', array(
 		'inline' => array(
-			l(t('Go back to your emails'), getSetting('pathForMenu') . 'emails'),
+			l(t('Go back to your emails'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'emails'),
 			'&nbsp;',
-			l(t('Go back to your personal page'), getSetting('pathForMenu') . 'personal-page'),
+			l(t('Go back to your personal page'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page'),
 			'<br /><br />',
 		)
 	));

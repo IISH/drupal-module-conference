@@ -44,7 +44,7 @@ function preregister_session_edit_form( $form, &$form_state ) {
 	// 
 	$list_of_networks = getArrayOfNetworks();
 
-	if ( getSetting('show_network') == 1 ) {
+	if ( SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1 ) {
 		$form['sessioninnetwork'] = array(
 			'#title' => 'Network ' . getSetting('required'),
 			'#type' => 'select',
@@ -63,7 +63,7 @@ function preregister_session_edit_form( $form, &$form_state ) {
 			'#title' => 'Proposed network',
 			'#prefix' => '<div style="display:none;">', 
 			'#suffix' => '</div>', 
-			'#default_value' => getSetting('default_network'), 
+			'#default_value' => SettingsApi::getSetting(SettingsApi::DEFAULT_NETWORK_ID),
 			);
 
 	}

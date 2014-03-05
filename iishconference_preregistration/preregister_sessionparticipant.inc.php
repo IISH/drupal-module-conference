@@ -108,7 +108,7 @@ function preregister_session_participant_form( $form, &$form_state ) {
 		'#default_value' => isset( $_SESSION['storage']['preregistersession_participantpaperabstract'] ) ? $_SESSION['storage']['preregistersession_participantpaperabstract'] : NULL, 
 		);
 
-	if ( getSetting('show_cv') == 1 ) {
+	if ( SettingsApi::getSetting(SettingsApi::SHOW_CV) == 1 ) {
 
 		$form['addparticipantcv'] = array(
 			'#type' => 'textarea',

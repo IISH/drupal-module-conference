@@ -282,7 +282,7 @@ class class_conference_paper {
 		drupal_add_http_header('Content-Type', $record['content_type']);
 		drupal_add_http_header('Content-Length', $record['filesize']);
 		drupal_add_http_header('Content-Disposition', 'attachment; filename=' .
-			str_replace(' ', '-', getSetting('code_year')) . '-' . $this->user_id . '-' . $record['filename']);
+			str_replace(' ', '-', CachedConferenceApi::getEventDate()) . '-' . $this->user_id . '-' . $record['filename']);
 
 		echo $record['file'];
 

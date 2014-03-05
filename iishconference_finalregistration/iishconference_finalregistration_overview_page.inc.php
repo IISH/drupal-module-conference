@@ -86,7 +86,7 @@ function finalregistration_overview_submit($form, $form_state) {
 				ConferenceMisc::getReadableAmount($participant->getTotalAmout()),
 				ConferenceMisc::getPaymentDescription($participant->getFeeAmount(), $participant->getExtras()));
 
-			drupal_goto(getSetting('pathForMenu') . 'final-registration/accept');
+			drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration/accept');
 		}
 		else if ($isPayWayTransaction) {
 			$payment = new PayWayMessage(array('orderid' => $order->get('orderid')));
@@ -99,7 +99,7 @@ function finalregistration_overview_submit($form, $form_state) {
 				ConferenceMisc::getPaymentDescription($participant->getFeeAmount(), $participant->getExtras()),
 				$participant->getBankTransferFinalDate(time()));
 
-			drupal_goto(getSetting('pathForMenu') . 'final-registration/bank-transfer');
+			drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration/bank-transfer');
 		}
 	}
 	else {

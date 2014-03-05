@@ -59,14 +59,6 @@ function iishconference_basemodule_settings_form($form, &$form_state) {
 		'#default_value' => variable_get('conference_date_code'),
 		'#description' => t('Enter the code of the current event date. E.g. \'2014\''),
 	);
-/*
-	$form['event_date_settings']['conference_country_id'] = array(
-		'#type' => 'select',
-		'#title' => t('Country where event takes place'),
-		'#options' => CRUDApiClient::getAsKeyValueArray(CachedConferenceApi::getCountries()),
-		'#default_value' => variable_get('conference_country_id', null),
-		'#description' => t('Select the country where the event will take place.'),
-	);*/
 
 	// +-------------------------------------------------------------------------------------------------------------+
 

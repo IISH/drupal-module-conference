@@ -6,9 +6,12 @@
 function conference_changepassword_form($form, &$form_state) {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		header('Location: ' . url(getSetting('pathForMenu') . 'login', array('query' => drupal_get_destination())));
-		die(t('Go to !login page.', array('!login' => l(t('login'), getSetting('pathForMenu') . 'login',
-			array('query' => drupal_get_destination())))));
+		header('Location: ' .
+			url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+				array('query' => drupal_get_destination())));
+		die(t('Go to !login page.',
+			array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+				array('query' => drupal_get_destination())))));
 	}
 
 	// show change password page
@@ -50,7 +53,10 @@ function conference_changepassword_form($form, &$form_state) {
 
 	$form['ct' . $ct++] = array(
 		'#type'   => 'markup',
-		'#markup' => '<div><span class="eca_warning">' . getSetting('password_criteria') . '</span></div>',
+		'#markup' => '<div><span class="eca_warning">' .
+			t('The new password must be at least 8 characters long and contain at least one lowercase character, ' .
+				'one upper case character and one digit.') .
+			'</span></div>',
 	);
 
 	return $form;
@@ -60,11 +66,12 @@ function conference_changepassword_form($form, &$form_state) {
  * Implements hook_form_validate()
  */
 function conference_changepassword_form_validate($form, &$form_state) {
-	$error_message = getSetting('password_criteria');
+	$error_message = t('The new password must be at least 8 characters long and contain at least ' .
+		'one lowercase character, one upper case character and one digit.');
 
 	// check length of new password
 	if (strlen($form_state['values']['new_password']) < 8) {
-		form_set_error('new_password', t($error_message));
+		form_set_error('new_password', $error_message);
 	}
 
 	// check if the new passwords are equal
@@ -74,7 +81,7 @@ function conference_changepassword_form_validate($form, &$form_state) {
 
 	// check if new passwords contain at least one lowercase, one uppercase, one digit
 	if (!ChangePasswordApi::isPasswordValid($form_state['values']['new_password'])) {
-		form_set_error('new_password', t($error_message));
+		form_set_error('new_password', $error_message);
 	}
 }
 
@@ -85,9 +92,10 @@ function conference_changepassword_form_submit($form, &$form_state) {
 	$changePasswordApi = new ChangePasswordApi();
 
 	if ($changePasswordApi->changePassword(
-	                      LoggedInUserDetails::getId(),
-	                      $form_state['values']['new_password'],
-	                      $form_state['values']['confirm_password'])) {
+		LoggedInUserDetails::getId(),
+		$form_state['values']['new_password'],
+		$form_state['values']['confirm_password'])
+	) {
 		drupal_set_message(t('Password is successfully changed!'), 'status');
 	}
 	else {

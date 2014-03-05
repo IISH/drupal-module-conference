@@ -61,7 +61,7 @@ function preregister_registerpaper_preview_form( $form, &$form_state ) {
 		'#markup' => $_SESSION['storage']['preregister_registerpaper_coauthors'],
 		);
 
-	if ( getSetting('show_network') == 1 ) {
+	if ( SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1 ) {
 		// proposed network
 		$list_of_networks = getArrayOfNetworks();
 		$form['ct'.$ct++] = array(
@@ -105,11 +105,11 @@ function preregister_registerpaper_preview_form( $form, &$form_state ) {
 			);
 	}
 
-	if ( getSetting('show_award') == 1 ) {
+	if ( SettingsApi::getSetting(SettingsApi::SHOW_AWARD) == 1 ) {
 		if ( isset( $_SESSION['storage']['preregister_personalinfo_student']['y'] ) && $_SESSION['storage']['preregister_personalinfo_student']['y'] === 'y' ) {
 			$form['ct'.$ct++] = array(
 				'#type' => 'markup',
-				'#markup' => '<span class="label_personalpage">Would you like to participate in the "' . getSetting('award_name') . ' award"? </span>',
+				'#markup' => '<span class="label_personalpage">Would you like to participate in the "' . SettingsApi::getSetting(SettingsApi::AWARD_NAME) . ' award"? </span>',
 				'#prefix' => '<div class="container-inline">', 
 				);
 			$form['ct'.$ct++] = array(

@@ -57,7 +57,7 @@ function preregister_registerpaper_edit_form( $form, &$form_state ) {
 		'#default_value' => isset( $_SESSION['storage']['preregister_registerpaper_coauthors'] ) ? $_SESSION['storage']['preregister_registerpaper_coauthors'] : NULL, 
 		);
 
-	if ( getSetting('show_network') == 1 ) {
+	if ( SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1 ) {
 
 //network_proposal_id
 		// 
@@ -81,7 +81,7 @@ function preregister_registerpaper_edit_form( $form, &$form_state ) {
 			'#title' => 'Proposed network',
 			'#prefix' => '<div style="display:none;">', 
 			'#suffix' => '</div>', 
-			'#default_value' => getSetting('default_network'), 
+			'#default_value' => SettingsApi::getSetting(SettingsApi::DEFAULT_NETWORK_ID),
 			);
 
 	}
@@ -112,7 +112,7 @@ function preregister_registerpaper_edit_form( $form, &$form_state ) {
 
 		);
 
-	if ( getSetting('show_award') == 1 ) {
+	if ( SettingsApi::getSetting(SettingsApi::SHOW_AWARD) == 1 ) {
 		if ( isset( $_SESSION['storage']['preregister_personalinfo_student']['y'] ) && $_SESSION['storage']['preregister_personalinfo_student']['y'] === 'y' ) {
 			$form['ct'.$ct++] = array(
 				'#type' => 'markup',
@@ -122,7 +122,7 @@ function preregister_registerpaper_edit_form( $form, &$form_state ) {
 			$form['award'] = array(
 				'#type' => 'checkboxes',
 				'#options' => array(
-								'y' => 'Would you like to participant in the "' . getSetting('award_name') . ' award"? &nbsp; <em>(<a href="/award" target="_blank">more about the award</a>)</em>',
+								'y' => 'Would you like to participant in the "' . SettingsApi::getSetting(SettingsApi::AWARD_NAME) . ' award"? &nbsp; <em>(<a href="/award" target="_blank">more about the award</a>)</em>',
 								),
 				'#default_value' => isset( $_SESSION['storage']['preregister_registerpaper_award'] ) ? $_SESSION['storage']['preregister_registerpaper_award'] : array(), 
 				);

@@ -21,10 +21,10 @@ function iishconference_finalregistration_help($path, $arg) {
  * Implements hook_menu()
  */
 function iishconference_finalregistration_menu() {
-	$extraPath = getSetting('pathForMenu');
+	$extraPath = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU);
 
 	$items[$extraPath . 'final-registration'] = array(
-		'title' => 'Final registration and payment for the ' . getSetting('code_year') . ' conference',
+		'title' => 'Final registration and payment for the ' . CachedConferenceApi::getEventDate() . ' conference',
 		'page callback' => 'drupal_get_form',
 		'page arguments' => array('iishconference_finalregistration_main_form'),
 		'access callback' => true,

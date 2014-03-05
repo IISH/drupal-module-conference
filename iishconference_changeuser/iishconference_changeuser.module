@@ -18,7 +18,7 @@ function iishconference_changeuser_help($path, $arg) {
 function iishconference_changeuser_menu() {
 	$items = array();
 
-	$extraAdminPath = getSetting('pathForAdminMenu');
+	$extraAdminPath = SettingsApi::getSetting(SettingsApi::PATH_FOR_ADMIN_MENU);
 
 	$items[$extraAdminPath . 'change-user'] = array(
 		'title'           => 'Change user',

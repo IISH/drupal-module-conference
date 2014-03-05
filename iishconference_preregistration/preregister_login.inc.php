@@ -1,287 +1,170 @@
-<?php 
+<?php
+
 /**
- * TODOEXPLAIN
+ * Implements hook_form()
  */
-function preregister_login_form( $form, &$form_state ) {
-	$ct=0;
+function preregister_login_form($form, &$form_state) {
+	$form['existing_users'] = array(
+		'#type'  => 'fieldset',
+		'#title' => t('Existing users'),
+	);
 
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '<div class="step">Step 1 of ' . getSetting('steps') . '</div>',
-		);
+	$form['existing_users']['help_text'] = array(
+		'#type'   => 'markup',
+		'#markup' => '<div class="bottommargin">' . t('Please enter your e-mail address and password.') . '</div>',
+	);
 
-	// EXISTING USERS
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '<div class="login_halfwidth rightmargin">',
-		);
-
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '<span class="header_login">Existing users</span>',
-		);
-
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '<div class="bottommargin">Please enter your e-mail address and password.</div>',
-		);
-
-	$default_email_value = '';
-	$default_email_value_newusers = '';
-
-	if ( !isset( $_SESSION["conference"]["login_default_email_existingusers"] ) ) {
-		$_SESSION["conference"]["login_default_email_existingusers"] = '';
-	}
-	if ( !isset( $_SESSION["conference"]["login_default_email_newusers"] ) ) {
-		$_SESSION["conference"]["login_default_email_newusers"] = '';
-	}
-
-	// check if page submitted
-	// button 1 = post, button 2 = get ???
-	if ( strtolower($_SERVER['REQUEST_METHOD']) == "post" || strtolower($_SERVER['REQUEST_METHOD']) == "get" ) {
-		$default_email_value = $_SESSION["conference"]["login_default_email_existingusers"];
-		$default_email_value_newusers = $_SESSION["conference"]["login_default_email_newusers"];
-
-	} else {
-
-		if ( isset( $_SESSION["conference"]["user_email"] ) ) {
-			$default_email_value = trim($_SESSION["conference"]["user_email"]);
-		}
-
-	}
-
-	$form['email'] = array(
-		'#type' => 'textfield',
-		'#title' => 'E-mail',
-		'#size' => 20,
+	$form['existing_users']['email'] = array(
+		'#type'      => 'textfield',
+		'#title'     => 'E-mail',
+		'#size'      => 20,
 		'#maxlength' => 100,
-		'#prefix' => '<div class="container-inline bottommargin">', 
-		'#suffix' => '</div>', 
-		'#default_value' => $default_email_value, 
-		);
+	);
 
-	$form['password'] = array(
-		'#type' => 'password',
-		'#title' => 'Password',
-		'#size' => 20,
+	$form['existing_users']['password'] = array(
+		'#type'      => 'password',
+		'#title'     => 'Password',
+		'#size'      => 20,
 		'#maxlength' => 50,
-		'#prefix' => '<div class="container-inline bottommargin">', 
-		'#suffix' => '</div>',
-		);
+	);
 
-	$form['submit_button_next'] = array(
-		'#type' => 'submit',
-		'#value' => 'Log in'
-		);
+	$form['existing_users']['submit_login'] = array(
+		'#type'  => 'submit',
+		'#value' => t('Log in'),
+	);
 
 	// lost password url
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '<div class="largertopmargin"><a href="/' . getSetting('pathForMenu') . 'lost-password">Lost password</a></div>',
-		);
+	$form['existing_users']['lost_password'] = array(
+		'#type'   => 'markup',
+		'#markup' =>
+			'<div class="largertopmargin">' . l(t('Lost password'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'lost-password') .
+			'</div>',
+	);
 
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '</div>',
-		);
+	$form['new_users'] = array(
+		'#type'  => 'fieldset',
+		'#title' => t('New users'),
+	);
 
-	// + + + + + + + + + + + + +
+	$form['new_users']['help_text'] = array(
+		'#type'   => 'markup',
+		'#markup' => '<div class="bottommargin">' . t('Please enter your e-mail address.') . '</div>',
+	);
 
-	// NEW USERS
-
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '<div class="login_halfwidth">',
-		);
-
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '<span class="header_login">New users</span>',
-		);
-
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '<div class="bottommargin">Please enter your e-mail address.</div>',
-		);
-
-	$form['email_newusers'] = array(
-		'#type' => 'textfield',
-		'#title' => 'E-mail',
-		'#size' => 20,
+	$form['new_users']['email_newusers'] = array(
+		'#type'      => 'textfield',
+		'#title'     => 'E-mail',
+		'#size'      => 20,
 		'#maxlength' => 100,
-		'#prefix' => '<div class="container-inline bottommargin">', 
-		'#suffix' => '</div>', 
-		'#default_value' => $default_email_value_newusers, 
-		);
+	);
 
-	$form['submit_button_new'] = array(
-		'#type' => 'submit',
-		'#value' => 'New user'
-		);
+	$form['new_users']['submit_new'] = array(
+		'#type'  => 'submit',
+		'#value' => t('New user'),
+	);
 
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '</div>',
-		);
+	$form['info_block'] = array(
+		'#type'   => 'markup',
+		'#markup' => ConferenceMisc::getInfoBlock(),
+	);
 
-	$form['ct'.$ct++] = goToErrorMessage(14);
-
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => "<div class=\"eca_warning\">
-<br>
-<strong>Comments</strong><br>
-<ol>
-	<li>Please disable (or minimize the size of) the cache in your browser (Internet Explorer, Firefox, Chrome)</li>
-	<li>Use the back/next buttons in the form, do NOT use the browser back button</li>
-	<li>Prepare your abstract beforehand. Do NOT type your abstract in the form field, but COPY it into the form field.</li>
-	<li>Please mail all errors to: " . encryptEmailAddress(getSetting('jira_email')) . "</li>
-</ol>
-</div>",
-		);
+	$form['comments_block'] = array(
+		'#type'   => 'markup',
+		'#markup' => '<div class="eca_warning">
+			<br />
+			<strong>' . t('Comments') . '</strong><br>
+			<ol>
+				<li>' .
+			t('Please disable (or minimize the size of) the cache in your browser (Internet Explorer, Firefox, Chrome)') . '</li>
+				<li>' .
+			t('Use the back/next buttons in the form, do NOT use the browser back button') . '</li>
+				<li>' .
+			t('Prepare your abstract beforehand. Do NOT type your abstract in the form field, but COPY it into the form field') . '</li>
+				<li>' .
+			t('Please mail all errors to: !email',
+				array('!email' => ConferenceMisc::encryptEmailAddress(SettingsApi::getSetting(SettingsApi::JIRA_EMAIL)))) . '</li>
+			</ol>
+		</div>',
+	);
 
 	return $form;
 }
 
 /**
- * TODOEXPLAIN
+ * Implements hook_form_validate()
  */
-function preregister_login_form_validate( $form, &$form_state ) {
+function preregister_login_form_validate($form, &$form_state) {
 	// EXISTING USERS
-	if ( $form_state['clicked_button']['#value'] == $form_state['values']['submit_button_next'] ) {
-
-		$email_existing_users_trimmed = trim($form_state['values']['email']);
-		if ( $email_existing_users_trimmed == '' ) {
+	if ($form_state['clicked_button']['#value'] == $form_state['values']['submit_login']) {
+		$email = trim($form_state['values']['email']);
+		if (strlen($email) === 0) {
 			form_set_error('email', 'E-mail field is required.');
-		} elseif ( !valid_email_address( $email_existing_users_trimmed ) ) {
+		}
+		else if (!valid_email_address($email)) {
 			form_set_error('email', 'The e-mail address appears to be invalid.');
 		}
 
-		$password_trimmed = trim($form_state['values']['password']);
-		if ( $password_trimmed == '' ) {
+		$password = trim($form_state['values']['password']);
+		if (strlen($password) === 0) {
 			form_set_error('password', 'Password field is required.');
 		}
-		$_SESSION["conference"]["login_default_email_newusers"] = '';
-
+	}
 	// NEW USERS
-	} elseif ( $form_state['clicked_button']['#value'] == $form_state['values']['submit_button_new'] ) {
-
-		$email_new_users_trimmed = trim($form_state['values']['email_newusers']);
-		if ( $email_new_users_trimmed == '' ) {
-			form_set_error('email_newusers', 'E-mail field is required.');
-		} elseif ( !valid_email_address( $email_new_users_trimmed ) ) {
-			form_set_error('email_newusers', 'The e-mail address appears to be invalid.');
+	else if ($form_state['clicked_button']['#value'] == $form_state['values']['submit_new']) {
+		$email = trim($form_state['values']['email_newusers']);
+		if (strlen($email) === 0) {
+			form_set_error('email', 'E-mail field is required.');
 		}
-
-		$_SESSION["conference"]["login_default_email_existingusers"] = '';
-	// ELSE
-	} else {
+		else if (!valid_email_address($email)) {
+			form_set_error('email', 'The e-mail address appears to be invalid.');
+		}
+	}
+	else {
 		die('ERROR 658412: Unknown button in login form');
 	}
-
 }
 
 /**
- * TODOEXPLAIN
+ * Implements hook_form_submit()
  */
-function preregister_login_form_submit( $form, &$form_state ) {
-	// Trigger multistep, there are more steps.
-	$form_state['rebuild'] = TRUE;
+function preregister_login_form_submit($form, &$form_state) {
+	$form_state['pre-registration']['is_existing_user'] = false;
 
 	// EXISTING USERS
-	if ( $form_state['clicked_button']['#value'] == $form_state['values']['submit_button_next'] ) {
+	if ($form_state['clicked_button']['#value'] == $form_state['values']['submit_button_next']) {
+		$loginApi = new LoginApi();
+		$userStatus = $loginApi->login($form_state['values']['email'], $form_state['values']['password']);
 
-		// load eca settings
-		$eca_dbsettings = loadEcaSettings();
-		$eca_salt = $eca_dbsettings["salt"];
-
-		$email_trimmed = trim($form_state['values']['email']);
-		$password_trimmed = trim($form_state['values']['password']);
-		$_SESSION["conference"]["login_default_email_existingusers"] = $email_trimmed;
-
-		db_set_active( getSetting('db_connection') );
-
-		$result = db_select('users', 'n')
-			->fields('n')
-			->condition('email', $email_trimmed, '=')
-			->orderBy('user_id', 'DESC')
-			->execute()
-			->fetchAssoc();
-
-		$user_status = 1;
-
-		if ( $result ) {
-
-			// calculate password hash
-			$password_hash = encryptPassword($password_trimmed, $eca_salt, $result['salt']);
-
-			// check if dbpassword = hash(password)
-			if ( $password_hash != $result["password"] ) {
-				$user_status = 0; // not equal
-			} elseif ( $result["enabled"] == 0 ) {
-				$user_status = 2; // disabled
-			} elseif ( $result["deleted"] == 1 ) {
-				$user_status = 3; // deleted
-			}
-
-		} else {
-			$user_status = 0;
+		if ($userStatus == LoggedInUserDetails::USER_STATUS_EXISTS) {
+			$form_state['pre-registration']['is_existing_user'] = true;
+			$form_state['pre-registration']['user_email'] = LoggedInUserDetails::getUser()->getEmail();
 		}
-
-		db_set_active();
-
-		if ( $user_status == 1 ) {
-
-			$_SESSION["conference"]["user_id"] = $result["user_id"];
-			$_SESSION["conference"]["user_email"] = trim($form_state['values']['email']);
-			$_SESSION['storage']['isexistinguser'] = 1;
-			//
-			$form_state['storage']['step'] = 'preregister_personalinfo_edit_form';
-		} else {
-
-			switch ( $user_status ) {
-				case 2:
-					drupal_set_message("Account is disabled.", 'error');
+		else {
+			switch ($userStatus) {
+				case LoggedInUserDetails::USER_STATUS_DISABLED:
+					drupal_set_message(t("Account is disabled."), 'error');
 					break;
-				case 3:
-					drupal_set_message("Account is deleted", 'error');
+				case LoggedInUserDetails::USER_STATUS_DELETED:
+					drupal_set_message(t("Account is deleted"), 'error');
 					break;
 				default:
-					drupal_set_message("Incorrect email/password combination.", 'error');
+					drupal_set_message(t("Incorrect email / password combination."), 'error');
 			}
 		}
+	}
+	// NEW USERS
+	else if ($form_state['clicked_button']['#value'] == $form_state['values']['submit_button_new']) {
+		$email = trim($form_state['values']['email_newusers']);
 
-	} elseif ( $form_state['clicked_button']['#value'] == $form_state['values']['submit_button_new'] ) {
+		$user = CRUDApiMisc::getFirstWherePropertyEquals(new UserApi(), 'email', $email);
+		if ($user !== null) {
+			$ecaSettings = CachedConferenceApi::getSettings();
+			$existingUserMessage = $ecaSettings[SettingsApi::EXISTING_USER_MESSAGE];
 
-		$email_trimmed = trim($form_state['values']['email_newusers']);
-		$_SESSION["conference"]["login_default_email_newusers"] = $email_trimmed;
-
-		db_set_active( getSetting('db_connection') );
-
-		$result = db_select('users', 'n')
-			->fields('n')
-			->condition('email', $email_trimmed, '=')
-			->orderBy('user_id', 'DESC')
-			->execute()
-			->fetchAssoc();
-
-		$user_status = 1;
-
-		$user_found = 0;
-		if ( $result ) {
-			$user_found = 1;
+			drupal_set_message(t($existingUserMessage, array('@email' => $email)), 'error');
 		}
-
-		db_set_active();
-
-		if ( $user_found == 1 ) {
-			drupal_set_message("E-mail already registered in our database.<br>Please login with your e-mail/password combination.<br>If you have forgotten your password please go to 'Lost password'.", 'error');
-		} else {
-			$_SESSION["conference"]["user_email"] = $email_trimmed;
-			$_SESSION['storage']['isexistinguser'] = 0;
-
-			//
-			$form_state['storage']['step'] = 'preregister_personalinfo_edit_form';
+		else {
+			$form_state['pre-registration']['user_email'] = $email;
 		}
 	}
 }

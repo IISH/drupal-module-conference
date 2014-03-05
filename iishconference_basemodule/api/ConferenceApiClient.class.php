@@ -86,7 +86,7 @@ class ConferenceApiClient {
 					throw new Exception('Failed to communicate with the conference API.');
 				}
 			}
-			catch (Exception $execption) {
+			catch (Exception $exception) {
 				if ($printErrorMessage) {
 					print t('There are currently problems obtaining the necessary data. Please try again later. ' .
 						'We are sorry for the inconvenience.');

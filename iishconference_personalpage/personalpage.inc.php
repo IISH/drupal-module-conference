@@ -6,9 +6,11 @@
 function conference_personalpage_main() {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		header('Location: ' . url(getSetting('pathForMenu') . 'login', array('query' => drupal_get_destination())));
-		die(t('Go to !login page.', array('!login' => l(t('login'), getSetting('pathForMenu') . 'login',
-			array('query' => drupal_get_destination())))));
+		header('Location: ' .
+		url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
+		die(t('Go to !login page.',
+			array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+				array('query' => drupal_get_destination())))));
 	}
 
 	// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
@@ -70,7 +72,7 @@ function conference_personalpage_main() {
 		'value' => $userDetails->getMobile()
 	));
 
-	if (TRUE || getSetting('show_cv') == 1) {
+	if (true || SettingsApi::getSetting(SettingsApi::SHOW_CV) == 1) {
 		$personalInfoContent[] = theme('iishconference_container_field', array(
 			'label'          => 'Curriculum Vitae',
 			'value'          => $userDetails->getCv(),
@@ -85,13 +87,13 @@ function conference_personalpage_main() {
 	if (LoggedInUserDetails::isAParticipant()) {
 		$registeredAndPayedContent[] = '<span class="eca_remark heavy">' .
 			t('You have pre-registered for the @conference conference.',
-				array('@conference' => getSetting('long_code_year'))) . '<br /></span>';
+				array('@conference' => CachedConferenceApi::getEventDate()->getLongCodeAndYear())) . '<br /></span>';
 
 		$paymentInfo = t('Payment: none') . ' ' . t('(Final registration and payment has not started yet)');
 		if (module_exists('iishconference_finalregistration')) {
 			$paymentInfo = t('Payment: none') . ' ' . t('(!link)',
 					array('!link' => l(t('Final registration and payment'),
-						getSetting('pathForMenu') . 'final-registration')));
+						SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration')));
 
 			if (!is_null($participantDateDetails->getPaymentId()) && ($participantDateDetails->getPaymentId() !== 0)) {
 				$orderDetails = new PayWayMessage(array('orderid' => $participantDateDetails->getPaymentId()));
@@ -121,8 +123,9 @@ function conference_personalpage_main() {
 	else {
 		$registeredAndPayedContent[] = '<span class="eca_warning">' .
 			t('You are not registered for the @conference conference. Please go to !link.',
-				array('@conference' => getSetting('long_code_year'), '!link' => l(t('Pre-registration form'),
-					getSetting('pathForMenu') . 'pre-registration'))) . '</span>';
+				array('@conference' => CachedConferenceApi::getEventDate()->getLongCodeAndYear(),
+				      '!link'       => l(t('Pre-registration form'),
+					      SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'pre-registration'))) . '</span>';
 	}
 
 	// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
@@ -247,7 +250,7 @@ function conference_personalpage_main() {
 			'value' => ConferenceMisc::getYesOrNo(count($networksAsChair) > 0)
 		));
 
-		if ((getSetting('show_network') == 1) && (count($networksAsChair) > 0)) {
+		if ((SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) && (count($networksAsChair) > 0)) {
 			$chairDiscussantContainer[] = theme('iishconference_container_field', array(
 				'label' => 'Network(s)',
 				'value' => implode(', ', $networksAsChair)
@@ -259,7 +262,7 @@ function conference_personalpage_main() {
 			'value' => ConferenceMisc::getYesOrNo(count($networksAsDiscussant) > 0)
 		));
 
-		if ((getSetting('show_network') == 1) && (count($networksAsDiscussant) > 0)) {
+		if ((SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) && (count($networksAsDiscussant) > 0)) {
 			$chairDiscussantContainer[] = theme('iishconference_container_field', array(
 				'label' => 'Network(s)',
 				'value' => implode(', ', $networksAsDiscussant)
@@ -271,7 +274,7 @@ function conference_personalpage_main() {
 		// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 		// ENGLISH LANGUAGE / COACH POOL
 
-		if (getSetting('show_languagecoachpupil') == 1) {
+		if (SettingsApi::getSetting(SettingsApi::SHOW_LANGUAGE_COACH_PUPIL) == 1) {
 			$networksAsCoach = ParticipantVolunteeringApi::getAllNetworksForVolunteering($allVolunteering,
 				getSetting('volunteering_languagecoach'));
 			$networksAsPupil = ParticipantVolunteeringApi::getAllNetworksForVolunteering($allVolunteering,
@@ -348,33 +351,37 @@ function conference_personalpage_main() {
 			$participantDateDetails->getStateId() === ParticipantStateApi::NEW_PARTICIPANT)
 	) {
 		$linksContainer[] =
-			'&bull; ' . l(t('Pre-registration form'), getSetting('pathForMenu') . 'pre-registration') . '<br />';
+			'&bull; ' . l(t('Pre-registration form'),
+				SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'pre-registration') . '<br />';
 	}
 	if (module_exists('iishconference_changepassword')) {
 		$linksContainer[] =
-			'&bull; ' . l(t('Change password'), getSetting('pathForMenu') . 'change-password') . '<br />';
+			'&bull; ' .
+			l(t('Change password'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'change-password') . '<br />';
 	}
 	if (module_exists('iishconference_finalregistration')) {
 		$linksContainer[] = '&bull; ' .
-			l(t('Final registration and payment'), getSetting('pathForMenu') . 'final-registration') . '<br />';
+			l(t('Final registration and payment'),
+				SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration') . '<br />';
 	}
 	if (module_exists('iishconference_emails')) {
 		$linksContainer[] =
-			'&bull; ' . l(t('List of e-mails sent to you'), getSetting('pathForMenu') . 'emails') . '<br />';
+			'&bull; ' . l(t('List of e-mails sent to you'),
+				SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'emails') . '<br />';
 	}
 	if (module_exists('iishconference_logout')) {
-		$linksContainer[] = '&bull; ' . l(t('Logout'), getSetting('pathForMenu') . 'logout') . '<br />';
+		$linksContainer[] =
+			'&bull; ' . l(t('Logout'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'logout') . '<br />';
 	}
 	// check if live or crew or network chair or chair or organizer
 	if (module_exists('iishconference_program') &&
-		(getSetting('onlineprogram_live') == 1 ||
-			LoggedInUserDetails::hasFullRights() ||
+			(LoggedInUserDetails::hasFullRights() ||
 			LoggedInUserDetails::isNetworkChair() ||
 			LoggedInUserDetails::isChair() ||
-			LoggedInUserDetails::isOrganiser())
-	) {
+			LoggedInUserDetails::isOrganiser())) {
 		$linksContainer[] =
-			'&bull; ' . l(getSetting('onlineprogram_header'), getSetting('pathForMenu') . 'program') . '<br />';
+			'&bull; ' . l(SettingsApi::getSetting(SettingsApi::ONLINE_PROGRAM_HEADER),
+				SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'program') . '<br />';
 	}
 
 	// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
@@ -386,23 +393,24 @@ function conference_personalpage_main() {
 	if (LoggedInUserDetails::hasFullRights() || LoggedInUserDetails::isNetworkChair()) {
 		if (module_exists('iishconference_networksforchairs')) {
 			$linksNetworkContainer[] = '&bull; ' . l(t('Networks, Sessions & Participants (and papers)'),
-					getSetting('pathForMenu') . 'networksforchairs') . '<br />';
+					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'networksforchairs') . '<br />';
 		}
 		if (module_exists('iishconference_networkparticipants')) {
 			$linksNetworkContainer[] = '&bull; ' .
-				l(t('Networks and their Participants'), getSetting('pathForMenu') . 'networkparticipants') . '<br />';
+				l(t('Networks and their Participants'),
+					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'networkparticipants') . '<br />';
 		}
 		if (module_exists('iishconference_networkvolunteers')) {
 			$linksNetworkContainer[] = '&bull; ' . l(t('Networks and their Volunteers (Chair/Discussant)'),
-					getSetting('pathForMenu') . 'networkvolunteers') . '<br />';
+					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'networkvolunteers') . '<br />';
 		}
 		if (module_exists('iishconference_proposednetworkparticipants')) {
 			$linksNetworkContainer[] = '&bull; ' . l(t('Participants and their proposed networks'),
-					getSetting('pathForMenu') . 'proposednetworkparticipants') . '<br />';
+					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'proposednetworkparticipants') . '<br />';
 		}
 		if (module_exists('iishconference_electionadvisory')) {
 			$linksNetworkContainer[] = '&bull; ' . l(t('Election \'Advisory board\''),
-					getSetting('pathForMenu') . 'election-advisory-board') . '<br />';
+					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'election-advisory-board') . '<br />';
 		}
 	}
 
@@ -446,8 +454,8 @@ function conference_personalpage_paper(&$container, $paper, $participant) {
 	$container[] = theme('iishconference_container_header', array('text' => t('Paper')));
 
 	$container[] = theme('iishconference_container_field', array(
-		'label' => 'Title',
-		'value' => $paper->getTitle())
+			'label' => 'Title',
+			'value' => $paper->getTitle())
 	);
 	$container[] = theme('iishconference_container_field', array(
 		'label' => 'Paper state',
@@ -463,11 +471,11 @@ function conference_personalpage_paper(&$container, $paper, $participant) {
 		'value' => $paper->getCoAuthors()
 	));
 
-	if ((getSetting('show_award') == 1) && $participant->getStudent()) {
+	if ((SettingsApi::getSetting(SettingsApi::SHOW_AWARD) == 1) && $participant->getStudent()) {
 		$awardText = ConferenceMisc::getYesOrNo($participant->getAward());
 		$awardText .= '&nbsp; <em>(' . l(t('more about the award'), 'award') . ')</em>';
 		$container[] = theme('iishconference_container_field', array(
-			'label'       => getSetting('award_name') . ' award?',
+			'label'       => SettingsApi::getSetting(SettingsApi::AWARD_NAME) . '?',
 			'value'       => $awardText,
 			'valueIsHTML' => true
 		));
@@ -483,5 +491,6 @@ function conference_personalpage_paper(&$container, $paper, $participant) {
 	));
 
 	$container[] = '<br /><b> ' .
-		l(t('Upload paper'), getSetting('pathForMenu') . 'personal-page/upload-paper/' . $paper->getId()) . '</b>';
+		l(t('Upload paper'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page/upload-paper/' .
+			$paper->getId()) . '</b>';
 }

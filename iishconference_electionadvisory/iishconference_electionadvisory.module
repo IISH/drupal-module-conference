@@ -14,7 +14,7 @@ function iishconference_electionadvisory_help($path, $arg) {
  * Implements hook_menu()
  */
 function iishconference_electionadvisory_menu() {
-	$extraPath = getSetting('pathForMenu');
+	$extraPath = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU);
 
 	$items[$extraPath . 'election-advisory-board'] = array(
 		'title'           => 'Election \'Advisory board\'',

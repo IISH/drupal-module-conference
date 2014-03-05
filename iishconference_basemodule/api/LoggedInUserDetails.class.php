@@ -190,16 +190,16 @@ class LoggedInUserDetails {
 	 */
 	public static function setCurrentlyLoggedInWithResponse(array $response) {
 		$userStatus = self::USER_STATUS_DOES_NOT_EXISTS;
-		$_SESSION["conference"]["user_email"] = null;
-		$_SESSION["conference"]["user_id"] = null;
+		$_SESSION['conference']['user_email'] = null;
+		$_SESSION['conference']['user_id'] = null;
 
 		if ($response !== null) {
 			$userStatus = $response['status'];
-			$_SESSION["conference"]["hasFullRights"] = $response['hasFullRights'];
-			$_SESSION["conference"]["isNetworkChair"] = $response['isNetworkChair'];
-			$_SESSION["conference"]["isChair"] = $response['isChair'];
-			$_SESSION["conference"]["isOrganiser"] = $response['isOrganiser'];
-			$_SESSION["conference"]["isCrew"] = $response['isCrew'];
+			$_SESSION['conference']['hasFullRights'] = $response['hasFullRights'];
+			$_SESSION['conference']['isNetworkChair'] = $response['isNetworkChair'];
+			$_SESSION['conference']['isChair'] = $response['isChair'];
+			$_SESSION['conference']['isOrganiser'] = $response['isOrganiser'];
+			$_SESSION['conference']['isCrew'] = $response['isCrew'];
 
 			$user = null;
 			if ($response['user'] instanceof UserApi) {
@@ -217,15 +217,11 @@ class LoggedInUserDetails {
 				$participant = ParticipantDateApi::getParticipantDateFromArray($response['participant']);
 			}
 
-			$_SESSION["conference"]["user_email"] = $user->getEmail();
-			$_SESSION["conference"]["user_id"] = $user->getId();
+			$_SESSION['conference']['user_email'] = $user->getEmail();
+			$_SESSION['conference']['user_id'] = $user->getId();
 
-			$_SESSION["conference"]["user"] = serialize($user);
-			$_SESSION["conference"]["participant"] = serialize($participant);
-		}
-
-		if ($userStatus == self::USER_STATUS_EXISTS) {
-			$_SESSION['storage']['isexistinguser'] = 1;
+			$_SESSION['conference']['user'] = serialize($user);
+			$_SESSION['conference']['participant'] = serialize($participant);
 		}
 
 		return $userStatus;

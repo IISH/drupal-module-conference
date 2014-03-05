@@ -20,8 +20,6 @@ class LoginApi {
 	 * @return int The status
 	 */
 	public function login($email, $password) {
-		$_SESSION["conference"]["login_default_email_existingusers"] = trim($email);
-
 		$response = $this->client->get(self::$apiName, array(
 			'email'    => trim($email),
 			'password' => trim($password),

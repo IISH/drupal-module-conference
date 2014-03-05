@@ -1,23 +1,4 @@
 <?php
-// show all messages
-error_reporting(E_ALL);
-ini_set("display_errors", 1);
-
-require_once 'preregister.inc.php';
-require_once 'preregister_login.inc.php';
-require_once 'preregister_personalinfo_edit.inc.php';
-require_once 'preregister_personalinfo_preview.inc.php';
-require_once 'preregister_typeofregistration.inc.php';
-require_once 'preregister_registerpaper_edit.inc.php';
-require_once 'preregister_registerpaper_preview.inc.php';
-require_once 'preregister_chairdiscussantpool_edit.inc.php';
-require_once 'preregister_chairdiscussantpool_preview.inc.php';
-require_once 'preregister_completed.inc.php';
-require_once 'preregister_session_list.inc.php';
-require_once 'preregister_session_edit.inc.php';
-require_once 'preregister_sessionparticipant.inc.php';
-require_once 'preregister_sessionparticipant_remove.inc.php';
-require_once 'preregister_session_remove.inc.php';
 
 /**
  * Implements hook_help()
@@ -37,14 +18,16 @@ function iishconference_preregistration_help($path, $arg) {
 function iishconference_preregistration_menu() {
 	$items = array();
 
-	$extraPath = getSetting('pathForMenu');
+	$extraPath = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU);
 
 	$items[$extraPath . 'pre-registration'] = array(
-		'title'           => 'Pre-registration for the ' . getSetting('long_code_year') . ' conference',
+		'title'           => 'Pre-registration for the ' . CachedConferenceApi::getEventDate()->getLongCodeAndYear() . ' conference',
+		'description'     => 'Pre-registration ...description...',
 		'page callback'   => 'drupal_get_form',
 		'page arguments'  => array('preregister_form'),
 		'access callback' => true,
 		'type'            => MENU_NORMAL_ITEM,
+		'file'            => 'preregister.inc.php',
 	);
 
 	return $items;

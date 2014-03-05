@@ -96,7 +96,7 @@ function saveEmailInDatabase($subject, $body, $user_id, $date_id, $set_as_sent =
 
 	$query =
 		"INSERT INTO sent_emails (user_id, date_id, from_name, from_email, subject, body, date_time_sent, num_tries) VALUES ($user_id, $date_id, '" .
-		addslashes(getSetting('email_fromname')) . "', '" . addslashes(getSetting('email_fromemail')) . "', '" .
+		addslashes(getSetting('email_fromname')) . "', '" . addslashes(SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL)) . "', '" .
 		addslashes($subject) . "', '" . addslashes($body) . "', '::DATE::', ::NUMOFTRIES::) ";
 
 	if ($set_as_sent) {
@@ -117,8 +117,8 @@ function saveEmailInDatabase($subject, $body, $user_id, $date_id, $set_as_sent =
  * TODOEXPLAIN
  */
 function sendEmail($to, $subject, $body, $bcc = '') {
-	$headers = "From: " . getSetting('email_fromemail') . "\r\nReply-To: " .
-		getSetting('email_fromemail') . "\r\nReturn-Path: gcu@iisg.nl";
+	$headers = "From: " . SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL) . "\r\nReply-To: " .
+		SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL) . "\r\nReturn-Path: gcu@iisg.nl";
 
 	mail($to, $subject, $body, $headers);
 
@@ -842,7 +842,7 @@ function getOrganizerDataOverview($user_id) {
 	foreach ($result as $record) {
 		$ret .= "SESSION: " . $record->session_name . " \n";
 		$ret .= "Abstract: " . $record->session_abstract . " \n";
-		if (getSetting('show_network') == 1) {
+		if (SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) {
 			$ret .= "Network(s): " . implode(', ',
 					loadNetworksInArray("SELECT networks.name FROM session_in_network INNER JOIN networks ON session_in_network.network_id=networks.network_id WHERE session_in_network.session_id=" .
 					$record->session_id . " GROUP BY networks.name ORDER BY networks.name ", "name")) . " \n \n";
@@ -1043,7 +1043,7 @@ function sendConfirmationEmail($user_id, $subject, $body) {
 			$paper .= "Co-author(s): " . $_SESSION['storage']['preregister_registerpaper_coauthors'] . " \n";
 
 			$list_of_networks = getArrayOfNetworks();
-			if (getSetting('show_network') == 1) {
+			if (SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) {
 				$paper .= "Proposed network: " .
 					$list_of_networks[$_SESSION['storage']['preregister_registerpaper_proposednetwork']] . " \n";
 			}
@@ -1059,7 +1059,7 @@ function sendConfirmationEmail($user_id, $subject, $body) {
 					"Proposed session: " . $_SESSION['storage']['preregister_registerpaper_proposedsession'] . " \n";
 			}
 
-			if (getSetting('show_award') == 1) {
+			if (SettingsApi::getSetting(SettingsApi::SHOW_AWARD) == 1) {
 				if (isset($_SESSION['storage']['preregister_personalinfo_student']['y']) &&
 					$_SESSION['storage']['preregister_personalinfo_student']['y'] === 'y'
 				) {
@@ -1093,7 +1093,7 @@ function sendConfirmationEmail($user_id, $subject, $body) {
 		$pool .= (isset($_SESSION['storage']['preregister_chairdiscussantpool_volunteerchair']['y']) &&
 			$_SESSION['storage']['preregister_chairdiscussantpool_volunteerchair']['y'] === 'y') ? 'yes' : 'no';
 		$pool .= " \n";
-		if (getSetting('show_network') == 1) {
+		if (SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) {
 			if (isset($_SESSION['storage']['preregister_chairdiscussantpool_volunteerchair']['y']) &&
 				$_SESSION['storage']['preregister_chairdiscussantpool_volunteerchair']['y'] === 'y'
 			) {
@@ -1105,7 +1105,7 @@ function sendConfirmationEmail($user_id, $subject, $body) {
 		$pool .= (isset($_SESSION['storage']['preregister_chairdiscussantpool_volunteerdiscussant']['y']) &&
 			$_SESSION['storage']['preregister_chairdiscussantpool_volunteerdiscussant']['y'] === 'y') ? 'yes' : 'no';
 		$pool .= " \n";
-		if (getSetting('show_network') == 1) {
+		if (SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) {
 			if (isset($_SESSION['storage']['preregister_chairdiscussantpool_volunteerdiscussant']['y']) &&
 				$_SESSION['storage']['preregister_chairdiscussantpool_volunteerdiscussant']['y'] === 'y'
 			) {
@@ -1117,8 +1117,8 @@ function sendConfirmationEmail($user_id, $subject, $body) {
 
 	// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 
-	if (getSetting('show_languagecoachpupil') == 1) {
-		// LANUGUAGE
+	if (SettingsApi::getSetting(SettingsApi::SHOW_LANGUAGE_COACH_PUPIL) == 1) {
+		// LANGUAGE
 		if (strpos($body, '[ParticipantLanguage]') !== false) {
 			$arrLanguageCoaches = getArrayOfLanguageCoach();
 			$chosenLangeuageCoach = $_SESSION['storage']['preregister_chairdiscussantpool_coachpupil'];
@@ -1391,7 +1391,7 @@ function saveUpdateParticipant() {
 	$query = str_replace('::PHONE::', addslashes($_SESSION['storage']['preregister_personalinfo_phone']), $query);
 	$query = str_replace('::MOBILE::', addslashes($_SESSION['storage']['preregister_personalinfo_mobile']), $query);
 	$query = str_replace('::DATE_ADDED::', addslashes(date("Y-m-d")), $query);
-	if (getSetting('show_cv') == 1) {
+	if (SettingsApi::getSetting(SettingsApi::SHOW_CV) == 1) {
 		$query = str_replace('::CVSEPARATOR::', ', ', $query);
 		$query = str_replace('::CVFIELD::', 'cv', $query);
 		$query = str_replace('::CVVALUE::', "'" . addslashes($_SESSION['storage']['preregister_personalinfo_cv']) . "'",
@@ -1996,7 +1996,7 @@ function saveParticipant() {
 	$query = str_replace('::ADDEDBY::', getIdLoggedInUser(), $query);
 	$query = str_replace('::USERID::', $_SESSION['storage']['preregistersession_participantid'], $query);
 
-	if (getSetting('show_cv') == 1) {
+	if (SettingsApi::getSetting(SettingsApi::SHOW_CV) == 1) {
 		$query = str_replace('::CVSEPARATOR::', ', ', $query);
 		$query = str_replace('::CVFIELD::', 'cv', $query);
 		$query = str_replace('::CVVALUE::', "'" . addslashes($_SESSION['storage']['preregister_personalinfo_cv']) . "'",

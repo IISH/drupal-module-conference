@@ -40,7 +40,7 @@ function preregister_chairdiscussantpool_preview_form( $form, &$form_state ) {
 		'#suffix' => '</div>', 
 		);
 
-	if ( getSetting('show_network') == 1 ) {
+	if ( SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1 ) {
 		if ( $_SESSION['storage']['preregister_chairdiscussantpool_volunteerchair']['y'] === 'y' ) {
 			// 
 			$form['ct'.$ct++] = array(
@@ -50,7 +50,7 @@ function preregister_chairdiscussantpool_preview_form( $form, &$form_state ) {
 		}
 	}
 
-	if ( getSetting('show_network') == 1 ) {
+	if ( SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1 ) {
 		$form['ct'.$ct++] = array(
 			'#type' => 'markup',
 			'#markup' => '<br>',
@@ -68,7 +68,7 @@ function preregister_chairdiscussantpool_preview_form( $form, &$form_state ) {
 		'#suffix' => '</div>', 
 		);
 
-if ( getSetting('show_network') == 1 ) {
+if ( SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1 ) {
 	if ( $_SESSION['storage']['preregister_chairdiscussantpool_volunteerdiscussant']['y'] === 'y' ) {
 		// 
 		$form['ct'.$ct++] = array(
@@ -85,7 +85,7 @@ if ( getSetting('show_network') == 1 ) {
 
 	// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 
-if ( getSetting('show_languagecoachpupil') == 1 ) {
+if ( SettingsApi::getSetting(SettingsApi::SHOW_LANGUAGE_COACH_PUPIL) == 1 ) {
 
 	// COACH PUPIL
 

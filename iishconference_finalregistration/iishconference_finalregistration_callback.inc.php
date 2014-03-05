@@ -56,5 +56,5 @@ function iishconference_finalregistration_decline() {
 function iishconference_finalregistration_exception() {
 	return t('Unfortunately, your payment result is uncertain at the moment.') . '<br />' .
 	t('Please contact @email to request information on your payment transaction.',
-		array('@email' => getSetting('admin_email')));
+		array('@email' => SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL)));
 }

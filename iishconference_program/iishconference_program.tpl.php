@@ -1,5 +1,5 @@
-<?php if (getSetting('onlineprogram_underconstruction') != '') : ?>
-	<h1><?php print getSetting('onlineprogram_underconstruction'); ?></h1>
+<?php if (SettingsApi::getSetting(SettingsApi::ONLINE_PROGRAM_UNDER_CONSTRUCTION) != '') : ?>
+	<h1><?php print SettingsApi::getSetting(SettingsApi::ONLINE_PROGRAM_UNDER_CONSTRUCTION); ?></h1>
 <?php endif; ?>
 
 <div class="container-inline bottommargin">

@@ -101,7 +101,7 @@ function preregister_personalinfo_preview_form( $form, &$form_state ) {
 		'#suffix' => '</div>', 
 		);
 
-	if ( getSetting('show_cv') == 1 ) {
+	if ( SettingsApi::getSetting(SettingsApi::SHOW_CV) == 1 ) {
 
 		$a = str_replace("\n", "<br>\n", $_SESSION['storage']['preregister_personalinfo_cv']);
 		$a = show_more($a, 300, 'divcv');

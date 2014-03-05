@@ -4,6 +4,7 @@
  * Holds all methods to cache data obtained via the API and obtain the data again from the cache
  */
 class CachedConferenceApi {
+	private static $nameEventDateCache = 'iishconference_eventdate';
 	private static $nameNetworksCache = 'iishconference_networks';
 	private static $nameCountriesCache = 'iishconference_countries';
 	private static $nameDaysCache = 'iishconference_days';
@@ -22,6 +23,7 @@ class CachedConferenceApi {
 	 * Updates all caches
 	 */
 	public static function updateAll() {
+		self::setEventDate();
 		self::setNetworks();
 		self::setCountries();
 		self::setDays();
@@ -35,6 +37,13 @@ class CachedConferenceApi {
 		self::setExtras();
 		self::setVolunteering();
 		self::setSettings();
+	}
+
+	public static function setEventDate() {
+		$eventDate = EventDateApi::getCurrent();
+		cache_set(self::$nameSettingsCache, $eventDate, 'cache', CACHE_PERMANENT);
+
+		return $eventDate;
 	}
 
 	public static function setNetworks() {
@@ -94,6 +103,15 @@ class CachedConferenceApi {
 
 	public static function setRooms() {
 		return self::set(self::$nameRoomsCache, 'RoomApi');
+	}
+
+	public static function getEventDate() {
+		if ($result = cache_get(self::$nameEventDateCache, 'cache')) {
+			return $result->data;
+		}
+		else {
+			return self::setEventDate();
+		}
 	}
 
 	public static function getRooms() {

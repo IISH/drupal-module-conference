@@ -6,8 +6,8 @@
 function conference_changeuser_form($form, &$form_state) {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		header('Location: ' . url(getSetting('pathForMenu') . 'login', array('query' => drupal_get_destination())));
-		die(t('Go to !login page.', array('!login' => l(t('login'), getSetting('pathForMenu') . 'login',
+		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
+		die(t('Go to !login page.', array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 			array('query' => drupal_get_destination())))));
 	}
 
@@ -16,7 +16,7 @@ function conference_changeuser_form($form, &$form_state) {
 			t('Current user ( @user ) is not a conference crew member.',
 				array('@user' => LoggedInUserDetails::getUser())) . '<br />' .
 			t('Please !login as a crew member.',
-				array('!login' => l(t('log out and login'), getSetting('pathForMenu') . 'login',
+				array('!login' => l(t('log out and login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 					array('query' => drupal_get_destination())))), 'error');
 
 		return '';
@@ -30,7 +30,8 @@ function conference_changeuser_form($form, &$form_state) {
 		'#markup' => '<div><br />' . t('Please enter # or e-mail of user.') . '</div>',
 	);
 
-	$value = getShiftValue($_SERVER["REQUEST_URI"], 1 + getNumberOfDirectories(getSetting('pathForAdminMenu')));
+	$path = SettingsApi::getSetting(SettingsApi::PATH_FOR_ADMIN_MENU);
+	$value = getShiftValue($_SERVER["REQUEST_URI"], 1 + getNumberOfDirectories($path));
 
 	$form['user_id'] = array(
 		'#type'          => 'textfield',
@@ -74,7 +75,8 @@ function conference_changeuser_form_submit($form, &$form_state) {
 				drupal_set_message(t("User changed."));
 
 				// redirect to personal page
-				$form_state['redirect'] = getSetting('pathForMenu') . 'personal-page';
+				$ecaSettings = CachedConferenceApi::getSettings();
+				$form_state['redirect'] = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page';
 			}
 			else {
 				switch ($userStatus) {

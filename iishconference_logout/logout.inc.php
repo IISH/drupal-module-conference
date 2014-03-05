@@ -41,6 +41,6 @@ function conference_logout_form_submit($form, &$form_state) {
 
 	// redirect to the login page
 	$form_state['redirect'] = array(
-		'/' . getSetting('pathForMenu') . getSetting('urllogin'),
+		'/' . SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 	);
 }

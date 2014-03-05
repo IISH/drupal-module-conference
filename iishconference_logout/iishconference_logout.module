@@ -18,7 +18,7 @@ function iishconference_logout_help($path, $arg) {
 function iishconference_logout_menu() {
 	$items = array();
 
-	$extraPath = getSetting('pathForMenu');
+	$extraPath = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU);
 
 	$items[$extraPath . 'logout'] = array(
 		'title'           => 'Logout',

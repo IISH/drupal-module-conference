@@ -8,8 +8,8 @@
 function iishconference_proposednetworkparticipants_main() {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		header('Location: ' . url(getSetting('pathForMenu') . 'login', array('query' => drupal_get_destination())));
-		die(t('Go to !login page.', array('!login' => l(t('login'), getSetting('pathForMenu') . 'login',
+		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
+		die(t('Go to !login page.', array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 			array('query' => drupal_get_destination())))));
 	}
 
@@ -27,7 +27,7 @@ function iishconference_proposednetworkparticipants_main() {
 		$links = array();
 		foreach ($networks as $network) {
 			$links[] =
-				l($network->getName(), getSetting('pathForMenu') . 'proposednetworkparticipants/' . $network->getId());
+				l($network->getName(), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'proposednetworkparticipants/' . $network->getId());
 		}
 
 		$output .= theme('item_list', array(
@@ -39,7 +39,7 @@ function iishconference_proposednetworkparticipants_main() {
 	$links = array();
 	foreach ($allNetworks as $network) {
 		$links[] =
-			l($network->getName(), getSetting('pathForMenu') . 'proposednetworkparticipants/' . $network->getId());
+			l($network->getName(), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'proposednetworkparticipants/' . $network->getId());
 	}
 
 	$output .= theme('item_list', array(
@@ -60,8 +60,8 @@ function iishconference_proposednetworkparticipants_main() {
 function iishconference_proposednetworkparticipants_detail($network) {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		header('Location: ' . url(getSetting('pathForMenu') . 'login', array('query' => drupal_get_destination())));
-		die(t('Go to !login page.', array('!login' => l(t('login'), getSetting('pathForMenu') . 'login',
+		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
+		die(t('Go to !login page.', array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 			array('query' => drupal_get_destination())))));
 	}
 
@@ -81,8 +81,8 @@ function iishconference_proposednetworkparticipants_detail($network) {
 		'list'     => CachedConferenceApi::getNetworks(),
 		'current'  => $network,
 		'prevLink' => l('« ' . t('Go back to networks list'),
-			getSetting('pathForMenu') . 'proposednetworkparticipants'),
-		'curUrl'   => getSetting('pathForMenu') . 'proposednetworkparticipants/',
+			SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'proposednetworkparticipants'),
+		'curUrl'   => SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'proposednetworkparticipants/',
 	));
 
 	$chairLinks = array();

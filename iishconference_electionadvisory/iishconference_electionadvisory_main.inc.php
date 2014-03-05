@@ -8,8 +8,8 @@
 function iishconference_electionadvisory_main() {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		header('Location: ' . url(getSetting('pathForMenu') . 'login', array('query' => drupal_get_destination())));
-		die(t('Go to !login page.', array('!login' => l(t('login'), getSetting('pathForMenu') . 'login',
+		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
+		die(t('Go to !login page.', array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 			array('query' => drupal_get_destination())))));
 	}
 
@@ -110,5 +110,5 @@ function iishconference_electionadvisory_form_submit($form, &$form_state) {
 
 	// Redirect back to the personal page
 	drupal_set_message('Thank you for your vote!', 'status');
-	drupal_goto(getSetting('pathForMenu') . 'personal-page');
+	drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page');
 }
