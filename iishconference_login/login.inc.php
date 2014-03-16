@@ -8,7 +8,7 @@ function conference_login_form($form, &$form_state) {
 
 	$form['ct' . $ct++] = array(
 		'#type'   => 'markup',
-		'#markup' => '<div class="preregister_fullwidth">',
+		'#markup' => '<div class="iishconference_container">',
 	);
 
 	$form['ct' . $ct++] = array(

@@ -4,6 +4,8 @@
  * Holds a fee state obtained from the API
  */
 class FeeStateApi extends CRUDApiClient {
+	const NO_FEE_SELECTED = 0;
+
 	protected $name;
 	protected $isDefaultFee;
 	protected $feeAmounts_id;

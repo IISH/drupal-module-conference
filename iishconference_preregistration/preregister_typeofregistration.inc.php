@@ -1,130 +1,269 @@
-<?php 
+<?php
+
 /**
- * TODOEXPLAIN
+ * Implements hook_form()
  */
-function preregister_typeofregistration_form( $form, &$form_state ) {
-	$ct = 0;
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '<div class="step">Step 4 of ' . getSetting('steps') . '</div>',
+function preregister_typeofregistration_form($form, &$form_state) {
+	$flow = new PreRegistrationFlow($form_state);
+	$user = $flow->getUser();
+	$data = array();
+
+	// + + + + + + + + + + + + + + + + + + + + + + + +
+	// AUTHOR
+
+	$showAuthor = SettingsApi::getSetting(SettingsApi::SHOW_AUTHOR_REGISTRATION);
+	$authorClosesOn = SettingsApi::getSetting(SettingsApi::AUTHOR_REGISTRATION_CLOSES_ON);
+
+	$authorRegistrationClosed =
+		(($authorClosesOn !== null) && (strlen(trim($authorClosesOn)) > 0) && (time() >= strtotime($authorClosesOn)));
+	$data['authorRegistrationOpen'] = (($showAuthor == 1) && !$authorRegistrationClosed);
+
+	if ($showAuthor == 1) {
+		$form['author'] = array(
+			'#type'  => 'fieldset',
+			'#title' => t('I would like to propose a paper'),
 		);
 
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '<div class="preregister_fullwidth">',
-		);
+		if (!$authorRegistrationClosed) {
+			$paperResults =
+				CRUDApiMisc::getAllWherePropertyEquals(new PaperApi(), 'addedBy_id', $user->getId());
+			$papers = $paperResults->getResults();
 
-	// show / hide options
-	$options = array();
-	if ( getSetting('hide_add_single_paper_after') > date("Y-m-d") ) {
-		$options['paper'] = 'I would like to propose a SINGLE paper<br><em>(If you have multiple papers, please register one paper and then contact the congress secretary)</em><br><br>';
-	}
+			$maxPapers = SettingsApi::getSetting(SettingsApi::MAX_PAPERS_PER_PERSON_PER_SESSION);
+			$canSubmitNewPaper = (($maxPapers === null) || ($paperResults->getTotalSize() < $maxPapers));
+			$data['canSubmitNewPaper'] = $canSubmitNewPaper;
 
-	// 
-	$oUser = new class_conference_user( getIdLoggedInUser() );
+			if ($canSubmitNewPaper) {
+				$form['author']['submit_paper'] = array(
+					'#type'   => 'submit',
+					'#name'   => 'submit_paper',
+					'#value'  => t('Add a new paper'),
+					'#suffix' => '<br /><br />',
+				);
+			}
 
-	if ( !$oUser->hasPaperWithoutSession() ) {
-		$options['spectator'] = 'I would like to register as a spectator<br><br>';
-	}
+			foreach ($papers as $i => $paper) {
+				if (($i == 0) && !$canSubmitNewPaper) {
+					$prefix = '';
+				}
+				else {
+					$prefix = ' &nbsp;' . t('or') . '<br /><br />';
+				}
 
-	if ( getSetting('hide_add_session_after') > date("Y-m-d") ) {
-		$options['session'] = 'I\'m an organizer and I would like to propose a session (including MULTIPLE participants and papers!)<br><br>';
-	}
-
-	// 
-	if ( $oUser->hasPaperWithoutSession() ) {
-		$options['skip'] = 'Go to step 7 (Chair / Discussant pool)<br><br>';
-	}
-
-	$form['what'] = array(
-		'#type' => 'radios',
-		'#title' => 'How would you like to pre-register?',
-		'#options' => $options,
-		'#default_value' => isset( $_SESSION['storage']['what'] ) ? $_SESSION['storage']['what'] : NULL,
-		);
-
-	if ( getSetting('hide_add_single_paper_after') <= date("Y-m-d") ) {
-		$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => '<font color=red>It is no longer possible to pre-register a paper.<br>You can still pre-register for the conference as listener.</font>',
+				$form['author']['submit_paper_' . $paper->getId()] = array(
+					'#name'   => 'submit_paper_' . $paper->getId(),
+					'#type'   => 'submit',
+					'#value'  => t('Edit paper'),
+					'#prefix' => $prefix,
+					'#suffix' => ' ' . $paper->getTitle() . '<br /><br />',
+				);
+			}
+		}
+		else {
+			$form['author']['closed_message'] = array(
+				'#type'   => 'markup',
+				'#markup' => '<font color="red">' . t('It is no longer possible to pre-register a paper.') . '<br/ >' .
+					t('You can still pre-register for the conference as a spectator.') . '</font>',
 			);
+		}
 	}
 
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '</div>',
+	// + + + + + + + + + + + + + + + + + + + + + + + +
+	// ORGANIZER
+
+	$showOrganizer = SettingsApi::getSetting(SettingsApi::SHOW_ORGANIZER_REGISTRATION);
+	$organizerClosesOn = SettingsApi::getSetting(SettingsApi::ORGANIZER_REGISTRATION_CLOSES_ON);
+
+	$organizerRegistrationClosed = (($organizerClosesOn !== null) && (strlen(trim($organizerClosesOn)) > 0) &&
+		(time() >= strtotime($organizerClosesOn)));
+	$data['organizerRegistrationOpen'] = (($showOrganizer == 1) && !$organizerRegistrationClosed);
+
+	if ($showOrganizer == 1) {
+		$form['organizer'] = array(
+			'#type'  => 'fieldset',
+			'#title' => t('I\'m an organizer and I would like to propose a session (including MULTIPLE participants and papers!)'),
 		);
 
-	// 
+		if (!$organizerRegistrationClosed) {
+			$sessions = CRUDApiMisc::getAllWherePropertyEquals(new SessionApi(), 'addedBy_id', $user->getId())
+				->getResults();
+
+			$form['organizer']['submit_session'] = array(
+				'#type'   => 'submit',
+				'#name'   => 'submit_session',
+				'#value'  => t('Add a new session'),
+				'#suffix' => '<br /><br />',
+			);
+
+			foreach ($sessions as $session) {
+				$form['organizer']['submit_session_' . $session->getId()] = array(
+					'#name'   => 'submit_session_' . $session->getId(),
+					'#type'   => 'submit',
+					'#value'  => t('Edit session'),
+					'#prefix' => ' &nbsp;' . t('or') . '<br /><br />',
+					'#suffix' => ' ' . $session->getName() . '<br /><br />',
+				);
+			}
+		}
+		else {
+			$form['organizer']['closed_message'] = array(
+				'#type'   => 'markup',
+				'#markup' => '<font color="red">' . t('It is no longer possible to propose a session.') . '<br/ >' .
+					t('You can still pre-register for the conference as a spectator.') . '</font>',
+			);
+		}
+	}
+
+	// + + + + + + + + + + + + + + + + + + + + + + + +
+	// SPECTATOR
+
+	$form['spectator'] = array(
+		'#type'  => 'fieldset',
+		'#title' => t('I would like to register as a spectator'),
+	);
+
+	$form['spectator']['help_text'] = array(
+		'#type'   => 'markup',
+		'#markup' => t('Then you may skip this page and go right away to the confirmation page.'),
+	);
+
+	// + + + + + + + + + + + + + + + + + + + + + + + +
+
 	$form['submit_back'] = array(
-		'#type' => 'submit',
-		'#value' => 'Back',
-		);
-
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '&nbsp; &nbsp; &nbsp;',
-		);
+		'#type'                    => 'submit',
+		'#name'                    => 'submit_back',
+		'#value'                   => t('Back to personal info'),
+		'#submit'                  => array('preregister_form_submit'),
+		'#limit_validation_errors' => array(),
+	);
 
 	$form['submit'] = array(
-		'#type' => 'submit',
-		'#value' => 'Next',
-		);
+		'#type'  => 'submit',
+		'#name'  => 'submit',
+		'#value' => t('Next to confirmation page'),
+	);
 
-	// EXISTING USERS
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '<br><br><br><br>',
-		);
+	$flow->setFormData($data);
 
 	return $form;
 }
 
 /**
- * TODOEXPLAIN
+ * Implements hook_form_submit()
  */
-function preregister_typeofregistration_form_validate( $form, &$form_state ) {
-	$values = $form_state['values'];
+function preregister_typeofregistration_form_submit($form, &$form_state) {
+	$flow = new PreRegistrationFlow($form_state);
+	$data = $flow->getFormData();
+	$submitName = $form_state['triggering_element']['#name'];
 
-	if ( $form_state['clicked_button']['#value'] == $values['submit'] ) {
-		if ( $form_state['values']['what'] == '' ) {
-			form_set_error('what', 'Please select how you would like to pre-register?.');
+	if ($submitName === 'submit') {
+		return 'preregister_confirm_form';
+	}
+
+	if ($data['authorRegistrationOpen']) {
+		if (($submitName === 'submit_paper') && $data['canSubmitNewPaper']) {
+			return preregister_typeofregistration_set_paper($flow, null);
+		}
+
+		if (strpos($submitName, 'submit_paper_') === 0) {
+			$id = EasyProtection::easyIntegerProtection(str_replace('submit_paper_', '', $submitName));
+
+			return preregister_typeofregistration_set_paper($flow, $id);
 		}
 	}
+
+	if ($data['organizerRegistrationOpen']) {
+		if ($submitName === 'submit_session') {
+			return preregister_typeofregistration_set_session($flow, null);
+		}
+
+		if (strpos($submitName, 'submit_session_') === 0) {
+			$id = EasyProtection::easyIntegerProtection(str_replace('submit_session_', '', $submitName));
+
+			return preregister_typeofregistration_set_session($flow, $id);
+		}
+	}
+
+	return 'preregister_typeofregistration_form';
 }
 
 /**
- * TODOEXPLAIN
+ * What is the previous page?
  */
-function preregister_typeofregistration_form_submit( $form, &$form_state ) {
-	// Trigger multistep, there are more steps.
-	$form_state['rebuild'] = TRUE;
-
-	$values = $form_state['values'];
-
-	$_SESSION['storage']['what'] = $form_state['values']['what'];
-
-	if ( $form_state['clicked_button']['#value'] == $values['submit_back'] ) {
-		$form_state['storage']['step'] = 'preregister_personalinfo_preview_form';
-	} elseif ( $form_state['clicked_button']['#value'] == $values['submit'] ) {
-
-		$_SESSION['storage']['choice'] = $form_state['values']["what"];
-
-		if ( $form_state['values']['what'] == 'paper' ) {
-			$form_state['storage']['step'] = 'preregister_registerpaper_edit_form';
-		} elseif ( $form_state['values']['what'] == 'spectator' || $form_state['values']['what'] == 'skip' ) {
-			$form_state['storage']['step'] = 'preregister_chairdiscussantpool_edit_form';
-		} elseif ( $form_state['values']['what'] == 'session' ) {
-			// save/update naw/papers/participantdate
-			saveUpdateParticipant();
-			saveUpdateParticipantDate();
-
-			$form_state['storage']['step'] = 'preregister_session_list_form';
-		} else {
-			die('ERROR 415174: unknown choice ' . $form_state['values']['what']);
-		}
-	} else {
-		die('ERROR 464174: unknown button ' . $form_state['clicked_button']['#value']);
-	}
+function preregister_typeofregistration_form_back($form, &$form_state) {
+	return 'preregister_personalinfo_form';
 }
+
+/**
+ * Check access to the edit page for the specified paper id and prepare a paper instance for the paper edit step
+ *
+ * @param PreRegistrationFlow $flow The pre-registration flow
+ * @param int|null            $id   The paper id
+ *
+ * @return string The function name of the next step, which is the paper edit form,
+ * unless the paper cannot be edited by the user
+ */
+function preregister_typeofregistration_set_paper($flow, $id) {
+	$user = $flow->getUser();
+
+	// Make sure the paper can be edited
+	if ($id !== null) {
+		$paper = CRUDApiMisc::getById(new PaperApi(), $id);
+
+		if ($paper === null) {
+			drupal_set_message('The paper you try to edit could not be found!', 'error');
+
+			return 'preregister_typeofregistration_form';
+		}
+		else if ($paper->getAddedById() != $user->getId()) {
+			drupal_set_message('You can only edit the papers you created!', 'error');
+
+			return 'preregister_typeofregistration_form';
+		}
+	}
+	else {
+		$paper = new PaperApi();
+	}
+
+	$flow->setMultiPageData(array('paper' => $paper));
+
+	return 'preregister_paper_form';
+}
+
+/**
+ * Check access to the edit page for the specified session id and prepare a session instance for the session edit step
+ *
+ * @param PreRegistrationFlow $flow The pre-registration flow
+ * @param int|null            $id   The session id
+ *
+ * @return string The function name of the next step, which is the session edit form,
+ * unless the session cannot be edited by the user
+ */
+function preregister_typeofregistration_set_session($flow, $id) {
+	$user = $flow->getUser();
+
+	// Make sure the session can be edited
+	if ($id !== null) {
+		$session = CRUDApiMisc::getById(new SessionApi(), $id);
+
+		if ($session === null) {
+			drupal_set_message('The session you try to edit could not be found!', 'error');
+
+			return 'preregister_typeofregistration_form';
+		}
+		else if ($session->getAddedById() != $user->getId()) {
+			drupal_set_message('You can only edit the sessions you created!', 'error');
+
+			return 'preregister_typeofregistration_form';
+		}
+	}
+	else {
+		$session = new SessionApi();
+	}
+
+	$flow->setMultiPageData(array('session' => $session));
+
+	return 'preregister_session_form';
+}
+
 

@@ -21,10 +21,12 @@ class UserApi extends CRUDApiClient {
 	protected $extraInfo;
 	protected $papers_id;
 	protected $daysPresent_day_id;
+	protected $addedBy_id;
 
 	private $sessionParticipants;
 	private $country;
 	private $days;
+	private $addedBy;
 
 	public static function getListWithCriteria(array $properties, $printErrorMessage = true) {
 		return parent::getListWithCriteriaForClass(__CLASS__, $properties, $printErrorMessage);
@@ -345,7 +347,7 @@ class UserApi extends CRUDApiClient {
 	 *
 	 * @param int|CountryApi $country The country (id)
 	 */
-	public function setCountryId($country) {
+	public function setCountry($country) {
 		if ($country instanceof CountryApi) {
 			$country = $country->getId();
 		}
@@ -368,57 +370,6 @@ class UserApi extends CRUDApiClient {
 		}
 
 		return $this->sessionParticipants;
-	}
-
-	/**
-	 * Returns the full name of this user
-	 *
-	 * @return string The full name
-	 */
-	public function getFullName() {
-		return trim($this->getFirstName()) . ' ' . trim($this->getLastName());
-	}
-
-	/**
-	 * Returns the first name of this user
-	 *
-	 * @return string The first name
-	 */
-	public function getFirstName() {
-		return $this->firstName;
-	}
-
-	/**
-	 * Set the first name of this user
-	 *
-	 * @param string|null $firstName The first name
-	 */
-	public function setFirstName($firstName) {
-		$firstName = (($firstName !== null) && strlen(trim($firstName)) > 0) ? trim($firstName) : null;
-
-		$this->firstName = $firstName;
-		$this->toSave['firstName'] = $firstName;
-	}
-
-	/**
-	 * Returns the last name of this user
-	 *
-	 * @return string The last name
-	 */
-	public function getLastName() {
-		return $this->lastName;
-	}
-
-	/**
-	 * Set the last name of this user
-	 *
-	 * @param string|null $lastName The last name
-	 */
-	public function setLastName($lastName) {
-		$lastName = (($lastName !== null) && strlen(trim($lastName)) > 0) ? trim($lastName) : null;
-
-		$this->lastName = $lastName;
-		$this->toSave['lastName'] = $lastName;
 	}
 
 	/**
@@ -469,6 +420,94 @@ class UserApi extends CRUDApiClient {
 		}
 
 		return $this->days;
+	}
+
+	/**
+	 * Returns the user that created this user
+	 *
+	 * @return UserApi The user that created this user
+	 */
+	public function getAddedBy() {
+		if (!$this->addedBy && is_int($this->getAddedById())) {
+			$this->addedBy = CRUDApiMisc::getById(new UserApi(), 'id', $this->getAddedById());
+		}
+
+		return $this->addedBy;
+	}
+
+	/**
+	 * Set the user who added this user
+	 *
+	 * @param int|UserApi $addedBy The user (id)
+	 */
+	public function setAddedBy($addedBy) {
+		if ($addedBy instanceof UserApi) {
+			$addedBy = $addedBy->getId();
+		}
+
+		$this->addedBy = null;
+		$this->addedBy_id = $addedBy;
+		$this->toSave['addedBy.id'] = $addedBy;
+	}
+
+	/**
+	 * The user id of the user who created this user
+	 *
+	 * @return int The user id of the user who created this user
+	 */
+	public function getAddedById() {
+		return $this->addedBy_id;
+	}
+
+	/**
+	 * Returns the full name of this user
+	 *
+	 * @return string The full name
+	 */
+	public function getFullName() {
+		return trim($this->getFirstName()) . ' ' . trim($this->getLastName());
+	}
+
+	/**
+	 * Returns the last name of this user
+	 *
+	 * @return string The last name
+	 */
+	public function getLastName() {
+		return $this->lastName;
+	}
+
+	/**
+	 * Set the last name of this user
+	 *
+	 * @param string|null $lastName The last name
+	 */
+	public function setLastName($lastName) {
+		$lastName = (($lastName !== null) && strlen(trim($lastName)) > 0) ? trim($lastName) : null;
+
+		$this->lastName = $lastName;
+		$this->toSave['lastName'] = $lastName;
+	}
+
+	/**
+	 * Returns the first name of this user
+	 *
+	 * @return string The first name
+	 */
+	public function getFirstName() {
+		return $this->firstName;
+	}
+
+	/**
+	 * Set the first name of this user
+	 *
+	 * @param string|null $firstName The first name
+	 */
+	public function setFirstName($firstName) {
+		$firstName = (($firstName !== null) && strlen(trim($firstName)) > 0) ? trim($firstName) : null;
+
+		$this->firstName = $firstName;
+		$this->toSave['firstName'] = $firstName;
 	}
 
 	public function save($printErrorMessage = true) {

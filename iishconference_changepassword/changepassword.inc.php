@@ -27,7 +27,7 @@ function conference_changepassword_form($form, &$form_state) {
 		'#size'      => 20,
 		'#maxlength' => 50,
 		'#required'  => true,
-		'#prefix'    => '<div class="container-inline">',
+		'#prefix'    => '<div class="iishconference_container_inline">',
 		'#suffix'    => '</div>',
 	);
 
@@ -37,7 +37,7 @@ function conference_changepassword_form($form, &$form_state) {
 		'#size'      => 20,
 		'#maxlength' => 50,
 		'#required'  => true,
-		'#prefix'    => '<div class="container-inline">',
+		'#prefix'    => '<div class="iishconference_container_inline">',
 		'#suffix'    => '</div>',
 	);
 

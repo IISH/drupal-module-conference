@@ -1,279 +1,361 @@
-<?php 
+<?php
+
 /**
- * TODOEXPLAIN
+ * Implements hook_form()
  */
-function preregister_session_participant_form( $form, &$form_state ) {
-	$ct=0;
+function preregister_sessionparticipant_form($form, &$form_state) {
+	$flow = new PreRegistrationFlow($form_state);
+	$preRegisterUser = $flow->getUser();
 
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '<div class="step">Step 5 of ' . getSetting('steps') . '</div>',
+	$multiPageData = $flow->getMultiPageData();
+	$session = $multiPageData['session'];
+	$user = $multiPageData['user'];
+	$sessionParticipants = $multiPageData['session_participants'];
+
+	$participant = CRUDApiMisc::getFirstWherePropertyEquals(new ParticipantDateApi(), 'user_id', $user->getId());
+	$participant = ($participant === null) ? new ParticipantDateApi() : $participant;
+
+	// Now collect the paper added to this session
+	$props = new ApiCriteriaBuilder();
+	$paper = PaperApi::getListWithCriteria(
+		$props
+			->eq('session_id', $session->getId())
+			->eq('user_id', $user->getId())
+			->get()
+	)->getFirstResult();
+
+	$paper = ($paper !== null) ? $paper : new PaperApi();
+
+	$flow->setFormData(array('session'              => $session,
+	                         'user'                 => $user,
+	                         'participant'          => $participant,
+	                         'paper'                => $paper,
+	                         'session_participants' => $sessionParticipants));
+
+	// + + + + + + + + + + + + + + + + + + + + + + + +
+	// PARTICIPANT
+
+	// If the user was added by the currently logged in user, he/she may change him/her
+	$readOnlyUser = array();
+	$readOnlyParticipant = array();
+	if ($user->isUpdate() && ($user->getAddedById() != $preRegisterUser->getId())) {
+		$readOnlyUser['readonly'] = 'readonly';
+	}
+	if ($participant->isUpdate() && ($participant->getAddedById() != $preRegisterUser->getId())) {
+		$readOnlyParticipant['readonly'] = 'readonly';
+	}
+
+	$form['participant'] = array(
+		'#type'  => 'fieldset',
+		'#title' => t('Add a participant'),
+	);
+
+	$form['participant']['addparticipantemail'] = array(
+		'#type'          => 'textfield',
+		'#title'         => t('E-mail'),
+		'#required'      => true,
+		'#size'          => 40,
+		'#maxlength'     => 100,
+		//'#prefix'        => '<div class="iishconference_container_inline">',
+		//'#suffix'        => '</div>',
+		'#default_value' => $user->getEmail(),
+		'#attributes'    => $readOnlyUser,
+	);
+
+	$form['participant']['addparticipantfirstname'] = array(
+		'#type'          => 'textfield',
+		'#title'         => t('First name'),
+		'#required'      => true,
+		'#size'          => 40,
+		'#maxlength'     => 255,
+		//	'#prefix'        => '<div class="iishconference_container_inline">',
+		//	'#suffix'        => '</div>',
+		'#default_value' => $user->getFirstName(),
+		'#attributes'    => $readOnlyUser,
+	);
+
+	$form['participant']['addparticipantlastname'] = array(
+		'#type'          => 'textfield',
+		'#title'         => t('Last name'),
+		'#required'      => true,
+		'#size'          => 40,
+		'#maxlength'     => 255,
+		//	'#prefix'        => '<div class="iishconference_container_inline">',
+		//	'#suffix'        => '</div>',
+		'#default_value' => $user->getLastName(),
+		'#attributes'    => $readOnlyUser,
+	);
+
+	if (SettingsApi::getSetting(SettingsApi::SHOW_STUDENT) == 1) {
+		$form['participant']['addparticipantstudent'] = array(
+			'#type'          => 'checkbox',
+			'#title'         => t('Please check if you are a (PhD) student'),
+			'#default_value' => $participant->getStudent(),
+			'#attributes'    => $readOnlyParticipant,
 		);
+	}
 
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '<span class="header_preregister">Add participant</span>',
+	if (SettingsApi::getSetting(SettingsApi::SHOW_CV) == 1) {
+		$form['participant']['addparticipantcv'] = array(
+			'#type'          => 'textarea',
+			'#title'         => t('Curriculum Vitae'),
+			'#description'   => '<em>' . t('(max. 200 words)') . '</em>',
+			'#rows'          => 2,
+			'#default_value' => $user->getCv(),
+			'#attributes'    => $readOnlyUser,
 		);
+	}
 
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '<div class="preregister_fullwidth">',
-		);
+	// + + + + + + + + + + + + + + + + + + + + + + + +
+	// PARTICIPANT ROLES
 
-	// als zelf ingevuld dan wel wijzigen
-	if ( $_SESSION['storage']['preregistersession_participantid'] > 0 ) {
-		$arrParticipant = getDetailsAsArray('SELECT * FROM users WHERE user_id=' . $_SESSION['storage']['preregistersession_participantid'], array('added_by'));
-		if ( $arrParticipant["added_by"] == getIdLoggedInUser() ) {
-			$emailReadonly = array();
-		} else {
-			$emailReadonly = array('readonly' => 'readonly');
+	$participantTypes = CachedConferenceApi::getParticipantTypes();
+	$participantTypeOptions = CRUDApiClient::getAsKeyValueArray($participantTypes);
+
+	$chosenTypes =
+		SessionParticipantApi::getAllTypesOfUserForSession($sessionParticipants, $user->getId(), $session->getId());
+	$chosenTypeValues = CRUDApiClient::getIds($chosenTypes);
+
+	$form['participant_roles'] = array(
+		'#type'  => 'fieldset',
+		'#title' => t('The roles of the participant in this session'),
+	);
+
+	$form['participant_roles']['addparticipanttype'] = array(
+		'#type'          => 'checkboxes',
+		'#description'   =>
+			'<br />' . ConferenceMisc::getCleanHTML(ParticipantTypeApi::getCombinationsNotAllowedText()),
+		'#required'      => true,
+		'#options'       => $participantTypeOptions,
+		//	'#prefix'        => '<div class="iishconference_container_inline">',
+		//	'#suffix'        => '</div>',
+		'#default_value' => $chosenTypeValues,
+	);
+
+	// + + + + + + + + + + + + + + + + + + + + + + + +
+	// PARTICIPANT PAPER
+
+	// For which selected participant types should a paper be added as well?
+	$visibleStates = array();
+	foreach ($participantTypes as $type) {
+		if ($type->getWithPaper()) {
+			$visibleStates[] =
+				array(':input[name="addparticipanttype[' . $type->getId() . ']"]' => array('checked' => true));
+			$visibleStates[] = 'or';
 		}
-	} else {
-		$emailReadonly = array();
 	}
+	array_pop($visibleStates); // Removes the last 'or'
 
-	$form['addparticipantemail'] = array(
-		'#type' => 'textfield',
-		'#title' => 'E-mail',
-		'#required' => TRUE,
-		'#size' => 40,
-		'#maxlength' => 100,
-		'#prefix' => '<div class="container-inline">', 
-		'#suffix' => '</div>', 
-		'#default_value' => isset( $_SESSION['storage']['preregistersession_participantemail'] ) ? trim($_SESSION['storage']['preregistersession_participantemail']) : NULL, 
-		'#attributes' => $emailReadonly,
-		);
+	$form['participant_paper'] = array(
+		'#type'   => 'fieldset',
+		'#title'  => t('Add paper for participant'),
+		'#states' => array('visible' => $visibleStates),
+	);
 
-	$types_options = getArrayOfParticipantTypes( getSetting('event_id') );
+	$form['participant_paper']['addparticipantpapertitle'] = array(
+		'#type'          => 'textfield',
+		'#title'         => t('Paper title'),
+		'#size'          => 40,
+		'#maxlength'     => 255,
+		//	'#prefix'        => '<div class="iishconference_container_inline">',
+		//	'#suffix'        => '</div>',
+		'#default_value' => $paper->getTitle(),
+	);
 
-	$form['addparticipanttype'] = array(
-		'#title' => 'Type',
-		'#type' => 'select',
-		'#size' => 5,
-		'#required' => TRUE,
-		'#options' => $types_options,
-		'#prefix' => '<div class="container-inline">', 
-		'#suffix' => '</div>', 
-		'#multiple' => TRUE, 
-		'#default_value' => isset( $_SESSION['storage']['preregistersession_participanttype'] ) ? $_SESSION['storage']['preregistersession_participanttype'] : NULL, 
-		);
+	$form['participant_paper']['addparticipantpaperabstract'] = array(
+		'#type'          => 'textarea',
+		'#title'         => t('Paper abstract'),
+		'#description'   => '<em>' . t('(max. 500 words)') . '</em>',
+		'#rows'          => 3,
+		'#default_value' => $paper->getAbstr(),
+	);
 
-	$form['addparticipantfirstname'] = array(
-		'#type' => 'textfield',
-		'#title' => 'First name',
-		'#required' => TRUE,
-		'#size' => 40,
-		'#maxlength' => 255,
-		'#prefix' => '<div class="container-inline">', 
-		'#suffix' => '</div>', 
-		'#default_value' => isset( $_SESSION['storage']['preregistersession_participantfirstname'] ) ? $_SESSION['storage']['preregistersession_participantfirstname'] : NULL, 
-		'#attributes' => $emailReadonly,
-		);
+	// + + + + + + + + + + + + + + + + + + + + + + + +
 
-	$form['addparticipantlastname'] = array(
-		'#type' => 'textfield',
-		'#title' => 'Last name',
-		'#required' => TRUE,
-		'#size' => 40,
-		'#maxlength' => 255,
-		'#prefix' => '<div class="container-inline">', 
-		'#suffix' => '</div>', 
-		'#default_value' => isset( $_SESSION['storage']['preregistersession_participantlastname'] ) ? $_SESSION['storage']['preregistersession_participantlastname'] : NULL, 
-		'#attributes' => $emailReadonly,
-		);
-
-	$form['addparticipantstudent'] = array(
-		'#type' => 'checkboxes',
-		'#options' => array(
-						'y' => 'Please check if participant is a (PhD) student',
-						),
-		'#default_value' => isset( $_SESSION['storage']['preregistersession_participantstudent'] ) ? $_SESSION['storage']['preregistersession_participantstudent'] : array(), 
-		);
-
-	$form['addparticipantpapertitle'] = array(
-		'#type' => 'textfield',
-		'#title' => 'Paper title',
-		'#size' => 40,
-		'#maxlength' => 255,
-		'#prefix' => '<div class="container-inline">', 
-		'#suffix' => '</div>', 
-		'#default_value' => isset( $_SESSION['storage']['preregistersession_participantpapertitle'] ) ? $_SESSION['storage']['preregistersession_participantpapertitle'] : NULL, 
-		);
-
-	$form['addparticipantpaperabstract'] = array(
-		'#type' => 'textarea',
-		'#title' => 'Paper abstract',
-		'#description' => '<em>(max. 500 words)</em>',
-		'#rows' => 3,
-		'#default_value' => isset( $_SESSION['storage']['preregistersession_participantpaperabstract'] ) ? $_SESSION['storage']['preregistersession_participantpaperabstract'] : NULL, 
-		);
-
-	if ( SettingsApi::getSetting(SettingsApi::SHOW_CV) == 1 ) {
-
-		$form['addparticipantcv'] = array(
-			'#type' => 'textarea',
-			'#title' => 'Curriculum Vitae',
-			'#description' => '<em>(max. 200 words)</em>',
-			'#rows' => 2,
-			'#default_value' => isset( $_SESSION['storage']['preregistersession_participantcv'] ) ? $_SESSION['storage']['preregistersession_participantcv'] : NULL, 
-			);
-
-	}
-
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '</div>',
-		);
-
-	$form['submit_cancel'] = array(
-		'#type' => 'submit',
-		'#value' => 'Back',
-		'#submit' => array('preregister_session_participant_form_cancel'),
+	$form['submit_back'] = array(
+		'#type'                    => 'submit',
+		'#name'                    => 'submit_back',
+		'#value'                   => t('Back'),
+		'#submit'                  => array('preregister_form_submit'),
 		'#limit_validation_errors' => array(),
-		);
+	);
 
-	$form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '&nbsp; &nbsp; &nbsp;',
-		);
+	$form['submit'] = array(
+		'#type'  => 'submit',
+		'#name'  => 'submit',
+		'#value' => t('Save participant'),
+	);
 
-	$form['submit_next'] = array(
-		'#type' => 'submit',
-		'#value' => 'Save participant',
-		);
-
-	if ( $_SESSION['storage']['preregistersession_participantid'] > 0 ) {
-		$form['ct'.$ct++] = array(
-			'#type' => 'markup',
-			'#markup' => '&nbsp; &nbsp; &nbsp;',
-			);
-
+	// We can only remove a participant from a session if he/she has already been added to session
+	if (isset($sessionParticipants[0])) {
 		$form['submit_remove'] = array(
-			'#type' => 'submit',
-			'#value' => 'Remove participant',
+			'#type'                    => 'submit',
+			'#name'                    => 'submit_remove',
+			'#value'                   => t('Remove participant'),
+			'#submit'                  => array('preregister_form_submit'),
 			'#limit_validation_errors' => array(),
-			);
+			'#attributes'              => array('onclick' =>
+				                                    'if (!confirm("' .
+				                                    t('Are you sure you want to remove this participant? ' .
+					                                    '(If the participant was added by someone else or this ' .
+					                                    'participant is you, then the participant will only ' .
+					                                    'be removed from this session).') .
+				                                    '")) { return false; }'),
+		);
 	}
 
 	return $form;
 }
 
 /**
-* Custom cancel button callback.
-*/
-function preregister_session_participant_form_cancel($form, &$form_state) {
-	// Trigger multistep, there are more steps.
-	$form_state['rebuild'] = TRUE;
-
-	$form_state['storage']['step'] = 'preregister_session_edit_form';
-}
-
-/**
- * TODOEXPLAIN
+ * Implements hook_form_validate()
  */
-function preregister_session_participant_form_validate( $form, &$form_state ) {
-	if ( $form_state['clicked_button']['#value'] == $form_state['values']['submit_next'] ) {
+function preregister_sessionparticipant_form_validate($form, &$form_state) {
+	$email = trim($form_state['values']['addparticipantemail']);
 
-		$email_existing_users_trimmed = trim($form_state['values']['addparticipantemail']);
-		// EMAIL IS VERPLICHT
-		if ( $email_existing_users_trimmed == '' ) {
-			form_set_error('addparticipantemail', 'E-mail field is required.');
-		// CHECK EMAIL IS VALID
-		} elseif ( !valid_email_address( $email_existing_users_trimmed ) ) {
-			form_set_error('addparticipantemail', 'The e-mail address appears to be invalid.');
-		// CONTROLEER OF EMAIL AL BESTAAT (uitgezonderd huidige record)
-		} elseif ( $_SESSION['storage']['preregistersession_participantid'] != 0 && checkIfEmailAlreadyExists( $form_state['values']['addparticipantemail'], $_SESSION['storage']['preregistersession_participantid'] ) > 0 ) {
-			form_set_error('addparticipantemail', 'E-mail already exists in the database.');
-		// controleer of userid niet al een andere sessie zit als author
-		} elseif ( getSetting('multiple_papers_per_author') == 0 && checkIfParticipantIsMultipleAuthor($_SESSION['storage']['preregistersession_participantid'], $form_state['values']['addparticipanttype'], $_SESSION['storage']['preregistersession_sessionid']) ) {
-			form_set_error('addparticipanttype', 'Participant is already an author in another session. It is only allowed to be author in one session.');
+	if (!valid_email_address($email)) {
+		form_set_error('addparticipantemail', t('The e-mail address appears to be invalid.'));
+	}
+
+	if (!ParticipantTypeApi::isCombinationOfTypesAllowed($form_state['values']['addparticipanttype'])) {
+		form_set_error('addparticipanttype',
+			ConferenceMisc::getCleanHTML(ParticipantTypeApi::getCombinationsNotAllowedText()));
+	}
+
+	if (ParticipantTypeApi::containsTypeWithPaper($form_state['values']['addparticipanttype'])) {
+		if (strlen(trim($form_state['values']['addparticipantpapertitle'])) === 0) {
+			form_set_error('addparticipantpapertitle', t('Paper title is required with the selected type(s).'));
 		}
-
-		// controler niet toegestane kombinatie types
-		if ( isAllowedCombination( $form_state['values']['addparticipanttype'] ) == 0 ) {
-			form_set_error('addparticipanttype', '(co)Author is not allowed in combination with Chair, Discussant and Co-author.');
-		}
-
-		// check if paper is required
-		if ( isPaperRequired( $form_state['values']['addparticipanttype'] ) ) {
-			// papertitle required if author or co-author
-			if ( trim($form_state['values']['addparticipantpapertitle']) == '' ) {
-				form_set_error('addparticipantpapertitle', 'Paper title is required when (co)author.');
-			}
-
-			// paperabstract required if author or co-author
-			if ( trim($form_state['values']['addparticipantpaperabstract']) == '' ) {
-				form_set_error('addparticipantpaperabstract', 'Paper abstract is required when (co)author.');
-			}
+		if (strlen(trim($form_state['values']['addparticipantpaperabstract'])) === 0) {
+			form_set_error('addparticipantpaperabstract', t('Paper abstract is required with the selected type(s).'));
 		}
 	}
 }
 
 /**
- * TODOEXPLAIN
+ * Implements hook_form_submit()
  */
-function preregister_session_participant_form_submit( $form, &$form_state ) {
-	// Trigger multistep, there are more steps.
-	$form_state['rebuild'] = TRUE;
+function preregister_sessionparticipant_form_submit($form, &$form_state) {
+	$flow = new PreRegistrationFlow($form_state);
+	$preRegisterUser = $flow->getUser();
 
-	$values = $form_state['values'];
+	$data = $flow->getFormData();
+	$session = $data['session'];
+	$user = $data['user'];
+	$participant = $data['participant'];
+	$paper = $data['paper'];
+	$allToDelete = $data['session_participants'];
 
-	if ( !isset($form_state['values']["addparticipantemail"]) ) {
-		$form_state['values']["addparticipantemail"] = '';
+	// First check if the user with the given email does not exists already
+	$email = strtolower(trim($form_state['values']['addparticipantemail']));
+	$foundUser = CRUDApiMisc::getFirstWherePropertyEquals(new UserApi(), 'email', $email);
+	if ($foundUser !== null) {
+		$user = $foundUser;
+		$participant =
+			CRUDApiMisc::getFirstWherePropertyEquals(new ParticipantDateApi(), 'user_id', $foundUser->getId());
+		$participant = ($participant !== null) ? $participant : new ParticipantDateApi();
 	}
 
-	$_SESSION['storage']['preregistersession_participantemail'] = trim($form_state['values']["addparticipantemail"]);
+	// Then we save the user
+	if (!$user->isUpdate() || ($user->getAddedById() == $preRegisterUser->getId())) {
+		$user->setEmail($form_state['values']['addparticipantemail']);
+		$user->setFirstName($form_state['values']['addparticipantfirstname']);
+		$user->setLastName($form_state['values']['addparticipantlastname']);
 
-	if ( !isset($form_state['values']["addparticipanttype"]) ) {
-		$form_state['values']["addparticipanttype"] = NULL;
-	}
-	$_SESSION['storage']['preregistersession_participanttype'] = $form_state['values']["addparticipanttype"];
+		if (SettingsApi::getSetting(SettingsApi::SHOW_CV) == 1) {
+			$user->setCv($form_state['values']['addparticipantcv']);
+		}
 
-	if ( !isset($form_state['values']["addparticipantfirstname"]) ) {
-		$form_state['values']["addparticipantfirstname"] = NULL;
-	}
-	$_SESSION['storage']['preregistersession_participantfirstname'] = trim($form_state['values']["addparticipantfirstname"]);
-
-	if ( !isset($form_state['values']["addparticipantlastname"]) ) {
-		$form_state['values']["addparticipantlastname"] = NULL;
-	}
-	$_SESSION['storage']['preregistersession_participantlastname'] = trim($form_state['values']["addparticipantlastname"]);
-
-	if ( !isset($form_state['values']["addparticipantpapertitle"]) ) {
-		$form_state['values']["addparticipantpapertitle"] = NULL;
-	}
-	$_SESSION['storage']['preregistersession_participantpapertitle'] = trim($form_state['values']["addparticipantpapertitle"]);
-
-	if ( !isset($form_state['values']["addparticipantpaperabstract"]) ) {
-		$form_state['values']["addparticipantpaperabstract"] = NULL;
-	}
-	$_SESSION['storage']['preregistersession_participantpaperabstract'] = $form_state['values']["addparticipantpaperabstract"];
-
-	$_SESSION['storage']['preregistersession_participantstudent'] = isset($form_state['values']["addparticipantstudent"]) ? $form_state['values']["addparticipantstudent"] : NULL;
-
-	if ( !isset($form_state['values']["addparticipantcv"]) ) {
-		$form_state['values']["addparticipantcv"] = NULL;
-	}
-	$_SESSION['storage']['preregistersession_participantcv'] = $form_state['values']["addparticipantcv"];
-
-	if ( !isset($values['submit_next']) ) {
-		$values['submit_next'] = '';
+		$user->save();
 	}
 
-	if ( !isset($values['submit_remove']) ) {
-		$values['submit_remove'] = '';
+	// Then save the participant
+	if (!$participant->isUpdate() || ($participant->getAddedById() == $preRegisterUser->getId())) {
+		if (SettingsApi::getSetting(SettingsApi::SHOW_STUDENT) == 1) {
+			$participant->setStudent($form_state['values']['addparticipantstudent']);
+		}
+		$participant->setUser($user);
+
+		$participant->save();
 	}
 
-	if ( $form_state['clicked_button']['#value'] == $values['submit_next'] ) {
-		// SAVE PARTICIPANT
-		saveParticipant();
+	// Then save the paper
+	if (ParticipantTypeApi::containsTypeWithPaper($form_state['values']['addparticipanttype'])) {
+		$paper->setUser($user);
+		$paper->setSession($session);
+		$paper->setTitle($form_state['values']['addparticipantpapertitle']);
+		$paper->setAbstr($form_state['values']['addparticipantpaperabstract']);
 
-		$form_state['storage']['step'] = 'preregister_session_edit_form';
-	} elseif ( $form_state['clicked_button']['#value'] == $values['submit_remove'] ) {
-		// REMOVE PARTICIPANT
-		$form_state['storage']['step'] = 'preregister_session_participant_remove_form';
-	} else {
-		die('ERROR 2514785: unknown button clicked ' . $form_state['clicked_button']['#id'] . ' - ' . $form_state['clicked_button']['#value']);
+		$paper->save();
 	}
+	else {
+		$paper->delete();
+	}
+
+	// Last the types
+	foreach ($form_state['values']['addparticipanttype'] as $typeId => $type) {
+		if ($typeId == $type) {
+			$foundInstance = false;
+			foreach ($allToDelete as $key => $instance) {
+				if ($instance->getTypeId() == $typeId) {
+					$foundInstance = true;
+					unset($allToDelete[$key]);
+					break;
+				}
+			}
+
+			if (!$foundInstance) {
+				$sessionParticipant = new SessionParticipantApi();
+				$sessionParticipant->setSession($session);
+				$sessionParticipant->setUser($user);
+				$sessionParticipant->setType($typeId);
+				$sessionParticipant->save();
+			}
+		}
+	}
+
+	foreach ($allToDelete as $instance) {
+		$instance->delete();
+	}
+
+	// Now go back to the session form
+	$flow->setMultiPageData(array('session' => $session));
+
+	return 'preregister_session_form';
 }
 
+/**
+ * What is the previous page?
+ */
+function preregister_sessionparticipant_form_back($form, &$form_state) {
+	return 'preregister_session_form';
+}
+
+/**
+ * Remove the session participant
+ */
+function preregister_sessionparticipant_form_remove($form, &$form_state) {
+	$flow = new PreRegistrationFlow($form_state);
+	$preRegisterUser = $flow->getUser();
+	$data = $flow->getFormData();
+
+	$user = $data['user'];
+	$participant = $data['participant'];
+	$sessionParticipants = $data['session_participants'];
+
+	if ($user->getAddedById() == $preRegisterUser->getId()) {
+		$user->delete();
+	}
+
+	if ($participant->getAddedById() == $preRegisterUser->getId()) {
+		$participant->delete();
+	}
+
+	foreach ($sessionParticipants as $sessionParticipant) {
+		$sessionParticipant->delete();
+	}
+
+	$flow->setMultiPageData(array());
+
+	return 'preregister_session_form';
+}

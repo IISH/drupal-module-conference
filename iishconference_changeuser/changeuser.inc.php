@@ -39,7 +39,7 @@ function conference_changeuser_form($form, &$form_state) {
 		'#size'          => 20,
 		'#maxlength'     => 100,
 		'#required'      => true,
-		'#prefix'        => '<div class="container-inline">',
+		'#prefix'        => '<div class="iishconference_container_inline">',
 		'#suffix'        => '</div>',
 		'#default_value' => $value
 	);

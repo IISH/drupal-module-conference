@@ -40,7 +40,7 @@ class ConferenceMisc {
 		return array(
 			''  => '',
 			'M' => t('Male'),
-			'F' => t('Female')
+			'F' => t('Female'),
 		);
 	}
 
@@ -66,7 +66,7 @@ class ConferenceMisc {
 		return array(
 			''      => t('not applicable'),
 			'coach' => t('I would like to be an English Language Coach'),
-			'pupil' => t('I need some help from an English Language Coach')
+			'pupil' => t('I need some help from an English Language Coach'),
 		);
 	}
 

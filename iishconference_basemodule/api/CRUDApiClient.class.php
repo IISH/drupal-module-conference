@@ -32,6 +32,22 @@ abstract class CRUDApiClient {
 	}
 
 	/**
+	 * Returns a list with the ids of the given list with CRUDApiClient instances
+	 *
+	 * @param CRUDApiClient[] $crudList A list with CRUDApiClient instances
+	 *
+	 * @return int[] All the ids
+	 */
+	public static function getIds(array $crudList) {
+		$list = array();
+		foreach ($crudList as $crudInstance) {
+			$list[] = $crudInstance->getId();
+		}
+
+		return $list;
+	}
+
+	/**
 	 * Return the previous and next item in a list of records
 	 *
 	 * @param CRUDApiClient[] $crudList All records ordered
@@ -195,6 +211,12 @@ abstract class CRUDApiClient {
 				self::getClient()->post($apiName, $this->toSave, $printErrorMessage);
 		}
 		else {
+			// If the object is created for the first time, store which user created the object
+			if (property_exists($this, 'addedBy_id')) {
+				$this->addedBy_id = LoggedInUserDetails::getId();
+				$this->toSave['addedBy.id'] = LoggedInUserDetails::getId();
+			}
+
 			$apiResults =
 				self::getClient()->put($apiName, $this->toSave, $printErrorMessage);
 
@@ -203,6 +225,7 @@ abstract class CRUDApiClient {
 				$this->id = EasyProtection::easyIntegerProtection($apiResults['id']);
 			}
 		}
+		$this->toSave = array();
 
 		return is_array($apiResults) ? $apiResults['success'] : false;
 	}
@@ -233,6 +256,15 @@ abstract class CRUDApiClient {
 	}
 
 	/**
+	 * Indicates whether this save is an update or an insert
+	 *
+	 * @return bool Returns 'true' in the case of an update
+	 */
+	public function isUpdate() {
+		return ($this->getId() !== null);
+	}
+
+	/**
 	 * The default comparison of two CRUDApiClient instances, by id
 	 *
 	 * @param CRUDApiClient $instance Compare this instance with the given instance
@@ -244,15 +276,6 @@ abstract class CRUDApiClient {
 	 */
 	protected function compareWith($instance) {
 		return strcmp($this->getId(), $instance->getId());
-	}
-
-	/**
-	 * Indicates whether this save is an update or an insert
-	 *
-	 * @return bool Returns 'true' in the case of an update
-	 */
-	protected function isUpdate() {
-		return ($this->getId() !== null);
 	}
 
 	public function __toString() {

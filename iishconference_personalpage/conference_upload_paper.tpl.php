@@ -1,8 +1,8 @@
-<div class="preregister_fullwidth">
-	<span class="header_personalpage"><?php print $variables['paper']->getTitle(); ?></span>
+<div class="iishconference_container">
+	<span class="iishconference_container_header"><?php print $variables['paper']->getTitle(); ?></span>
 
 	<div>
-		<span class="label_personalpage"><?php print t('Uploaded paper '); ?></span>
+		<span class="iishconference_container_label"><?php print t('Uploaded paper '); ?></span>
 
 		<?php if (is_null($variables['paper']->getFileSize()) || ($variables['paper']->getFileSize() === 0)) : ?>
 			<?php print t('No paper uploaded yet'); ?>

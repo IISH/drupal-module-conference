@@ -14,10 +14,17 @@ class ParticipantDateApi extends CRUDApiClient {
 	protected $student;
 	protected $award;
 	protected $extras_id;
+	protected $addedBy_id;
 
 	private $state;
 	private $user;
 	private $extras;
+	private $addedBy;
+
+	public function __construct() {
+		$this->setState(ParticipantStateApi::DID_NOT_FINISH_REGISTRATION);
+		$this->setFeeState(FeeStateApi::NO_FEE_SELECTED);
+	}
 
 	public static function getListWithCriteria(array $properties, $printErrorMessage = true) {
 		return parent::getListWithCriteriaForClass(__CLASS__, $properties, $printErrorMessage);
@@ -126,11 +133,15 @@ class ParticipantDateApi extends CRUDApiClient {
 	/**
 	 * Changes the fee state of this user
 	 *
-	 * @param int $feeStateId The new fee state id
+	 * @param FeeStateApi|int $feeStateId The new fee state (id)
 	 */
-	public function setFeeStateId($feeStateId) {
-		$this->feeState_id = $feeStateId;
-		$this->toSave['feeState.id'] = $feeStateId;
+	public function setFeeState($feeState) {
+		if ($feeState instanceof FeeStateApi) {
+			$feeState = $feeState->getId();
+		}
+
+		$this->feeState_id = $feeState;
+		$this->toSave['feeState.id'] = $feeState;
 	}
 
 	public function save($printErrorMessage = true) {
@@ -265,6 +276,8 @@ class ParticipantDateApi extends CRUDApiClient {
 	public function setStudent($student) {
 		$this->student = (bool) $student;
 		$this->toSave['student'] = $this->student;
+
+		$this->setLowerFeeRequested($this->student);
 	}
 
 	/**
@@ -274,39 +287,6 @@ class ParticipantDateApi extends CRUDApiClient {
 	 */
 	public function getUserId() {
 		return $this->user_id;
-	}
-
-	/**
-	 * Returns the user of this participant
-	 *
-	 * @return UserApi The user
-	 */
-	public function getUser() {
-		if (!$this->user) {
-			if (LoggedInUserDetails::getId() === $this->user_id) {
-				$this->user = LoggedInUserDetails::getUser();
-			}
-			else {
-				$this->user = CRUDApiMisc::getById(new UserApi(), $this->user_id);
-			}
-		}
-
-		return $this->user;
-	}
-
-	/**
-	 * Sets the user of this participant
-	 *
-	 * @param int|UserApi $user The user (id) to set
-	 */
-	public function setUser($user) {
-		if ($user instanceof UserApi) {
-			$user = $user->getId();
-		}
-
-		$this->user = null;
-		$this->user_id = $user;
-		$this->toSave['user.id'] = $user;
 	}
 
 	/**
@@ -346,6 +326,39 @@ class ParticipantDateApi extends CRUDApiClient {
 				->sort('endDate', 'asc')
 				->get()
 		)->getFirstResult();
+	}
+
+	/**
+	 * Returns the user of this participant
+	 *
+	 * @return UserApi The user
+	 */
+	public function getUser() {
+		if (!$this->user) {
+			if (LoggedInUserDetails::getId() === $this->user_id) {
+				$this->user = LoggedInUserDetails::getUser();
+			}
+			else {
+				$this->user = CRUDApiMisc::getById(new UserApi(), $this->user_id);
+			}
+		}
+
+		return $this->user;
+	}
+
+	/**
+	 * Sets the user of this participant
+	 *
+	 * @param int|UserApi $user The user (id) to set
+	 */
+	public function setUser($user) {
+		if ($user instanceof UserApi) {
+			$user = $user->getId();
+		}
+
+		$this->user = null;
+		$this->user_id = $user;
+		$this->toSave['user.id'] = $user;
 	}
 
 	/**
@@ -406,6 +419,43 @@ class ParticipantDateApi extends CRUDApiClient {
 		}
 
 		return $finalDate;
+	}
+
+	/**
+	 * Returns the user that created this participant
+	 *
+	 * @return UserApi The user that created this participant
+	 */
+	public function getAddedBy() {
+		if (!$this->addedBy && is_int($this->getAddedById())) {
+			$this->addedBy = CRUDApiMisc::getById(new UserApi(), 'id', $this->getAddedById());
+		}
+
+		return $this->addedBy;
+	}
+
+	/**
+	 * Set the user who added this participant
+	 *
+	 * @param int|UserApi $addedBy The user (id)
+	 */
+	public function setAddedBy($addedBy) {
+		if ($addedBy instanceof UserApi) {
+			$addedBy = $addedBy->getId();
+		}
+
+		$this->addedBy = null;
+		$this->addedBy_id = $addedBy;
+		$this->toSave['addedBy.id'] = $addedBy;
+	}
+
+	/**
+	 * The user id of the user who created this participant
+	 *
+	 * @return int The user id of the user who created this participant
+	 */
+	public function getAddedById() {
+		return $this->addedBy_id;
 	}
 
 	public function __toString() {

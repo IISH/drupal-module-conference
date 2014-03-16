@@ -48,7 +48,7 @@ function conference_personalpage_main() {
 		'value' => $userDetails->getEmail()
 	));
 
-	if (LoggedInUserDetails::isAParticipant()) {
+	if (LoggedInUserDetails::isAParticipant() && (SettingsApi::getSetting(SettingsApi::SHOW_STUDENT) == 1)) {
 		$personalInfoContent[] = theme('iishconference_container_field', array(
 			'label' => '(PhD) Student?',
 			'value' => ConferenceMisc::getYesOrNo($participantDateDetails->getStudent())
@@ -72,7 +72,7 @@ function conference_personalpage_main() {
 		'value' => $userDetails->getMobile()
 	));
 
-	if (true || SettingsApi::getSetting(SettingsApi::SHOW_CV) == 1) {
+	if (SettingsApi::getSetting(SettingsApi::SHOW_CV) == 1) {
 		$personalInfoContent[] = theme('iishconference_container_field', array(
 			'label'          => 'Curriculum Vitae',
 			'value'          => $userDetails->getCv(),

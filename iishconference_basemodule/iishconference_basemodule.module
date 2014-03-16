@@ -1,36 +1,5 @@
 <?php
 
-require_once 'class_conference_user.inc.php';
-require_once 'class_conference_country.inc.php';
-require_once 'class_conference_day.inc.php';
-require_once 'class_conference_days.inc.php';
-require_once 'class_conference_email.inc.php';
-require_once 'class_conference_equipment.inc.php';
-require_once 'class_conference_extra.inc.php';
-require_once 'class_conference_extras.inc.php';
-require_once 'class_conference_fee_amount.inc.php';
-require_once 'class_conference_fee_amounts.inc.php';
-require_once 'class_conference_fee_state.inc.php';
-require_once 'class_conference_misc.inc.php';
-require_once 'class_conference_network.inc.php';
-require_once 'class_conference_networks.inc.php';
-require_once 'class_conference_paper.inc.php';
-require_once 'class_conference_paperstate.inc.php';
-require_once 'class_conference_participant_state.inc.php';
-require_once 'class_conference_participantdate.inc.php';
-require_once 'class_conference_participantpaper.inc.php';
-require_once 'class_conference_participantsession.inc.php';
-require_once 'class_conference_participanttype.inc.php';
-require_once 'class_conference_room.inc.php';
-require_once 'class_conference_session.inc.php';
-require_once 'class_conference_sessiondatetime.inc.php';
-require_once 'class_conference_sessiondatetimes.inc.php';
-require_once 'class_conference_sessions.inc.php';
-require_once 'class_conference_sessionstate.inc.php';
-require_once 'class_conference_sent_email.inc.php';
-
-require_once 'misc.inc.php';
-
 /**
  * Implements hook_help()
  */
@@ -113,7 +82,7 @@ function iishconference_basemodule_cron() {
  * Returns HTML for an information container
  */
 function theme_iishconference_container($variables) {
-	$output = '<div class="preregister_fullwidth">';
+	$output = '<div class="iishconference_container">';
 	foreach ($variables['fields'] as $field) {
 		$output .= $field;
 	}
@@ -126,14 +95,14 @@ function theme_iishconference_container($variables) {
  * Returns the HTML for an header text in a container
  */
 function theme_iishconference_container_header($variables) {
-	return '<span class="header_personalpage">' . trim($variables['text']) . '</span>';
+	return '<span class="iishconference_container_header">' . trim($variables['text']) . '</span>';
 }
 
 /**
  * Returns the HTML for an inline field in a container
  */
 function theme_iishconference_container_inline($variables) {
-	$output = '<div class="container-inline">';
+	$output = '<div class="iishconference_container_inline">';
 	foreach ($variables['inline'] as $inline) {
 		$output .= $inline;
 	}
@@ -151,15 +120,18 @@ function theme_iishconference_container_field($variables) {
 	if ($variables['valueOnNewLine']) {
 		return theme_iishconference_container_inline(array(
 			'inline' => array(
-				'<span class="label_personalpage">' .
+				'<span class="iishconference_container_label">' .
 				t(trim($variables['label'])) . ' </span>'
 			)
-		)) . $value;
+		)) .
+		theme_iishconference_container_inline(array(
+			'inline' => array($value)
+		));
 	}
 	else {
 		return theme_iishconference_container_inline(array(
 			'inline' => array(
-				'<span class="label_personalpage">' .
+				'<span class="iishconference_container_label">' .
 				t(trim($variables['label'])) . ' </span>',
 				$value
 			)

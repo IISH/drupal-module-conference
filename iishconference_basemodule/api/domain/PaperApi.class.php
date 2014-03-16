@@ -18,10 +18,16 @@ class PaperApi extends CRUDApiClient {
 	protected $fileSize;
 	protected $equipmentComment;
 	protected $equipment_id;
+	protected $addedBy_id;
 
 	private $paperState;
 	private $equipment;
 	private $user;
+	private $addedBy;
+
+	public function __construct() {
+		$this->setState(PaperStateApi::NEW_PAPER);
+	}
 
 	public static function getListWithCriteria(array $properties, $printErrorMessage = true) {
 		return parent::getListWithCriteriaForClass(__CLASS__, $properties, $printErrorMessage);
@@ -66,6 +72,42 @@ class PaperApi extends CRUDApiClient {
 	}
 
 	/**
+	 * For all given papers, find those of the given user id
+	 *
+	 * @param PaperApi|PaperApi[] $papers The papers to search through
+	 * @param int                 $userId The id of the user in question
+	 *
+	 * @return PaperApi[] All papers of the given user id
+	 */
+	public static function getPapersOfUser($papers, $userId) {
+		$papersOfUser = array();
+
+		if ($papers instanceof PaperApi) {
+			if ($papers->getUserId() == $userId) {
+				$papersOfUser[] = $papers;
+			}
+		}
+		else if (is_array($papers)) {
+			foreach ($papers as $paper) {
+				if ($paper->getUserId() == $userId) {
+					$papersOfUser[] = $paper;
+				}
+			}
+		}
+
+		return $papersOfUser;
+	}
+
+	/**
+	 * Returns the id of the session this paper may be planned in
+	 *
+	 * @return int|null The session id
+	 */
+	public function getSessionId() {
+		return $this->session_id;
+	}
+
+	/**
 	 * For all given papers, find those that are not yet planned in a session
 	 *
 	 * @param PaperApi|PaperApi[] $papers The papers to search through
@@ -92,20 +134,11 @@ class PaperApi extends CRUDApiClient {
 	}
 
 	/**
-	 * Returns the id of the session this paper may be planned in
-	 *
-	 * @return int|null The session id
-	 */
-	public function getSessionId() {
-		return $this->session_id;
-	}
-
-	/**
 	 * Set the state of this paper
 	 *
 	 * @param int|PaperStateApi $state The paper state (id)
 	 */
-	public function setStateId($state) {
+	public function setState($state) {
 		if ($state instanceof PaperStateApi) {
 			$state = $state->getId();
 		}
@@ -127,6 +160,15 @@ class PaperApi extends CRUDApiClient {
 
 		$this->networkProposal_id = $networkProposal;
 		$this->toSave['networkProposal.id'] = $networkProposal;
+	}
+
+	/**
+	 * Returns the network (id) proposal for this paper
+	 *
+	 * @return int The network id
+	 */
+	public function getNetworkProposalId() {
+		return $this->networkProposal_id;
 	}
 
 	/**
@@ -348,6 +390,67 @@ class PaperApi extends CRUDApiClient {
 
 		$this->toSave['equipment.id'] = implode(';', $this->equipment_id);
 	}
+
+	/**
+	 * Returns all equipment (ids) necessary for this paper according to the author
+	 *
+	 * @return int[] All equipment ids
+	 */
+	public function getEquipmentIds() {
+		return (is_array($this->equipment_id)) ? $this->equipment_id : array();
+	}
+
+	/**
+	 * Returns the user that created this paper
+	 *
+	 * @return UserApi The user that created this paper
+	 */
+	public function getAddedBy() {
+		if (!$this->addedBy && is_int($this->getAddedById())) {
+			$this->addedBy = CRUDApiMisc::getById(new UserApi(), 'id', $this->getAddedById());
+		}
+
+		return $this->addedBy;
+	}
+
+	/**
+	 * Set the user who added this paper
+	 *
+	 * @param int|UserApi $addedBy The user (id)
+	 */
+	public function setAddedBy($addedBy) {
+		if ($addedBy instanceof UserApi) {
+			$addedBy = $addedBy->getId();
+		}
+
+		$this->addedBy = null;
+		$this->addedBy_id = $addedBy;
+		$this->toSave['addedBy.id'] = $addedBy;
+	}
+
+	/**
+	 * The user id of the user who created this paper
+	 *
+	 * @return int The user id of the user who created this paper
+	 */
+	public function getAddedById() {
+		return $this->addedBy_id;
+	}
+
+	/**
+	 * Set the session of this paper
+	 *
+	 * @param int|SessionApi|null $session The session (id)
+	 */
+	public function setSession($session) {
+		if ($session instanceof SessionApi) {
+			$session = $session->getId();
+		}
+
+		$this->session_id = $session;
+		$this->toSave['session.id'] = $session;
+	}
+
 
 	/**
 	 * Returns the title of this paper

@@ -16,6 +16,10 @@ class SessionApi extends CRUDApiClient {
 	private $addedBy;
 	private $sessionParticipants;
 
+	public function __construct() {
+		$this->setState(SessionStateApi::NEW_SESSION);
+	}
+
 	public static function getListWithCriteria(array $properties, $printErrorMessage = true) {
 		return parent::getListWithCriteriaForClass(__CLASS__, $properties, $printErrorMessage);
 	}
@@ -69,27 +73,6 @@ class SessionApi extends CRUDApiClient {
 
 		$this->abstr = $abstr;
 		$this->toSave['abstr'] = $abstr;
-	}
-
-	/**
-	 * Returns the name of this session
-	 *
-	 * @return string The name of this session
-	 */
-	public function getName() {
-		return $this->name;
-	}
-
-	/**
-	 * Set the name for this paper
-	 *
-	 * @param string $name The name
-	 */
-	public function setName($name) {
-		$name = (($name !== null) && strlen(trim($name)) > 0) ? trim($name) : null;
-
-		$this->name = $name;
-		$this->toSave['name'] = $name;
 	}
 
 	/**
@@ -151,6 +134,27 @@ class SessionApi extends CRUDApiClient {
 	}
 
 	/**
+	 * Set all the networks to which this session belongs
+	 *
+	 * @param int[]|NetworkApi[] $networks The networks (or their ids) to add to this session
+	 */
+	public function setNetworks($networks) {
+		$this->networks = null;
+		$this->networks_id = array();
+
+		foreach ($networks as $network) {
+			if ($network instanceof NetworkApi) {
+				$this->networks_id[] = $network->getId();
+			}
+			else if (is_int($network)) {
+				$this->networks_id[] = $network;
+			}
+		}
+
+		$this->toSave['networks.id'] = implode(';', $this->networks_id);
+	}
+
+	/**
 	 * Returns a list with ids of all networks to which this session belongs
 	 *
 	 * @return int[] The network ids
@@ -197,6 +201,21 @@ class SessionApi extends CRUDApiClient {
 	}
 
 	/**
+	 * Set the state of this session
+	 *
+	 * @param int|SessionStateApi $state The session state (id)
+	 */
+	public function setState($state) {
+		if ($state instanceof SessionStateApi) {
+			$state = $state->getId();
+		}
+
+		$this->sessionState = null;
+		$this->state_id = $state;
+		$this->toSave['state.id'] = $state;
+	}
+
+	/**
 	 * Returns session participants information of this session
 	 *
 	 * @return SessionParticipantApi[] The session participant information
@@ -209,6 +228,27 @@ class SessionApi extends CRUDApiClient {
 		}
 
 		return $this->sessionParticipants;
+	}
+
+	/**
+	 * Returns the name of this session
+	 *
+	 * @return string The name of this session
+	 */
+	public function getName() {
+		return $this->name;
+	}
+
+	/**
+	 * Set the name for this paper
+	 *
+	 * @param string $name The name
+	 */
+	public function setName($name) {
+		$name = (($name !== null) && strlen(trim($name)) > 0) ? trim($name) : null;
+
+		$this->name = $name;
+		$this->toSave['name'] = $name;
 	}
 
 	public function __toString() {

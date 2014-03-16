@@ -22,16 +22,10 @@ class ConferenceApiClient {
 		$this->requestCache = SimpleApiCache::getInstance();
 
 		$this->conferenceApiUrl = variable_get('conference_base_url') . variable_get('conference_event_code') . '/' .
-			variable_get('conference_date_code') . '/' . 'api' . '/';
+			variable_get('conference_date_code') . '/api/';
 		$this->conferenceTokenUrl = variable_get('conference_base_url') . 'oauth/token';
 
-		/*$this->conferenceApiUrl = http_build_url(variable_get('conference_base_url'), array(
-			'path' => variable_get('conference_event_code') . '/' . variable_get('conference_date_code') . '/' . 'api'
-		));
-		$this->conferenceTokenUrl = http_build_url(variable_get('conference_base_url'), array(
-			'path' => 'oauth/token'
-		));*/
-
+		$this->oAuthClient->setAccessTokenType(Client::ACCESS_TOKEN_BEARER);
 		if ($cachedToken = cache_get('conference_access_token_' . $clientId)) {
 			$this->oAuthClient->setAccessToken($cachedToken->data);
 		}
@@ -51,17 +45,58 @@ class ConferenceApiClient {
 	}
 
 	/**
+	 * Make a POST call to the Conference Management System API
+	 *
+	 * @param string $apiName           The name of the API to call
+	 * @param array  $parameters        The parameters to send with the call
+	 * @param bool   $printErrorMessage Whether to print an error message in case of failure
+	 *
+	 * @return mixed The response message if found, else null is returned
+	 */
+	public function post($apiName, array $parameters, $printErrorMessage = true) {
+		return $this->call($apiName, $parameters, $printErrorMessage, Client::HTTP_METHOD_POST);
+	}
+
+	/**
+	 * Make a PUT call to the Conference Management System API
+	 *
+	 * @param string $apiName           The name of the API to call
+	 * @param array  $parameters        The parameters to send with the call
+	 * @param bool   $printErrorMessage Whether to print an error message in case of failure
+	 *
+	 * @return mixed The response message if found, else null is returned
+	 */
+	public function put($apiName, array $parameters, $printErrorMessage = true) {
+		// Make sure we send it with content-type 'application/x-www-form-urlencoded'
+		$parameters = http_build_query($parameters, null, '&');
+
+		return $this->call($apiName, $parameters, $printErrorMessage, Client::HTTP_METHOD_PUT);
+	}
+
+	/**
 	 * Make a DELETE call to the Conference Management System API
 	 *
 	 * @param string $apiName           The name of the API to call
 	 * @param array  $parameters        The parameters to send with the call
 	 * @param bool   $printErrorMessage Whether to print an error message in case of failure
-	 * @param string $http_method       The HTTP method to use
 	 *
 	 * @return mixed The response message if found, else null is returned
 	 */
-	private function call($apiName, array $parameters, $printErrorMessage = true,
-		$http_method = Client::HTTP_METHOD_GET) {
+	public function delete($apiName, array $parameters, $printErrorMessage = true) {
+		return $this->call($apiName, $parameters, $printErrorMessage, Client::HTTP_METHOD_DELETE);
+	}
+
+	/**
+	 * Make a DELETE call to the Conference Management System API
+	 *
+	 * @param string       $apiName           The name of the API to call
+	 * @param array|string $parameters        The parameters to send with the call
+	 * @param bool         $printErrorMessage Whether to print an error message in case of failure
+	 * @param string       $http_method       The HTTP method to use
+	 *
+	 * @return mixed The response message if found, else null is returned
+	 */
+	private function call($apiName, $parameters, $printErrorMessage = true, $http_method = Client::HTTP_METHOD_GET) {
 		// See if this request was made before
 		$result = $this->requestCache->get($apiName, $parameters, $http_method);
 
@@ -111,44 +146,5 @@ class ConferenceApiClient {
 			cache_set('conference_access_token_' . $this->oAuthClient->getClientId(), $token, 'cache',
 				time() + 60 * 60 * 12);
 		}
-	}
-
-	/**
-	 * Make a POST call to the Conference Management System API
-	 *
-	 * @param string $apiName           The name of the API to call
-	 * @param array  $parameters        The parameters to send with the call
-	 * @param bool   $printErrorMessage Whether to print an error message in case of failure
-	 *
-	 * @return mixed The response message if found, else null is returned
-	 */
-	public function post($apiName, array $parameters, $printErrorMessage = true) {
-		return $this->call($apiName, $parameters, $printErrorMessage, Client::HTTP_METHOD_POST);
-	}
-
-	/**
-	 * Make a PUT call to the Conference Management System API
-	 *
-	 * @param string $apiName           The name of the API to call
-	 * @param array  $parameters        The parameters to send with the call
-	 * @param bool   $printErrorMessage Whether to print an error message in case of failure
-	 *
-	 * @return mixed The response message if found, else null is returned
-	 */
-	public function put($apiName, array $parameters, $printErrorMessage = true) {
-		return $this->call($apiName, $parameters, $printErrorMessage, Client::HTTP_METHOD_PUT);
-	}
-
-	/**
-	 * Make a DELETE call to the Conference Management System API
-	 *
-	 * @param string $apiName           The name of the API to call
-	 * @param array  $parameters        The parameters to send with the call
-	 * @param bool   $printErrorMessage Whether to print an error message in case of failure
-	 *
-	 * @return mixed The response message if found, else null is returned
-	 */
-	public function delete($apiName, array $parameters, $printErrorMessage = true) {
-		return $this->call($apiName, $parameters, $printErrorMessage, Client::HTTP_METHOD_DELETE);
 	}
 } 

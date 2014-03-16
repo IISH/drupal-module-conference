@@ -161,7 +161,7 @@ class ParticipantVolunteeringApi extends CRUDApiClient {
 		$this->participantDate_user = null;
 		$this->userInstance = null;
 		$this->participantDate_id = $participantDate;
-		$this->toSave['$participantDate.id'] = $participantDate;
+		$this->toSave['participantDate.id'] = $participantDate;
 	}
 
 	/**

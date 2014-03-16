@@ -27,7 +27,7 @@ function iishconference_networksforchairs_main() {
 	}
 
 	$form = drupal_get_form('iishconference_networksforchairs_form');
-	$output = '<div class="container-inline">' . render($form) . '</div>';
+	$output = '<div class="iishconference_container_inline">' . render($form) . '</div>';
 
 	$allNetworks = CachedConferenceApi::getNetworks();
 	if (LoggedInUserDetails::isNetworkChair()) {

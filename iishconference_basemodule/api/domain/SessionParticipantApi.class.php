@@ -39,6 +39,22 @@ class SessionParticipantApi extends CRUDApiClient {
 	}
 
 	/**
+	 * For the given list with session participants, filter out all users that were found in that list
+	 *
+	 * @param SessionParticipantApi[] $sessionParticipants The list with session participants
+	 *
+	 * @return UserApi[] The user that were found
+	 */
+	public static function getAllUsers($sessionParticipants) {
+		$users = array();
+		foreach ($sessionParticipants as $sessionParticipant) {
+			$users[] = $sessionParticipant->getUser();
+		}
+
+		return array_values(array_unique($users));
+	}
+
+	/**
 	 * For the given list with session participants, filter out the types
 	 * with which the given user was added to the given session
 	 *
@@ -171,7 +187,7 @@ class SessionParticipantApi extends CRUDApiClient {
 	 *
 	 * @param int|ParticipantTypeApi $type The participant type (id)
 	 */
-	public function setTypeId($type) {
+	public function setType($type) {
 		if ($type instanceof ParticipantTypeApi) {
 			$type = $type->getId();
 		}

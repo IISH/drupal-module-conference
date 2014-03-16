@@ -26,7 +26,7 @@ class LoggedInUserDetails {
 	public static function getId() {
 		$id = null;
 		if (isset($_SESSION["conference"]["user_id"]) && is_int($_SESSION["conference"]["user_id"]) &&
-		    ($_SESSION["conference"]["user_id"] > 0)
+			($_SESSION["conference"]["user_id"] > 0)
 		) {
 
 			$id = $_SESSION["conference"]["user_id"];
@@ -60,7 +60,7 @@ class LoggedInUserDetails {
 	 */
 	public static function isAParticipant() {
 		return ((self::getParticipant() !== null) &&
-		        (self::getParticipant()->getStateId() !== ParticipantStateApi::DID_NOT_FINISH_REGISTRATION));
+			(self::getParticipant()->getStateId() !== ParticipantStateApi::DID_NOT_FINISH_REGISTRATION));
 	}
 
 	/**
@@ -74,7 +74,8 @@ class LoggedInUserDetails {
 			$participant = unserialize($_SESSION['conference']['participant']);
 		}
 		else if (is_int(LoggedInUserDetails::getId())) {
-			$participant = CRUDApiMisc::getFirstWherePropertyEquals(new ParticipantDateApi(), 'user_id', LoggedInUserDetails::getId());
+			$participant = CRUDApiMisc::getFirstWherePropertyEquals(new ParticipantDateApi(), 'user_id',
+				LoggedInUserDetails::getId());
 			$_SESSION['conference']['participant'] = serialize($participant);
 		}
 
@@ -152,22 +153,23 @@ class LoggedInUserDetails {
 	}
 
 	/**
-	 * !!! FOR TESTING PURPOSES ONLY !!!
 	 * Set the currently logged in user without logging in
 	 *
-	 * @param int  $userId         The id of the user in question
-	 * @param bool $hasFullRights  Whether the user will have full rights
-	 * @param bool $isNetworkChair Whether the user will be a network chair
-	 * @param bool $isChair        Whether the user will be a chair
-	 * @param bool $isOrganiser    Whether the user will be an organiser
-	 * @param bool $isCrew         Whether the user will be a crew member
+	 * @param int|UserApi $user           The (id of the) user in question
+	 * @param bool        $hasFullRights  Whether the user will have full rights
+	 * @param bool        $isNetworkChair Whether the user will be a network chair
+	 * @param bool        $isChair        Whether the user will be a chair
+	 * @param bool        $isOrganiser    Whether the user will be an organiser
+	 * @param bool        $isCrew         Whether the user will be a crew member
 	 *
 	 * @return int The user status of the currently logged in user
 	 */
-	public static function setCurrentlyLoggedIn($userId, $hasFullRights = false, $isNetworkChair = false,
+	public static function setCurrentlyLoggedIn($user, $hasFullRights = false, $isNetworkChair = false,
 	                                            $isChair = false, $isOrganiser = false, $isCrew = false) {
-		$user = CRUDApiMisc::getById(new UserApi(), $userId);
-		$participant = CRUDApiMisc::getFirstWherePropertyEquals(new ParticipantDateApi(), 'user_id', $userId);
+		if (!($user instanceof UserApi)) {
+			$user = CRUDApiMisc::getById(new UserApi(), $user);
+		}
+		$participant = CRUDApiMisc::getFirstWherePropertyEquals(new ParticipantDateApi(), 'user_id', $user->getId());
 
 		return self::setCurrentlyLoggedInWithResponse(array(
 			'status'         => self::USER_STATUS_EXISTS,

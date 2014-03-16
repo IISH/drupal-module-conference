@@ -21,16 +21,19 @@ class SettingsApi {
 	const DEFAULT_NETWORK_ID = 'default_network_id';
 	const SHOW_CHAIR_DISCUSSANT_POOL = 'show_chair_discussant_pool';
 	const SHOW_LANGUAGE_COACH_PUPIL = 'show_language_coach_pupil';
+	const SHOW_STUDENT = 'show_student';
 	const SHOW_CV = 'show_cv';
 	const ONLINE_PROGRAM_HEADER = 'online_program_header';
 	const ONLINE_PROGRAM_UNDER_CONSTRUCTION = 'online_program_under_construction';
-
-	// Pre-registration
 	const PREREGISTRATION_CLOSES_ON = 'preregistration_closes_on';
 	const PREREGISTRATION_STARTS_ON = 'preregistration_starts_on';
 	const PREREGISTRATION_CLOSES_ON_MESSAGE = 'preregistration_closes_on_message';
 	const PREREGISTRATION_STARTS_ON_MESSAGE = 'preregistration_starts_on_message';
 	const EXISTING_USER_MESSAGE = 'existing_user_message';
+	const AUTHOR_REGISTRATION_CLOSES_ON = 'author_registration_closes_on';
+	const ORGANIZER_REGISTRATION_CLOSES_ON = 'organizer_registration_closes_on';
+	const SHOW_AUTHOR_REGISTRATION = 'show_author_registration';
+	const SHOW_ORGANIZER_REGISTRATION = 'show_organizer_registration';
 
 	// Email templates
 	const BANK_TRANSFER_EMAIL_TEMPLATE_ID = 'bank_transfer_email_template_id';
