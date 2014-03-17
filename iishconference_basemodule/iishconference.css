@@ -29,15 +29,34 @@
     font-weight: bold;
 }
 
+/* MARGINS */
+
+.rightmargin {
+    margin-right: 10px;
+}
+
+.bottommargin {
+    margin-bottom: 20px;
+}
+
+.topmargin {
+    margin-top: 20px;
+}
+
+.largertopmargin {
+    margin-top: 27px;
+}
+
 /* OTHER CSS */
 
-.extra_uitleg {
+.extra_info {
 	font-style: italic;
 }
 
+/*
 .form-type-textfield {
 	width: 200px;
-}
+}*/
 
 .eca_remark {
     display: inline-block;
@@ -64,6 +83,7 @@
 	color: green;
 }
 
+/*
 table.noborder {
 	width: 100%;
 }
@@ -78,7 +98,7 @@ th.chairs_and_volunteers {
 
 ol.maillist li {
 	margin-bottom: 20px;
-}
+}*/
 
 table.program {
 	width: 100%;

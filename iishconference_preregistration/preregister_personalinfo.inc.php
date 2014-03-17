@@ -163,7 +163,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 
 	$form['communication_means']['extra_info'] = array(
 		'#type'   => 'markup',
-		'#markup' => '<span class="extra_uitleg">' .
+		'#markup' => '<span class="extra_info">' .
 			t('Please enter international numbers (including country prefix etc.)') .
 			'</span>',
 	);

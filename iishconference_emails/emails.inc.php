@@ -13,7 +13,7 @@ function conference_emails() {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
 		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
-		die(t('Go to !login page.', array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+		die(t('Go to !login page.', array('!login' => l(t('login'), '/' . SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 			array('query' => drupal_get_destination())))));
 	}
 
@@ -49,7 +49,7 @@ function conference_emails() {
 	foreach ($emailsNotSent as $email) {
 		$rowsNotSent[] = array(
 			array(
-				'data' => l($email->getSubject(), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'emails/' . $email->getId())
+				'data' => l($email->getSubject(), '/' . SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'emails/' . $email->getId())
 			),
 			array(
 				'data' => (is_null($email->getDateTimeCreated())) ? null :
@@ -66,7 +66,7 @@ function conference_emails() {
 	foreach ($emailsSent as $email) {
 		$rowsSent[] = array(
 			array(
-				'data' => l($email->getSubject(), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'emails/' . $email->getId())
+				'data' => l($email->getSubject(), '/' . SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'emails/' . $email->getId())
 			),
 			array(
 				'data' => (is_null($email->getDateTimeSent())) ? null :
@@ -106,7 +106,7 @@ function conference_emails() {
 		)
 	);
 
-	$emailsPage = l(t('Go back to your personal page'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page') . '<br /><br />';
+	$emailsPage = l(t('Go back to your personal page'), '/' . SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page') . '<br /><br />';
 	$emailsPage .= theme('iishconference_container',
 		array(
 			'fields' => array(

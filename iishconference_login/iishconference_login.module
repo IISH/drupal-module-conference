@@ -1,6 +1,5 @@
 <?php
 
-
 function iishconference_login_help($path, $arg) {
 	switch ($path) {
 		// Module help for the block module

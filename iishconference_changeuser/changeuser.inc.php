@@ -7,7 +7,7 @@ function conference_changeuser_form($form, &$form_state) {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
 		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
-		die(t('Go to !login page.', array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+		die(t('Go to !login page.', array('!login' => l(t('login'), '/' . SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 			array('query' => drupal_get_destination())))));
 	}
 
@@ -16,7 +16,7 @@ function conference_changeuser_form($form, &$form_state) {
 			t('Current user ( @user ) is not a conference crew member.',
 				array('@user' => LoggedInUserDetails::getUser())) . '<br />' .
 			t('Please !login as a crew member.',
-				array('!login' => l(t('log out and login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+				array('!login' => l(t('log out and login'), '/' . SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 					array('query' => drupal_get_destination())))), 'error');
 
 		return '';
