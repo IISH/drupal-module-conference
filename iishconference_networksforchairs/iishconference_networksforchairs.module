@@ -19,19 +19,21 @@ function iishconference_networksforchairs_menu() {
 	$items = array();
 
 	$extraPath = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU);
+	$networkNameSingular = NetworkApi::getNetworkName();
+	$networkNamePlural = NetworkApi::getNetworkName(false);
 
-	$items[$extraPath . 'networksforchairs'] = array(
-		'title'           => 'Networks, Sessions & Participants',
-		'description'     => 'Networks, Sessions & Participants ...description...',
+	$items[$extraPath . strtolower($networkNamePlural) . 'forchairs'] = array(
+		'title'           => '@networks, Sessions & Participants',
+		'title arguments' => array('@networks' => $networkNamePlural),
 		'page callback'   => 'iishconference_networksforchairs_main',
 		'access callback' => true,
 		'type'            => MENU_NORMAL_ITEM,
 		'file'            => 'networksforchairs.inc.php',
 	);
 
-	$items[$extraPath . 'networksforchairs/%'] = array(
-		'title'           => 'Networks, Sessions & Participants',
-		'description'     => 'Networks, Sessions & Participants ...description...',
+	$items[$extraPath . strtolower($networkNamePlural) . 'forchairs/%'] = array(
+		'title'           => '@networks, Sessions & Participants',
+		'title arguments' => array('@networks' => $networkNamePlural),
 		'page callback'   => 'iishconference_networksforchairs_sessions',
 		'page arguments'  => array(2),
 		'access callback' => true,
@@ -39,9 +41,9 @@ function iishconference_networksforchairs_menu() {
 		'file'            => 'networksforchairs.inc.php',
 	);
 
-	$items[$extraPath . 'networksforchairs/%/%'] = array(
-		'title'           => 'Networks, Sessions & Participants',
-		'description'     => 'Networks, Sessions & Participants ...description...',
+	$items[$extraPath . strtolower($networkNamePlural) . 'forchairs/%/%'] = array(
+		'title'           => '@networks, Sessions & Participants',
+		'title arguments' => array('@networks' => $networkNamePlural),
 		'page callback'   => 'iishconference_networksforchairs_papers',
 		'page arguments'  => array(2, 3),
 		'access callback' => true,

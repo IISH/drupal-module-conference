@@ -8,13 +8,17 @@
 function iishconference_networkvolunteers_main() {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
-		die(t('Go to !login page.', array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
-			array('query' => drupal_get_destination())))));
+		header('Location: ' .
+			url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+				array('query' => drupal_get_destination())));
+		die(t('Go to !login page.',
+			array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+				array('query' => drupal_get_destination())))));
 	}
 
 	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
-		drupal_set_message(t('Access denied. You are not a network chair.'), 'error');
+		drupal_set_message(t('Access denied. You are not a @network chair.',
+			array('@network' => NetworkApi::getNetworkName(true, true))), 'error');
 
 		return '';
 	}
@@ -22,17 +26,19 @@ function iishconference_networkvolunteers_main() {
 	$networks = iishconference_networkvolunteers_get_networks();
 	$links = array();
 	foreach ($networks as $network) {
-		$links[] = l($network->getName(), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'networkvolunteers/' . $network->getId());
+		$links[] = l($network->getName(),
+			SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'networkvolunteers/' . $network->getId());
 	}
 
 	if (count($links) > 0) {
 		return theme('item_list', array(
-			'title' => t('Your network(s)'),
+			'title' => t('Your @networks', array('@networks' => NetworkApi::getNetworkName(false, true))),
 			'items' => $links,
 		));
 	}
 	else {
-		drupal_set_message(t('No networks found!'), 'warning');
+		drupal_set_message(t('No @networks found!', array('@networks' => NetworkApi::getNetworkName(false, true))),
+			'warning');
 
 		return '';
 	}
@@ -48,19 +54,24 @@ function iishconference_networkvolunteers_main() {
 function iishconference_networkvolunteers_detail($network) {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
-		die(t('Go to !login page.', array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
-			array('query' => drupal_get_destination())))));
+		header('Location: ' .
+			url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+				array('query' => drupal_get_destination())));
+		die(t('Go to !login page.',
+			array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+				array('query' => drupal_get_destination())))));
 	}
 
 	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
-		drupal_set_message(t('Access denied. You are not a network chair.'), 'error');
+		drupal_set_message(t('Access denied. You are not a @network chair.',
+			array('@network' => NetworkApi::getNetworkName(true, true))), 'error');
 
 		return '';
 	}
 
 	if ($network === null) {
-		drupal_set_message(t('The network could not be found.'), 'error');
+		drupal_set_message(t('The @network could not be found.',
+			array('@network' => NetworkApi::getNetworkName(true, true))), 'error');
 
 		return '';
 	}
@@ -68,8 +79,12 @@ function iishconference_networkvolunteers_detail($network) {
 	$header = theme('iishconference_navigation', array(
 		'list'     => iishconference_networkvolunteers_get_networks(),
 		'current'  => $network,
-		'prevLink' => l('« ' . t('Go back to networks list'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'networkvolunteers'),
-		'curUrl'   => SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'networkvolunteers/',
+		'prevLink' => l('« ' .
+			t('Go back to @networks list', array('@networks' => NetworkApi::getNetworkName(false, true))),
+			SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(true, true) .
+			'volunteers'),
+		'curUrl'   => SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(true, true) .
+			'volunteers/',
 	));
 
 	$chairLinks = array();
@@ -78,11 +93,11 @@ function iishconference_networkvolunteers_detail($network) {
 	}
 
 	$title = theme('iishconference_container_field', array(
-		'label' => t('Network'),
+		'label' => NetworkApi::getNetworkName(),
 		'value' => $network->getName(),
 	));
 	$title .= theme('iishconference_container_field', array(
-		'label'       => t('Network chairs'),
+		'label'       => t('@network chairs', array('@networks' => NetworkApi::getNetworkName())),
 		'value'       => ConferenceMisc::getEnumSingleLine($chairLinks),
 		'valueIsHTML' => true,
 	));

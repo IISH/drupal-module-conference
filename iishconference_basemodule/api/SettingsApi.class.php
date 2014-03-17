@@ -34,6 +34,8 @@ class SettingsApi {
 	const ORGANIZER_REGISTRATION_CLOSES_ON = 'organizer_registration_closes_on';
 	const SHOW_AUTHOR_REGISTRATION = 'show_author_registration';
 	const SHOW_ORGANIZER_REGISTRATION = 'show_organizer_registration';
+	const NETWORK_NAME_SINGULAR = 'network_name_singular';
+	const NETWORK_NAME_PLURAL = 'network_name_plural';
 
 	// Email templates
 	const BANK_TRANSFER_EMAIL_TEMPLATE_ID = 'bank_transfer_email_template_id';

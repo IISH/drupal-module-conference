@@ -8,13 +8,17 @@
 function iishconference_electionadvisory_main() {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
-		die(t('Go to !login page.', array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
-			array('query' => drupal_get_destination())))));
+		header('Location: ' .
+		url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
+		die(t('Go to !login page.',
+			array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+				array('query' => drupal_get_destination())))));
 	}
 
 	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
-		drupal_set_message(t('Access denied. You are not a network chair.'), 'error');
+		$networkName = NetworkApi::getNetworkName();
+		drupal_set_message(t('Access denied. You are not a @network chair.', array('@network' => $networkName)),
+			'error');
 
 		return '';
 	}

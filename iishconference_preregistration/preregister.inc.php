@@ -14,6 +14,8 @@ require_once 'preregister_confirm.inc.php';
  * Implements hook_form()
  */
 function preregister_form($form, &$form_state) {
+	$form['#attributes']['class'][] = 'iishconference_form';
+
 	// Load ECA settings
 	$closesOn = SettingsApi::getSetting(SettingsApi::PREREGISTRATION_CLOSES_ON);
 	$startsOn = SettingsApi::getSetting(SettingsApi::PREREGISTRATION_STARTS_ON);

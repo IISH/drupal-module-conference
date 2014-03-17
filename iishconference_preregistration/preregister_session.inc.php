@@ -42,7 +42,7 @@ function preregister_session_form($form, &$form_state) {
 
 	$networkIds = $session->getNetworksId();
 	$form['session']['sessioninnetwork'] = array(
-		'#title'         => t('Network'),
+		'#title'         => NetworkApi::getNetworkName(),
 		'#type'          => 'select',
 		'#options'       => $networkOptions,
 		'#required'      => true,

@@ -41,6 +41,29 @@ class NetworkApi extends CRUDApiClient {
 	}
 
 	/**
+	 * Returns the network name of the current conference
+	 *
+	 * @param bool $singular  Whether the singular or plural form should be returned
+	 * @param bool $lowercase Whether it should be all lowercase
+	 *
+	 * @return string The network name
+	 */
+	public static function getNetworkName($singular = true, $lowercase = false) {
+		if ($singular) {
+			$networkName = SettingsApi::getSetting(SettingsApi::NETWORK_NAME_SINGULAR);
+		}
+		else {
+			$networkName = SettingsApi::getSetting(SettingsApi::NETWORK_NAME_PLURAL);
+		}
+
+		if ($lowercase) {
+			$networkName = strtolower($networkName);
+		}
+
+		return $networkName;
+	}
+
+	/**
 	 * Returns a list with the ids of all the chairs of this network
 	 *
 	 * @return int[] A list of chair ids
@@ -101,6 +124,10 @@ class NetworkApi extends CRUDApiClient {
 		return $this->chairs;
 	}
 
+	public function __toString() {
+		return $this->getName();
+	}
+
 	/**
 	 * Returns the name of this network
 	 *
@@ -122,10 +149,5 @@ class NetworkApi extends CRUDApiClient {
 	 */
 	protected function compareWith($instance) {
 		return strcmp(strtolower($this->getName()), strtolower($instance->getName()));
-	}
-
-
-	public function __toString() {
-		return $this->getName();
 	}
 } 

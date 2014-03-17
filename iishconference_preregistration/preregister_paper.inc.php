@@ -60,7 +60,7 @@ function preregister_paper_form($form, &$form_state) {
 
 	$form['paper']['proposednetwork'] = array(
 		'#type'          => 'select',
-		'#title'         => t('Proposed network'),
+		'#title'         => t('Proposed @network', array('@network' => NetworkApi::getNetworkName(true, true))),
 		'#options'       => $networkOptions,
 		//	'#prefix'        => '<div class="iishconference_container_inline">',
 		//	'#suffix'        => '</div>',

@@ -199,7 +199,8 @@ function preregister_personalinfo_form($form, &$form_state) {
 			//'#suffix'        => '</div>',
 			'#multiple'      => true,
 			'#size'          => 3,
-			'#description'   => '<i>' . t('Use CTRL key to select multiple networks.') . '</i>',
+			'#description'   => '<i>' . t('Use CTRL key to select multiple @networks.',
+					array('@networks' => NetworkApi::getNetworkName(false, true))) . '</i>',
 			'#states'        => array(
 				'visible' => array(
 					':input[name="volunteerchair"]' => array('checked' => true),
@@ -229,7 +230,8 @@ function preregister_personalinfo_form($form, &$form_state) {
 			//'#suffix'        => '</div>',
 			'#multiple'      => true,
 			'#size'          => 3,
-			'#description'   => '<i>' . t('Use CTRL key to select multiple networks.') . '</i>',
+			'#description'   => '<i>' . t('Use CTRL key to select multiple @networks.',
+					array('@networks' => NetworkApi::getNetworkName(false, true))) . '</i>',
 			'#states'        => array(
 				'visible' => array(
 					':input[name="volunteerdiscussant"]' => array('checked' => true),
@@ -286,7 +288,8 @@ function preregister_personalinfo_form($form, &$form_state) {
 			'#size'          => 3,
 			//'#prefix'        => '<div class='container-inline'>',
 			//'#suffix'        => '</div>',
-			'#description'   => '<i>' . t('Use CTRL key to select multiple networks.') . '</i>',
+			'#description'   => '<i>' . t('Use CTRL key to select multiple @networks.',
+					array('@networks' => NetworkApi::getNetworkName(false, true))) . '</i>',
 			'#states'        => array(
 				'visible' => array(
 					array(':input[name="coachpupil"]' => array('value' => 'coach')),
@@ -323,7 +326,8 @@ function preregister_personalinfo_form_validate($form, &$form_state) {
 	if ($form_state['values']['volunteerchair']) {
 		if (count($form_state['values']['volunteerchair_networks']) === 0) {
 			form_set_error('volunteerchair',
-				t('Please select a network or uncheck the field \'I would like to volunteer as Chair\'.'));
+				t('Please select a @network or uncheck the field \'I would like to volunteer as Chair\'.'),
+				array('@network' => NetworkApi::getNetworkName(true, false)));
 		}
 	}
 
@@ -331,7 +335,8 @@ function preregister_personalinfo_form_validate($form, &$form_state) {
 	if ($form_state['values']['volunteerdiscussant']) {
 		if (count($form_state['values']['volunteerdiscussant_networks']) == 0) {
 			form_set_error('volunteerdiscussant',
-				t('Please select a network or uncheck the field \'I would like to volunteer as Discussant\'.'));
+				t('Please select a @network or uncheck the field \'I would like to volunteer as Discussant\'.'),
+				array('@network' => NetworkApi::getNetworkName(true, false)));
 		}
 	}
 
@@ -339,7 +344,8 @@ function preregister_personalinfo_form_validate($form, &$form_state) {
 	if (in_array($form_state['values']['coachpupil'], array('coach', 'pupil'))) {
 		if (count($form_state['values']['coachpupil_networks']) == 0) {
 			form_set_error('coachpupil',
-				t('Please select a network or select \'not applicable\' at English language coach.'));
+				t('Please select a @network or select \'not applicable\' at English language coach.'),
+				array('@network' => NetworkApi::getNetworkName(true, false)));
 		}
 	}
 }

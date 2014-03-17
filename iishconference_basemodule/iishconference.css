@@ -1,6 +1,6 @@
 /* IISH CONFERENCE THEMES */
 
-.iishconference_container, fieldset.form-wrapper {
+.iishconference_container, .iishconference_form fieldset.form-wrapper {
 	border: 1px solid;
 	border-radius: 5px;
 	-moz-border-radius: 5px;
@@ -10,14 +10,14 @@
 	width: 100%;
 }
 
-.iishconference_container_header, fieldset.form-wrapper > legend {
+.iishconference_container_header, .iishconference_form fieldset.form-wrapper > legend {
 	font-weight: bold;
 	font-size: 120%;
 	display: block;
 	margin-bottom: 10px;
 }
 
-fieldset.form-wrapper > legend {
+.iishconference_form fieldset.form-wrapper > legend {
     margin-bottom: 0;
 }
 

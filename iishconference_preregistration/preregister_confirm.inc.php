@@ -116,12 +116,10 @@ function preregister_confirm_form($form, &$form_state) {
 
 	$chairDiscussantContent = array();
 	if ($showChairDiscussantPool) {
-		$chairId = 9; // TODO
-		$discussantId = 10; // TODO
-
-		$chairVolunteering = ParticipantVolunteeringApi::getAllNetworksForVolunteering($allVolunteering, $chairId);
+		$chairVolunteering =
+			ParticipantVolunteeringApi::getAllNetworksForVolunteering($allVolunteering, VolunteeringApi::CHAIR);
 		$discussantVolunteering =
-			ParticipantVolunteeringApi::getAllNetworksForVolunteering($allVolunteering, $discussantId);
+			ParticipantVolunteeringApi::getAllNetworksForVolunteering($allVolunteering, VolunteeringApi::DISCUSSANT);
 
 		$chairDiscussantContent =
 			array(theme('iishconference_container_header', array('text' => t('Chair / discussant pool'))));
@@ -133,7 +131,7 @@ function preregister_confirm_form($form, &$form_state) {
 
 		if ((SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) && (count($chairVolunteering) > 0)) {
 			$chairDiscussantContent[] = theme('iishconference_container_field', array(
-				'label' => 'Network(s)',
+				'label' => NetworkApi::getNetworkName(false),
 				'value' => implode(', ', $chairVolunteering)
 			));
 		}
@@ -145,7 +143,7 @@ function preregister_confirm_form($form, &$form_state) {
 
 		if ((SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) && (count($discussantVolunteering) > 0)) {
 			$chairDiscussantContent[] = theme('iishconference_container_field', array(
-				'label' => 'Network(s)',
+				'label' => NetworkApi::getNetworkName(false),
 				'value' => implode(', ', $discussantVolunteering)
 			));
 		}
@@ -156,11 +154,10 @@ function preregister_confirm_form($form, &$form_state) {
 
 	$englishCoachingContent = array();
 	if ($showChairDiscussantPool) {
-		$coachId = 11; // TODO
-		$pupilId = 12; // TODO
-
-		$coachVolunteering = ParticipantVolunteeringApi::getAllNetworksForVolunteering($allVolunteering, $coachId);
-		$pupilVolunteering = ParticipantVolunteeringApi::getAllNetworksForVolunteering($allVolunteering, $pupilId);
+		$coachVolunteering =
+			ParticipantVolunteeringApi::getAllNetworksForVolunteering($allVolunteering, VolunteeringApi::COACH);
+		$pupilVolunteering =
+			ParticipantVolunteeringApi::getAllNetworksForVolunteering($allVolunteering, VolunteeringApi::PUPIL);
 
 		$englishCoachingContent =
 			array(theme('iishconference_container_header', array('text' => t('English Language Coach'))));
@@ -172,7 +169,7 @@ function preregister_confirm_form($form, &$form_state) {
 
 		if ((SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) && (count($coachVolunteering) > 0)) {
 			$englishCoachingContent[] = theme('iishconference_container_field', array(
-				'label' => 'Network(s)',
+				'label' => NetworkApi::getNetworkName(false),
 				'value' => implode(', ', $coachVolunteering)
 			));
 		}
@@ -184,7 +181,7 @@ function preregister_confirm_form($form, &$form_state) {
 
 		if ((SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) && (count($pupilVolunteering) > 0)) {
 			$englishCoachingContent[] = theme('iishconference_container_field', array(
-				'label' => 'Network(s)',
+				'label' => NetworkApi::getNetworkName(false),
 				'value' => implode(', ', $pupilVolunteering)
 			));
 		}
@@ -262,12 +259,13 @@ function preregister_confirm_form($form, &$form_state) {
 		));
 
 		$sessionContent[] = theme('iishconference_container_field', array(
-			'label' => 'Network',
+			'label' => NetworkApi::getNetworkName(),
 			'value' => isset($networks[0]) ? $networks[0] : null
 		));
 
 		foreach ($users as $user) {
-			$participant = CRUDApiMisc::getFirstWherePropertyEquals(new ParticipantDateApi(), 'user_id', $user->getId());
+			$participant =
+				CRUDApiMisc::getFirstWherePropertyEquals(new ParticipantDateApi(), 'user_id', $user->getId());
 			$paper = PaperApi::getPapersOfUser($sessionPapers, $user->getId());
 			$paper = isset($paper[0]) ? $paper[0] : null;
 			$types = SessionParticipantApi::getAllTypesOfUserForSession($sessionParticipants, $user->getId(),

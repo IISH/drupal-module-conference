@@ -19,17 +19,19 @@ function iishconference_networks_menu() {
 	$items = array();
 
 	$extraPath = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU);
+	$networkNameSingular = NetworkApi::getNetworkName();
+	$networkNamePlural = NetworkApi::getNetworkName(false);
 
-	$items[$extraPath . 'networks'] = array(
-		'title'           => 'Networks',
+	$items[$extraPath . strtolower($networkNamePlural)] = array(
+		'title'           => '@networks',
+		'title arguments' => array('@networks' => $networkNamePlural),
 		'page callback'   => 'iishconference_networks',
 		'access callback' => true,
 		'type'            => MENU_NORMAL_ITEM,
 		'file'            => 'networks.inc.php',
 	);
 
-	$items[$extraPath . 'networks/%iishconference_network'] = array(
-		'title'           => 'Network',
+	$items[$extraPath . strtolower($networkNamePlural) . '/%iishconference_network'] = array(
 		'title callback' => 'iishconference_networks_network_title',
 		'title arguments' => array(2),
 		'page callback'   => 'iishconference_network_detail',
@@ -74,5 +76,5 @@ function iishconference_networks_network_title($network) {
 		return $network->getName();
 	}
 
-	return 'Network';
+	return NetworkApi::getNetworkName();
 }

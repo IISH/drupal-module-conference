@@ -19,20 +19,21 @@ function iishconference_networkparticipants_menu() {
 	$items = array();
 
 	$extraPath = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU);
+	$networkNameSingular = NetworkApi::getNetworkName();
+	$networkNamePlural = NetworkApi::getNetworkName(false);
 
-	$items[$extraPath . 'networkparticipants'] = array(
-		'title'           => 'Networks and their Participants',
-		'description'     => 'Networks and their Participants ...description...',
+	$items[$extraPath . strtolower($networkNameSingular) . 'participants'] = array(
+		'title'           => '@networks and their Participants',
+		'title arguments' => array('@networks' => $networkNamePlural),
 		'page callback'   => 'iishconference_networkparticipants_main',
 		'access callback' => true,
 		'type'            => MENU_NORMAL_ITEM,
 		'file'            => 'networkparticipants.inc.php',
 	);
 
-	$items[$extraPath . 'networkparticipants/%iishconference_network'] = array(
-		'title'           => 'Network and its participants',
-		'description'     => 'Network and its participants ...description...',
-		'page callback'   => 'iishconference_networkparticipants_detail',
+	$items[$extraPath . strtolower($networkNameSingular) . 'participants/%iishconference_network'] = array(
+		'title'           => '@network and their Participants',
+		'title arguments' => array('@network' => $networkNameSingular),
 		'page arguments'  => array(2),
 		'access callback' => true,
 		'type'            => MENU_CALLBACK,
