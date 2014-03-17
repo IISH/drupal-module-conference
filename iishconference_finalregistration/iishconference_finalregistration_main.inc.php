@@ -19,14 +19,14 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
 		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
-		die(t('Go to !login page.', array('!login' => l(t('login'), '/' . SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+		die(t('Go to !login page.', array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 			array('query' => drupal_get_destination())))));
 	}
 
 	if (!LoggedInUserDetails::isAParticipant()) {
 		drupal_set_message(t('You are not registered for the @conference conference. Please go to !link.',
 				array('@conference' => CachedConferenceApi::getEventDate()->getLongCodeAndYear(),
-				      '!link' => l(t('Pre-registration form'), '/' . SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'pre-registration'))),
+				      '!link' => l(t('Pre-registration form'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'pre-registration'))),
 			'warning');
 
 		return '';

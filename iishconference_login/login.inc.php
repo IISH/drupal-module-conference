@@ -52,7 +52,7 @@ function conference_login_form($form, &$form_state) {
 	// lost password url
 	$form['ct' . $ct++] = array(
 		'#type'   => 'markup',
-		'#markup' => '<div class="largertopmargin">' . l(t('Lost password'), '/' . SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) .
+		'#markup' => '<div class="largertopmargin">' . l(t('Lost password'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) .
 				'lost-password') . '</div>',
 	);
 
@@ -60,7 +60,7 @@ function conference_login_form($form, &$form_state) {
 	$form['ct' . $ct++] = array(
 		'#type'   => 'markup',
 		'#markup' => '<div class="largertopmargin">' . t('If you don\'t have an account please go to !link.',
-				array('!link' => l(t('Pre-registration form'), '/' . SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'pre-registration'))) .
+				array('!link' => l(t('Pre-registration form'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'pre-registration'))) .
 			'</div>',
 	);
 

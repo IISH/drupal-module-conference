@@ -257,7 +257,6 @@ class UserApi extends CRUDApiClient {
 	 */
 	public function getLocationDetails() {
 		$locations = array();
-
 		if (($this->getDepartment() !== null) && (strlen($this->getDepartment()) > 0)) {
 			$locations[] = $this->getDepartment();
 		}

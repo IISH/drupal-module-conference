@@ -44,7 +44,7 @@ function preregister_password_form($form, &$form_state) {
 		'#type'   => 'markup',
 		'#markup' =>
 			'<div class="largertopmargin">' .
-			l(t('Lost password'), '/' . SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'lost-password') .
+			l(t('Lost password'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'lost-password') .
 			'</div>',
 	);
 

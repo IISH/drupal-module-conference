@@ -11,7 +11,7 @@ function iishconference_electionadvisory_main() {
 		header('Location: ' .
 		url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
 		die(t('Go to !login page.',
-			array('!login' => l(t('login'), '/' . SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+			array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 				array('query' => drupal_get_destination())))));
 	}
 

@@ -13,7 +13,7 @@ function iishconference_finalregistration_bank_transfer() {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
 		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
-		die(t('Go to !login page.', array('!login' => l(t('login'), '/' . SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+		die(t('Go to !login page.', array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 			array('query' => drupal_get_destination())))));
 	}
 
@@ -47,7 +47,7 @@ function iishconference_finalregistration_bank_transfer() {
 			}
 			else {
 				drupal_set_message(t('You have chosen another payment method. !link to change your payment method.',
-						array('!link' => l(t('Click here'), '/' . SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration'))),
+						array('!link' => l(t('Click here'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration'))),
 					'error');
 
 				return '';
@@ -62,7 +62,7 @@ function iishconference_finalregistration_bank_transfer() {
 	}
 	else {
 		drupal_set_message(t('You have not finished the final registration. !link.',
-			array('!link' => l(t('Click here'), '/' . SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration'))), 'error');
+			array('!link' => l(t('Click here'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration'))), 'error');
 
 		return '';
 	}

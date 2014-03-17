@@ -10,7 +10,7 @@ function conference_personalpage_main() {
 			url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 				array('query' => drupal_get_destination())));
 		die(t('Go to !login page.',
-			array('!login' => l(t('login'), '/' . SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+			array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 				array('query' => drupal_get_destination())))));
 	}
 
@@ -361,7 +361,7 @@ function conference_personalpage_main() {
 	if (module_exists('iishconference_changepassword')) {
 		$linksContainer[] =
 			'&bull; ' .
-			l(t('Change password'), '/' . SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'change-password') . '<br />';
+			l(t('Change password'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'change-password') . '<br />';
 	}
 	if (module_exists('iishconference_finalregistration')) {
 		$linksContainer[] = '&bull; ' .
@@ -375,7 +375,7 @@ function conference_personalpage_main() {
 	}
 	if (module_exists('iishconference_logout')) {
 		$linksContainer[] =
-			'&bull; ' . l(t('Logout'), '/' . SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'logout') . '<br />';
+			'&bull; ' . l(t('Logout'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'logout') . '<br />';
 	}
 	// check if live or crew or network chair or chair or organizer
 	if (module_exists('iishconference_program') &&
@@ -504,6 +504,6 @@ function conference_personalpage_paper(&$container, $paper, $participant) {
 	));
 
 	$container[] = '<br /><b> ' .
-		l(t('Upload paper'), '/' . SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page/upload-paper/' .
+		l(t('Upload paper'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page/upload-paper/' .
 			$paper->getId()) . '</b>';
 }
