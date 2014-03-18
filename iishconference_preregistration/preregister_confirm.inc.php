@@ -390,7 +390,8 @@ function preregister_confirm_form_submit($form, &$form_state) {
 	$participant->setState(ParticipantStateApi::NEW_PARTICIPANT);
 	$participant->save();
 
-	// TODO: Send emails
+	$sendEmailApi = new SendEmailApi();
+	$sendEmailApi->sendPreRegistrationFinishedEmail($flow->getUser());
 
 	drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'pre-registration/completed');
 }

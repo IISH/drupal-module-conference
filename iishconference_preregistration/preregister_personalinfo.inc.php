@@ -322,30 +322,31 @@ function preregister_personalinfo_form($form, &$form_state) {
  * Implements hook_form_validate()
  */
 function preregister_personalinfo_form_validate($form, &$form_state) {
-	// controle als men chair aanklikt ook echt een netwerk wordt geselecteerd
+	// Make sure that when a chair is checked, a network is chosen as well
 	if ($form_state['values']['volunteerchair']) {
 		if (count($form_state['values']['volunteerchair_networks']) === 0) {
 			form_set_error('volunteerchair',
-				t('Please select a @network or uncheck the field \'I would like to volunteer as Chair\'.'),
-				array('@network' => NetworkApi::getNetworkName(true, false)));
+				t('Please select a @network or uncheck the field \'I would like to volunteer as Chair\'.',
+					array('@network' => NetworkApi::getNetworkName(true, false))));
 		}
 	}
 
-	// controle als men discussant aanklikt ook echt een netwerk wordt geselecteerd
+	// Make sure that when a discussant is checked, a network is chosen as well
 	if ($form_state['values']['volunteerdiscussant']) {
-		if (count($form_state['values']['volunteerdiscussant_networks']) == 0) {
+		if (count($form_state['values']['volunteerdiscussant_networks']) === 0) {
 			form_set_error('volunteerdiscussant',
-				t('Please select a @network or uncheck the field \'I would like to volunteer as Discussant\'.'),
-				array('@network' => NetworkApi::getNetworkName(true, false)));
+				t('Please select a @network or uncheck the field \'I would like to volunteer as Discussant\'.',
+					array('@network' => NetworkApi::getNetworkName(true, false))));
 		}
 	}
 
-	// controle als men language aanklikt ook echt een netwerk wordt geselecteerd
+	// Make sure that when a language coach or pupil is checked, a network is chosen as well
 	if (in_array($form_state['values']['coachpupil'], array('coach', 'pupil'))) {
-		if (count($form_state['values']['coachpupil_networks']) == 0) {
+		if (count($form_state['values']['coachpupil_networks']) === 0) {
 			form_set_error('coachpupil',
-				t('Please select a @network or select \'not applicable\' at English language coach.'),
-				array('@network' => NetworkApi::getNetworkName(true, false)));
+				t('Please select a @network or select \'not applicable\' at English language coach.',
+					array('@network' => NetworkApi::getNetworkName(true, false)))
+			);
 		}
 	}
 }

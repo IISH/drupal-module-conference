@@ -8,7 +8,7 @@
  * Implements template_preprocess_hook()
  */
 function template_preprocess_iishconference_finalregistration_main_form(&$variables) {
-	if (variable_get('payment_show_days_session_planned')) {
+	if (SettingsApi::getSetting(SettingsApi::PAYMENT_SHOW_DAYS_SESSION_PLANNED) == 1) {
 		$sessions = SessionParticipantApi::getAllSessions(LoggedInUserDetails::getUser()->getSessionParticipantInfo());
 		$variables['session-days'] = SessionApi::getAllPlannedDaysForSessions($sessions);
 	}
@@ -20,6 +20,6 @@ function template_preprocess_iishconference_finalregistration_main_form(&$variab
  */
 function template_preprocess_iishconference_finalregistration_overview_form(&$variables) {
 	$variables['bank_transfer_open'] =
-		(ConferenceMisc::getTimeFromDateArray(variable_get('date_close_bank_transfer')) >= strtotime('today'));
+		(strtotime(SettingsApi::getSetting(SettingsApi::BANK_TRANSFER_CLOSES_ON)) >= strtotime('today'));
 	$variables['email-addresses'] = ConferenceMisc::getInfoBlock(1);
 }

@@ -413,7 +413,7 @@ class ParticipantDateApi extends CRUDApiClient {
 		$feeAmount = $this->getFeeAmount($orderCreationDate);
 		$finalDate = $feeAmount->getEndDate();
 
-		$closingDate = ConferenceMisc::getTimeFromDateArray(variable_get('date_close_bank_transfer'));
+		$closingDate = strtotime(SettingsApi::getSetting(SettingsApi::BANK_TRANSFER_CLOSES_ON));
 		if ($finalDate > $closingDate) {
 			$finalDate = $closingDate;
 		}

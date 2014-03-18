@@ -32,7 +32,7 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 		return '';
 	}
 
-	if (ConferenceMisc::getTimeFromDateArray(variable_get('date_close_final_registration')) < strtotime('today')) {
+	if (strtotime(SettingsApi::getSetting(SettingsApi::FINAL_REGISTRATION_CLOSES_ON)) < strtotime('today')) {
 		drupal_set_message(t('The final registration is closed.'), 'warning');
 
 		return '';

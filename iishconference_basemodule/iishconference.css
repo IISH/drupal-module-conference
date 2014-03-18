@@ -3,7 +3,9 @@
 .iishconference_container, .iishconference_form fieldset.form-wrapper {
 	border: 1px solid;
 	border-radius: 5px;
+    -o-border-radius: 5px;
 	-moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
 	padding: 10px;
 	margin-bottom: 20px;
 	float: left;
@@ -49,14 +51,13 @@
 
 /* OTHER CSS */
 
+.iishconference_form .form-type-textfield label, .iishconference_form .form-type-select label {
+    display: inline-block;
+}
+
 .extra_info {
 	font-style: italic;
 }
-
-/*
-.form-type-textfield {
-	width: 200px;
-}*/
 
 .eca_remark {
     display: inline-block;
@@ -74,6 +75,7 @@
 	font-weight: bold;
 }
 
+/*
 .eca_ul {
 	type: circle;
 	margin-bottom: 30px;
@@ -82,7 +84,7 @@
 .hh {
 	color: green;
 }
-
+*/
 /*
 table.noborder {
 	width: 100%;

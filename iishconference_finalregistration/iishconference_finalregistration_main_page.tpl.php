@@ -1,5 +1,4 @@
-<?php if (array_key_exists('days_present', $variables['form']) && variable_get('payment_show_days_session_planned')
-) : ?>
+<?php if (array_key_exists('days_present', $variables['form']) && (SettingsApi::getSetting(SettingsApi::PAYMENT_SHOW_DAYS_SESSION_PLANNED) == 1)) : ?>
 	<?php if (count($variables['session-days']) > 0) : ?>
 		<div id="session-days-hint">
 			<span class="hint-message">

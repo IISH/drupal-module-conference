@@ -64,16 +64,6 @@ function iishconference_finalregistration_menu() {
 		'file' => 'iishconference_finalregistration_callback.inc.php',
 	);
 
-	$items['admin/settings/iishconference-finalregistration'] = array(
-		'title' => 'Final registration settings',
-		'description' => 'Change the final registration settings',
-		'page callback' => 'drupal_get_form',
-		'page arguments' => array('iishconference_finalregistration_settings_form'),
-		'access arguments' => array('access administration pages'),
-		'type' => MENU_CALLBACK,
-		'file' => 'iishconference_finalregistration_settings.inc.php',
-	);
-
 	return $items;
 }
 

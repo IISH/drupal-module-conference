@@ -141,17 +141,6 @@ class ConferenceMisc {
 	}
 
 	/**
-	 * Creates a Unix timestamp out of a date array (an array with the month, day and year)
-	 *
-	 * @param array $dateArray The array with the month, day and year
-	 *
-	 * @return int The Unix timestamp
-	 */
-	public static function getTimeFromDateArray(array $dateArray) {
-		return mktime(0, 0, 0, $dateArray['month'], $dateArray['day'], $dateArray['year']);
-	}
-
-	/**
 	 * Returns the amount in a human friendly readable format
 	 *
 	 * @param int|float $amount        The amount
@@ -188,10 +177,10 @@ class ConferenceMisc {
 	 */
 	public static function getInfoBlock($emptyRows = 2) {
 		return
-			'<span class="eca_warning">' . str_repeat('<br />', $emptyRows) . t('General questions please contact: ') .
+			str_repeat('<br />', $emptyRows) . '<div class="eca_warning">' . t('General questions please contact: ') .
 			self::encryptEmailAddress(SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL)) . '<br/ > ' .
 			t('Errors/bugs please contact: ') .
-			self::encryptEmailAddress(SettingsApi::getSetting(SettingsApi::JIRA_EMAIL)) . '</span>';
+			self::encryptEmailAddress(SettingsApi::getSetting(SettingsApi::JIRA_EMAIL)) . '</div>';
 	}
 
 	/**

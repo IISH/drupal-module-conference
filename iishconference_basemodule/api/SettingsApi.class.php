@@ -36,10 +36,20 @@ class SettingsApi {
 	const SHOW_ORGANIZER_REGISTRATION = 'show_organizer_registration';
 	const NETWORK_NAME_SINGULAR = 'network_name_singular';
 	const NETWORK_NAME_PLURAL = 'network_name_plural';
+	const BANK_TRANSFER_CLOSES_ON = 'bank_transfer_closes_on';
+	const FINAL_REGISTRATION_CLOSES_ON = 'final_registration_closes_on';
+	const PAYMENT_SHOW_DAYS_SESSION_PLANNED = 'payment_show_days_session_planned';
 
 	// Email templates
 	const BANK_TRANSFER_EMAIL_TEMPLATE_ID = 'bank_transfer_email_template_id';
 	const PAYMENT_ACCEPTED_EMAIL_TEMPLATE_ID = 'payment_accepted_email_template_id';
+	const PRE_REGISTRATION_EMAIL_TEMPLATE_ID = 'pre_registration_email_template_id';
+
+	// PayWay
+	const PAYWAY_ADDRESS = 'payway_address';
+	const PAYWAY_PROJECT = 'payway_project';
+	const PAYWAY_PASSPHRASE_IN = 'payway_passphrase_in';
+	const PAYWAY_PASSPHRASE_OUT = 'payway_passphrase_out';
 
 	private $client;
 	private static $apiName = 'settings';

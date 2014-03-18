@@ -43,24 +43,6 @@ class PayWayMessage {
 	}
 
 	/**
-	 * Returns the value for the given parameter
-	 *
-	 * @param string $parameter The parameter in question
-	 *
-	 * @return mixed The value of the given parameter in this message
-	 */
-	public function get($parameter) {
-		$parameter = trim(strtoupper($parameter));
-
-		if (array_key_exists($parameter, $this->message)) {
-			return $this->message[$parameter];
-		}
-		else {
-			return null;
-		}
-	}
-
-	/**
 	 * Returns the date/time value for the given parameter
 	 *
 	 * @param string $parameter The parameter in question
@@ -95,11 +77,11 @@ class PayWayMessage {
 		}
 		else {
 			$result = drupal_http_request(
-				variable_get('payway_address') . $apiName,
+				SettingsApi::getSetting(SettingsApi::PAYWAY_ADDRESS) . $apiName,
 				array(
 					'headers' => array('Content-Type' => 'text/json'),
-					'method' => 'POST',
-					'data' => drupal_json_encode($this->message),
+					'method'  => 'POST',
+					'data'    => drupal_json_encode($this->message),
 				)
 			);
 
@@ -125,6 +107,7 @@ class PayWayMessage {
 		if (!$successExists || ($successExists && $this->get('success'))) {
 			$curSign = $this->get('shasign');
 			$this->sign(false);
+
 			return ($curSign == $this->get('shasign'));
 		}
 
@@ -132,21 +115,21 @@ class PayWayMessage {
 	}
 
 	/**
-	 * Redirects the user to PayWay payment page with this message
-	 */
-	private function redirectToPayWay() {
-		header('Location: ' . variable_get('payway_address') . 'payment?' . http_build_query($this->message));
-		die();
-	}
-
-	/**
-	 * Adds the project name to the message
+	 * Returns the value for the given parameter
 	 *
-	 * @return PayWayMessage
+	 * @param string $parameter The parameter in question
+	 *
+	 * @return mixed The value of the given parameter in this message
 	 */
-	private function addProject() {
-		$this->add('project', variable_get('payway_project'));
-		return $this;
+	public function get($parameter) {
+		$parameter = trim(strtoupper($parameter));
+
+		if (array_key_exists($parameter, $this->message)) {
+			return $this->message[$parameter];
+		}
+		else {
+			return null;
+		}
 	}
 
 	/**
@@ -157,9 +140,9 @@ class PayWayMessage {
 	 * @return PayWayMessage
 	 */
 	private function sign($in = true) {
-		$passPhrase = variable_get('passphrase_payway_in');
+		$passPhrase = SettingsApi::getSetting(SettingsApi::PAYWAY_PASSPHRASE_IN);
 		if (!$in) {
-			$passPhrase = variable_get('passphrase_payway_out');
+			$passPhrase = SettingsApi::getSetting(SettingsApi::PAYWAY_PASSPHRASE_OUT);
 		}
 
 		// Sort and cleanup the message
@@ -180,5 +163,25 @@ class PayWayMessage {
 		$this->add('shasign', sha1($toBeHashed));
 
 		return $this;
+	}
+
+	/**
+	 * Adds the project name to the message
+	 *
+	 * @return PayWayMessage
+	 */
+	private function addProject() {
+		$this->add('project', SettingsApi::getSetting(SettingsApi::PAYWAY_PROJECT));
+
+		return $this;
+	}
+
+	/**
+	 * Redirects the user to PayWay payment page with this message
+	 */
+	private function redirectToPayWay() {
+		header('Location: ' . SettingsApi::getSetting(SettingsApi::PAYWAY_ADDRESS) . 'payment?' .
+			http_build_query($this->message));
+		die();
 	}
 } 

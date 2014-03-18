@@ -23,7 +23,6 @@ function iishconference_preregistration_menu() {
 
 	$items[$extraPath . 'pre-registration'] = array(
 		'title'           => 'Pre-registration for the ' . $conferenceName . ' conference',
-		'description'     => 'Pre-registration ...description...',
 		'page callback'   => 'drupal_get_form',
 		'page arguments'  => array('preregister_form'),
 		'access callback' => true,
