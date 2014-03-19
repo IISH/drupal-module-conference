@@ -15,9 +15,9 @@ function preregister_personalinfo_form($form, &$form_state) {
 	 * </style>
 	 */
 
-	$flow = new PreRegistrationFlow($form_state);
-	$user = $flow->getUser();
-	$participant = $flow->getParticipant();
+	$state = new PreRegistrationState($form_state);
+	$user = $state->getUser();
+	$participant = $state->getParticipant();
 
 	$showChairDiscussantPool = (SettingsApi::getSetting(SettingsApi::SHOW_CHAIR_DISCUSSANT_POOL) == 1);
 	$showLanguageCoaching = (SettingsApi::getSetting(SettingsApi::SHOW_LANGUAGE_COACH_PUPIL) == 1);
@@ -32,7 +32,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 		$networkOptions = CRUDApiClient::getAsKeyValueArray($networks);
 	}
 
-	$flow->setFormData(array('volunteering' => $allVolunteering));
+	$state->setFormData(array('volunteering' => $allVolunteering));
 
 	// + + + + + + + + + + + + + + + + + + + + + + + +
 	// PERSONAL INFO
@@ -322,31 +322,35 @@ function preregister_personalinfo_form($form, &$form_state) {
  * Implements hook_form_validate()
  */
 function preregister_personalinfo_form_validate($form, &$form_state) {
-	// Make sure that when a chair is checked, a network is chosen as well
-	if ($form_state['values']['volunteerchair']) {
-		if (count($form_state['values']['volunteerchair_networks']) === 0) {
-			form_set_error('volunteerchair',
-				t('Please select a @network or uncheck the field \'I would like to volunteer as Chair\'.',
-					array('@network' => NetworkApi::getNetworkName(true, false))));
+	if (SettingsApi::getSetting(SettingsApi::SHOW_CHAIR_DISCUSSANT_POOL) == 1) {
+		// Make sure that when a chair is checked, a network is chosen as well
+		if ($form_state['values']['volunteerchair']) {
+			if (count($form_state['values']['volunteerchair_networks']) === 0) {
+				form_set_error('volunteerchair',
+					t('Please select a @network or uncheck the field \'I would like to volunteer as Chair\'.',
+						array('@network' => NetworkApi::getNetworkName(true, false))));
+			}
+		}
+
+		// Make sure that when a discussant is checked, a network is chosen as well
+		if ($form_state['values']['volunteerdiscussant']) {
+			if (count($form_state['values']['volunteerdiscussant_networks']) === 0) {
+				form_set_error('volunteerdiscussant',
+					t('Please select a @network or uncheck the field \'I would like to volunteer as Discussant\'.',
+						array('@network' => NetworkApi::getNetworkName(true, false))));
+			}
 		}
 	}
 
-	// Make sure that when a discussant is checked, a network is chosen as well
-	if ($form_state['values']['volunteerdiscussant']) {
-		if (count($form_state['values']['volunteerdiscussant_networks']) === 0) {
-			form_set_error('volunteerdiscussant',
-				t('Please select a @network or uncheck the field \'I would like to volunteer as Discussant\'.',
-					array('@network' => NetworkApi::getNetworkName(true, false))));
-		}
-	}
-
-	// Make sure that when a language coach or pupil is checked, a network is chosen as well
-	if (in_array($form_state['values']['coachpupil'], array('coach', 'pupil'))) {
-		if (count($form_state['values']['coachpupil_networks']) === 0) {
-			form_set_error('coachpupil',
-				t('Please select a @network or select \'not applicable\' at English language coach.',
-					array('@network' => NetworkApi::getNetworkName(true, false)))
-			);
+	if (SettingsApi::getSetting(SettingsApi::SHOW_LANGUAGE_COACH_PUPIL) == 1) {
+		// Make sure that when a language coach or pupil is checked, a network is chosen as well
+		if (in_array($form_state['values']['coachpupil'], array('coach', 'pupil'))) {
+			if (count($form_state['values']['coachpupil_networks']) === 0) {
+				form_set_error('coachpupil',
+					t('Please select a @network or select \'not applicable\' at English language coach.',
+						array('@network' => NetworkApi::getNetworkName(true, false)))
+				);
+			}
 		}
 	}
 }
@@ -355,9 +359,9 @@ function preregister_personalinfo_form_validate($form, &$form_state) {
  * Implements hook_form_submit()
  */
 function preregister_personalinfo_form_submit($form, &$form_state) {
-	$flow = new PreRegistrationFlow($form_state);
-	$user = $flow->getUser();
-	$participant = $flow->getParticipant();
+	$state = new PreRegistrationState($form_state);
+	$user = $state->getUser();
+	$participant = $state->getParticipant();
 
 	// First save the user
 	$user->setEmail($form_state['values']['email']);
@@ -386,11 +390,11 @@ function preregister_personalinfo_form_submit($form, &$form_state) {
 	$participant->save();
 
 	// Make sure the correct changes are also cached correctly
-	$flow->updateUserAndParticipant($user, $participant);
+	$state->updateUserAndParticipant($user, $participant);
 	LoggedInUserDetails::setCurrentlyLoggedIn($user);
 
 	// Then the volunteering options (chair / discussant / language coach / language pupil)
-	$data = $flow->getFormData();
+	$data = $state->getFormData();
 	$allToDelete = $data['volunteering'];
 
 	if (SettingsApi::getSetting(SettingsApi::SHOW_CHAIR_DISCUSSANT_POOL) == 1) {

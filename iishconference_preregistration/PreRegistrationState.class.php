@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Handles the flow of moving between pages during the pre-registration process
+ * Handles the state during the pre-registration process
  */
-class PreRegistrationFlow {
+class PreRegistrationState {
 	private $formState;
 
 	public function __construct(array &$formState) {
@@ -13,10 +13,9 @@ class PreRegistrationFlow {
 	/**
 	 * The next step/page the user should go to
 	 *
-	 * @param string $formName     The internal function name of the form to call
-	 * @param bool   $movesForward Whether the user moves forward, in other words: validate and save the given data
+	 * @param string $formName The internal function name of the form to call
 	 */
-	public function setNextStep($formName, $movesForward = true) {
+	public function setNextStep($formName) {
 		$this->formState['pre_registration']['step'] = $formName;
 
 		// Make sure that during refreshes the user stays on the right step
@@ -25,7 +24,6 @@ class PreRegistrationFlow {
 		}
 
 		$this->formState['pre_registration']['form_build_id'] = $this->formState['values']['form_build_id'];
-		$this->formState['pre_registration']['moves_forward'] = $movesForward;
 		$this->formState['rebuild'] = true;
 
 		unset($this->formState['pre_registration']['data']);
@@ -48,19 +46,6 @@ class PreRegistrationFlow {
 
 		return $this->formState['pre_registration']['step'];
 	}
-
-	/**
-	 * Indicates whether the user is moving forward through the pre-registration
-	 *
-	 * @return bool Whether the user is moving forward through the pre-registration
-	 */
-	/*public function isUserMovingForward() {
-		if (!isset($this->formState['pre_registration']['moves_forward'])) {
-			$this->formState['pre_registration']['moves_forward'] = true;
-		}
-
-		return $this->formState['pre_registration']['moves_forward'];
-	}*/
 
 	/**
 	 * Caches data only for a single step/page

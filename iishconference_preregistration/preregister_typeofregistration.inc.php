@@ -4,8 +4,8 @@
  * Implements hook_form()
  */
 function preregister_typeofregistration_form($form, &$form_state) {
-	$flow = new PreRegistrationFlow($form_state);
-	$user = $flow->getUser();
+	$state = new PreRegistrationState($form_state);
+	$user = $state->getUser();
 	$data = array();
 
 	// + + + + + + + + + + + + + + + + + + + + + + + +
@@ -25,8 +25,13 @@ function preregister_typeofregistration_form($form, &$form_state) {
 		);
 
 		if (!$authorRegistrationClosed) {
-			$paperResults =
-				CRUDApiMisc::getAllWherePropertyEquals(new PaperApi(), 'addedBy_id', $user->getId());
+			$props = new ApiCriteriaBuilder();
+			$paperResults = PaperApi::getListWithCriteria(
+				$props
+					->eq('addedBy_id', $user->getId())
+					->eq('user_id', $user->getId())
+					->get()
+			);
 			$papers = $paperResults->getResults();
 
 			$maxPapers = SettingsApi::getSetting(SettingsApi::MAX_PAPERS_PER_PERSON_PER_SESSION);
@@ -143,7 +148,7 @@ function preregister_typeofregistration_form($form, &$form_state) {
 		'#value' => t('Next to confirmation page'),
 	);
 
-	$flow->setFormData($data);
+	$state->setFormData($data);
 
 	return $form;
 }
@@ -152,8 +157,8 @@ function preregister_typeofregistration_form($form, &$form_state) {
  * Implements hook_form_submit()
  */
 function preregister_typeofregistration_form_submit($form, &$form_state) {
-	$flow = new PreRegistrationFlow($form_state);
-	$data = $flow->getFormData();
+	$state = new PreRegistrationState($form_state);
+	$data = $state->getFormData();
 	$submitName = $form_state['triggering_element']['#name'];
 
 	if ($submitName === 'submit') {
@@ -162,25 +167,25 @@ function preregister_typeofregistration_form_submit($form, &$form_state) {
 
 	if ($data['authorRegistrationOpen']) {
 		if (($submitName === 'submit_paper') && $data['canSubmitNewPaper']) {
-			return preregister_typeofregistration_set_paper($flow, null);
+			return preregister_typeofregistration_set_paper($state, null);
 		}
 
 		if (strpos($submitName, 'submit_paper_') === 0) {
 			$id = EasyProtection::easyIntegerProtection(str_replace('submit_paper_', '', $submitName));
 
-			return preregister_typeofregistration_set_paper($flow, $id);
+			return preregister_typeofregistration_set_paper($state, $id);
 		}
 	}
 
 	if ($data['organizerRegistrationOpen']) {
 		if ($submitName === 'submit_session') {
-			return preregister_typeofregistration_set_session($flow, null);
+			return preregister_typeofregistration_set_session($state, null);
 		}
 
 		if (strpos($submitName, 'submit_session_') === 0) {
 			$id = EasyProtection::easyIntegerProtection(str_replace('submit_session_', '', $submitName));
 
-			return preregister_typeofregistration_set_session($flow, $id);
+			return preregister_typeofregistration_set_session($state, $id);
 		}
 	}
 
@@ -197,14 +202,14 @@ function preregister_typeofregistration_form_back($form, &$form_state) {
 /**
  * Check access to the edit page for the specified paper id and prepare a paper instance for the paper edit step
  *
- * @param PreRegistrationFlow $flow The pre-registration flow
+ * @param PreRegistrationState $state The pre-registration flow
  * @param int|null            $id   The paper id
  *
  * @return string The function name of the next step, which is the paper edit form,
  * unless the paper cannot be edited by the user
  */
-function preregister_typeofregistration_set_paper($flow, $id) {
-	$user = $flow->getUser();
+function preregister_typeofregistration_set_paper($state, $id) {
+	$user = $state->getUser();
 
 	// Make sure the paper can be edited
 	if ($id !== null) {
@@ -215,7 +220,7 @@ function preregister_typeofregistration_set_paper($flow, $id) {
 
 			return 'preregister_typeofregistration_form';
 		}
-		else if ($paper->getAddedById() != $user->getId()) {
+		else if (($paper->getAddedById() != $user->getId()) || ($paper->getUserId() != $user->getId())) {
 			drupal_set_message('You can only edit the papers you created!', 'error');
 
 			return 'preregister_typeofregistration_form';
@@ -225,7 +230,7 @@ function preregister_typeofregistration_set_paper($flow, $id) {
 		$paper = new PaperApi();
 	}
 
-	$flow->setMultiPageData(array('paper' => $paper));
+	$state->setMultiPageData(array('paper' => $paper));
 
 	return 'preregister_paper_form';
 }
@@ -233,14 +238,14 @@ function preregister_typeofregistration_set_paper($flow, $id) {
 /**
  * Check access to the edit page for the specified session id and prepare a session instance for the session edit step
  *
- * @param PreRegistrationFlow $flow The pre-registration flow
+ * @param PreRegistrationState $state The pre-registration flow
  * @param int|null            $id   The session id
  *
  * @return string The function name of the next step, which is the session edit form,
  * unless the session cannot be edited by the user
  */
-function preregister_typeofregistration_set_session($flow, $id) {
-	$user = $flow->getUser();
+function preregister_typeofregistration_set_session($state, $id) {
+	$user = $state->getUser();
 
 	// Make sure the session can be edited
 	if ($id !== null) {
@@ -261,7 +266,7 @@ function preregister_typeofregistration_set_session($flow, $id) {
 		$session = new SessionApi();
 	}
 
-	$flow->setMultiPageData(array('session' => $session));
+	$state->setMultiPageData(array('session' => $session));
 
 	return 'preregister_session_form';
 }

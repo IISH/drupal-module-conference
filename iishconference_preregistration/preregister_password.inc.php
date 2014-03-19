@@ -4,8 +4,8 @@
  * Implements hook_form()
  */
 function preregister_password_form($form, &$form_state) {
-	$flow = new PreRegistrationFlow($form_state);
-	$user = $flow->getUser();
+	$state = new PreRegistrationState($form_state);
+	$user = $state->getUser();
 
 	$form['login_with_password'] = array(
 		'#type' => 'fieldset',
@@ -55,8 +55,8 @@ function preregister_password_form($form, &$form_state) {
  * Implements hook_form_submit()
  */
 function preregister_password_form_submit($form, &$form_state) {
-	$flow = new PreRegistrationFlow($form_state);
-	$user = $flow->getUser();
+	$state = new PreRegistrationState($form_state);
+	$user = $state->getUser();
 
 	$loginApi = new LoginApi();
 	$userStatus = $loginApi->login($user->getEmail(), $form_state['values']['password']);

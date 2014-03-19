@@ -171,14 +171,16 @@ function conference_personalpage_main() {
 				'valueIsHTML' => true
 			));
 
-			$plannedText = '<span class="eca_warning heavy">' . $planned->getDay()
-					->getDayFormatted("l d F Y") . ' / ' . $planned->getDateTimePeriod() . ' / ' .
-				$planned->getRoomName() . '</span>';
-			$sessionContainer[] = theme('iishconference_container_field', array(
-				'label'       => 'Session Date / Time / Room',
-				'value'       => $plannedText,
-				'valueIsHTML' => true
-			));
+			if ($planned !== null) {
+				$plannedText = '<span class="eca_warning heavy">' . $planned->getDay()
+						->getDayFormatted("l d F Y") . ' / ' . $planned->getDateTimePeriod() . ' / ' .
+					$planned->getRoomName() . '</span>';
+				$sessionContainer[] = theme('iishconference_container_field', array(
+					'label'       => 'Session Date / Time / Room',
+					'value'       => $plannedText,
+					'valueIsHTML' => true
+				));
+			}
 
 			$submittedBy = (is_object($session->getAddedBy())) ? $session->getAddedBy()->getFullName() : null;
 			$sessionContainer[] = theme('iishconference_container_field', array(
@@ -237,9 +239,9 @@ function conference_personalpage_main() {
 		// CHAIR / DISCUSSANT POOL
 
 		$networksAsChair = ParticipantVolunteeringApi::getAllNetworksForVolunteering($allVolunteering,
-			getSetting('volunteering_chair'));
+			VolunteeringApi::CHAIR);
 		$networksAsDiscussant = ParticipantVolunteeringApi::getAllNetworksForVolunteering($allVolunteering,
-			getSetting('volunteering_discussant'));
+			VolunteeringApi::DISCUSSANT);
 
 		CRUDApiClient::sort($networksAsChair);
 		CRUDApiClient::sort($networksAsDiscussant);
@@ -277,9 +279,9 @@ function conference_personalpage_main() {
 
 		if (SettingsApi::getSetting(SettingsApi::SHOW_LANGUAGE_COACH_PUPIL) == 1) {
 			$networksAsCoach = ParticipantVolunteeringApi::getAllNetworksForVolunteering($allVolunteering,
-				getSetting('volunteering_languagecoach'));
+				VolunteeringApi::COACH);
 			$networksAsPupil = ParticipantVolunteeringApi::getAllNetworksForVolunteering($allVolunteering,
-				getSetting('volunteering_languagepupil'));
+				VolunteeringApi::PUPIL);
 
 			CRUDApiClient::sort($networksAsCoach);
 			CRUDApiClient::sort($networksAsPupil);

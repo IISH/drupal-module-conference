@@ -64,9 +64,9 @@ function preregister_form($form, &$form_state) {
 		return $form;
 	}
 
-	$flow = new PreRegistrationFlow($form_state);
+	$state = new PreRegistrationState($form_state);
 
-	$functionName = $flow->getCurrentStep();
+	$functionName = $state->getCurrentStep();
 	if (function_exists($functionName)) {
 		$form = $functionName($form, $form_state);
 	}
@@ -79,9 +79,9 @@ function preregister_form($form, &$form_state) {
  * Implements hook_form_validate()
  */
 function preregister_form_validate($form, &$form_state) {
-	$flow = new PreRegistrationFlow($form_state);
+	$state = new PreRegistrationState($form_state);
 
-	$functionName = $flow->getCurrentStep() . '_validate';
+	$functionName = $state->getCurrentStep() . '_validate';
 	if (function_exists($functionName)) {
 		$functionName($form, $form_state);
 	}
@@ -92,21 +92,21 @@ function preregister_form_validate($form, &$form_state) {
  * Implements hook_form_submit()
  */
 function preregister_form_submit($form, &$form_state) {
-	$flow = new PreRegistrationFlow($form_state);
-	$nextStepName = $flow->getCurrentStep();
+	$state = new PreRegistrationState($form_state);
+	$nextStepName = $state->getCurrentStep();
 
 	$userPressedPrevButton = strpos($form_state['triggering_element']['#name'], 'submit_back') === 0;
 	$userPressedRemoveButton = strpos($form_state['triggering_element']['#name'], 'submit_remove') === 0;
 
 	// Determine which function to call
 	if ($userPressedPrevButton) {
-		$functionName = $flow->getCurrentStep() . '_back';
+		$functionName = $state->getCurrentStep() . '_back';
 	}
 	else if ($userPressedRemoveButton) {
-		$functionName = $flow->getCurrentStep() . '_remove';
+		$functionName = $state->getCurrentStep() . '_remove';
 	}
 	else {
-		$functionName = $flow->getCurrentStep() . '_submit';
+		$functionName = $state->getCurrentStep() . '_submit';
 	}
 
 	// Call the function if it exists, otherwise we will stay on the same step
@@ -114,6 +114,6 @@ function preregister_form_submit($form, &$form_state) {
 		$nextStepName = $functionName($form, $form_state);
 	}
 
-	$flow->setNextStep($nextStepName);
+	$state->setNextStep($nextStepName);
 }
 

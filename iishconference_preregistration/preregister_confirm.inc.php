@@ -4,9 +4,9 @@
  * Implements hook_form()
  */
 function preregister_confirm_form($form, &$form_state) {
-	$flow = new PreRegistrationFlow($form_state);
-	$user = $flow->getUser();
-	$participant = $flow->getParticipant();
+	$state = new PreRegistrationState($form_state);
+	$user = $state->getUser();
+	$participant = $state->getParticipant();
 
 	$showChairDiscussantPool = (SettingsApi::getSetting(SettingsApi::SHOW_CHAIR_DISCUSSANT_POOL) == 1);
 	$showLanguageCoaching = (SettingsApi::getSetting(SettingsApi::SHOW_LANGUAGE_COACH_PUPIL) == 1);
@@ -384,14 +384,28 @@ function preregister_confirm_form($form, &$form_state) {
  * Implements hook_form_submit()
  */
 function preregister_confirm_form_submit($form, &$form_state) {
-	$flow = new PreRegistrationFlow($form_state);
+	$state = new PreRegistrationState($form_state);
+	$user = $state->getUser();
 
-	$participant = $flow->getParticipant();
+	$participant = $state->getParticipant();
 	$participant->setState(ParticipantStateApi::NEW_PARTICIPANT);
 	$participant->save();
 
+	// Also set the state of all session participants we added to 0
+	$sessionParticipants =
+		CRUDApiMisc::getAllWherePropertyEquals(new SessionParticipantApi(), 'addedBy_id', $user->getId())->getResults();
+	$users = SessionParticipantApi::getAllUsers($sessionParticipants);
+	foreach ($users as $addedUser) {
+		$participant =
+			CRUDApiMisc::getFirstWherePropertyEquals(new ParticipantDateApi(), 'user_id', $addedUser->getId());
+		if ($participant->getStateId() == ParticipantStateApi::DID_NOT_FINISH_REGISTRATION) {
+			$participant->setState(ParticipantStateApi::NEW_PARTICIPANT);
+			$participant->save();
+		}
+	}
+
 	$sendEmailApi = new SendEmailApi();
-	$sendEmailApi->sendPreRegistrationFinishedEmail($flow->getUser());
+	$sendEmailApi->sendPreRegistrationFinishedEmail($state->getUser());
 
 	drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'pre-registration/completed');
 }

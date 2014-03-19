@@ -4,8 +4,8 @@
  * Implements hook_form()
  */
 function preregister_session_form($form, &$form_state) {
-	$flow = new PreRegistrationFlow($form_state);
-	$multiPageData = $flow->getMultiPageData();
+	$state = new PreRegistrationState($form_state);
+	$multiPageData = $state->getMultiPageData();
 	$session = $multiPageData['session'];
 	$data = array();
 
@@ -120,7 +120,7 @@ function preregister_session_form($form, &$form_state) {
 		);
 	}
 
-	$flow->setFormData($data);
+	$state->setFormData($data);
 
 	return $form;
 }
@@ -129,10 +129,10 @@ function preregister_session_form($form, &$form_state) {
  * Implements hook_form_submit()
  */
 function preregister_session_form_submit($form, &$form_state) {
-	$flow = new PreRegistrationFlow($form_state);
-	$user = $flow->getUser();
+	$state = new PreRegistrationState($form_state);
+	$user = $state->getUser();
 
-	$multiPageData = $flow->getMultiPageData();
+	$multiPageData = $state->getMultiPageData();
 	$session = $multiPageData['session'];
 
 	// Save session information
@@ -163,19 +163,19 @@ function preregister_session_form_submit($form, &$form_state) {
 
 	// Move back to the 'type of registration' page, clean cached data
 	if ($submitName === 'submit') {
-		$flow->setMultiPageData(array());
+		$state->setMultiPageData(array());
 
 		return 'preregister_typeofregistration_form';
 	}
 
 	if ($submitName === 'submit_participant') {
-		return preregister_session_set_sessionparticipant($flow, $session, null);
+		return preregister_session_set_sessionparticipant($state, $session, null);
 	}
 
 	if (strpos($submitName, 'submit_participant_') === 0) {
 		$id = EasyProtection::easyIntegerProtection(str_replace('submit_participant_', '', $submitName));
 
-		return preregister_session_set_sessionparticipant($flow, $session, $id);
+		return preregister_session_set_sessionparticipant($state, $session, $id);
 	}
 }
 
@@ -190,13 +190,13 @@ function preregister_session_form_back($form, &$form_state) {
  * Remove the session
  */
 function preregister_session_form_remove($form, &$form_state) {
-	$flow = new PreRegistrationFlow($form_state);
-	$multiPageData = $flow->getMultiPageData();
+	$state = new PreRegistrationState($form_state);
+	$multiPageData = $state->getMultiPageData();
 
 	$session = $multiPageData['session'];
 	$session->delete();
 
-	$flow->setMultiPageData(array());
+	$state->setMultiPageData(array());
 
 	return 'preregister_typeofregistration_form';
 }
@@ -205,15 +205,15 @@ function preregister_session_form_remove($form, &$form_state) {
  * Check access to the edit page for the specified user id
  * and prepare a user instance for the session participant edit step
  *
- * @param PreRegistrationFlow $flow    The pre-registration flow
+ * @param PreRegistrationState $state    The pre-registration flow
  * @param SessionApi          $session The session in question
  * @param int|null            $id      The user id
  *
  * @return string The function name of the next step, which is the session participant edit form,
  * unless the session participant cannot be edited by the user
  */
-function preregister_session_set_sessionparticipant($flow, $session, $id) {
-	$preRegisterUser = $flow->getUser();
+function preregister_session_set_sessionparticipant($state, $session, $id) {
+	$preRegisterUser = $state->getUser();
 
 	// Make sure the session participant can be edited
 	if ($id !== null) {
@@ -246,7 +246,7 @@ function preregister_session_set_sessionparticipant($flow, $session, $id) {
 		return 'preregister_session_form';
 	}
 
-	$flow->setMultiPageData(array('session'              => $session, 'user' => $user,
+	$state->setMultiPageData(array('session'              => $session, 'user' => $user,
 	                              'session_participants' => $sessionParticipants));
 
 	return 'preregister_sessionparticipant_form';

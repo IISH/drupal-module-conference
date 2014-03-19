@@ -4,10 +4,10 @@
  * Implements hook_form()
  */
 function preregister_sessionparticipant_form($form, &$form_state) {
-	$flow = new PreRegistrationFlow($form_state);
-	$preRegisterUser = $flow->getUser();
+	$state = new PreRegistrationState($form_state);
+	$preRegisterUser = $state->getUser();
 
-	$multiPageData = $flow->getMultiPageData();
+	$multiPageData = $state->getMultiPageData();
 	$session = $multiPageData['session'];
 	$user = $multiPageData['user'];
 	$sessionParticipants = $multiPageData['session_participants'];
@@ -26,11 +26,11 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 
 	$paper = ($paper !== null) ? $paper : new PaperApi();
 
-	$flow->setFormData(array('session'              => $session,
-	                         'user'                 => $user,
-	                         'participant'          => $participant,
-	                         'paper'                => $paper,
-	                         'session_participants' => $sessionParticipants));
+	$state->setFormData(array('session'              => $session,
+	                          'user'                 => $user,
+	                          'participant'          => $participant,
+	                          'paper'                => $paper,
+	                          'session_participants' => $sessionParticipants));
 
 	// + + + + + + + + + + + + + + + + + + + + + + + +
 	// PARTICIPANT
@@ -236,10 +236,10 @@ function preregister_sessionparticipant_form_validate($form, &$form_state) {
  * Implements hook_form_submit()
  */
 function preregister_sessionparticipant_form_submit($form, &$form_state) {
-	$flow = new PreRegistrationFlow($form_state);
-	$preRegisterUser = $flow->getUser();
+	$state = new PreRegistrationState($form_state);
+	$preRegisterUser = $state->getUser();
 
-	$data = $flow->getFormData();
+	$data = $state->getFormData();
 	$session = $data['session'];
 	$user = $data['user'];
 	$participant = $data['participant'];
@@ -319,7 +319,7 @@ function preregister_sessionparticipant_form_submit($form, &$form_state) {
 	}
 
 	// Now go back to the session form
-	$flow->setMultiPageData(array('session' => $session));
+	$state->setMultiPageData(array('session' => $session));
 
 	return 'preregister_session_form';
 }
@@ -335,27 +335,27 @@ function preregister_sessionparticipant_form_back($form, &$form_state) {
  * Remove the session participant
  */
 function preregister_sessionparticipant_form_remove($form, &$form_state) {
-	$flow = new PreRegistrationFlow($form_state);
-	$preRegisterUser = $flow->getUser();
-	$data = $flow->getFormData();
+	$state = new PreRegistrationState($form_state);
+	$preRegisterUser = $state->getUser();
+	$data = $state->getFormData();
 
 	$user = $data['user'];
 	$participant = $data['participant'];
 	$sessionParticipants = $data['session_participants'];
 
-	if ($user->getAddedById() == $preRegisterUser->getId()) {
+	/*if ($user->getAddedById() == $preRegisterUser->getId()) {
 		$user->delete();
 	}
 
 	if ($participant->getAddedById() == $preRegisterUser->getId()) {
 		$participant->delete();
-	}
+	}*/
 
 	foreach ($sessionParticipants as $sessionParticipant) {
 		$sessionParticipant->delete();
 	}
 
-	$flow->setMultiPageData(array());
+	$state->setMultiPageData(array());
 
 	return 'preregister_session_form';
 }

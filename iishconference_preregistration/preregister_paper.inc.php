@@ -4,10 +4,10 @@
  * Implements hook_form()
  */
 function preregister_paper_form($form, &$form_state) {
-	$flow = new PreRegistrationFlow($form_state);
-	$participant = $flow->getParticipant();
+	$state = new PreRegistrationState($form_state);
+	$participant = $state->getParticipant();
 
-	$data = $flow->getMultiPageData();
+	$data = $state->getMultiPageData();
 	$paper = $data['paper'];
 
 	// + + + + + + + + + + + + + + + + + + + + + + + +
@@ -182,11 +182,11 @@ function preregister_paper_form_validate($form, &$form_state) {
  * Implements hook_form_submit()
  */
 function preregister_paper_form_submit($form, &$form_state) {
-	$flow = new PreRegistrationFlow($form_state);
-	$user = $flow->getUser();
-	$participant = $flow->getParticipant();
+	$state = new PreRegistrationState($form_state);
+	$user = $state->getUser();
+	$participant = $state->getParticipant();
 
-	$data = $flow->getMultiPageData();
+	$data = $state->getMultiPageData();
 	$paper = $data['paper'];
 
 	// First save the paper
@@ -217,7 +217,7 @@ function preregister_paper_form_submit($form, &$form_state) {
 	}
 
 	// Move back to the 'type of registration' page, clean cached data
-	$flow->setMultiPageData(array());
+	$state->setMultiPageData(array());
 
 	return 'preregister_typeofregistration_form';
 }
@@ -233,13 +233,13 @@ function preregister_paper_form_back($form, &$form_state) {
  * Remove the paper
  */
 function preregister_paper_form_remove($form, &$form_state) {
-	$flow = new PreRegistrationFlow($form_state);
-	$multiPageData = $flow->getMultiPageData();
+	$state = new PreRegistrationState($form_state);
+	$multiPageData = $state->getMultiPageData();
 
 	$paper = $multiPageData['paper'];
 	$paper->delete();
 
-	$flow->setMultiPageData(array());
+	$state->setMultiPageData(array());
 
 	return 'preregister_typeofregistration_form';
 }

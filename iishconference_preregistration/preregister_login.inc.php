@@ -70,10 +70,10 @@ function preregister_login_form_validate($form, &$form_state) {
  * Implements hook_form_submit()
  */
 function preregister_login_form_submit($form, &$form_state) {
-	$flow = new PreRegistrationFlow($form_state);
+	$state = new PreRegistrationState($form_state);
 
 	$email = strtolower(trim($form_state['values']['email']));
-	$flow->setEmail($email);
+	$state->setEmail($email);
 	$user = CRUDApiMisc::getFirstWherePropertyEquals(new UserApi(), 'email', $email);
 
 	// If the user is not found, then this must be a new user, otherwise he/she must login with password first
