@@ -197,33 +197,35 @@ class LoggedInUserDetails {
 
 		if ($response !== null) {
 			$userStatus = $response['status'];
-			$_SESSION['conference']['hasFullRights'] = $response['hasFullRights'];
-			$_SESSION['conference']['isNetworkChair'] = $response['isNetworkChair'];
-			$_SESSION['conference']['isChair'] = $response['isChair'];
-			$_SESSION['conference']['isOrganiser'] = $response['isOrganiser'];
-			$_SESSION['conference']['isCrew'] = $response['isCrew'];
+			if ($userStatus == LoggedInUserDetails::USER_STATUS_EXISTS) {
+				$_SESSION['conference']['hasFullRights'] = $response['hasFullRights'];
+				$_SESSION['conference']['isNetworkChair'] = $response['isNetworkChair'];
+				$_SESSION['conference']['isChair'] = $response['isChair'];
+				$_SESSION['conference']['isOrganiser'] = $response['isOrganiser'];
+				$_SESSION['conference']['isCrew'] = $response['isCrew'];
 
-			$user = null;
-			if ($response['user'] instanceof UserApi) {
-				$user = $response['user'];
-			}
-			else if (is_array($response['user'])) {
-				$user = UserApi::getUserFromArray($response['user']);
-			}
+				$user = null;
+				if ($response['user'] instanceof UserApi) {
+					$user = $response['user'];
+				}
+				else if (is_array($response['user'])) {
+					$user = UserApi::getUserFromArray($response['user']);
+				}
 
-			$participant = null;
-			if ($response['participant'] instanceof ParticipantDateApi) {
-				$participant = $response['participant'];
-			}
-			else if (is_array($response['participant'])) {
-				$participant = ParticipantDateApi::getParticipantDateFromArray($response['participant']);
-			}
+				$participant = null;
+				if ($response['participant'] instanceof ParticipantDateApi) {
+					$participant = $response['participant'];
+				}
+				else if (is_array($response['participant'])) {
+					$participant = ParticipantDateApi::getParticipantDateFromArray($response['participant']);
+				}
 
-			$_SESSION['conference']['user_email'] = $user->getEmail();
-			$_SESSION['conference']['user_id'] = $user->getId();
+				$_SESSION['conference']['user_email'] = $user->getEmail();
+				$_SESSION['conference']['user_id'] = $user->getId();
 
-			$_SESSION['conference']['user'] = serialize($user);
-			$_SESSION['conference']['participant'] = serialize($participant);
+				$_SESSION['conference']['user'] = serialize($user);
+				$_SESSION['conference']['participant'] = serialize($participant);
+			}
 		}
 
 		return $userStatus;
