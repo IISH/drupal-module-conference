@@ -17,7 +17,7 @@ function iishconference_networksforchairs_main() {
 	}
 
 	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
-		drupal_set_message(t('Access denied. You are not a @network chair.',
+		drupal_set_message(t('Access denied. You are not a chair of a @network.',
 			array('@network' => NetworkApi::getNetworkName(true, true))), 'error');
 
 		return '';
@@ -86,7 +86,7 @@ function iishconference_networksforchairs_sessions($networkId) {
 	}
 
 	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
-		drupal_set_message(t('Access denied. You are not a @network chair.',
+		drupal_set_message(t('Access denied. You are not a chair of a @network.',
 			array('@network' => NetworkApi::getNetworkName(true, true))), 'error');
 
 		return '';
@@ -213,7 +213,7 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 	}
 
 	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
-		drupal_set_message(t('Access denied. You are not a @network chair.',
+		drupal_set_message(t('Access denied. You are not a chair of a @network.',
 			array('@network' => NetworkApi::getNetworkName(true, true))), 'error');
 
 		return '';

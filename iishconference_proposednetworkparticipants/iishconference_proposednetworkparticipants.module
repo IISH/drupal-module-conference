@@ -19,12 +19,12 @@ function iishconference_proposednetworkparticipants_menu() {
 	$items = array();
 
 	$extraPath = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU);
-	$networkNameSingular = NetworkApi::getNetworkName();
-	$networkNamePlural = NetworkApi::getNetworkName(false);
+	$networkNameSingular = NetworkApi::getNetworkName(true, true);
+	$networkNamePlural = NetworkApi::getNetworkName(false, true);
 
 	$items[$extraPath . 'proposed' . strtolower($networkNameSingular) . 'participants'] = array(
-		'title'           => 'Participants and their proposed @network',
-		'title arguments' => array('@network' => $networkNameSingular),
+		'title'           => 'Participants and their proposed @networks',
+		'title arguments' => array('@networks' => $networkNamePlural),
 		'page callback'   => 'iishconference_proposednetworkparticipants_main',
 		'type'            => MENU_NORMAL_ITEM,
 		'access callback' => true,
@@ -32,8 +32,8 @@ function iishconference_proposednetworkparticipants_menu() {
 	);
 
 	$items[$extraPath . 'proposed' . strtolower($networkNameSingular) . 'participants/%iishconference_network'] = array(
-		'title'           => 'Participants and their proposed @network',
-		'title arguments' => array('@network' => $networkNameSingular),
+		'title'           => 'Participants and their proposed @networks',
+		'title arguments' => array('@networks' => $networkNamePlural),
 		'page callback'   => 'iishconference_proposednetworkparticipants_detail',
 		'page arguments'  => array(2),
 		'type'            => MENU_NORMAL_ITEM,

@@ -16,8 +16,8 @@ function iishconference_electionadvisory_main() {
 	}
 
 	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
-		$networkName = NetworkApi::getNetworkName();
-		drupal_set_message(t('Access denied. You are not a @network chair.', array('@network' => $networkName)),
+		$networkName = NetworkApi::getNetworkName(true, true);
+		drupal_set_message(t('Access denied. You are not a chair of a @network.', array('@network' => $networkName)),
 			'error');
 
 		return '';

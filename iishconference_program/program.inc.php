@@ -189,7 +189,7 @@ function iishconference_program_form($form, &$form_state, $networkId, $textsearc
 
 	$form['network'] = array(
 		'#type'          => 'select',
-		'#title'         => 'Browse @networks: ', array('@networks' => NetworkApi::getNetworkName(false, true)),
+		'#title'         => t('Browse @networks: ', array('@networks' => NetworkApi::getNetworkName(false, true))),
 		'#size'          => 1,
 		'#default_value' => is_null($networkId) ? 0 : $networkId,
 		'#options'       => $selectListOfNetworks,
@@ -198,7 +198,7 @@ function iishconference_program_form($form, &$form_state, $networkId, $textsearc
 
 	$form['textsearch'] = array(
 		'#type'          => 'textfield',
-		'#title'         => 'or search on name',
+		'#title'         => t('or search on name'),
 		'#size'          => 20,
 		'#maxlength'     => 50,
 		'#default_value' => is_null($textsearch) ? '' : $textsearch,
