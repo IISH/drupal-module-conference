@@ -106,6 +106,15 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 		);
 	}
 
+	$form['participant']['addparticipantcountry'] = array(
+		'#type'          => 'select',
+		'#title'         => t('Country'),
+		'#options'       => CRUDApiClient::getAsKeyValueArray(CachedConferenceApi::getCountries()),
+		'#required'      => true,
+		'#default_value' => $user->getCountryId(),
+		'#attributes'    => $readOnlyUser,
+	);
+
 	// + + + + + + + + + + + + + + + + + + + + + + + +
 	// PARTICIPANT ROLES
 
@@ -261,6 +270,7 @@ function preregister_sessionparticipant_form_submit($form, &$form_state) {
 		$user->setEmail($form_state['values']['addparticipantemail']);
 		$user->setFirstName($form_state['values']['addparticipantfirstname']);
 		$user->setLastName($form_state['values']['addparticipantlastname']);
+		$user->setCountry($form_state['values']['addparticipantcountry']);
 
 		if (SettingsApi::getSetting(SettingsApi::SHOW_CV) == 1) {
 			$user->setCv($form_state['values']['addparticipantcv']);

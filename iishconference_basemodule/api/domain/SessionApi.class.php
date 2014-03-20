@@ -170,7 +170,7 @@ class SessionApi extends CRUDApiClient {
 	 */
 	public function getAddedBy() {
 		if (!$this->addedBy && is_int($this->getAddedById())) {
-			$this->addedBy = CRUDApiMisc::getById(new UserApi(), 'id', $this->getAddedById());
+			$this->addedBy = CRUDApiMisc::getById(new UserApi(), $this->getAddedById());
 		}
 
 		return $this->addedBy;

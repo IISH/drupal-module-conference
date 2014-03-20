@@ -41,7 +41,7 @@ class CachedConferenceApi {
 
 	public static function setEventDate() {
 		$eventDate = EventDateApi::getCurrent();
-		cache_set(self::$nameSettingsCache, $eventDate, 'cache', CACHE_PERMANENT);
+		cache_set(self::$nameEventDateCache, $eventDate, 'cache', CACHE_PERMANENT);
 
 		return $eventDate;
 	}

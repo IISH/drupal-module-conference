@@ -301,6 +301,10 @@ function preregister_confirm_form($form, &$form_state) {
 			}
 
 			$sessionContent[] = theme('iishconference_container_field', array(
+				'label' => 'Country',
+				'value' => $user->getCountry()->getNameEnglish()
+			));
+			$sessionContent[] = theme('iishconference_container_field', array(
 				'label' => 'Type(s)',
 				'value' => implode(', ', $types),
 			));

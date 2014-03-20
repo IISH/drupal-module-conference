@@ -130,7 +130,7 @@ class PaperApi extends CRUDApiClient {
 			}
 		}
 
-		return $papersWithoutSession;
+		return array_values($papersWithoutSession);
 	}
 
 	/**

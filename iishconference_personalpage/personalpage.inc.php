@@ -153,15 +153,19 @@ function conference_personalpage_main() {
 			);
 			$sessionPapers = PaperApi::getPapersWithSession($papers, $session->getId());
 
-			foreach ($networks as $network) {
-				$sessionContainer[] = theme('iishconference_container_field', array(
-					'label' => t('@network name', array('@network' => NetworkApi::getNetworkName())),
-					'value' => $network->getName()
-				));
-				$sessionContainer[] = theme('iishconference_container_field', array(
-					'label' => t('@network chairs', array('@network' => NetworkApi::getNetworkName())),
-					'value' => implode(', ', $network->getChairs())
-				));
+			if (SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) {
+				foreach ($networks as $network) {
+					$sessionContainer[] = theme('iishconference_container_field', array(
+						'label' => t('@network name', array('@network' => NetworkApi::getNetworkName())),
+						'value' => $network->getName()
+					));
+					$sessionContainer[] = theme('iishconference_container_field', array(
+						'label' => t('Chairs of this @network',
+							array('@network' => NetworkApi::getNetworkName(true, true))),
+						'value' => implode(', ', $network->getChairs())
+					));
+					$sessionContainer[] = '<br />';
+				}
 			}
 
 			$sessionName = $session->getName() . ' <em>(' . $session->getState()->getDescription() . ')</em>';
@@ -201,12 +205,13 @@ function conference_personalpage_main() {
 			// show paper info
 			if (count($sessionPapers) > 0) {
 				foreach ($sessionPapers as $paper) {
-					$sessionContainer[] = '<br /><br />';
+					$sessionContainer[] = '<br />';
+					$sessionContainer[] = theme('iishconference_container_header', array('text' => t('Paper')));
 					conference_personalpage_paper($sessionContainer, $paper, $participantDateDetails);
 				}
 			}
 			else {
-				$sessionContainer[] = '<br /><br />';
+				$sessionContainer[] = '<br />';
 				$sessionContainer[] = theme('iishconference_container_header', array('text' => t('Paper')));
 				$sessionContainer[] = t('No paper.');
 			}
@@ -220,8 +225,12 @@ function conference_personalpage_main() {
 
 		// show paper info
 		$noSessionPapers = PaperApi::getPapersWithoutSession($papers);
-		foreach ($noSessionPapers as $paper) {
-			conference_personalpage_paper($papersContainer, $paper, $participantDateDetails);
+		foreach ($noSessionPapers as $i => $paper) {
+			$paperContainer = array(theme('iishconference_container_header',
+				array('text' => t('Paper  @count of @total',
+					array('@count' => $i + 1, '@total' => count($noSessionPapers))))));
+			conference_personalpage_paper($paperContainer, $paper, $participantDateDetails);
+			$papersContainer[] = $paperContainer;
 		}
 	}
 
@@ -466,8 +475,6 @@ function conference_personalpage_main() {
  * @param ParticipantDateApi $participant The participant of this paper
  */
 function conference_personalpage_paper(&$container, $paper, $participant) {
-	$container[] = theme('iishconference_container_header', array('text' => t('Paper')));
-
 	$container[] = theme('iishconference_container_field', array(
 			'label' => 'Title',
 			'value' => $paper->getTitle())
