@@ -102,7 +102,7 @@ function preregister_paper_form($form, &$form_state) {
 			'#type'          => 'checkbox',
 			'#title'         => t('Would you like to participant in the "@awardName"?',
 					array('@awardName' => SettingsApi::getSetting(SettingsApi::AWARD_NAME))) . '&nbsp; <em>(' .
-				l(t('more about the award'), '/award', array('attributes' => array('target' => '_blank'))) . ')</em>',
+				l(t('more about the award'), 'award', array('attributes' => array('target' => '_blank'))) . ')</em>',
 			'#default_value' => $participant->getAward(),
 		);
 	}

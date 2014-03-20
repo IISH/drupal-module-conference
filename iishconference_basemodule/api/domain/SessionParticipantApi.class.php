@@ -21,11 +21,11 @@ class SessionParticipantApi extends CRUDApiClient {
 		// This join makes sure that instances with removed sessions, types or users are filtered out
 		$prop = new ApiCriteriaBuilder();
 		$properties = array_merge($prop
-			->ne('session_id', null)
-			->ne('user_id', null)
-			->ne('type_id', null)
-			->get(),
-		$properties);
+				->ne('session_id', null)
+				->ne('user_id', null)
+				->ne('type_id', null)
+				->get(),
+			$properties);
 
 		return parent::getListWithCriteriaForClass(__CLASS__, $properties, $printErrorMessage);
 	}
@@ -195,5 +195,42 @@ class SessionParticipantApi extends CRUDApiClient {
 		$this->userInstance = null;
 		$this->user_id = $user;
 		$this->toSave['user.id'] = $user;
+	}
+
+	/**
+	 * Returns the user that created this session participant
+	 *
+	 * @return UserApi The user that created this session participant
+	 */
+	public function getAddedBy() {
+		if (!$this->addedBy && is_int($this->getAddedById())) {
+			$this->addedBy = CRUDApiMisc::getById(new UserApi(), $this->getAddedById());
+		}
+
+		return $this->addedBy;
+	}
+
+	/**
+	 * Set the user who added this session participant
+	 *
+	 * @param int|UserApi $addedBy The user (id)
+	 */
+	public function setAddedBy($addedBy) {
+		if ($addedBy instanceof UserApi) {
+			$addedBy = $addedBy->getId();
+		}
+
+		$this->addedBy = null;
+		$this->addedBy_id = $addedBy;
+		$this->toSave['addedBy.id'] = $addedBy;
+	}
+
+	/**
+	 * The user id of the user who created this session participant
+	 *
+	 * @return int The user id of the user who created this session participant
+	 */
+	public function getAddedById() {
+		return $this->addedBy_id;
 	}
 } 

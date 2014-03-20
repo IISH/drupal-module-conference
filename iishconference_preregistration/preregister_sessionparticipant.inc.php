@@ -38,10 +38,14 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 	// If the user was added by the currently logged in user, he/she may change him/her
 	$readOnlyUser = array();
 	$readOnlyParticipant = array();
-	if ($user->isUpdate() && ($user->getAddedById() != $preRegisterUser->getId())) {
+	if ($user->isUpdate() && ($user->getAddedById() != $preRegisterUser->getId()) &&
+		($user->getId() != $preRegisterUser->getId())
+	) {
 		$readOnlyUser['readonly'] = 'readonly';
 	}
-	if ($participant->isUpdate() && ($participant->getAddedById() != $preRegisterUser->getId())) {
+	if ($participant->isUpdate() && ($participant->getAddedById() != $preRegisterUser->getId()) &&
+		($participant->getUserId() != $preRegisterUser->getId())
+	) {
 		$readOnlyParticipant['readonly'] = 'readonly';
 	}
 
@@ -266,7 +270,9 @@ function preregister_sessionparticipant_form_submit($form, &$form_state) {
 	}
 
 	// Then we save the user
-	if (!$user->isUpdate() || ($user->getAddedById() == $preRegisterUser->getId())) {
+	if (!$user->isUpdate() || ($user->getAddedById() == $preRegisterUser->getId()) ||
+		($user->getId() == $preRegisterUser->getId())
+	) {
 		$user->setEmail($form_state['values']['addparticipantemail']);
 		$user->setFirstName($form_state['values']['addparticipantfirstname']);
 		$user->setLastName($form_state['values']['addparticipantlastname']);
@@ -280,7 +286,9 @@ function preregister_sessionparticipant_form_submit($form, &$form_state) {
 	}
 
 	// Then save the participant
-	if (!$participant->isUpdate() || ($participant->getAddedById() == $preRegisterUser->getId())) {
+	if (!$participant->isUpdate() || ($participant->getAddedById() == $preRegisterUser->getId()) |
+		($participant->getUserId() == $preRegisterUser->getId())
+	) {
 		if (SettingsApi::getSetting(SettingsApi::SHOW_STUDENT) == 1) {
 			$participant->setStudent($form_state['values']['addparticipantstudent']);
 		}
