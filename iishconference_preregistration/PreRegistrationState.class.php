@@ -144,7 +144,7 @@ class PreRegistrationState {
 
 	/**
 	 * Updates the user and participant instances that are cached during the pre-registration.
-	 * Should only be used by the personalinfo form
+	 * Should only be used by the personal info form
 	 *
 	 * @param UserApi            $user        The user instance
 	 * @param ParticipantDateApi $participant The participant instance

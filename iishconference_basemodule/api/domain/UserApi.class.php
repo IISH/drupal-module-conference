@@ -513,7 +513,7 @@ class UserApi extends CRUDApiClient {
 		$save = parent::save($printErrorMessage);
 
 		// Make sure to invalidate the cached user
-		if ($save) {
+		if ($save && isset($_SESSION['conference']['user'])) {
 			unset($_SESSION['conference']['user']);
 		}
 

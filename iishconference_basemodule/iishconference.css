@@ -51,7 +51,8 @@
 
 /* OTHER CSS */
 
-.iishconference_form .form-type-textfield label, .iishconference_form .form-type-select label {
+.iishconference_form .form-type-textfield label, .iishconference_form .form-type-select label,
+.iishconference_form .form-type-password label {
     display: inline-block;
 }
 
