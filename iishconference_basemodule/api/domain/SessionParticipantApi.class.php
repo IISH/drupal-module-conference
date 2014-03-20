@@ -7,6 +7,7 @@ class SessionParticipantApi extends CRUDApiClient {
 	protected $user_id;
 	protected $session_id;
 	protected $type_id;
+	protected $addedBy_id;
 	protected $user;
 	protected $session;
 	protected $type;
@@ -15,6 +16,7 @@ class SessionParticipantApi extends CRUDApiClient {
 	private $userInstance;
 	private $sessionInstance;
 	private $typeInstance;
+	private $addedByInstance;
 
 	public static function getListWithCriteria(array $properties, $printErrorMessage = true) {
 		// Even though none of the ids can be null, querying it like this triggers a join
@@ -203,11 +205,11 @@ class SessionParticipantApi extends CRUDApiClient {
 	 * @return UserApi The user that created this session participant
 	 */
 	public function getAddedBy() {
-		if (!$this->addedBy && is_int($this->getAddedById())) {
-			$this->addedBy = CRUDApiMisc::getById(new UserApi(), $this->getAddedById());
+		if (!$this->addedByInstance) {
+			$this->addedByInstance = $this->createNewInstance('UserApi', $this->addedBy);
 		}
 
-		return $this->addedBy;
+		return $this->addedByInstance;
 	}
 
 	/**

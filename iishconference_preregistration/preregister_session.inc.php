@@ -205,9 +205,9 @@ function preregister_session_form_remove($form, &$form_state) {
  * Check access to the edit page for the specified user id
  * and prepare a user instance for the session participant edit step
  *
- * @param PreRegistrationState $state    The pre-registration flow
- * @param SessionApi          $session The session in question
- * @param int|null            $id      The user id
+ * @param PreRegistrationState $state   The pre-registration flow
+ * @param SessionApi           $session The session in question
+ * @param int|null             $id      The user id
  *
  * @return string The function name of the next step, which is the session participant edit form,
  * unless the session participant cannot be edited by the user
@@ -247,7 +247,7 @@ function preregister_session_set_sessionparticipant($state, $session, $id) {
 	}
 
 	$state->setMultiPageData(array('session'              => $session, 'user' => $user,
-	                              'session_participants' => $sessionParticipants));
+	                               'session_participants' => $sessionParticipants));
 
 	return 'preregister_sessionparticipant_form';
 }
