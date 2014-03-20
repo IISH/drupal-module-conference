@@ -517,6 +517,12 @@ class UserApi extends CRUDApiClient {
 			unset($_SESSION['conference']['user']);
 		}
 
+		// Also mail the user his new password
+		if ($save) {
+			$mailNewPasswordApi = new MailNewPasswordApi();
+			$mailNewPasswordApi->mailNewPassword($this);
+		}
+
 		return $save;
 	}
 

@@ -18,6 +18,7 @@ files[] = api/CRUDApiMisc.class.php
 files[] = api/CRUDApiResults.class.php
 files[] = api/EmptyApi.class.php
 files[] = api/LoggedInUserDetails.class.php
+files[] = api/MailNewPasswordApi.class.php
 files[] = api/SendEmailApi.class.php
 files[] = api/SettingsApi.class.php
 
