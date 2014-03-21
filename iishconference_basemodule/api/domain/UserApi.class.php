@@ -510,6 +510,9 @@ class UserApi extends CRUDApiClient {
 	}
 
 	public function save($printErrorMessage = true) {
+        // Before we save it... we need to know whether this is a new user
+        $isUpdate = $this->isUpdate();
+
 		$save = parent::save($printErrorMessage);
 
 		// Make sure to invalidate the cached user
@@ -517,8 +520,8 @@ class UserApi extends CRUDApiClient {
 			unset($_SESSION['conference']['user']);
 		}
 
-		// Also mail the user his new password
-		if ($save) {
+		// If it is a new user, mail him his new password
+		if (!$isUpdate && $save) {
 			$mailNewPasswordApi = new MailNewPasswordApi();
 			$mailNewPasswordApi->mailNewPassword($this);
 		}

@@ -5,7 +5,6 @@
  */
 function preregister_password_form($form, &$form_state) {
 	$state = new PreRegistrationState($form_state);
-	$user = $state->getUser();
 
 	$form['login_with_password'] = array(
 		'#type' => 'fieldset',
@@ -21,7 +20,7 @@ function preregister_password_form($form, &$form_state) {
 		'#title'         => 'E-mail',
 		'#size'          => 20,
 		'#maxlength'     => 100,
-		'#default_value' => $user->getEmail(),
+		'#default_value' => $state->getEmail(),
 		'#attributes'    => array('readonly' => 'readonly'),
 	);
 
@@ -56,10 +55,9 @@ function preregister_password_form($form, &$form_state) {
  */
 function preregister_password_form_submit($form, &$form_state) {
 	$state = new PreRegistrationState($form_state);
-	$user = $state->getUser();
 
 	$loginApi = new LoginApi();
-	$userStatus = $loginApi->login($user->getEmail(), $form_state['values']['password']);
+	$userStatus = $loginApi->login($state->getEmail(), $form_state['values']['password']);
 
 	if ($userStatus == LoggedInUserDetails::USER_STATUS_EXISTS) {
 		return 'preregister_personalinfo_form';
@@ -68,10 +66,10 @@ function preregister_password_form_submit($form, &$form_state) {
 		switch ($userStatus) {
 			case LoggedInUserDetails::USER_STATUS_DISABLED:
 			case LoggedInUserDetails::USER_STATUS_DELETED:
-				drupal_set_message(t("The account with the given email address is disabled."), 'error');
+				drupal_set_message(t('The account with the given email address is disabled.'), 'error');
 				break;
 			case LoggedInUserDetails::USER_STATUS_DOES_NOT_EXISTS:
-				drupal_set_message(t("Incorrect email / password combination."), 'error');
+				drupal_set_message(t('Incorrect email / password combination.'), 'error');
 		}
 
 		return 'preregister_password_form';

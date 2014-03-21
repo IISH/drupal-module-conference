@@ -103,6 +103,19 @@ class PreRegistrationState {
 		$this->formState['pre_registration']['email'] = strtolower(trim($email));
 	}
 
+    /**
+     * Returns the email of the user doing the pre-registration
+     *
+     * @return string|null The email address or null if not found
+     */
+    public function getEmail() {
+        if (isset($this->formState['pre_registration']['email'])) {
+            return $this->formState['pre_registration']['email'];
+        }
+
+        return null;
+    }
+
 	/**
 	 * Returns the user instance doing the pre-registration
 	 *
