@@ -34,11 +34,11 @@ class PaperApi extends CRUDApiClient {
 	}
 
 	/**
-	 * Allows the creation of a papaer via an array with details
+	 * Allows the creation of a paper via an array with details
 	 *
-	 * @param array $paper An array with papaer details
+	 * @param array $paper An array with paper details
 	 *
-	 * @return PaperApi A papaer object
+	 * @return PaperApi A paper object
 	 */
 	public static function getPaperFromArray(array $paper) {
 		return self::createNewInstance(__CLASS__, $paper);

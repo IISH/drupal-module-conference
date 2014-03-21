@@ -45,7 +45,49 @@ class ConferenceApiClient {
 	}
 
 	/**
+	 * Make a POST call to the Conference Management System API
+	 *
+	 * @param string $apiName           The name of the API to call
+	 * @param array  $parameters        The parameters to send with the call
+	 * @param bool   $printErrorMessage Whether to print an error message in case of failure
+	 *
+	 * @return mixed The response message if found, else null is returned
+	 */
+	public function post($apiName, array $parameters, $printErrorMessage = true) {
+		return $this->call($apiName, $parameters, $printErrorMessage, Client::HTTP_METHOD_POST);
+	}
+
+	/**
+	 * Make a PUT call to the Conference Management System API
+	 *
+	 * @param string $apiName           The name of the API to call
+	 * @param array  $parameters        The parameters to send with the call
+	 * @param bool   $printErrorMessage Whether to print an error message in case of failure
+	 *
+	 * @return mixed The response message if found, else null is returned
+	 */
+	public function put($apiName, array $parameters, $printErrorMessage = true) {
+		// Make sure we send it with content-type 'application/x-www-form-urlencoded'
+		$parameters = http_build_query($parameters, null, '&');
+
+		return $this->call($apiName, $parameters, $printErrorMessage, Client::HTTP_METHOD_PUT);
+	}
+
+	/**
 	 * Make a DELETE call to the Conference Management System API
+	 *
+	 * @param string $apiName           The name of the API to call
+	 * @param array  $parameters        The parameters to send with the call
+	 * @param bool   $printErrorMessage Whether to print an error message in case of failure
+	 *
+	 * @return mixed The response message if found, else null is returned
+	 */
+	public function delete($apiName, array $parameters, $printErrorMessage = true) {
+		return $this->call($apiName, $parameters, $printErrorMessage, Client::HTTP_METHOD_DELETE);
+	}
+
+	/**
+	 * Make a call to the Conference Management System API
 	 *
 	 * @param string       $apiName           The name of the API to call
 	 * @param array|string $parameters        The parameters to send with the call
@@ -110,47 +152,5 @@ class ConferenceApiClient {
 			cache_set('conference_access_token_' . $this->oAuthClient->getClientId(), $token, 'cache',
 				time() + 60 * 60 * 12);
 		}
-	}
-
-	/**
-	 * Make a POST call to the Conference Management System API
-	 *
-	 * @param string $apiName           The name of the API to call
-	 * @param array  $parameters        The parameters to send with the call
-	 * @param bool   $printErrorMessage Whether to print an error message in case of failure
-	 *
-	 * @return mixed The response message if found, else null is returned
-	 */
-	public function post($apiName, array $parameters, $printErrorMessage = true) {
-		return $this->call($apiName, $parameters, $printErrorMessage, Client::HTTP_METHOD_POST);
-	}
-
-	/**
-	 * Make a PUT call to the Conference Management System API
-	 *
-	 * @param string $apiName           The name of the API to call
-	 * @param array  $parameters        The parameters to send with the call
-	 * @param bool   $printErrorMessage Whether to print an error message in case of failure
-	 *
-	 * @return mixed The response message if found, else null is returned
-	 */
-	public function put($apiName, array $parameters, $printErrorMessage = true) {
-		// Make sure we send it with content-type 'application/x-www-form-urlencoded'
-		$parameters = http_build_query($parameters, null, '&');
-
-		return $this->call($apiName, $parameters, $printErrorMessage, Client::HTTP_METHOD_PUT);
-	}
-
-	/**
-	 * Make a DELETE call to the Conference Management System API
-	 *
-	 * @param string $apiName           The name of the API to call
-	 * @param array  $parameters        The parameters to send with the call
-	 * @param bool   $printErrorMessage Whether to print an error message in case of failure
-	 *
-	 * @return mixed The response message if found, else null is returned
-	 */
-	public function delete($apiName, array $parameters, $printErrorMessage = true) {
-		return $this->call($apiName, $parameters, $printErrorMessage, Client::HTTP_METHOD_DELETE);
 	}
 } 

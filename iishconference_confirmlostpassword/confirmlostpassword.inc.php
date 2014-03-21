@@ -7,11 +7,8 @@ function conference_confirmlostpassword_form($form, &$form_state) {
 	$ct = 0;
 	$params = drupal_get_query_parameters();
 
-	$default_id = $params['id'];
-	$default_id = EasyProtection::easyIntegerProtection($default_id);
-
-	$default_code = strtolower($params["code"]);
-	$default_code = EasyProtection::easyStringProtection($default_code);
+	$default_id = isset($params['id']) ? EasyProtection::easyIntegerProtection($params['id']) : null;
+	$default_code = isset($params['code']) ? EasyProtection::easyStringProtection($params['code']) : null;
 
 	$codeCheckOkay = false;
 
@@ -72,7 +69,7 @@ function conference_confirmlostpassword_form_validate($form, &$form_state) {
 		form_set_error('id', t('The ID appears to be invalid.'));
 	}
 	// regexp only digits and characters
-	if (EasyProtection::easyStringProtection(strtolower($form_state['values']['code'])) === '') {
+	if (EasyProtection::easyStringProtection($form_state['values']['code']) === '') {
 		form_set_error('code', t('The CODE appears to be invalid.'));
 	}
 }
