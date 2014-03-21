@@ -183,6 +183,9 @@ function preregister_session_form_submit($form, &$form_state) {
  * What is the previous page?
  */
 function preregister_session_form_back($form, &$form_state) {
+    $state = new PreRegistrationState($form_state);
+    $state->setMultiPageData(array());
+
 	return 'preregister_typeofregistration_form';
 }
 

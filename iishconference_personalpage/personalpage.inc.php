@@ -221,7 +221,7 @@ function conference_personalpage_main() {
 
 		// END SESSIONS
 		// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
-		// LOSSE PAPERS
+		// PAPERS WITHOUT SESSION
 
 		// show paper info
 		$noSessionPapers = PaperApi::getPapersWithoutSession($papers);

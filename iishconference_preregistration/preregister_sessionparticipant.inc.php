@@ -346,6 +346,12 @@ function preregister_sessionparticipant_form_submit($form, &$form_state) {
  * What is the previous page?
  */
 function preregister_sessionparticipant_form_back($form, &$form_state) {
+    $state = new PreRegistrationState($form_state);
+    $data = $state->getFormData();
+
+    $session = $data['session'];
+    $state->setMultiPageData(array('session' => $session));
+
 	return 'preregister_session_form';
 }
 
@@ -359,6 +365,7 @@ function preregister_sessionparticipant_form_remove($form, &$form_state) {
 
 	$user = $data['user'];
 	$participant = $data['participant'];
+    $session = $data['session'];
 	$sessionParticipants = $data['session_participants'];
 
 	/*if ($user->getAddedById() == $preRegisterUser->getId()) {
@@ -373,7 +380,8 @@ function preregister_sessionparticipant_form_remove($form, &$form_state) {
 		$sessionParticipant->delete();
 	}
 
-	$state->setMultiPageData(array());
+    // Now go back to the session page
+    $state->setMultiPageData(array('session' => $session));
 
 	return 'preregister_session_form';
 }

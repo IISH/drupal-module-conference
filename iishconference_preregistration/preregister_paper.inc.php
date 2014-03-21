@@ -100,7 +100,7 @@ function preregister_paper_form($form, &$form_state) {
 	if ((SettingsApi::getSetting(SettingsApi::SHOW_AWARD) == 1) && $participant->getStudent()) {
 		$form['paper']['award'] = array(
 			'#type'          => 'checkbox',
-			'#title'         => t('Would you like to participant in the "@awardName"?',
+			'#title'         => t('Would you like to participate in the "@awardName"?',
 					array('@awardName' => SettingsApi::getSetting(SettingsApi::AWARD_NAME))) . '&nbsp; <em>(' .
 				l(t('more about the award'), 'award', array('attributes' => array('target' => '_blank'))) . ')</em>',
 			'#default_value' => $participant->getAward(),
@@ -226,6 +226,9 @@ function preregister_paper_form_submit($form, &$form_state) {
  * What is the previous page?
  */
 function preregister_paper_form_back($form, &$form_state) {
+    $state = new PreRegistrationState($form_state);
+    $state->setMultiPageData(array());
+
 	return 'preregister_typeofregistration_form';
 }
 
