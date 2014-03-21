@@ -83,8 +83,10 @@ abstract class CRUDApiClient {
 	 *
 	 * @param CRUDApiClient[] $crudList The instances to be sorted
 	 */
-	public static function sort(array &$crudList) {
-		usort($crudList, array('self', 'compare'));
+	public static function sort(&$crudList) {
+		if (is_array($crudList)) {
+			usort($crudList, array('self', 'compare'));
+		}
 	}
 
 	/**

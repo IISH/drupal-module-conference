@@ -48,7 +48,7 @@ class ParticipantVolunteeringApi extends CRUDApiClient {
 	 *
 	 * @return UserApi[] All matching users
 	 */
-	public static function getAllUsersWIthTypeForNetworks($volunteering, array $networks) {
+	public static function getAllUsersWithTypeForNetworks($volunteering, array $networks) {
 		if ($volunteering instanceof VolunteeringApi) {
 			$volunteering = $volunteering->getId();
 		}

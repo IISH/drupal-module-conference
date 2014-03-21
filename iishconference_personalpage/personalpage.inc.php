@@ -312,7 +312,7 @@ function conference_personalpage_main() {
 
 			if (count($networksAsPupil) > 0) {
 				$languageFound = true;
-				$networksAndUsers = ParticipantVolunteeringApi::getAllUsersWIthTypeForNetworks(
+				$networksAndUsers = ParticipantVolunteeringApi::getAllUsersWithTypeForNetworks(
 					VolunteeringApi::COACH, $networksAsPupil);
 
 				$list = array();
