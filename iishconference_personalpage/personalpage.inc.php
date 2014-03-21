@@ -318,10 +318,13 @@ function conference_personalpage_main() {
 				$list = array();
 				foreach ($networksAsPupil as $network) {
 					CRUDApiClient::sort($networksAndUsers[$network->getId()]);
+
 					$emailList = array();
-					foreach ($networksAndUsers[$network->getId()] as $user) {
-						$emailList[] =
-							l($user->getFullName(), 'mailto:' . $user->getEmail(), array('absolute' => true));
+					if (is_array($networksAndUsers[$network->getId()])) {
+						foreach ($networksAndUsers[$network->getId()] as $user) {
+							$emailList[] =
+								l($user->getFullName(), 'mailto:' . $user->getEmail(), array('absolute' => true));
+						}
 					}
 
 					if (count($emailList) > 0) {
