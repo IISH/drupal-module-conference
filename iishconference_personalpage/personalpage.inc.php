@@ -313,7 +313,7 @@ function conference_personalpage_main() {
 			if (count($networksAsPupil) > 0) {
 				$languageFound = true;
 				$networksAndUsers = ParticipantVolunteeringApi::getAllUsersWIthTypeForNetworks(
-					getSetting('volunteering_languagecoach'), $networksAsPupil);
+					VolunteeringApi::COACH, $networksAsPupil);
 
 				$list = array();
 				foreach ($networksAsPupil as $network) {

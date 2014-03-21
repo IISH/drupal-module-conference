@@ -101,8 +101,8 @@ function iishconference_networksforchairs_sessions($networkId) {
 		$search = EasyProtection::easyStringProtection($params['search']);
 
 		$highlighter = new Highlighter(explode(' ', $search));
-		$highlighter->setOpeningTag('<font color="green"><b>');
-		$highlighter->setClosingTag('</b></font>');
+		$highlighter->setOpeningTag('<span class="highlight">');
+		$highlighter->setClosingTag('</span>');
 	}
 	else {
 		$networkId = EasyProtection::easyIntegerProtection($networkId, true);

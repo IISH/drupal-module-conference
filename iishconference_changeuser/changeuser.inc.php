@@ -3,7 +3,7 @@
 /**
  * Implements hook_form()
  */
-function conference_changeuser_form($form, &$form_state) {
+function conference_changeuser_form($form, &$form_state, $value) {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
 		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
@@ -29,9 +29,6 @@ function conference_changeuser_form($form, &$form_state) {
 		'#type'   => 'markup',
 		'#markup' => '<div><br />' . t('Please enter # or e-mail of user.') . '</div>',
 	);
-
-	$path = SettingsApi::getSetting(SettingsApi::PATH_FOR_ADMIN_MENU);
-	$value = getShiftValue($_SERVER["REQUEST_URI"], 1 + getNumberOfDirectories($path));
 
 	$form['user_id'] = array(
 		'#type'          => 'textfield',
@@ -75,7 +72,6 @@ function conference_changeuser_form_submit($form, &$form_state) {
 				drupal_set_message(t("User changed."));
 
 				// redirect to personal page
-				$ecaSettings = CachedConferenceApi::getSettings();
 				$form_state['redirect'] = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page';
 			}
 			else {

@@ -76,6 +76,11 @@
 	font-weight: bold;
 }
 
+.highlight {
+    color: green;
+    font-weight: bold;
+}
+
 /*
 .eca_ul {
 	type: circle;

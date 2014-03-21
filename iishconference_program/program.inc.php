@@ -114,15 +114,7 @@ function iishconference_program() {
 	$curShowing .= (strlen($showingTimeSlot) > 0) ? ' (' . $showingTimeSlot . ')' : '';
 
 	// Search for the paper
-	$paper = null;
-	if (!is_null($paperId)) {
-		$props = new ApiCriteriaBuilder();
-		$paper = PaperApi::getListWithCriteria(
-			$props
-				->eq('id', $paperId)
-				->get()
-		)->getFirstResult();
-	}
+	$paper = CRUDApiMisc::getById(new PaperApi(), $paperId);
 
 	// Create the query part for the back URL
 	if (!is_null($textsearch)) {
@@ -141,8 +133,8 @@ function iishconference_program() {
 	$form = drupal_get_form('iishconference_program_form', $networkId, $textsearch);
 
 	$highlight = new Highlighter(explode(' ', $textsearch));
-	$highlight->setOpeningTag('<font color="green"><b>');
-	$highlight->setClosingTag('</b></font>');
+	$highlight->setOpeningTag('<span class="highlight">');
+	$highlight->setClosingTag('</span>');
 
 	$program = null;
 	if (is_null($paper)) {
