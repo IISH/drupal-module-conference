@@ -19,7 +19,6 @@ function iishconference_networksforchairs_menu() {
 	$items = array();
 
 	$extraPath = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU);
-	$networkNameSingular = NetworkApi::getNetworkName();
 	$networkNamePlural = NetworkApi::getNetworkName(false);
 
 	$items[$extraPath . strtolower($networkNamePlural) . 'forchairs'] = array(

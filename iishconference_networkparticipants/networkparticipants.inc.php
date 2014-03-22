@@ -8,12 +8,10 @@
 function iishconference_networkparticipants_main() {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		header('Location: ' .
-			url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 				array('query' => drupal_get_destination())));
-		die(t('Go to !login page.',
-			array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
-				array('query' => drupal_get_destination())))));
+		die(t('Go to !login page.', array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU)
+			. 'login', array('query' => drupal_get_destination())))));
 	}
 
 	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
@@ -24,7 +22,7 @@ function iishconference_networkparticipants_main() {
 	}
 
 	$networks = CachedConferenceApi::getNetworks();
-	if (LoggedInUserDetails::isChair()) {
+	if (!LoggedInUserDetails::isCrew() && LoggedInUserDetails::isNetworkChair()) {
 		$networks = NetworkApi::getOnlyNetworksOfChair($networks, LoggedInUserDetails::getUser());
 	}
 
@@ -36,15 +34,15 @@ function iishconference_networkparticipants_main() {
 	}
 
 	if (count($links) > 0) {
-		return theme('item_list', array(
-			'title' => t('Your @networks',
-				array('@networks' => NetworkApi::getNetworkName(false, true))),
-			'items' => $links,
-		));
+		return theme('item_list',
+			array(
+				'title' => t('Your @networks', array('@networks' => NetworkApi::getNetworkName(false, true))),
+				'items' => $links,
+			));
 	}
 	else {
-		drupal_set_message(t('No @networks found!',
-			array('@networks' => NetworkApi::getNetworkName(false))), 'warning');
+		drupal_set_message(t('No @networks found!', array('@networks' => NetworkApi::getNetworkName(false, true))),
+			'warning');
 
 		return '';
 	}
@@ -60,22 +58,21 @@ function iishconference_networkparticipants_main() {
 function iishconference_networkparticipants_detail($network) {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		header('Location: ' .
-			url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 				array('query' => drupal_get_destination())));
-		die(t('Go to !login page.',
-			array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
-				array('query' => drupal_get_destination())))));
+		die(t('Go to !login page.', array('!login' => l(t('login'),
+			SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+			array('query' => drupal_get_destination())))));
 	}
 
 	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
 		drupal_set_message(t('Access denied. You are not a chair of a @network.',
-			array('@network' => NetworkApi::getNetworkName(true, true))), 'error');
+				array('@network' => NetworkApi::getNetworkName(true, true))), 'error');
 
 		return '';
 	}
 
-	if ($network !== null) {
+	if (!empty($network)) {
 		$networkName = EasyProtection::easyAlphaNumericStringProtection($network->getName());
 		$participantsInNetworkApi = new ParticipantsInNetworkApi();
 		if ($participants = $participantsInNetworkApi->getParticipantsForNetwork($network, true)) {
@@ -83,10 +80,12 @@ function iishconference_networkparticipants_detail($network) {
 			drupal_add_http_header('Expires', '0');
 			drupal_add_http_header('Cache-Control', 'must-revalidate, post-check=0, pre-check=0');
 			drupal_add_http_header('Content-Type', 'application/vnd.ms-excel');
-			drupal_add_http_header('Content-Disposition', 'attachment; filename=' .
+			drupal_add_http_header('Content-Disposition',
+				'attachment; filename=' .
 				t('Participants in @networkName @network on @date',
 					array('@networkName' => NetworkApi::getNetworkName(true, true),
-					      '@network'     => $networkName, '@date' => date('m-d-Y'))) . '.xls;');
+					      '@network'     => $networkName,
+					      '@date'        => date('m-d-Y'))) . '.xls;');
 			drupal_add_http_header('Content-Transfer-Encoding', 'binary');
 			drupal_add_http_header('Content-Length', strlen($participants));
 
@@ -96,6 +95,6 @@ function iishconference_networkparticipants_detail($network) {
 	}
 
 	drupal_set_message(t('Failed to create an excel file for download.'), 'error');
-
-	return '';
+	drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) .
+		NetworkApi::getNetworkName(false, true) . 'participants');
 }

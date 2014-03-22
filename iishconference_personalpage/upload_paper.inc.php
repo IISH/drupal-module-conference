@@ -4,13 +4,13 @@
  * Provides the page where a participant can upload or remove a file for his/her paper
  */
 
-define('UPLOAD_PAPER_ERROR_NONE', 0);
-define('UPLOAD_PAPER_ERROR_ID_NOT_FOUND', 1);
-define('UPLOAD_PAPER_ERROR_USER_NOT_ALLOWED', 2);
-define('UPLOAD_PAPER_ERROR_EMPTY_FILE', 3);
-define('UPLOAD_PAPER_ERROR_LARGE_FILE', 4);
-define('UPLOAD_PAPER_ERROR_EXT_NOT_ALLOWED', 5);
-define('UPLOAD_PAPER_ERROR_OTHER', 6);
+define('UPLOAD_PAPER_ERROR_NONE',               0);
+define('UPLOAD_PAPER_ERROR_ID_NOT_FOUND',       1);
+define('UPLOAD_PAPER_ERROR_USER_NOT_ALLOWED',   2);
+define('UPLOAD_PAPER_ERROR_EMPTY_FILE',         3);
+define('UPLOAD_PAPER_ERROR_LARGE_FILE',         4);
+define('UPLOAD_PAPER_ERROR_EXT_NOT_ALLOWED',    5);
+define('UPLOAD_PAPER_ERROR_OTHER',              6);
 
 /**
  * Allows participants to upload paper files through the CMS API
@@ -27,15 +27,15 @@ function conference_upload_paper($paper) {
 			array('query' => drupal_get_destination())))));
 	}
 
-	if ($paper === null) {
+	if (empty($paper)) {
 		drupal_set_message(t('Unfortunately, this paper does not seem to exist.'), 'error');
 
-		return '';
+		drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page');
 	}
 	else if ($paper->getUserId() !== LoggedInUserDetails::getId()) {
 		drupal_set_message(t('You are only allowed to upload a paper for your own papers.'), 'error');
 
-		return '';
+		drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page');
 	}
 	else {
 		$accessTokenApi = new AccessTokenApi();

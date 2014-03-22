@@ -32,8 +32,8 @@ function iishconference_networkvolunteers_menu() {
 	);
 
 	$items[$extraPath . strtolower($networkNameSingular) . 'volunteers/%iishconference_network'] = array(
-		'title'           => '@networks and its volunteers',
-		'title arguments' => array('@networks' => $networkNamePlural),
+		'title'           => '@network and its volunteers',
+		'title arguments' => array('@network' => $networkNameSingular),
 		'page callback'   => 'iishconference_networkvolunteers_detail',
 		'page arguments'  => array(2),
 		'access callback' => true,

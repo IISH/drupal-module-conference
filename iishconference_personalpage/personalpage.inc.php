@@ -328,8 +328,13 @@ function conference_personalpage_main() {
 					}
 
 					if (count($emailList) > 0) {
-						$list[] = '<strong>' . $network->getName() . '</strong>: ' .
-							ConferenceMisc::getEnumSingleLine($emailList) . '';
+						if (SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) {
+							$list[] = '<strong>' . $network->getName() . '</strong>: ' .
+								ConferenceMisc::getEnumSingleLine($emailList);
+						}
+						else {
+							$list[] = ConferenceMisc::getEnumSingleLine($emailList);
+						}
 					}
 					else {
 						$list[] =
@@ -408,7 +413,8 @@ function conference_personalpage_main() {
 
 	$linksNetworkContainer =
 		array(theme('iishconference_container_header',
-			array('text' => t('Links for @network Chairs', array('@network' => NetworkApi::getNetworkName())))));
+			array('text' => t('Links for chairs of a @network',
+				array('@network' => NetworkApi::getNetworkName(true, true))))));
 
 	if (LoggedInUserDetails::hasFullRights() || LoggedInUserDetails::isNetworkChair()) {
 		if (module_exists('iishconference_networksforchairs')) {

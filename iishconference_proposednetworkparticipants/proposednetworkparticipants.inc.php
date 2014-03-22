@@ -26,7 +26,7 @@ function iishconference_proposednetworkparticipants_main() {
 	$allNetworks = CachedConferenceApi::getNetworks();
 	$output = '';
 
-	if (LoggedInUserDetails::isNetworkChair()) {
+	if (!LoggedInUserDetails::isCrew() && LoggedInUserDetails::isNetworkChair()) {
 		$networks = NetworkApi::getOnlyNetworksOfChair($allNetworks, LoggedInUserDetails::getUser());
 		$links = array();
 		foreach ($networks as $network) {
@@ -70,8 +70,7 @@ function iishconference_proposednetworkparticipants_main() {
 function iishconference_proposednetworkparticipants_detail($network) {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		header('Location: ' .
-			url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 				array('query' => drupal_get_destination())));
 		die(t('Go to !login page.',
 			array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
@@ -85,11 +84,12 @@ function iishconference_proposednetworkparticipants_detail($network) {
 		return '';
 	}
 
-	if (!$network) {
+	if (empty($network)) {
 		drupal_set_message(t('The @network does not exist.',
-			array('@network' => NetworkApi::getNetworkName(true, true)), 'error'));
+			array('@network' => NetworkApi::getNetworkName(true, true))), 'error');
 
-		return '';
+		drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'proposed' .
+			NetworkApi::getNetworkName(true, true) . 'participants');
 	}
 
 	$header = theme('iishconference_navigation', array(
@@ -113,7 +113,7 @@ function iishconference_proposednetworkparticipants_detail($network) {
 		'value' => $network->getName(),
 	));
 	$title .= theme('iishconference_container_field', array(
-		'label'       => t('@network chairs', array('@network' => NetworkApi::getNetworkName())),
+		'label'       => t('Chairs in this @network', array('@network' => NetworkApi::getNetworkName(true, true))),
 		'value'       => ConferenceMisc::getEnumSingleLine($chairLinks),
 		'valueIsHTML' => true,
 	));

@@ -19,15 +19,15 @@ function conference_email_main($email) {
 			array('query' => drupal_get_destination())))));
 	}
 
-	if ($email === null) {
+	if (empty($email)) {
 		drupal_set_message(t('Unfortunately, this email does not seem to exist.'), 'error');
 
-		return '';
+		drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'emails');
 	}
 	if ($email->getUserId() !== LoggedInUserDetails::getId()) {
 		drupal_set_message(t('You are only allowed to see emails sent to you.'), 'error');
 
-		return '';
+		drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'emails');
 	}
 
 	$form = drupal_get_form('conference_email_form', $email);

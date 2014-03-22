@@ -72,7 +72,7 @@ function iishconference_networks_theme() {
  * @return string The title of this page
  */
 function iishconference_networks_network_title($network) {
-	if ($network !== null) {
+	if (!empty($network)) {
 		return $network->getName();
 	}
 

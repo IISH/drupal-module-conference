@@ -52,7 +52,7 @@
 /* OTHER CSS */
 
 .iishconference_form .form-type-textfield label, .iishconference_form .form-type-select label,
-.iishconference_form .form-type-password label {
+.iishconference_form .form-type-password label, .iishconference_inline {
     display: inline-block;
 }
 
@@ -91,7 +91,7 @@
 	color: green;
 }
 */
-/*
+
 table.noborder {
 	width: 100%;
 }
@@ -100,6 +100,7 @@ td.noborder {
 	border: 1px solid white;
 }
 
+/*
 th.chairs_and_volunteers {
 	font-weight: bold;
 }
