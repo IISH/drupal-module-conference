@@ -6,8 +6,7 @@
 function conference_personalpage_main() {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		header('Location: ' .
-			url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 				array('query' => drupal_get_destination())));
 		die(t('Go to !login page.',
 			array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
@@ -459,7 +458,7 @@ function conference_personalpage_main() {
 			}
 		}
 		foreach ($papersContainer as $paperContainer) {
-			if (count($sessionContainer) > 0) {
+			if (count($paperContainer) > 0) {
 				$personalPage .= theme('iishconference_container', array('fields' => $paperContainer));
 			}
 		}
