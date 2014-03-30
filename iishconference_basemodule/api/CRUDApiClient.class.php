@@ -148,7 +148,7 @@ abstract class CRUDApiClient {
 	 * @return CRUDApiClient A new class instance
 	 */
 	protected static function createNewInstance($class, array $properties) {
-		$instance = new $class();
+		$instance = new $class(false);
 		foreach ($properties as $property => $value) {
 			$prop = str_replace('.', '_', $property);
 			if (is_array($value)) {

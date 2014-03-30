@@ -42,11 +42,13 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 		($user->getId() != $preRegisterUser->getId())
 	) {
 		$readOnlyUser['readonly'] = 'readonly';
+		$readOnlyUser['class'] = array('readonly-text');
 	}
 	if ($participant->isUpdate() && ($participant->getAddedById() != $preRegisterUser->getId()) &&
 		($participant->getUserId() != $preRegisterUser->getId())
 	) {
 		$readOnlyParticipant['readonly'] = 'readonly';
+		$readOnlyParticipant['class'] = array('readonly-text');
 	}
 
 	$form['participant'] = array(
@@ -93,7 +95,7 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 	if (SettingsApi::getSetting(SettingsApi::SHOW_STUDENT) == 1) {
 		$form['participant']['addparticipantstudent'] = array(
 			'#type'          => 'checkbox',
-			'#title'         => t('Please check if you are a (PhD) student'),
+			'#title'         => t('Please check if this participant is a (PhD) student'),
 			'#default_value' => $participant->getStudent(),
 			'#attributes'    => $readOnlyParticipant,
 		);
@@ -204,16 +206,14 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 		$form['submit_remove'] = array(
 			'#type'                    => 'submit',
 			'#name'                    => 'submit_remove',
-			'#value'                   => t('Remove participant'),
+			'#value'                   => t('Remove participant from session'),
 			'#submit'                  => array('preregister_form_submit'),
 			'#limit_validation_errors' => array(),
 			'#attributes'              => array('onclick' =>
-				                                    'if (!confirm("' .
-				                                    t('Are you sure you want to remove this participant? ' .
-					                                    '(If the participant was added by someone else or this ' .
-					                                    'participant is you, then the participant will only ' .
-					                                    'be removed from this session).') .
-				                                    '")) { return false; }'),
+	            'if (!confirm("' .
+	            t('Are you sure you want to remove this participant? ' .
+		            '(The participant will only be removed from this session).') .
+	            '")) { return false; }'),
 		);
 	}
 
@@ -346,11 +346,11 @@ function preregister_sessionparticipant_form_submit($form, &$form_state) {
  * What is the previous page?
  */
 function preregister_sessionparticipant_form_back($form, &$form_state) {
-    $state = new PreRegistrationState($form_state);
-    $data = $state->getFormData();
+	$state = new PreRegistrationState($form_state);
+	$data = $state->getFormData();
 
-    $session = $data['session'];
-    $state->setMultiPageData(array('session' => $session));
+	$session = $data['session'];
+	$state->setMultiPageData(array('session' => $session));
 
 	return 'preregister_session_form';
 }
@@ -365,7 +365,7 @@ function preregister_sessionparticipant_form_remove($form, &$form_state) {
 
 	$user = $data['user'];
 	$participant = $data['participant'];
-    $session = $data['session'];
+	$session = $data['session'];
 	$sessionParticipants = $data['session_participants'];
 
 	/*if ($user->getAddedById() == $preRegisterUser->getId()) {
@@ -380,8 +380,8 @@ function preregister_sessionparticipant_form_remove($form, &$form_state) {
 		$sessionParticipant->delete();
 	}
 
-    // Now go back to the session page
-    $state->setMultiPageData(array('session' => $session));
+	// Now go back to the session page
+	$state->setMultiPageData(array('session' => $session));
 
 	return 'preregister_session_form';
 }

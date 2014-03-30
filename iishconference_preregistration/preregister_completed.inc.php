@@ -8,7 +8,7 @@ function preregister_completed() {
 		array('fields' => array(
 			'<span class="eca_remark heavy">' .
 				t('You are now pre-registered for the @conference conference.',
-					array('@conference' => CachedConferenceApi::getEventDate()->getLongCodeAndYear())) .
+					array('@conference' => CachedConferenceApi::getEventDate()->getLongNameAndYear())) .
 				'<br />' .
 				t('In a few minutes you will receive by e-mail a copy of your pre-registration.') .
 			'</span>',

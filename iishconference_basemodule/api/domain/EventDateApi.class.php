@@ -126,8 +126,8 @@ class EventDateApi extends CRUDApiClient {
 	 *
 	 * @return string The code and year of this event date concatenated by a space
 	 */
-	public function getCodeAndYear() {
-		return $this->getEvent()->getCode() . ' ' . $this->getYearCode();
+	public function getShortNameAndYear() {
+		return $this->getEvent()->getShortName() . ' ' . $this->getYearCode();
 	}
 
 	/**
@@ -135,11 +135,11 @@ class EventDateApi extends CRUDApiClient {
 	 *
 	 * @return string The long code (including the word 'conference') and year of this event date concatenated
 	 */
-	public function getLongCodeAndYear() {
-		return $this->getEvent()->getCode() . ' ' . t('conference') . ' ' . $this->getYearCode();
+	public function getLongNameAndYear() {
+		return $this->getEvent()->getLongName() . ' ' . $this->getYearCode();
 	}
 
 	public function  __toString() {
-		return $this->getCodeAndYear();
+		return $this->getShortNameAndYear();
 	}
 } 

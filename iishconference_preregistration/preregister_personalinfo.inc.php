@@ -4,17 +4,6 @@
  * Implements hook_form()
  */
 function preregister_personalinfo_form($form, &$form_state) {
-	/**
-	 * TODO:
-	 * <style>
-	 * <!--
-	 * #edit-email {
-	 * border: 0px;
-	 * }
-	 * // -->
-	 * </style>
-	 */
-
 	$state = new PreRegistrationState($form_state);
 	$user = $state->getUser();
 	$participant = $state->getParticipant();
@@ -91,7 +80,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 		'#size'          => 40,
 		'#maxlength'     => 100,
 		'#default_value' => $user->getEmail(),
-		'#attributes'    => array('readonly' => 'readonly'),
+		'#attributes'    => array('readonly' => 'readonly', 'class' => array('readonly-text')),
 	);
 
 	if (SettingsApi::getSetting(SettingsApi::SHOW_STUDENT) == 1) {

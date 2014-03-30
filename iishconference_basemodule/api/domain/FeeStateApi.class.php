@@ -8,6 +8,7 @@ class FeeStateApi extends CRUDApiClient {
 
 	protected $name;
 	protected $isDefaultFee;
+	protected $isAccompanyingPersonFee;
 	protected $feeAmounts_id;
 
 	public static function getListWithCriteria(array $properties, $printErrorMessage = true) {
@@ -17,10 +18,19 @@ class FeeStateApi extends CRUDApiClient {
 	/**
 	 * Returns the default fee state, if there is one
 	 *
-	 * @return FeeStateAPI|null The default fee state, if found
+	 * @return FeeStateApi|null The default fee state, if found
 	 */
 	public static function getDefaultFee() {
 		return CRUDApiMisc::getFirstWherePropertyEquals(new FeeStateApi(), 'isDefaultFee', true);
+	}
+
+	/**
+	 * Returns the accompanying person fee state, if there is one
+	 *
+	 * @return FeeStateApi|null The accompanying person fee state, if found
+	 */
+	public static function getAccompanyingPersonFee() {
+		return CRUDApiMisc::getFirstWherePropertyEquals(new FeeStateApi(), 'isAccompanyingPersonFee', true);
 	}
 
 	/**
@@ -48,6 +58,29 @@ class FeeStateApi extends CRUDApiClient {
 	 */
 	public function isDefaultFee() {
 		return $this->isDefaultFee;
+	}
+
+	/**
+	 * Returns whether this fee is the accompanying person fee
+	 *
+	 * @return bool Returns true if this is the accompanying person fee
+	 */
+	public function isAccompanyingPersonFee() {
+		return $this->isAccompanyingPersonFee;
+	}
+
+	/**
+	 * Returns all fee amounts for this fee state
+	 *
+	 * @param int|null        $date        Returns only the fee amounts that are still valid from the given date
+	 *                                     If no date is given, the current date is used
+	 * @param int|null        $numDays     When specified, returns only the fee amounts for this number of days
+	 * @param bool            $oneDateOnly Whether to only return results with the same youngest date
+	 *
+	 * @return FeeAmountApi[] The fee amounts that match the criteria
+	 */
+	public function getFeeAmounts($date = null, $numDays = null, $oneDateOnly = true) {
+		return FeeAmountApi::getFeeAmounts($this, $date, $numDays, $oneDateOnly);
 	}
 
 	public function __toString() {

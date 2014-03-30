@@ -136,7 +136,7 @@ class CachedConferenceApi {
 	}
 
 	public static function getExtras() {
-		return self::get(self::$nameExtrasCache, 'ExtraAPI');
+		return self::get(self::$nameExtrasCache, 'ExtraApi');
 	}
 
 	public static function getSessionDateTimes() {

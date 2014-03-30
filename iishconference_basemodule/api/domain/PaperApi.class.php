@@ -25,8 +25,10 @@ class PaperApi extends CRUDApiClient {
 	private $user;
 	private $addedBy;
 
-	public function __construct() {
-		$this->setState(PaperStateApi::NEW_PAPER);
+	public function __construct($new = true) {
+		if ($new) {
+			$this->setState(PaperStateApi::NEW_PAPER);
+		}
 	}
 
 	public static function getListWithCriteria(array $properties, $printErrorMessage = true) {

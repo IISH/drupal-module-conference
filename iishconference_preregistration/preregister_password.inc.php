@@ -21,7 +21,7 @@ function preregister_password_form($form, &$form_state) {
 		'#size'          => 20,
 		'#maxlength'     => 100,
 		'#default_value' => $state->getEmail(),
-		'#attributes'    => array('readonly' => 'readonly'),
+		'#attributes'    => array('readonly' => 'readonly', 'class' => array('readonly-text')),
 	);
 
 	$form['login_with_password']['password'] = array(

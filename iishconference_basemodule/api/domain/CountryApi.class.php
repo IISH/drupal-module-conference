@@ -20,8 +20,9 @@ class CountryApi extends CRUDApiClient {
 	 * @return CountryApi|null The country where the event takes place or null if not found
 	 */
 	public static function getCountryOfEvent() {
-		$countryId = 14; // TODO: Where to store country id?
+		$countryId = SettingsApi::getSetting(SettingsApi::COUNTRY_ID);
 		$countries = CachedConferenceApi::getCountries();
+
 		foreach ($countries as $country) {
 			if ($country->getId() == $countryId) {
 				return $country;

@@ -39,14 +39,17 @@ class SendEmailApi {
 	 * @param string      $paymentNumber      The payment number
 	 * @param string      $paymentAmount      The amount payed
 	 * @param string      $paymentDescription The payment description
+	 * @param string      $orderDescription   The order description
 	 *
 	 * @return bool Returns whether the action was successful or not
 	 */
-	public function sendPaymentAcceptedEmail($userId, $paymentNumber, $paymentAmount, $paymentDescription) {
+	public function sendPaymentAcceptedEmail($userId, $paymentNumber, $paymentAmount, $paymentDescription,
+	                                         $orderDescription) {
 		return $this->sendEmail(SettingsApi::PAYMENT_ACCEPTED_EMAIL_TEMPLATE_ID, $userId, array(
 			'paymentNumber'      => $paymentNumber,
 			'paymentAmount'      => $paymentAmount,
 			'paymentDescription' => $paymentDescription,
+			'orderDescription'   => $orderDescription,
 		));
 	}
 

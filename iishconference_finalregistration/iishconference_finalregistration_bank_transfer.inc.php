@@ -12,9 +12,11 @@
 function iishconference_finalregistration_bank_transfer() {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
-		die(t('Go to !login page.', array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
-			array('query' => drupal_get_destination())))));
+		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+				array('query' => drupal_get_destination())));
+		die(t('Go to !login page.',
+			array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+				array('query' => drupal_get_destination())))));
 	}
 
 	if (LoggedInUserDetails::isAParticipant() && LoggedInUserDetails::getParticipant()->getPaymentId()) {
@@ -34,27 +36,28 @@ function iishconference_finalregistration_bank_transfer() {
 				$amount = ConferenceMisc::getReadableAmount($order->get('amount'), true);
 				$finalDate =
 					date('l j F Y', $participant->getBankTransferFinalDate($order->getDateTime('createdat')));
+				$fullName = LoggedInUserDetails::getUser()->getFullName();
 
-				$bankTransferInfo = str_replace('[PaymentNumber]', $order->get('orderid'), $bankTransferInfo);
-				$bankTransferInfo = str_replace('[PaymentAmount]', $amount, $bankTransferInfo);
-				$bankTransferInfo = str_replace('[PaymentDescription]', $order->get('com'), $bankTransferInfo);
-				$bankTransferInfo = str_replace('[PaymentFinalDate]', $finalDate, $bankTransferInfo);
-				$bankTransferInfo =
-					str_replace('[NameParticipant]', LoggedInUserDetails::getUser()->getFullName(),
-						$bankTransferInfo);
+				$bankTransferInfo = str_replace('[PaymentNumber]',      $order->get('orderid'), $bankTransferInfo);
+				$bankTransferInfo = str_replace('[PaymentAmount]',      $amount,                $bankTransferInfo);
+				$bankTransferInfo = str_replace('[PaymentDescription]', $order->get('com'),     $bankTransferInfo);
+				$bankTransferInfo = str_replace('[PaymentFinalDate]',   $finalDate,             $bankTransferInfo);
+				$bankTransferInfo = str_replace('[NameParticipant]',    $fullName,              $bankTransferInfo);
 
 				return ConferenceMisc::getCleanHTML($bankTransferInfo);
 			}
 			else {
 				drupal_set_message(t('You have chosen another payment method. !link to change your payment method.',
-						array('!link' => l(t('Click here'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration'))),
+						array('!link' => l(t('Click here'),
+							SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration'))),
 					'error');
 
 				return '';
 			}
 		}
 		else {
-			drupal_set_message(t('Currently it is not possible to obtain your payment information. Please try again later...'),
+			drupal_set_message(t('Currently it is not possible to obtain your payment information. ' .
+					'Please try again later...'),
 				'error');
 
 			return '';
@@ -62,7 +65,8 @@ function iishconference_finalregistration_bank_transfer() {
 	}
 	else {
 		drupal_set_message(t('You have not finished the final registration. !link.',
-			array('!link' => l(t('Click here'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration'))), 'error');
+			array('!link' => l(t('Click here'),
+				SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration'))), 'error');
 
 		return '';
 	}

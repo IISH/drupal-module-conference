@@ -16,22 +16,51 @@ function iishconference_finalregistration_accept() {
 	if ($paymentResponse->isSignValid() && $paymentResponse->get('POST')) {
 		$participant = CRUDApiMisc::getFirstWherePropertyEquals(new ParticipantDateApi(), 'user_id',
 			$paymentResponse->get('userid'));
-
 		$orderId = $paymentResponse->get('orderid');
 		$participant->setPaymentId($orderId);
 
+		// Get the details of the order in question
+		$orderDetails = new PayWayMessage(array('orderid' => $participant->getPaymentId()));
+		$order = $orderDetails->send('orderDetails');
+
 		// Send the participant an email that his/her payment has been accepted
-		$sendEmailApi = new SendEmailApi();
-		$sendEmailApi->sendPaymentAcceptedEmail($participant->getUserId(), $orderId,
-			ConferenceMisc::getReadableAmount($participant->getTotalAmount()),
-			ConferenceMisc::getPaymentDescription($participant->getFeeAmount(), $participant->getExtras()));
+		if (!empty($order)) {
+			$creationDate = $order->getDateTime('createdat');
 
-		// Make sure that cancelled participants are confirmed again
-		if ($participant->getState()->getId() === ParticipantStateApi::REMOVED_CANCELLED) {
-			$participant->setStateId(ParticipantStateApi::PARTICIPANT);
+			// Obtain the order description
+			$orderDescription = array();
+			$orderDescription[] = '- ' . $participant->getFeeAmount($creationDate);
+
+			foreach ($participant->getExtras() as $extra) {
+				$orderDescription[] = '- ' . $extra;
+			}
+
+			if (SettingsApi::getSetting(SettingsApi::SHOW_ACCOMPANYING_PERSONS)) {
+				$accompanyingPersons = $participant->getAccompanyingPersons();
+				$feeAmountAccompanyingPersons = $participant->getFeeAmount($creationDate,
+					FeeStateApi::getAccompanyingPersonFee());
+
+				foreach ($accompanyingPersons as $accompanyingPerson) {
+					$orderDescription[] = '- ' . $accompanyingPerson . ' ' . $feeAmountAccompanyingPersons;
+				}
+			}
+
+			$sendEmailApi = new SendEmailApi();
+			$sendEmailApi->sendPaymentAcceptedEmail(
+				$participant->getUserId(),
+				$orderId,
+				ConferenceMisc::getReadableAmount($order->get('amount'), true),
+				$order->get('com'),
+				implode("\n", $orderDescription)
+			);
+
+			// Make sure that cancelled participants are confirmed again
+			if ($participant->getStateId() == ParticipantStateApi::REMOVED_CANCELLED) {
+				$participant->setState(ParticipantStateApi::PARTICIPANT);
+			}
+
+			$participant->save();
 		}
-
-		$participant->save();
 	}
 
 	return t('Thank you. The procedure has been completed successfully!') . '<br />' .
@@ -45,7 +74,8 @@ function iishconference_finalregistration_accept() {
  * @return string The message for the user
  */
 function iishconference_finalregistration_decline() {
-	return t('Unfortunately, your payment has been declined. Please try to finish your final registration at a later moment or try a different payment method.');
+	return t('Unfortunately, your payment has been declined. Please try to finish your final registration ' .
+		'at a later moment or try a different payment method.');
 }
 
 /**
@@ -55,6 +85,7 @@ function iishconference_finalregistration_decline() {
  */
 function iishconference_finalregistration_exception() {
 	return t('Unfortunately, your payment result is uncertain at the moment.') . '<br />' .
-	t('Please contact @email to request information on your payment transaction.',
-		array('@email' => SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL)));
+	t('Please contact !email to request information on your payment transaction.',
+		array('!email' => ConferenceMisc::encryptEmailAddress(
+				SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL))));
 }

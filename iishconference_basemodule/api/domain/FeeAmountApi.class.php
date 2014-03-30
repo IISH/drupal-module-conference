@@ -18,6 +18,55 @@ class FeeAmountApi extends CRUDApiClient {
 	}
 
 	/**
+	 * Returns all fee amounts
+	 *
+	 * @param FeeStateApi|int $feeState    The fee state (id) to use
+	 * @param int|null        $date        Returns only the fee amounts that are still valid from the given date
+	 *                                     If no date is given, the current date is used
+	 * @param int|null        $numDays     When specified, returns only the fee amounts for this number of days
+	 * @param bool            $oneDateOnly Whether to only return results with the same youngest date
+	 *
+	 * @return FeeAmountApi[] The fee amounts that match the criteria
+	 */
+	public static function getFeeAmounts($feeState = null, $date = null, $numDays = null, $oneDateOnly = true) {
+		if ($feeState instanceof FeeStateApi) {
+			$feeState = $feeState->getId();
+		}
+
+		if ($date === null) {
+			$date = time();
+		}
+
+		$props = new ApiCriteriaBuilder();
+		$props
+			->eq('feeState_id', $feeState)
+			->ge('endDate', $date)
+			->sort('endDate', 'asc');
+
+		if (is_int($numDays)) {
+			$props
+				->le('numDaysStart', $numDays)
+				->ge('numDaysEnd', $numDays);
+		}
+
+		$feeAmounts = FeeAmountApi::getListWithCriteria($props->get())->getResults();
+
+		if ($oneDateOnly) {
+			$firstDate = null;
+			foreach ($feeAmounts as $key => $feeAmount) {
+				if ($firstDate === null) {
+					$firstDate = $feeAmount->getEndDate();
+				}
+				else if ($firstDate !== $feeAmount->getEndDate()) {
+					unset($feeAmounts[$key]);
+				}
+			}
+		}
+
+		return array_values($feeAmounts);
+	}
+
+	/**
 	 * The final date this fee amount is valid
 	 *
 	 * @return int The final date as a Unix timestamp
@@ -56,7 +105,7 @@ class FeeAmountApi extends CRUDApiClient {
 	/**
 	 * The fee state to which this amount belongs
 	 *
-	 * @return FeeStateAPI The fee state
+	 * @return FeeStateApi The fee state
 	 */
 	public function getFeeState() {
 		if (!$this->feeState) {
@@ -106,6 +155,11 @@ class FeeAmountApi extends CRUDApiClient {
 			$name = $this->substituteName;
 		}
 
-		return $name . ' (' . $days . '): ' . $this->getFeeAmountInFormat();
+		if ($this->getFeeState()->isAccompanyingPersonFee()) {
+			return '(' . $days . '): ' . $this->getFeeAmountInFormat();
+		}
+		else {
+			return $name . ' (' . $days . '): ' . $this->getFeeAmountInFormat();
+		}
 	}
 } 

@@ -86,13 +86,16 @@ function conference_personalpage_main() {
 	$registeredAndPayedContent = array();
 	if (LoggedInUserDetails::isAParticipant()) {
 		$registeredAndPayedContent[] = '<span class="eca_remark heavy">' .
-			t('You have pre-registered for the @conference conference.',
-				array('@conference' => CachedConferenceApi::getEventDate()->getLongCodeAndYear())) . '<br /></span>';
+			t('You have pre-registered for the @conference.',
+				array('@conference' => CachedConferenceApi::getEventDate()->getLongNameAndYear())) . '</span>';
 
-		$paymentInfo = t('Payment: none') . ' ' . t('(Final registration and payment has not started yet)');
+		$registeredAndPayedContent[] = '<br />';
+
+		$paymentMethod = t('Payment: none');
+		$paymentStatus = t('(Final registration and payment has not started yet)');
+
 		if (module_exists('iishconference_finalregistration')) {
-			$paymentInfo = t('Payment: none') . ' ' . t('(!link)',
-					array('!link' => l(t('Final registration and payment'),
+			$paymentStatus = t('(!link)', array('!link' => l(t('Final registration and payment'),
 						SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration')));
 
 			if (!is_null($participantDateDetails->getPaymentId()) && ($participantDateDetails->getPaymentId() !== 0)) {
@@ -100,31 +103,42 @@ function conference_personalpage_main() {
 				$order = $orderDetails->send('orderDetails');
 
 				if (!empty($order)) {
-					if ($order->get('payed') == 1) {
-						if ($order->get('willpaybybank')) {
-							$paymentInfo = t('Payment: by bank transfer') . ' ' . t('(confirmed)');
-						}
-						else {
-							$paymentInfo = t('Payment: by credit card/iDeal') . ' ' . t('(confirmed)');
-						}
+					if ($order->get('willpaybybank')) {
+						$paymentMethod = t('Payment: by bank transfer');
 					}
-					else if ($order->get('willpaybybank')) {
-						$paymentInfo = t('Payment: by bank transfer') . ' ' . t('(not yet confirmed)');
+					else {
+						$paymentMethod = t('Payment: online payment');
+					}
+
+					switch ($order->get('payed')) {
+						case 0:
+							$paymentStatus = t('(not yet confirmed)');
+							break;
+						case 1:
+							$paymentStatus = t('(confirmed)');
+							break;
+						case 2:
+						case 3:
+							$paymentStatus = t('(refunded)');
+							break;
+						default:
+							$paymentStatus = t('(status unknown)');
 					}
 				}
 				else {
-					$paymentInfo = t('Payment information is currently unavailable');
+					$paymentMethod = t('Payment information is currently unavailable');
+					$paymentStatus = '';
 				}
 			}
 		}
 
-		$registeredAndPayedContent[] = $paymentInfo . '<br />';
+		$registeredAndPayedContent[] = '<span>' . trim($paymentMethod . ' ' . $paymentStatus) . '</span>';
 	}
 	else {
 		$registeredAndPayedContent[] = '<span class="eca_warning">' .
-			t('You are not registered for the @conference conference. Please go to !link.',
-				array('@conference' => CachedConferenceApi::getEventDate()->getLongCodeAndYear(),
-				      '!link'       => l(t('Pre-registration form'),
+			t('You are not registered for the @conference. Please go to the !link.',
+				array('@conference' => CachedConferenceApi::getEventDate()->getLongNameAndYear(),
+				      '!link'       => l(t('pre-registration form'),
 					      SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'pre-registration'))) . '</span>';
 	}
 
@@ -301,11 +315,9 @@ function conference_personalpage_main() {
 			if (count($networksAsCoach) > 0) {
 				$languageFound = true;
 				$languageContainer[] = theme('iishconference_container_field', array(
-					'label'          => t('I would like to be an English Language Coach in the following @networks:',
+					'label' => t('I would like to be an English Language Coach in the following @networks:',
 						array('@networks' => NetworkApi::getNetworkName(false, true))),
-					'value'          => str_replace("\n", '', theme('item_list', array('items' => $networksAsCoach))),
-					'valueIsHTML'    => true,
-					'valueOnNewLine' => true
+					'value' => implode(', ', $networksAsCoach),
 				));
 			}
 
@@ -396,8 +408,9 @@ function conference_personalpage_main() {
 			'&bull; ' . l(t('Logout'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'logout') . '<br />';
 	}
 	// check if live or crew or network chair or chair or organizer
-	if (module_exists('iishconference_program') &&
-		(LoggedInUserDetails::hasFullRights() ||
+	if (module_exists('iishconference_program') && (
+			(SettingsApi::getSetting(SettingsApi::SHOW_PROGRAMME_ONLINE) == 1) ||
+			LoggedInUserDetails::hasFullRights() ||
 			LoggedInUserDetails::isNetworkChair() ||
 			LoggedInUserDetails::isChair() ||
 			LoggedInUserDetails::isOrganiser())
@@ -520,7 +533,7 @@ function conference_personalpage_paper(&$container, $paper, $participant) {
 		'value' => $paper->getEquipmentComment()
 	));
 
-	$container[] = '<br /><b> ' .
+	$container[] = '<br /><span class="heavy"> ' .
 		l(t('Upload paper'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page/upload-paper/' .
-			$paper->getId()) . '</b>';
+			$paper->getId()) . '</span>';
 }

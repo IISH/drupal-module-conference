@@ -157,18 +157,6 @@ class ConferenceMisc {
 	}
 
 	/**
-	 * Returns the payment description for the given fee amount and the extras
-	 *
-	 * @param FeeAmountApi $feeAmount The fee amount
-	 * @param ExtraApi[]   $extras    All extras that should be included
-	 *
-	 * @return string The payment description
-	 */
-	public static function getPaymentDescription($feeAmount, $extras) {
-		return implode(' + ', array_merge(array($feeAmount), $extras));
-	}
-
-	/**
 	 * Returns the block that informs the user how and who to contact for information
 	 *
 	 * @param int $emptyRows The number of empty rows before the block appears
@@ -177,10 +165,10 @@ class ConferenceMisc {
 	 */
 	public static function getInfoBlock($emptyRows = 2) {
 		return
-			str_repeat('<br />', $emptyRows) . '<div class="eca_warning">' . t('General questions please contact: ') .
-			self::encryptEmailAddress(SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL)) . '<br/ > ' .
-			t('Errors/bugs please contact: ') .
-			self::encryptEmailAddress(SettingsApi::getSetting(SettingsApi::JIRA_EMAIL)) . '</div>';
+			str_repeat('<br />', $emptyRows) . '<div class="eca_warning">' .
+				t('For general questions and errors please contact: ') .
+				self::encryptEmailAddress(SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL)) .
+			'</div>';
 	}
 
 	/**
@@ -240,11 +228,15 @@ document.write('<a hr'+'ef=\"'+'mai'+'lto:'+w+'@'+h1+'.'+h2+'\">'+w+'@'+h1+'.'+h
 	 *
 	 * @param array  $items        The items to enumerate
 	 * @param string $seperator    The default seperator to use
-	 * @param string $seperatorEnd The last seperator to use
+	 * @param string $seperatorEnd The last seperator to use, 'and' by default
 	 *
 	 * @return string A single line enumeration
 	 */
-	public static function getEnumSingleLine(array $items, $seperator = ', ', $seperatorEnd = ' and ') {
+	public static function getEnumSingleLine(array $items, $seperator = ', ', $seperatorEnd = null) {
+		if ($seperatorEnd === null) {
+			$seperatorEnd = ' ' . t('and') . ' ';
+		}
+
 		$line = '';
 		$items = array_values($items);
 		foreach ($items as $i => $item) {

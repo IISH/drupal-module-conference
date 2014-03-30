@@ -47,12 +47,12 @@ function preregister_typeofregistration_form($form, &$form_state) {
 				);
 			}
 
-			foreach ($papers as $i => $paper) {
-				if (($i == 0) && !$canSubmitNewPaper) {
-					$prefix = '';
-				}
-				else {
+			$printOr = true;
+			foreach ($papers as $paper) {
+				$prefix = '';
+				if ($printOr  && $canSubmitNewPaper) {
 					$prefix = ' &nbsp;' . t('or') . '<br /><br />';
+					$printOr = false;
 				}
 
 				$form['author']['submit_paper_' . $paper->getId()] = array(
@@ -86,7 +86,7 @@ function preregister_typeofregistration_form($form, &$form_state) {
 	if ($showOrganizer == 1) {
 		$form['organizer'] = array(
 			'#type'  => 'fieldset',
-			'#title' => t('I\'m an organizer and I would like to propose a session (including MULTIPLE participants and papers!)'),
+			'#title' => t('I\'m an organizer and I would like to propose a session (including multiple participants and papers)'),
 		);
 
 		if (!$organizerRegistrationClosed) {
@@ -100,12 +100,19 @@ function preregister_typeofregistration_form($form, &$form_state) {
 				'#suffix' => '<br /><br />',
 			);
 
+			$printOr = true;
 			foreach ($sessions as $session) {
+				$prefix = '';
+				if ($printOr) {
+					$prefix = ' &nbsp;' . t('or') . '<br /><br />';
+					$printOr = false;
+				}
+
 				$form['organizer']['submit_session_' . $session->getId()] = array(
 					'#name'   => 'submit_session_' . $session->getId(),
 					'#type'   => 'submit',
 					'#value'  => t('Edit session'),
-					'#prefix' => ' &nbsp;' . t('or') . '<br /><br />',
+					'#prefix' => $prefix,
 					'#suffix' => ' ' . $session->getName() . '<br /><br />',
 				);
 			}
@@ -124,7 +131,8 @@ function preregister_typeofregistration_form($form, &$form_state) {
 
 	$form['spectator'] = array(
 		'#type'  => 'fieldset',
-		'#title' => t('I would like to register as a spectator'),
+		'#title' => t('I would like to register as a @spectator',
+			array('@spectator' => strtolower(SettingsApi::getSetting(SettingsApi::SPECTATOR_NAME)))),
 	);
 
 	$form['spectator']['help_text'] = array(

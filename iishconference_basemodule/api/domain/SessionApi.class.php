@@ -16,8 +16,10 @@ class SessionApi extends CRUDApiClient {
 	private $addedBy;
 	private $sessionParticipants;
 
-	public function __construct() {
-		$this->setState(SessionStateApi::NEW_SESSION);
+	public function __construct($new = true) {
+		if ($new) {
+			$this->setState(SessionStateApi::NEW_SESSION);
+		}
 	}
 
 	public static function getListWithCriteria(array $properties, $printErrorMessage = true) {

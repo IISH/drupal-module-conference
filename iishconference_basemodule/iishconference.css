@@ -63,13 +63,13 @@
 .eca_remark {
     display: inline-block;
 	color: blue;
-    margin-bottom: 15px;
+    //margin-bottom: 15px;
 }
 
 .eca_warning {
     display: inline-block;
 	color: #E61A3C;
-    margin-bottom: 15px;
+    //margin-bottom: 15px;
 }
 
 .heavy {
@@ -79,6 +79,11 @@
 .highlight {
     color: green;
     font-weight: bold;
+}
+
+.readonly-text {
+    border: 0px;
+    background-color: transparent;
 }
 
 /*
@@ -131,32 +136,4 @@ td.program {
 	background-color: #E61A3C;
 	border-color: #E61A3C;
 	height: 1px;
-}
-
-#final-registration-overview {
-    margin-bottom: 10px;
-}
-
-.final-registration-overview-header {
-    margin: 10px 0;
-    display: block;
-    font-weight: bold;
-}
-
-.final-registration-overview-total {
-    font-weight: bold;
-}
-
-#payment-buttons {
-    display: inline-block;
-    margin-left: 50px;
-}
-
-#edit-back {
-    vertical-align: top;
-}
-
-#payment-buttons input {
-    display: block;
-    margin-bottom: 10px;
 }

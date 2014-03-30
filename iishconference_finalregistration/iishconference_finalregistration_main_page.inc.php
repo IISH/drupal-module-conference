@@ -19,6 +19,7 @@ function finalregistration_main_form($form, &$form_state) {
 	$feeAmounts = $participant->getFeeAmounts();
 	$days = CRUDApiClient::getAsKeyValueArray(CachedConferenceApi::getDays());
 
+	// Start with the days
 	$form['days_present'] = array(
 		'#title'         => t('Days present'),
 		'#type'          => 'checkboxes',
@@ -58,15 +59,102 @@ function finalregistration_main_form($form, &$form_state) {
 		);
 	}
 
+	// Any extras from which the participant can choose?
 	$extras = CachedConferenceApi::getExtras();
 	foreach ($extras as $extra) {
+		$description = $extra->getSecondDescription();
+		$description .= ($extra->getAmount() > 0) ? ' ' . $extra->getAmountInFormat() . '.' : '';
+
 		$form['extras_' . $extra->getExtra()] = array(
 			'#title'         => $extra->getTitle(),
 			'#type'          => 'checkboxes',
-			'#description'   => $extra->getSecondDescription(),
+			'#description'   => $description,
 			'#options'       => array($extra->getId() => $extra->getDescription()),
 			'#default_value' => $participant->getExtrasId(),
 		);
+	}
+
+	// Only add accompanying persons if accepted
+	if (SettingsApi::getSetting(SettingsApi::SHOW_ACCOMPANYING_PERSONS) == 1) {
+		$accompanyingPersons = $participant->getAccompanyingPersons();
+		$accompanyingPersonFeeState = FeeStateApi::getAccompanyingPersonFee();
+		$accompanyingPersonFees = $accompanyingPersonFeeState->getFeeAmounts();
+
+		// Always show add least one textfield for participants to enter an accompanying person
+		if (!isset($form_state['num_persons'])) {
+			$form_state['num_persons'] = max(1, count($accompanyingPersons));
+		}
+
+		$form['accompanying_persons'] = array(
+			'#type'   => 'container',
+			'#prefix' => '<div id="accompanying-persons-wrapper">',
+			'#suffix' => '</div>',
+		);
+
+		$title = t('Accompanying persons');
+		$description = SettingsApi::getSetting(SettingsApi::ACCOMPANYING_PERSON_DESCRIPTION);
+		$description .= ' ' . implode(', ', $accompanyingPersonFees) . '.';
+		$form['accompanying_persons']['person']['#tree'] = true;
+
+		// Display all accompanying persons previously stored, unless the user deliberately removed some
+		foreach ($accompanyingPersons as $i => $accompanyingPerson) {
+			if ($i <= ($form_state['num_persons'] - 1)) {
+				$form['accompanying_persons']['person'][$i] = array(
+					'#type'          => 'textfield',
+					'#size'          => 40,
+					'#maxlength'     => 100,
+					'#default_value' => $accompanyingPerson,
+					'#title'         => ($i === 0) ? $title : null,
+					'#description'   => ($i === ($form_state['num_persons'] - 1)) ? $description : null,
+				);
+			}
+		}
+
+		// Now display all additional empty text fields to enter accompanying persons, as many as requested by the user
+		for ($i = count($accompanyingPersons); $i < $form_state['num_persons']; $i++) {
+			$form['accompanying_persons']['person'][$i] = array(
+				'#type'        => 'textfield',
+				'#size'        => 40,
+				'#maxlength'   => 100,
+				'#title'         => ($i === 0) ? $title : null,
+				'#description'   => ($i === ($form_state['num_persons'] - 1)) ? $description : null,
+			);
+		}
+
+		$form['accompanying_persons']['add_person'] = array(
+			'#type'                    => 'submit',
+			'#name'                    => 'add_person',
+			'#value'                   => t('Add one more person'),
+			'#submit'                  => array('finalregistration_add_person'),
+			'#limit_validation_errors' => array(),
+			'#ajax'                    => array(
+				'callback' => 'finalregistration_callback',
+				'wrapper'  => 'accompanying-persons-wrapper',
+				'progress' => array(
+					'type'    => 'throbber',
+					'message' => t('Please wait...'),
+				),
+			),
+		);
+
+		// Always display add least one text field to enter accompanying persons
+		if ($form_state['num_persons'] > 1) {
+			$form['accompanying_persons']['remove_person'] = array(
+				'#type'                    => 'submit',
+				'#name'                    => 'remove_person',
+				'#value'                   => t('Remove the last person'),
+				'#submit'                  => array('finalregistration_remove_person'),
+				'#limit_validation_errors' => array(),
+				'#ajax'                    => array(
+					'callback' => 'finalregistration_callback',
+					'wrapper'  => 'accompanying-persons-wrapper',
+					'progress' => array(
+						'type'    => 'throbber',
+						'message' => t('Please wait...'),
+					),
+				),
+			);
+		}
 	}
 
 	$form['next'] = array(
@@ -88,7 +176,8 @@ function finalregistration_main_validate($form, &$form_state) {
 	// Make sure the values exists, if the user chooses to go back one step
 	if (array_key_exists('invitation_letter', $form_state['values'])) {
 		if (($form_state['values']['invitation_letter'] === 1) &&
-			(strlen(trim($form_state['values']['address'])) === 0)) {
+			(strlen(trim($form_state['values']['address'])) === 0)
+		) {
 			form_set_error('address', t('Please enter your address, so we can send the invitation letter to you.'));
 		}
 	}
@@ -129,6 +218,35 @@ function finalregistration_main_submit($form, &$form_state) {
 	}
 	$participant->setExtras($extras);
 
+	// Save accompanying person(s) into the database
+	if (SettingsApi::getSetting(SettingsApi::SHOW_ACCOMPANYING_PERSONS) == 1) {
+		$accompanyingPersons = array();
+		foreach ($form_state['values']['person'] as $accompanyingPerson) {
+			$accompanyingPerson = trim($accompanyingPerson);
+			if (strlen($accompanyingPerson) > 0) {
+				$accompanyingPersons[] = $accompanyingPerson;
+			}
+		}
+		$participant->setAccompanyingPersons($accompanyingPersons);
+
+		// Reset the number of additional persons in form state
+		unset($form_state['num_persons']);
+	}
+
 	$user->save();
 	$participant->save();
+}
+
+function finalregistration_add_person($form, &$form_state) {
+	$form_state['num_persons']++;
+	$form_state['rebuild'] = true;
+}
+
+function finalregistration_remove_person($form, &$form_state) {
+	$form_state['num_persons']--;
+	$form_state['rebuild'] = true;
+}
+
+function finalregistration_callback($form, &$form_state) {
+	return $form['accompanying_persons'];
 }

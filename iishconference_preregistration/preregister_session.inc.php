@@ -31,7 +31,7 @@ function preregister_session_form($form, &$form_state) {
 	$form['session']['sessionabstract'] = array(
 		'#type'          => 'textarea',
 		'#title'         => t('Abstract'),
-		'#description'   => '<em>' . t('(max. 1.000 words)') . '</em>',
+		'#description'   => '<em>(' . t('max. 1.000 words') . ')</em>',
 		'#rows'          => 3,
 		'#required'      => true,
 		'#default_value' => $session->getAbstr(),
@@ -79,13 +79,24 @@ function preregister_session_form($form, &$form_state) {
 		'#suffix' => '<br /><br />',
 	);
 
-	foreach ($users as $i => $user) {
+	$printOr = true;
+	foreach ($users as $user) {
+		$prefix = '';
+		if ($printOr) {
+			$prefix = ' &nbsp;' . t('or') . '<br /><br />';
+			$printOr = false;
+		}
+
+		$roles = SessionParticipantApi::getAllTypesOfUserForSession($sessionParticipants,
+			$user->getId(), $session->getId());
+
 		$form['session_participants']['submit_participant_' . $user->getId()] = array(
 			'#name'   => 'submit_participant_' . $user->getId(),
 			'#type'   => 'submit',
 			'#value'  => 'Edit',
-			'#prefix' => ' &nbsp;' . t('or') . '<br /><br />',
-			'#suffix' => ' ' . $user->getFullName() . '<br /><br />',
+			'#prefix' => $prefix,
+			'#suffix' => ' ' . $user->getFullName() . ' &nbsp;&nbsp; <em>(' .
+				ConferenceMisc::getEnumSingleLine($roles) . ')</em><br /><br />',
 		);
 	}
 
@@ -183,8 +194,8 @@ function preregister_session_form_submit($form, &$form_state) {
  * What is the previous page?
  */
 function preregister_session_form_back($form, &$form_state) {
-    $state = new PreRegistrationState($form_state);
-    $state->setMultiPageData(array());
+	$state = new PreRegistrationState($form_state);
+	$state->setMultiPageData(array());
 
 	return 'preregister_typeofregistration_form';
 }
@@ -249,7 +260,8 @@ function preregister_session_set_sessionparticipant($state, $session, $id) {
 		return 'preregister_session_form';
 	}
 
-	$state->setMultiPageData(array('session'              => $session, 'user' => $user,
+	$state->setMultiPageData(array('session'              => $session,
+	                               'user'                 => $user,
 	                               'session_participants' => $sessionParticipants));
 
 	return 'preregister_sessionparticipant_form';

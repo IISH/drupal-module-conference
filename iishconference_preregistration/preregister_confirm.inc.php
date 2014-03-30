@@ -191,8 +191,9 @@ function preregister_confirm_form($form, &$form_state) {
 	// PAPERS
 
 	$papersContent = array();
-	foreach ($papers as $paper) {
-		$paperContent = array(theme('iishconference_container_header', array('text' => t('Paper'))));
+	foreach ($papers as $i => $paper) {
+		$paperContent = array(theme('iishconference_container_header', array('text' => t('Paper @count of @total',
+			array('@count' => $i + 1, '@total' => count($papers))))));
 
 		$paperContent[] = theme('iishconference_container_field', array(
 			'label' => 'Title',
@@ -232,7 +233,7 @@ function preregister_confirm_form($form, &$form_state) {
 	// SESSIONS
 
 	$sessionsContent = array();
-	foreach ($sessions as $session) {
+	foreach ($sessions as $i => $session) {
 		$networks = $session->getNetworks();
 
 		$sessionParticipants =
@@ -245,7 +246,8 @@ function preregister_confirm_form($form, &$form_state) {
 
 		// + + + + + + + + + + + + + + + + + + + + + + + +
 
-		$sessionContent = array(theme('iishconference_container_header', array('text' => t('Session'))));
+		$sessionContent = array(theme('iishconference_container_header', array('text' => t('Session @count of @total',
+			array('@count' => $i + 1, '@total' => count($sessions))))));
 
 		$sessionContent[] = theme('iishconference_container_field', array(
 			'label' => 'Session name',

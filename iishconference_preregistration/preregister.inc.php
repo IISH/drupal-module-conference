@@ -25,11 +25,11 @@ function preregister_form($form, &$form_state) {
 		$form['ct1'] = array(
 			'#type'   => 'markup',
 			'#markup' => '<span class="eca_warning">' .
-				t('You are already pre-registered for the @codeYear conference. It is not allowed to modify online ' .
+				t('You are already pre-registered for the @codeYear. It is not allowed to modify online ' .
 					'your data after your data has been checked by the conference organization. If you would like to ' .
 					'make some changes please send an e-mail to @code. Please go to your !link to check the data.',
-					array('@codeYear' => CachedConferenceApi::getEventDate()->getLongCodeAndYear(),
-					      '@code'     => CachedConferenceApi::getEventDate()->getEvent()->getCode(),
+					array('@codeYear' => CachedConferenceApi::getEventDate()->getLongNameAndYear(),
+					      '@code'     => CachedConferenceApi::getEventDate()->getEvent()->getShortName(),
 					      '!link'     => l(t('personal page'),
 						      SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page'))) .
 				'</span>',

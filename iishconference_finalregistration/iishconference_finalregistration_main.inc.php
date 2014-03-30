@@ -18,15 +18,18 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
-		die(t('Go to !login page.', array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
-			array('query' => drupal_get_destination())))));
+		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+				array('query' => drupal_get_destination())));
+		die(t('Go to !login page.',
+			array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+				array('query' => drupal_get_destination())))));
 	}
 
 	if (!LoggedInUserDetails::isAParticipant()) {
 		drupal_set_message(t('You are not registered for the @conference conference. Please go to !link.',
-				array('@conference' => CachedConferenceApi::getEventDate()->getLongCodeAndYear(),
-				      '!link' => l(t('Pre-registration form'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'pre-registration'))),
+				array('@conference' => CachedConferenceApi::getEventDate()->getLongNameAndYear(),
+				      '!link'       => l(t('pre-registration form'),
+					      SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'pre-registration'))),
 			'warning');
 
 		return '';
@@ -43,10 +46,23 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 	$feeAmounts = $participant->getFeeAmounts();
 
 	if (count($feeAmounts) === 0) {
-		drupal_set_message(t('Something is wrong with your fee, please contact @email .',
-			array('@email' => SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL))), 'error');
+		drupal_set_message(t('Something is wrong with your fee, please contact !email.', array('!email' =>
+            ConferenceMisc::encryptEmailAddress(SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL)))),
+			'error');
 
 		return '';
+	}
+
+	if (SettingsApi::getSetting(SettingsApi::SHOW_ACCOMPANYING_PERSONS) == 1) {
+		$accompanyingPersonsFeeState = FeeStateApi::getAccompanyingPersonFee();
+
+		if (($accompanyingPersonsFeeState === null) || (count($accompanyingPersonsFeeState->getFeeAmounts()) === 0)) {
+			drupal_set_message(t('Something is wrong with your fee, please contact !email .',
+				array('!email' => ConferenceMisc::encryptEmailAddress(
+						SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL)))), 'error');
+
+			return '';
+		}
 	}
 
 	if ($participant->getPaymentId()) {
@@ -55,11 +71,11 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 
 		if (!empty($order)) {
 			if ($order->get('payed') == 1) {
-				drupal_set_message(t('You already finished the final registration for the @conference conference.') .
+				drupal_set_message(t('You already finished the final registration for the @conference.') .
 					'<br />' .
 					t('If you have questions please contact the secretariat at @email .',
-						array('@conference' => CachedConferenceApi::getEventDate()->getLongCodeAndYear(),
-						      '@email'      => SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL))));
+						array('@conference' => CachedConferenceApi::getEventDate()->getLongNameAndYear(),
+							  '@email'      => SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL))));
 
 				return '';
 			}
@@ -70,15 +86,16 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 						'<span class="eca_warning">' .
 						t('You chose to finish your final registration by bank transfer.') . '<br />' .
 						t('!link for the bank transfer information.', array('!link' => l(t('Click here'),
-							SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration/bank-transfer'))) .
+							SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) .
+							'final-registration/bank-transfer'))) .
 						'<br />' . t('Please continue if you want to choose a different payment method.') .
 						'</span>',
 				);
 			}
 		}
 		else {
-			drupal_set_message(t('Currently it is not possible to proceed with the final registration. Please try again later...'),
-				'error');
+			drupal_set_message(t('Currently it is not possible to proceed with the final registration. ' .
+					'Please try again later...'), 'error');
 
 			return '';
 		}
@@ -138,12 +155,11 @@ function iishconference_finalregistration_main_form_submit($form, &$form_state) 
 			}
 			break;
 		case 'main':
-			finalregistration_main_submit($form, $form_state);
-			$form_state['stage'] = 'overview';
-			$form_state['rebuild'] = true;
+			if ($form_state['triggering_element']['#name'] == 'next') {
+				finalregistration_main_submit($form, $form_state);
+				$form_state['stage'] = 'overview';
+				$form_state['rebuild'] = true;
+			}
 			break;
-		default:
-			$form_state['stage'] = 'main';
-			$form_state['rebuild'] = true;
 	}
 }

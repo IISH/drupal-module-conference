@@ -11,8 +11,10 @@ function iishconference_finalregistration_help($path, $arg) {
 	switch ($path) {
 		case "admin/help#iishconference_finalregistration":
 			$output = '<h3>' . t('About') . '</h3>';
-			$output .= '<p>' . t('The \'Final registration and Payment\' module allows conference users to finalize their registration by making a payment.') . ' ';
+			$output .= '<p>' .
+				t('The \'Final registration and Payment\' module allows conference users to finalize their registration by making a payment.') . ' ';
 			$output .= t('In order to make payments possible, the module communicates with the \'PayWay\' API, which in turn communicates with \'Ogone\'.') . '</p>';
+
 			return $output;
 	}
 }
@@ -24,44 +26,44 @@ function iishconference_finalregistration_menu() {
 	$extraPath = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU);
 
 	$items[$extraPath . 'final-registration'] = array(
-		'title' => 'Final registration and payment for the ' . CachedConferenceApi::getEventDate() . ' conference',
-		'page callback' => 'drupal_get_form',
-		'page arguments' => array('iishconference_finalregistration_main_form'),
+		'title'           => 'Final registration and payment for the ' . CachedConferenceApi::getEventDate(),
+		'page callback'   => 'drupal_get_form',
+		'page arguments'  => array('iishconference_finalregistration_main_form'),
 		'access callback' => true,
-		'type' => MENU_NORMAL_ITEM,
-		'file' => 'iishconference_finalregistration_main.inc.php',
+		'type'            => MENU_NORMAL_ITEM,
+		'file'            => 'iishconference_finalregistration_main.inc.php',
 	);
 
 	$items[$extraPath . 'final-registration/bank-transfer'] = array(
-		'title' => 'Bank transfer information',
-		'page callback' => 'iishconference_finalregistration_bank_transfer',
+		'title'           => 'Bank transfer information',
+		'page callback'   => 'iishconference_finalregistration_bank_transfer',
 		'access callback' => true,
-		'type' => MENU_CALLBACK,
-		'file' => 'iishconference_finalregistration_bank_transfer.inc.php',
+		'type'            => MENU_CALLBACK,
+		'file'            => 'iishconference_finalregistration_bank_transfer.inc.php',
 	);
 
 	$items[$extraPath . 'final-registration/accept'] = array(
-		'title' => 'Thank you for finishing your registration',
-		'page callback' => 'iishconference_finalregistration_accept',
+		'title'           => 'Thank you for finishing your registration',
+		'page callback'   => 'iishconference_finalregistration_accept',
 		'access callback' => true,
-		'type' => MENU_CALLBACK,
-		'file' => 'iishconference_finalregistration_callback.inc.php',
+		'type'            => MENU_CALLBACK,
+		'file'            => 'iishconference_finalregistration_callback.inc.php',
 	);
 
 	$items[$extraPath . 'final-registration/decline'] = array(
-		'title' => 'Your payment was declined',
-		'page callback' => 'iishconference_finalregistration_decline',
+		'title'           => 'Your payment was declined',
+		'page callback'   => 'iishconference_finalregistration_decline',
 		'access callback' => true,
-		'type' => MENU_CALLBACK,
-		'file' => 'iishconference_finalregistration_callback.inc.php',
+		'type'            => MENU_CALLBACK,
+		'file'            => 'iishconference_finalregistration_callback.inc.php',
 	);
 
 	$items[$extraPath . 'final-registration/exception'] = array(
-		'title' => 'Something went wrong with your payment',
-		'page callback' => 'iishconference_finalregistration_exception',
+		'title'           => 'Something went wrong with your payment',
+		'page callback'   => 'iishconference_finalregistration_exception',
 		'access callback' => true,
-		'type' => MENU_CALLBACK,
-		'file' => 'iishconference_finalregistration_callback.inc.php',
+		'type'            => MENU_CALLBACK,
+		'file'            => 'iishconference_finalregistration_callback.inc.php',
 	);
 
 	return $items;
@@ -72,15 +74,15 @@ function iishconference_finalregistration_menu() {
  */
 function iishconference_finalregistration_theme() {
 	return array(
-		'iishconference_finalregistration_main_form' => array(
+		'iishconference_finalregistration_main_form'     => array(
 			'render element' => 'form',
-			'file' => 'iishconference_finalregistration_theme.inc.php',
-			'template' => 'iishconference_finalregistration_main_page',
+			'file'           => 'iishconference_finalregistration_theme.inc.php',
+			'template'       => 'iishconference_finalregistration_main_page',
 		),
 		'iishconference_finalregistration_overview_form' => array(
 			'render element' => 'form',
-			'file' => 'iishconference_finalregistration_theme.inc.php',
-			'template' => 'iishconference_finalregistration_overview_page',
+			'file'           => 'iishconference_finalregistration_theme.inc.php',
+			'template'       => 'iishconference_finalregistration_overview_page',
 		),
 	);
 }
