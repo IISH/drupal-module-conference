@@ -74,12 +74,12 @@ function iishconference_finalregistration_menu() {
  */
 function iishconference_finalregistration_theme() {
 	return array(
-		'iishconference_finalregistration_main_form'     => array(
+		'iishconference_finalregistration_main_page_form'     => array(
 			'render element' => 'form',
 			'file'           => 'iishconference_finalregistration_theme.inc.php',
 			'template'       => 'iishconference_finalregistration_main_page',
 		),
-		'iishconference_finalregistration_overview_form' => array(
+		'iishconference_finalregistration_overview_page_form' => array(
 			'render element' => 'form',
 			'file'           => 'iishconference_finalregistration_theme.inc.php',
 			'template'       => 'iishconference_finalregistration_overview_page',

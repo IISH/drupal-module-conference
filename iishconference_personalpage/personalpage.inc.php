@@ -91,12 +91,17 @@ function conference_personalpage_main() {
 
 		$registeredAndPayedContent[] = '<br />';
 
+		$registeredAndPayedContent[] = theme('iishconference_container_field', array(
+			'label' => 'Currently selected fee',
+			'value' => $participantDateDetails->getFeeState()
+		));
+
 		$paymentMethod = t('Payment: none');
 		$paymentStatus = t('(Final registration and payment has not started yet)');
 
 		if (module_exists('iishconference_finalregistration')) {
 			$paymentStatus = t('(!link)', array('!link' => l(t('Final registration and payment'),
-						SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration')));
+				SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration')));
 
 			if (!is_null($participantDateDetails->getPaymentId()) && ($participantDateDetails->getPaymentId() !== 0)) {
 				$orderDetails = new PayWayMessage(array('orderid' => $participantDateDetails->getPaymentId()));

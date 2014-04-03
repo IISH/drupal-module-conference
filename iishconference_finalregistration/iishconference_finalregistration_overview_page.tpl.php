@@ -4,7 +4,7 @@
 	</span>
 
 	<ul>
-		<li><?php print $variables['fee-amount']; ?></li>
+		<li><?php print $variables['fee-amount-description']; ?></li>
 
 		<?php foreach ($variables['extras'] as $extra) : ?>
 			<li><?php print $extra; ?></li>
@@ -12,35 +12,37 @@
 
 		<?php if (SettingsApi::getSetting(SettingsApi::SHOW_ACCOMPANYING_PERSONS) == 1) : ?>
 			<?php foreach ($variables['accompanying-persons'] as $accompanyingPerson) : ?>
-				<li><?php print $accompanyingPerson . ' ' . $variables['fee-amount-accompanying-person']; ?></li>
+				<li><?php print $accompanyingPerson . ' ' . $variables['fee-amount-accompanying-person-description']; ?></li>
 			<?php endforeach; ?>
 		<?php endif; ?>
 
 		<li>
 			<span class="final-registration-overview-total">
-				<?php print t('Total amount:'); ?>
+				<?php print t('Total amount') . ':'; ?>
 				<?php print ConferenceMisc::getReadableAmount($variables['total-amount']); ?>
 			</span>
 		</li>
 	</ul>
 
-	<span class="final-registration-overview-header">
-		<?php print t('You have indicated to be present on the following days:'); ?>
-	</span>
+	<?php if (SettingsApi::getSetting(SettingsApi::SHOW_DAYS_FINAL_REGISTRATION) == 1) : ?>
+		<span class="final-registration-overview-header">
+			<?php print t('You have indicated to be present on the following days:'); ?>
+		</span>
 
-	<ul>
-		<?php foreach (LoggedInUserDetails::getUser()->getDaysPresent() as $day) : ?>
-			<li><?php print $day; ?></li>
-		<?php endforeach; ?>
-	</ul>
+		<ul>
+			<?php foreach ($variables['days'] as $day) : ?>
+				<li><?php print $day; ?></li>
+			<?php endforeach; ?>
+		</ul>
+	<?php endif; ?>
 
-	<?php if (LoggedInUserDetails::getParticipant()->getInvitationLetter()) : ?>
+	<?php if ($variables['invitation-letter']) : ?>
 		<span class="final-registration-overview-header">
 			<?php print t('In addition, you also indicated that an invitation letter should be send to:'); ?>
 		</span>
 
 		<ul>
-			<li><?php print ConferenceMisc::getCleanHTML(LoggedInUserDetails::getUser()->getAddress()); ?></li>
+			<li><?php print ConferenceMisc::getCleanHTML($variables['address']); ?></li>
 		</ul>
 	<?php endif; ?>
 </div>

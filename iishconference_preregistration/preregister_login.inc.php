@@ -45,9 +45,6 @@ function preregister_login_form($form, &$form_state) {
 			t('Use the back/next buttons in the form, do NOT use the browser back button') . '</li>
 				<li>' .
 			t('Prepare your abstract beforehand. Do NOT type your abstract in the form field, but COPY it into the form field') . '</li>
-				<li>' .
-			t('Please mail all errors to: !email',
-				array('!email' => ConferenceMisc::encryptEmailAddress(SettingsApi::getSetting(SettingsApi::JIRA_EMAIL)))) . '</li>
 			</ol>
 		</div>',
 	);

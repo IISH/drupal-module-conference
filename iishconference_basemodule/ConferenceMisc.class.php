@@ -166,7 +166,7 @@ class ConferenceMisc {
 	public static function getInfoBlock($emptyRows = 2) {
 		return
 			str_repeat('<br />', $emptyRows) . '<div class="eca_warning">' .
-				t('For general questions and errors please contact: ') .
+				t('For any remarks or questions, please contact: ') .
 				self::encryptEmailAddress(SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL)) .
 			'</div>';
 	}

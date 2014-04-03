@@ -17,10 +17,11 @@ class ParticipantDateApi extends CRUDApiClient {
 	protected $extras_id;
 	protected $addedBy_id;
 
-	private $state;
 	private $user;
+	private $state;
 	private $extras;
 	private $addedBy;
+	private $feeState;
 
 	public function __construct($new = true) {
 		if ($new) {
@@ -78,15 +79,29 @@ class ParticipantDateApi extends CRUDApiClient {
 	 * @return int The fee state id of this participant
 	 */
 	public function getFeeStateId() {
-		if ($this->feeState_id == 0 || $this->feeState_id == null) {
+		return $this->getFeeState()->getId();
+	}
+
+	/**
+	 * The participants fee state
+	 *
+	 * @return FeeStateApi The fee state of this participant
+	 */
+	public function getFeeState() {
+		if ($this->feeState_id == 0 || $this->feeState_id === null) {
 			$feeState = FeeStateApi::getDefaultFee();
 			if (!empty($feeState)) {
+				$this->feeState = $feeState;
 				$this->setFeeState($feeState);
 				$this->save();
 			}
 		}
 
-		return $this->feeState_id;
+		if ($this->feeState === null) {
+			$this->feeState = CRUDApiMisc::getById(new FeeStateApi(), $this->feeState_id);
+		}
+
+		return $this->feeState;
 	}
 
 	/**
@@ -345,7 +360,7 @@ class ParticipantDateApi extends CRUDApiClient {
 	 * @return FeeAmountApi[] The fee amounts that match the criteria
 	 */
 	public function getFeeAmounts($numDays = null, $date = null, $oneDateOnly = true) {
-		return FeeAmountApi::getFeeAmounts($this->getFeeStateId(), $numDays, $date, $oneDateOnly);
+		return FeeAmountApi::getFeeAmounts($this->getFeeStateId(), $date, $numDays, $oneDateOnly);
 	}
 
 	/**

@@ -63,13 +63,13 @@
 .eca_remark {
     display: inline-block;
 	color: blue;
-    //margin-bottom: 15px;
+    margin-bottom: 15px;
 }
 
 .eca_warning {
     display: inline-block;
 	color: #E61A3C;
-    //margin-bottom: 15px;
+    margin-bottom: 15px;
 }
 
 .heavy {

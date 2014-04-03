@@ -46,8 +46,9 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 	$feeAmounts = $participant->getFeeAmounts();
 
 	if (count($feeAmounts) === 0) {
-		drupal_set_message(t('Something is wrong with your fee, please contact !email.', array('!email' =>
-            ConferenceMisc::encryptEmailAddress(SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL)))),
+		drupal_set_message(t('Something is wrong with your fee, please contact !email.',
+				array('!email' => ConferenceMisc::encryptEmailAddress(
+						SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL)))),
 			'error');
 
 		return '';
@@ -73,9 +74,10 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 			if ($order->get('payed') == 1) {
 				drupal_set_message(t('You already finished the final registration for the @conference.') .
 					'<br />' .
-					t('If you have questions please contact the secretariat at @email .',
+					t('If you have questions please contact the secretariat at !email .',
 						array('@conference' => CachedConferenceApi::getEventDate()->getLongNameAndYear(),
-							  '@email'      => SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL))));
+						      '!email'      => ConferenceMisc::encryptEmailAddress(
+								      SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL)))));
 
 				return '';
 			}
@@ -95,7 +97,7 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 		}
 		else {
 			drupal_set_message(t('Currently it is not possible to proceed with the final registration. ' .
-					'Please try again later...'), 'error');
+				'Please try again later...'), 'error');
 
 			return '';
 		}
@@ -115,13 +117,13 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 function getFormForCurrentStage($form, &$form_state) {
 	switch ($form_state['stage']) {
 		case 'overview':
-			$form['#theme'] = 'iishconference_finalregistration_overview_form';
+			$form['#theme'] = 'iishconference_finalregistration_overview_page_form';
 
 			return finalregistration_overview_form($form, $form_state);
 			break;
 		case 'main':
 		default:
-			$form['#theme'] = 'iishconference_finalregistration_main_form';
+			$form['#theme'] = 'iishconference_finalregistration_main_page_form';
 
 			return finalregistration_main_form($form, $form_state);
 	}

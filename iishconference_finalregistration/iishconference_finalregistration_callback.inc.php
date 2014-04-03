@@ -29,7 +29,7 @@ function iishconference_finalregistration_accept() {
 
 			// Obtain the order description
 			$orderDescription = array();
-			$orderDescription[] = '- ' . $participant->getFeeAmount($creationDate);
+			$orderDescription[] = '- ' . $participant->getFeeAmount($creationDate)->getDescriptionWithoutDays();
 
 			foreach ($participant->getExtras() as $extra) {
 				$orderDescription[] = '- ' . $extra;
@@ -38,7 +38,7 @@ function iishconference_finalregistration_accept() {
 			if (SettingsApi::getSetting(SettingsApi::SHOW_ACCOMPANYING_PERSONS)) {
 				$accompanyingPersons = $participant->getAccompanyingPersons();
 				$feeAmountAccompanyingPersons = $participant->getFeeAmount($creationDate,
-					FeeStateApi::getAccompanyingPersonFee());
+					FeeStateApi::getAccompanyingPersonFee())->getDescriptionWithoutDays();
 
 				foreach ($accompanyingPersons as $accompanyingPerson) {
 					$orderDescription[] = '- ' . $accompanyingPerson . ' ' . $feeAmountAccompanyingPersons;

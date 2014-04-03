@@ -65,7 +65,7 @@ function finalregistration_overview_submit($form, &$form_state) {
 		'ownertown'     => $user->getCity(),
 		'ownercty'      => ($user->getCountry() !== null) ? $user->getCountry()->getISOCode() : null,
 		'ownertelno'    => $user->getPhone(),
-		'com'           => CachedConferenceApi::getEventDate() . ' ' . t('final registration'),
+		'com'           => CachedConferenceApi::getEventDate() . ' ' . t('payment'),
 		'willpaybybank' => !$isPayWayTransaction,
 		'userid'        => LoggedInUserDetails::getId(),
 	));
@@ -81,7 +81,7 @@ function finalregistration_overview_submit($form, &$form_state) {
 		if ($totalAmount == 0) {
 			// Obtain the order description
 			$orderDescription = array();
-			$orderDescription[] = '- ' . $participant->getFeeAmount();
+			$orderDescription[] = '- ' . $participant->getFeeAmount()->getDescriptionWithoutDays();
 
 			foreach ($participant->getExtras() as $extra) {
 				$orderDescription[] = '- ' . $extra;
@@ -92,7 +92,7 @@ function finalregistration_overview_submit($form, &$form_state) {
 				$feeAmountAccompanyingPersons = $participant->getFeeAmount(null, FeeStateApi::getAccompanyingPersonFee());
 
 				foreach ($accompanyingPersons as $accompanyingPerson) {
-					$orderDescription[] = '- ' . $accompanyingPerson . ' ' . $feeAmountAccompanyingPersons;
+					$orderDescription[] = '- ' . $accompanyingPerson . ' ' . $feeAmountAccompanyingPersons->getDescriptionWithoutDays();
 				}
 			}
 
@@ -101,7 +101,7 @@ function finalregistration_overview_submit($form, &$form_state) {
 				$participant->getUserId(),
 				$order->get('orderid'),
 				ConferenceMisc::getReadableAmount($totalAmount),
-				CachedConferenceApi::getEventDate() . ' ' . t('final registration'),
+				CachedConferenceApi::getEventDate() . ' ' . t('payment'),
 				implode("\n", $orderDescription)
 			);
 
@@ -117,7 +117,7 @@ function finalregistration_overview_submit($form, &$form_state) {
 				$participant->getUserId(),
 				$order->get('orderid'),
 				ConferenceMisc::getReadableAmount($totalAmount),
-				CachedConferenceApi::getEventDate() . ' ' . t('final registration'),
+				CachedConferenceApi::getEventDate() . ' ' . t('payment'),
 				$participant->getBankTransferFinalDate(time())
 			);
 

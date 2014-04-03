@@ -20,14 +20,17 @@ function finalregistration_main_form($form, &$form_state) {
 	$days = CRUDApiClient::getAsKeyValueArray(CachedConferenceApi::getDays());
 
 	// Start with the days
-	$form['days_present'] = array(
-		'#title'         => t('Days present'),
-		'#type'          => 'checkboxes',
-		'#description'   => t('Please select the days you will be present.') . ' ' . implode(', ', $feeAmounts) . '.',
-		'#options'       => $days,
-		'#default_value' => $user->getDaysPresentDayId(),
-		'#required'      => true,
-	);
+	if (SettingsApi::getSetting(SettingsApi::SHOW_DAYS_FINAL_REGISTRATION) == 1) {
+		$form['days_present'] = array(
+			'#title'         => t('Days present'),
+			'#type'          => 'checkboxes',
+			'#description'   => t('Please select the days you will be present.') . ' <span class="heavy">' .
+				FeeAmountApi::getFeeAmountsDescription($feeAmounts) . '</span>.',
+			'#options'       => $days,
+			'#default_value' => $user->getDaysPresentDayId(),
+			'#required'      => true,
+		);
+	}
 
 	// Only show invitation letter to participants in a not exempted country and participating in at least one session
 	$countryEvent = CountryApi::getCountryOfEvent();
@@ -63,12 +66,14 @@ function finalregistration_main_form($form, &$form_state) {
 	$extras = CachedConferenceApi::getExtras();
 	foreach ($extras as $extra) {
 		$description = $extra->getSecondDescription();
-		$description .= ($extra->getAmount() > 0) ? ' ' . $extra->getAmountInFormat() . '.' : '';
+		if ($extra->getAmount() > 0) {
+			$description .= ' <span class="heavy">' . $extra->getAmountInFormat() . '</span>.';
+		}
 
-		$form['extras_' . $extra->getExtra()] = array(
+		$form['extras_' . $extra->getId()] = array(
 			'#title'         => $extra->getTitle(),
 			'#type'          => 'checkboxes',
-			'#description'   => $description,
+			'#description'   => trim($description),
 			'#options'       => array($extra->getId() => $extra->getDescription()),
 			'#default_value' => $participant->getExtrasId(),
 		);
@@ -80,7 +85,7 @@ function finalregistration_main_form($form, &$form_state) {
 		$accompanyingPersonFeeState = FeeStateApi::getAccompanyingPersonFee();
 		$accompanyingPersonFees = $accompanyingPersonFeeState->getFeeAmounts();
 
-		// Always show add least one textfield for participants to enter an accompanying person
+		// Always show add least one text field for participants to enter an accompanying person
 		if (!isset($form_state['num_persons'])) {
 			$form_state['num_persons'] = max(1, count($accompanyingPersons));
 		}
@@ -93,7 +98,8 @@ function finalregistration_main_form($form, &$form_state) {
 
 		$title = t('Accompanying persons');
 		$description = SettingsApi::getSetting(SettingsApi::ACCOMPANYING_PERSON_DESCRIPTION);
-		$description .= ' ' . implode(', ', $accompanyingPersonFees) . '.';
+		$description .= ' <span class="heavy">' .
+			FeeAmountApi::getFeeAmountsDescription($accompanyingPersonFees) . '</span>.';
 		$form['accompanying_persons']['person']['#tree'] = true;
 
 		// Display all accompanying persons previously stored, unless the user deliberately removed some
@@ -105,7 +111,7 @@ function finalregistration_main_form($form, &$form_state) {
 					'#maxlength'     => 100,
 					'#default_value' => $accompanyingPerson,
 					'#title'         => ($i === 0) ? $title : null,
-					'#description'   => ($i === ($form_state['num_persons'] - 1)) ? $description : null,
+					'#description'   => ($i === ($form_state['num_persons'] - 1)) ? trim($description) : null,
 				);
 			}
 		}
@@ -116,8 +122,8 @@ function finalregistration_main_form($form, &$form_state) {
 				'#type'        => 'textfield',
 				'#size'        => 40,
 				'#maxlength'   => 100,
-				'#title'         => ($i === 0) ? $title : null,
-				'#description'   => ($i === ($form_state['num_persons'] - 1)) ? $description : null,
+				'#title'       => ($i === 0) ? $title : null,
+				'#description' => ($i === ($form_state['num_persons'] - 1)) ? trim($description) : null,
 			);
 		}
 
@@ -194,13 +200,19 @@ function finalregistration_main_submit($form, &$form_state) {
 	$user = LoggedInUserDetails::getUser();
 
 	// Save days
-	$days = array();
-	foreach ($form_state['values']['days_present'] as $dayId => $day) {
-		if ($dayId == $day) {
-			$days[] = $dayId;
+	if (SettingsApi::getSetting(SettingsApi::SHOW_DAYS_FINAL_REGISTRATION) == 1) {
+		$days = array();
+		foreach ($form_state['values']['days_present'] as $dayId => $day) {
+			if ($dayId == $day) {
+				$days[] = $dayId;
+			}
 		}
+		$user->setDaysPresent($days);
 	}
-	$user->setDaysPresent($days);
+	else {
+		$days = CachedConferenceApi::getDays();
+		$user->setDaysPresent(CRUDApiClient::getIds($days));
+	}
 
 	// Save invitation letter info
 	if (array_key_exists('invitation_letter', $form_state['values'])) {
@@ -211,7 +223,7 @@ function finalregistration_main_submit($form, &$form_state) {
 	// Save extras
 	$extras = array();
 	foreach (CachedConferenceApi::getExtras() as $extra) {
-		$value = $form_state['values']['extras_' . $extra->getExtra()][$extra->getId()];
+		$value = $form_state['values']['extras_' . $extra->getId()][$extra->getId()];
 		if ($extra->getId() == $value) {
 			$extras[] = $extra->getId();
 		}

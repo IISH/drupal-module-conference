@@ -67,6 +67,28 @@ class FeeAmountApi extends CRUDApiClient {
 	}
 
 	/**
+	 * Returns a fee amount description based on the amount of fee amounts given.
+	 * If more than one fee amount is given, then the days when the fees are valid are included in the description
+	 *
+	 * @param FeeAmountApi|FeeAmountApi[] $feeAmounts One or more fee amounts to create a description of
+	 *
+	 * @return string The description of the given fee amounts
+	 */
+	public static function getFeeAmountsDescription($feeAmounts) {
+		if (is_array($feeAmounts) && (count($feeAmounts) > 1)) {
+			return implode(', ', $feeAmounts);
+		}
+		else {
+			$feeAmount = $feeAmounts;
+			if (is_array($feeAmounts) && isset($feeAmounts[0])) {
+				$feeAmount = $feeAmounts[0];
+			}
+
+			return $feeAmount->getDescriptionWithoutDays();
+		}
+	}
+
+	/**
 	 * The final date this fee amount is valid
 	 *
 	 * @return int The final date as a Unix timestamp
@@ -142,7 +164,12 @@ class FeeAmountApi extends CRUDApiClient {
 		return $this->substituteName;
 	}
 
-	public function __toString() {
+	/**
+	 * Returns a description of the current fee amount
+	 *
+	 * @return string Returns the name of the fee, which days the fee is valid and the fee amount
+	 */
+	public function getDescription() {
 		if ($this->numDaysStart == $this->numDaysEnd) {
 			$days = $this->numDaysStart . ' ' . t('day');
 		}
@@ -161,5 +188,28 @@ class FeeAmountApi extends CRUDApiClient {
 		else {
 			return $name . ' (' . $days . '): ' . $this->getFeeAmountInFormat();
 		}
+	}
+
+	/**
+	 * Returns a description of the current fee amount without the days
+	 *
+	 * @return string Returns the name of the fee and the fee amount
+	 */
+	public function getDescriptionWithoutDays() {
+		$name = $this->getFeeState()->getName();
+		if (!empty($this->substituteName)) {
+			$name = $this->substituteName;
+		}
+
+		if ($this->getFeeState()->isAccompanyingPersonFee()) {
+			return $this->getFeeAmountInFormat();
+		}
+		else {
+			return $name . ': ' . $this->getFeeAmountInFormat();
+		}
+	}
+
+	public function __toString() {
+		return $this->getDescription();
 	}
 } 
