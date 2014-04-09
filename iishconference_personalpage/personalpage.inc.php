@@ -265,7 +265,7 @@ function conference_personalpage_create_papers_info($userDetails, $participantDa
 			$header = t('Paper  @count of @total', array('@count' => $i + 1, '@total' => count($noSessionPapers)));
 			$paperContent = array(theme('iishconference_container_header', array('text' => $header)));
 
-			conference_personalpage_paper($paperContent, $paper, $participantDateDetails);
+			conference_personalpage_create_paper_info($paperContent, $paper, $participantDateDetails);
 
 			$papersContainers .= theme('iishconference_container', array('fields' => $paperContent));
 		}
@@ -496,12 +496,19 @@ function conference_personalpage_create_language_info($participantDateDetails) {
 		$languageContent =
 			array(theme('iishconference_container_header', array('text' => t('English Language Coach'))));
 
-		if (count($networksAsCoach) > 0) {
+		if ((SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) && (count($networksAsCoach) > 0)) {
 			$languageFound = true;
 			$languageContent[] = theme('iishconference_container_field', array(
 				'label' => t('I would like to be an English Language Coach in the following @networks',
 					array('@networks' => NetworkApi::getNetworkName(false, true))),
 				'value' => implode(', ', $networksAsCoach),
+			));
+		}
+		else if (count($networksAsCoach) > 0) {
+			$languageFound = true;
+			$languageContent[] = theme('iishconference_container_field', array(
+				'label' => t('I would like to be an English Language Coach'),
+				'value' => ConferenceMisc::getYesOrNo(true),
 			));
 		}
 
@@ -532,16 +539,27 @@ function conference_personalpage_create_language_info($participantDateDetails) {
 					}
 				}
 				else {
-					$list[] =
-						'<strong>' . $network->getName() . '</strong>: <em>' .
-						t('No language coaches found in this @network!',
-							array('@network' => NetworkApi::getNetworkName(true, true))) . '</em>';
+					if (SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) {
+						$list[] = '<strong>' . $network->getName() . '</strong>: <em>' .
+							t('No language coaches found in this @network!',
+								array('@network' => NetworkApi::getNetworkName(true, true))) . '</em>';
+					}
+					else {
+						$list[] = '<em>' . t('No language coaches found!') . '</em>';
+					}
 				}
 			}
 
+			if (SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) {
+				$languageCoachLabel = t('I need some help from one of the following English Language Coaches ' .
+					'in each chosen @network', array('@network' => NetworkApi::getNetworkName(true, true)));
+			}
+			else {
+				$languageCoachLabel = t('I need some help from one of the following English Language Coaches');
+			}
+
 			$languageContent[] = theme('iishconference_container_field', array(
-				'label'          => t('I need some help from one of the following English Language Coaches in each chosen @network',
-					array('@network' => NetworkApi::getNetworkName(true, true))),
+				'label'          => $languageCoachLabel,
 				'value'          => str_replace("\n", '', theme('item_list', array('items' => $list))),
 				'valueIsHTML'    => true,
 				'valueOnNewLine' => true
@@ -549,8 +567,7 @@ function conference_personalpage_create_language_info($participantDateDetails) {
 		}
 
 		if (!$languageFound) {
-			$languageContent[] = theme('iishconference_container_field',
-				array('label' => ConferenceMisc::getLanguageCoachPupil('')));
+			$languageContent[] = '<em>' . ConferenceMisc::getLanguageCoachPupil('') . '</em>';
 		}
 
 		return theme('iishconference_container', array('fields' => $languageContent));
