@@ -24,7 +24,7 @@
 		</li>
 	</ul>
 
-	<?php if (SettingsApi::getSetting(SettingsApi::SHOW_DAYS_FINAL_REGISTRATION) == 1) : ?>
+	<?php if (SettingsApi::getSetting(SettingsApi::SHOW_DAYS) == 1) : ?>
 		<span class="final-registration-overview-header">
 			<?php print t('You have indicated to be present on the following days:'); ?>
 		</span>

@@ -25,11 +25,10 @@ class LoggedInUserDetails {
 	 */
 	public static function getId() {
 		$id = null;
-		if (isset($_SESSION["conference"]["user_id"]) && is_int($_SESSION["conference"]["user_id"]) &&
-			($_SESSION["conference"]["user_id"] > 0)
-		) {
+		$storedId = isset($_SESSION['conference']['user_id']) ? $_SESSION['conference']['user_id'] : null;
 
-			$id = $_SESSION["conference"]["user_id"];
+		if (is_int($storedId) && ($storedId > 0)) {
+			$id = $storedId;
 		}
 
 		return $id;

@@ -97,6 +97,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 			'#title'         => t('Curriculum Vitae'),
 			'#description'   => '<em>' . t('(max. 200 words)') . '</em>',
 			'#rows'          => 2,
+			'#required'      => SettingsApi::getSetting(SettingsApi::REQUIRED_CV) == 1,
 			'#default_value' => $user->getCv(),
 		);
 	}

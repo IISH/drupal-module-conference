@@ -22,6 +22,7 @@ class ParticipantDateApi extends CRUDApiClient {
 	private $extras;
 	private $addedBy;
 	private $feeState;
+	private $participantVolunteering;
 
 	public function __construct($new = true) {
 		if ($new) {
@@ -71,51 +72,6 @@ class ParticipantDateApi extends CRUDApiClient {
 	 */
 	public function getExtrasId() {
 		return $this->extras_id;
-	}
-
-	/**
-	 * The id of this participants fee state
-	 *
-	 * @return int The fee state id of this participant
-	 */
-	public function getFeeStateId() {
-		return $this->getFeeState()->getId();
-	}
-
-	/**
-	 * The participants fee state
-	 *
-	 * @return FeeStateApi The fee state of this participant
-	 */
-	public function getFeeState() {
-		if ($this->feeState_id == 0 || $this->feeState_id === null) {
-			$feeState = FeeStateApi::getDefaultFee();
-			if (!empty($feeState)) {
-				$this->feeState = $feeState;
-				$this->setFeeState($feeState);
-				$this->save();
-			}
-		}
-
-		if ($this->feeState === null) {
-			$this->feeState = CRUDApiMisc::getById(new FeeStateApi(), $this->feeState_id);
-		}
-
-		return $this->feeState;
-	}
-
-	/**
-	 * Changes the fee state of this user
-	 *
-	 * @param FeeStateApi|int $feeStateId The new fee state (id)
-	 */
-	public function setFeeState($feeState) {
-		if ($feeState instanceof FeeStateApi) {
-			$feeState = $feeState->getId();
-		}
-
-		$this->feeState_id = $feeState;
-		$this->toSave['feeState.id'] = $feeState;
 	}
 
 	/**
@@ -257,6 +213,120 @@ class ParticipantDateApi extends CRUDApiClient {
 	}
 
 	/**
+	 * Returns the fee amounts suitable for this participant
+	 *
+	 * @param int|null $numDays     When specified, returns only the fee amounts for this number of days
+	 * @param int|null $date        Returns only the fee amounts that are still valid from the given date.
+	 *                              If no date is given, the current date is used
+	 * @param bool     $oneDateOnly Whether to only return results with the same youngest date
+	 *
+	 * @return FeeAmountApi[] The fee amounts that match the criteria
+	 */
+	public function getFeeAmounts($numDays = null, $date = null, $oneDateOnly = true) {
+		return FeeAmountApi::getFeeAmounts($this->getFeeStateId(), $date, $numDays, $oneDateOnly);
+	}
+
+	/**
+	 * The id of this participants fee state
+	 *
+	 * @return int The fee state id of this participant
+	 */
+	public function getFeeStateId() {
+		return $this->getFeeState()->getId();
+	}
+
+	/**
+	 * The participants fee state
+	 *
+	 * @return FeeStateApi The fee state of this participant
+	 */
+	public function getFeeState() {
+		if ($this->feeState_id == 0 || $this->feeState_id === null) {
+			$feeState = FeeStateApi::getDefaultFee();
+			if (!empty($feeState)) {
+				$this->feeState = $feeState;
+				$this->setFeeState($feeState);
+				$this->save();
+			}
+		}
+
+		if ($this->feeState === null) {
+			$this->feeState = CRUDApiMisc::getById(new FeeStateApi(), $this->feeState_id);
+		}
+
+		return $this->feeState;
+	}
+
+	/**
+	 * Changes the fee state of this user
+	 *
+	 * @param FeeStateApi|int $feeState The new fee state (id)
+	 */
+	public function setFeeState($feeState) {
+		if ($feeState instanceof FeeStateApi) {
+			$feeState = $feeState->getId();
+		}
+
+		$this->feeState_id = $feeState;
+		$this->toSave['feeState.id'] = $feeState;
+	}
+
+	public function save($printErrorMessage = true) {
+		$save = parent::save($printErrorMessage);
+
+		// Make sure to invalidate the cached participant
+		if ($save && isset($_SESSION['conference']['participant'])) {
+			unset($_SESSION['conference']['participant']);
+		}
+	}
+
+	/**
+	 * Compute the total amount the given participant has to pay for
+	 * - The days
+	 * - The extras
+	 * - The accompanying persons
+	 *
+	 * @return float The total amount to pay
+	 */
+	public function getTotalAmount() {
+		$totalAmount = $this->getFeeAmount()->getFeeAmount();
+
+		foreach ($this->getExtras() as $extra) {
+			$totalAmount += $extra->getAmount();
+		}
+
+		if (SettingsApi::getSetting(SettingsApi::SHOW_ACCOMPANYING_PERSONS) == 1) {
+			$feeAmountAccompaningPerson = $this->getFeeAmount(null, FeeStateApi::getAccompanyingPersonFee());
+			$totalAmount += (count($this->getAccompanyingPersons()) * $feeAmountAccompaningPerson->getFeeAmount());
+		}
+
+		return $totalAmount;
+	}
+
+	/**
+	 * Returns the single best fee amount to use for this participant
+	 *
+	 * @param int|null             $date     Returns the fee amount for the given date. If no date is given, the current date is used
+	 * @param FeeStateApi|int|null $feeState The fee state to use. If no fee state is given, the participants fee state is used
+	 *
+	 * @return FeeAmountApi The fee amount
+	 */
+	public function getFeeAmount($date = null, $feeState = null) {
+		if ($date === null) {
+			$date = time();
+		}
+
+		$feeStateId = $this->getFeeStateId();
+		if ($feeState !== null) {
+			$feeStateId = ($feeState instanceof FeeStateApi) ? $feeState->getId() : $feeState;
+		}
+
+		$feeAmounts = FeeAmountApi::getFeeAmounts($feeStateId, $date, count($this->getUser()->getDaysPresentDayId()));
+
+		return (isset($feeAmounts[0])) ? $feeAmounts[0] : null;
+	}
+
+	/**
 	 * Returns the user of this participant
 	 *
 	 * @return UserApi The user
@@ -287,25 +357,6 @@ class ParticipantDateApi extends CRUDApiClient {
 		$this->user = null;
 		$this->user_id = $user;
 		$this->toSave['user.id'] = $user;
-	}
-
-	/**
-	 * Returns the names of the accompanying persons
-	 *
-	 * @return string[] Names of the accompanying persons
-	 */
-	public function getAccompanyingPersons() {
-		return is_array($this->accompanyingPersons) ? array_values($this->accompanyingPersons) : array();
-	}
-
-	/**
-	 * Sets the names of the accompanying persons
-	 *
-	 * @param string[] $accompanyingPersons Names of the accompanying persons
-	 */
-	public function setAccompanyingPersons($accompanyingPersons) {
-		$this->accompanyingPersons = $accompanyingPersons;
-		$this->toSave['accompanyingPersons'] = json_encode($this->accompanyingPersons);
 	}
 
 	/**
@@ -350,63 +401,22 @@ class ParticipantDateApi extends CRUDApiClient {
 	}
 
 	/**
-	 * Returns the fee amounts suitable for this participant
+	 * Returns the names of the accompanying persons
 	 *
-	 * @param int|null $numDays     When specified, returns only the fee amounts for this number of days
-	 * @param int|null $date        Returns only the fee amounts that are still valid from the given date.
-	 *                              If no date is given, the current date is used
-	 * @param bool     $oneDateOnly Whether to only return results with the same youngest date
-	 *
-	 * @return FeeAmountApi[] The fee amounts that match the criteria
+	 * @return string[] Names of the accompanying persons
 	 */
-	public function getFeeAmounts($numDays = null, $date = null, $oneDateOnly = true) {
-		return FeeAmountApi::getFeeAmounts($this->getFeeStateId(), $date, $numDays, $oneDateOnly);
+	public function getAccompanyingPersons() {
+		return is_array($this->accompanyingPersons) ? array_values($this->accompanyingPersons) : array();
 	}
 
 	/**
-	 * Returns the single best fee amount to use for this participant
+	 * Sets the names of the accompanying persons
 	 *
-	 * @param int|null $date Returns the fee amount for the given date. If no date is given, the current date is used
-	 * @param FeeStateApi|int|null $feeState The fee state to use. If no fee state is given, the participants fee state is used
-	 *
-	 * @return FeeAmountApi The fee amount
+	 * @param string[] $accompanyingPersons Names of the accompanying persons
 	 */
-	public function getFeeAmount($date = null, $feeState = null) {
-		if ($date === null) {
-			$date = time();
-		}
-
-		$feeStateId = $this->getFeeStateId();
-		if ($feeState !== null) {
-			$feeStateId = ($feeState instanceof FeeStateApi) ? $feeState->getId() : $feeState;
-		}
-
-		$feeAmounts = FeeAmountApi::getFeeAmounts($feeStateId, $date, count($this->getUser()->getDaysPresentDayId()));
-
-		return (isset($feeAmounts[0])) ? $feeAmounts[0] : null;
-	}
-
-	/**
-	 * Compute the total amount the given participant has to pay for
-	 * - The days
-	 * - The extras
-	 * - The accompanying persons
-	 *
-	 * @return float The total amount to pay
-	 */
-	public function getTotalAmount() {
-		$totalAmount = $this->getFeeAmount()->getFeeAmount();
-
-		foreach ($this->getExtras() as $extra) {
-			$totalAmount += $extra->getAmount();
-		}
-
-		if (SettingsApi::getSetting(SettingsApi::SHOW_ACCOMPANYING_PERSONS) == 1) {
-			$feeAmountAccompaningPerson = $this->getFeeAmount(null, FeeStateApi::getAccompanyingPersonFee());
-			$totalAmount += (count($this->getAccompanyingPersons()) * $feeAmountAccompaningPerson->getFeeAmount());
-		}
-
-		return $totalAmount;
+	public function setAccompanyingPersons($accompanyingPersons) {
+		$this->accompanyingPersons = $accompanyingPersons;
+		$this->toSave['accompanyingPersons'] = json_encode($this->accompanyingPersons);
 	}
 
 	/**
@@ -426,6 +436,20 @@ class ParticipantDateApi extends CRUDApiClient {
 		}
 
 		return $finalDate;
+	}
+
+	/**
+	 * Returns all volunteering chosen by this participant
+	 *
+	 * @return ParticipantVolunteeringApi[] All volunteering by this participant
+	 */
+	public function getParticipantVolunteering() {
+		if (!$this->participantVolunteering) {
+			$this->participantVolunteering = CRUDApiMisc::getAllWherePropertyEquals(new ParticipantVolunteeringApi(),
+				'participantDate_id', $this->getId())->getResults();
+		}
+
+		return $this->participantVolunteering;
 	}
 
 	/**
@@ -463,15 +487,6 @@ class ParticipantDateApi extends CRUDApiClient {
 	 */
 	public function getAddedById() {
 		return $this->addedBy_id;
-	}
-
-	public function save($printErrorMessage = true) {
-		$save = parent::save($printErrorMessage);
-
-		// Make sure to invalidate the cached participant
-		if ($save && isset($_SESSION['conference']['participant'])) {
-			unset($_SESSION['conference']['participant']);
-		}
 	}
 
 	public function __toString() {

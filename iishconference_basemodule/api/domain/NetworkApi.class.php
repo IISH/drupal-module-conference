@@ -111,13 +111,15 @@ class NetworkApi extends CRUDApiClient {
 	/**
 	 * Returns a list with all the chairs of this network
 	 *
+	 * @param bool $printErrorMessage Whether an error message should be printed on failure
+	 *
 	 * @return UserApi[] A list of users who are chairs
 	 */
-	public function getChairs() {
+	public function getChairs($printErrorMessage = true) {
 		if (!$this->chairs) {
 			$this->chairs = array();
 			foreach ($this->chairs_chair_id as $id) {
-				$this->chairs[] = CRUDApiMisc::getById(new UserApi(), $id);
+				$this->chairs[] = CRUDApiMisc::getById(new UserApi(), $id, $printErrorMessage);
 			}
 		}
 

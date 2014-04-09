@@ -26,7 +26,6 @@ class SettingsApi {
 	const ORGANIZER_REGISTRATION_CLOSES_ON = 'organizer_registration_closes_on';
 	const PATH_FOR_ADMIN_MENU = 'path_for_admin_menu';
 	const PATH_FOR_MENU = 'path_for_menu';
-	const PAYMENT_SHOW_DAYS_SESSION_PLANNED = 'payment_show_days_session_planned';
 	const PREREGISTRATION_CLOSES_ON = 'preregistration_closes_on';
 	const PREREGISTRATION_CLOSES_ON_MESSAGE = 'preregistration_closes_on_message';
 	const PREREGISTRATION_STARTS_ON = 'preregistration_starts_on';
@@ -39,12 +38,16 @@ class SettingsApi {
 	const SHOW_AWARD = 'show_award';
 	const SHOW_CHAIR_DISCUSSANT_POOL = 'show_chair_discussant_pool';
 	const SHOW_CV = 'show_cv';
-	const SHOW_DAYS_FINAL_REGISTRATION = 'show_days_final_registration';
+	const SHOW_DAYS = 'show_days';
+	const SHOW_DAYS_SESSION_PLANNED = 'show_days_session_planned';
 	const SHOW_LANGUAGE_COACH_PUPIL = 'show_language_coach_pupil';
 	const SHOW_NETWORK = 'show_network';
 	const SHOW_ORGANIZER_REGISTRATION = 'show_organizer_registration';
 	const SHOW_PROGRAMME_ONLINE = 'show_programme_online';
 	const SHOW_STUDENT = 'show_student';
+
+	// Required fields
+	const REQUIRED_CV = 'required_cv';
 
 	// Email templates
 	const BANK_TRANSFER_EMAIL_TEMPLATE_ID = 'bank_transfer_email_template_id';
@@ -68,10 +71,12 @@ class SettingsApi {
 	/**
 	 * Returns an array with the CMS settings where the keys hold the property
 	 *
+	 * @param bool $printErrorMessage Whether an error message should be printed on failure
+	 *
 	 * @return array|null The settings array or null in case of a failure
 	 */
-	public function settings() {
-		return $this->client->get(self::$apiName, array());
+	public function settings($printErrorMessage) {
+		return $this->client->get(self::$apiName, array(), $printErrorMessage);
 	}
 
 	/**

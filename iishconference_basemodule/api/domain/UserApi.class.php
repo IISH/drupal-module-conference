@@ -24,6 +24,7 @@ class UserApi extends CRUDApiClient {
 	protected $addedBy_id;
 
 	private $sessionParticipants;
+	private $papers;
 	private $country;
 	private $days;
 	private $addedBy;
@@ -209,6 +210,20 @@ class UserApi extends CRUDApiClient {
 	}
 
 	/**
+	 * Returns a list with all papers of this user
+	 *
+	 * @return PaperApi[] The papers of this user
+	 */
+	public function getPapers() {
+		if (!$this->papers) {
+			$this->papers =
+				CRUDApiMisc::getAllWherePropertyEquals(new PaperApi(), 'user_id', $this->getId())->getResults();
+		}
+
+		return $this->papers;
+	}
+
+	/**
 	 * Returns the phone number of this user
 	 *
 	 * @return string|null The phone number
@@ -333,15 +348,6 @@ class UserApi extends CRUDApiClient {
 	}
 
 	/**
-	 * Returns the id of the country of this user
-	 *
-	 * @return int|null The country id
-	 */
-	public function getCountryId() {
-		return $this->country_id;
-	}
-
-	/**
 	 * Set the country of this user
 	 *
 	 * @param int|CountryApi $country The country (id)
@@ -354,6 +360,15 @@ class UserApi extends CRUDApiClient {
 		$this->country = null;
 		$this->country_id = $country;
 		$this->toSave['country.id'] = $country;
+	}
+
+	/**
+	 * Returns the id of the country of this user
+	 *
+	 * @return int|null The country id
+	 */
+	public function getCountryId() {
+		return $this->country_id;
 	}
 
 	/**
@@ -458,6 +473,30 @@ class UserApi extends CRUDApiClient {
 		return $this->addedBy_id;
 	}
 
+	public function save($printErrorMessage = true) {
+		// Before we save it... we need to know whether this is a new user
+		$isUpdate = $this->isUpdate();
+
+		$save = parent::save($printErrorMessage);
+
+		// Make sure to invalidate the cached user
+		if ($save && isset($_SESSION['conference']['user'])) {
+			unset($_SESSION['conference']['user']);
+		}
+
+		// If it is a new user, mail him his new password
+		if (!$isUpdate && $save) {
+			$mailNewPasswordApi = new MailNewPasswordApi();
+			$mailNewPasswordApi->mailNewPassword($this);
+		}
+
+		return $save;
+	}
+
+	public function __toString() {
+		return $this->getFullName();
+	}
+
 	/**
 	 * Returns the full name of this user
 	 *
@@ -465,6 +504,26 @@ class UserApi extends CRUDApiClient {
 	 */
 	public function getFullName() {
 		return trim($this->getFirstName()) . ' ' . trim($this->getLastName());
+	}
+
+	/**
+	 * Compare two users, by last name, then by first name
+	 *
+	 * @param UserApi $instance Compare this instance with the given instance
+	 *
+	 * @return int &lt; 0 if <i>$instA</i> is less than
+	 * <i>$instB</i>; &gt; 0 if <i>$instA</i>
+	 * is greater than <i>$instB</i>, and 0 if they are
+	 * equal.
+	 */
+	protected function compareWith($instance) {
+		$lastNameCmp = strcmp(strtolower($this->getLastName()), strtolower($instance->getLastName()));
+		if ($lastNameCmp === 0) {
+			return strcmp(strtolower($this->getFirstName()), strtolower($instance->getFirstName()));
+		}
+		else {
+			return $lastNameCmp;
+		}
 	}
 
 	/**
@@ -507,49 +566,5 @@ class UserApi extends CRUDApiClient {
 
 		$this->firstName = $firstName;
 		$this->toSave['firstName'] = $firstName;
-	}
-
-	public function save($printErrorMessage = true) {
-        // Before we save it... we need to know whether this is a new user
-        $isUpdate = $this->isUpdate();
-
-		$save = parent::save($printErrorMessage);
-
-		// Make sure to invalidate the cached user
-		if ($save && isset($_SESSION['conference']['user'])) {
-			unset($_SESSION['conference']['user']);
-		}
-
-		// If it is a new user, mail him his new password
-		if (!$isUpdate && $save) {
-			$mailNewPasswordApi = new MailNewPasswordApi();
-			$mailNewPasswordApi->mailNewPassword($this);
-		}
-
-		return $save;
-	}
-
-	/**
-	 * Compare two users, by last name, then by first name
-	 *
-	 * @param UserApi $instance Compare this instance with the given instance
-	 *
-	 * @return int &lt; 0 if <i>$instA</i> is less than
-	 * <i>$instB</i>; &gt; 0 if <i>$instA</i>
-	 * is greater than <i>$instB</i>, and 0 if they are
-	 * equal.
-	 */
-	protected function compareWith($instance) {
-		$lastNameCmp = strcmp(strtolower($this->getLastName()), strtolower($instance->getLastName()));
-		if ($lastNameCmp === 0) {
-			return strcmp(strtolower($this->getFirstName()), strtolower($instance->getFirstName()));
-		}
-		else {
-			return $lastNameCmp;
-		}
-	}
-
-	public function __toString() {
-		return $this->getFullName();
 	}
 } 

@@ -4,13 +4,13 @@
  * Provides the page where a participant can upload or remove a file for his/her paper
  */
 
-define('UPLOAD_PAPER_ERROR_NONE',               0);
-define('UPLOAD_PAPER_ERROR_ID_NOT_FOUND',       1);
-define('UPLOAD_PAPER_ERROR_USER_NOT_ALLOWED',   2);
-define('UPLOAD_PAPER_ERROR_EMPTY_FILE',         3);
-define('UPLOAD_PAPER_ERROR_LARGE_FILE',         4);
-define('UPLOAD_PAPER_ERROR_EXT_NOT_ALLOWED',    5);
-define('UPLOAD_PAPER_ERROR_OTHER',              6);
+define('UPLOAD_PAPER_ERROR_NONE', 0);
+define('UPLOAD_PAPER_ERROR_ID_NOT_FOUND', 1);
+define('UPLOAD_PAPER_ERROR_USER_NOT_ALLOWED', 2);
+define('UPLOAD_PAPER_ERROR_EMPTY_FILE', 3);
+define('UPLOAD_PAPER_ERROR_LARGE_FILE', 4);
+define('UPLOAD_PAPER_ERROR_EXT_NOT_ALLOWED', 5);
+define('UPLOAD_PAPER_ERROR_OTHER', 6);
 
 /**
  * Allows participants to upload paper files through the CMS API
@@ -22,9 +22,11 @@ define('UPLOAD_PAPER_ERROR_OTHER',              6);
 function conference_upload_paper($paper) {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
-		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
-		die(t('Go to !login page.', array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
-			array('query' => drupal_get_destination())))));
+		header('Location: ' .
+		url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
+		die(t('Go to !login page.',
+			array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+				array('query' => drupal_get_destination())))));
 	}
 
 	if (empty($paper)) {
@@ -47,9 +49,8 @@ function conference_upload_paper($paper) {
 		$paperDownloadLink = variable_get('conference_base_url') . variable_get('conference_event_code') . '/' .
 			variable_get('conference_date_code') . '/' . 'userApi/downloadPaper/' . $paper->getId();
 
-		$ecaSettings = CachedConferenceApi::getSettings();
-		$allowedExtensions = $ecaSettings[SettingsApi::ALLOWED_PAPER_EXTENSIONS];
-		$maxSize = $ecaSettings[SettingsApi::MAX_UPLOAD_SIZE_PAPER];
+		$allowedExtensions = SettingsApi::getSetting(SettingsApi::ALLOWED_PAPER_EXTENSIONS);
+		$maxSize = SettingsApi::getSetting(SettingsApi::MAX_UPLOAD_SIZE_PAPER);
 		$form = drupal_get_form('conference_upload_paper_form', $paper);
 
 		$params = drupal_get_query_parameters();
@@ -96,6 +97,8 @@ function conference_upload_paper($paper) {
  * Implements hook_form()
  */
 function conference_upload_paper_form($form, &$form_state) {
+	$form['#attributes'] = array('class' => array('iishconference_inline'));
+
 	$form['remove-paper'] = array(
 		'#type'       => 'submit',
 		'#name'       => 'remove-paper',

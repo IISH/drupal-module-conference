@@ -1,4 +1,4 @@
-<?php if (SettingsApi::getSetting(SettingsApi::PAYMENT_SHOW_DAYS_SESSION_PLANNED) == 1) : ?>
+<?php if (SettingsApi::getSetting(SettingsApi::SHOW_DAYS_SESSION_PLANNED) == 1) : ?>
 	<?php if (count($variables['session-days']) > 0) : ?>
 		<div id="session-days-hint">
 			<span class="hint-message">
@@ -24,7 +24,7 @@
 	<br /><br />
 	<?php print ConferenceMisc::getCleanHTML(SettingsApi::getSetting(SettingsApi::FINAL_REGISTRATION_INTRO_TEXT)); ?>
 
-	<?php if (SettingsApi::getSetting(SettingsApi::SHOW_DAYS_FINAL_REGISTRATION) != 1) : ?>
+	<?php if (SettingsApi::getSetting(SettingsApi::SHOW_DAYS) != 1) : ?>
 		<br /><br />
 		<span class="heavy">
 			<?php print $variables['fee-amount-description']; ?>

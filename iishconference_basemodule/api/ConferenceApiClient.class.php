@@ -95,13 +95,14 @@ class ConferenceApiClient {
 	 * @param string       $http_method       The HTTP method to use
 	 *
 	 * @return mixed The response message if found, else null is returned
+	 *
+	 * @throws Exception May throw an exception in case of failure if $printErrorMessage == false
 	 */
 	private function call($apiName, $parameters, $printErrorMessage = true, $http_method = Client::HTTP_METHOD_GET) {
 		// See if this request was made before
 		$result = $this->requestCache->get($apiName, $parameters, $http_method);
 
 		if (!$result) {
-			//$url = http_build_url($this->conferenceApiUrl, array('path' => $apiName));
 			$url = $this->conferenceApiUrl . $apiName;
 
 			try {
@@ -118,20 +119,19 @@ class ConferenceApiClient {
 					$this->requestCache->set($apiName, $parameters, $http_method, $result);
 				}
 				else {
-					throw new Exception('Failed to communicate with the conference API.');
+					throw new Exception('Failed to communicate with the conference API: returned ' . $response['code']);
 				}
 			}
 			catch (Exception $exception) {
+				// Print error message by interrupting the current page building and delivering an empty page with an error message
 				if ($printErrorMessage) {
-					/*print t('There are currently problems obtaining the necessary data. Please try again later. ' .
-						'We are sorry for the inconvenience.');
-					drupal_exit();*/
-
-					drupal_set_title(t('Error'));
 					drupal_set_message(t('There are currently problems obtaining the necessary data. ' .
 						'Please try again later. We are sorry for the inconvenience.'), 'error');
-					print theme('maintenance_page', array('content' => ''));
+					drupal_deliver_page('');
 					drupal_exit();
+				}
+				else {
+					throw $exception;
 				}
 			}
 		}

@@ -20,7 +20,7 @@ function finalregistration_main_form($form, &$form_state) {
 	$days = CRUDApiClient::getAsKeyValueArray(CachedConferenceApi::getDays());
 
 	// Start with the days
-	if (SettingsApi::getSetting(SettingsApi::SHOW_DAYS_FINAL_REGISTRATION) == 1) {
+	if (SettingsApi::getSetting(SettingsApi::SHOW_DAYS) == 1) {
 		$form['days_present'] = array(
 			'#title'         => t('Days present'),
 			'#type'          => 'checkboxes',
@@ -200,7 +200,7 @@ function finalregistration_main_submit($form, &$form_state) {
 	$user = LoggedInUserDetails::getUser();
 
 	// Save days
-	if (SettingsApi::getSetting(SettingsApi::SHOW_DAYS_FINAL_REGISTRATION) == 1) {
+	if (SettingsApi::getSetting(SettingsApi::SHOW_DAYS) == 1) {
 		$days = array();
 		foreach ($form_state['values']['days_present'] as $dayId => $day) {
 			if ($dayId == $day) {

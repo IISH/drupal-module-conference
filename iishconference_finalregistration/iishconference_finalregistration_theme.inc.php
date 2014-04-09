@@ -8,12 +8,12 @@
  * Implements template_preprocess_hook()
  */
 function template_preprocess_iishconference_finalregistration_main_page_form(&$variables) {
-	if (SettingsApi::getSetting(SettingsApi::PAYMENT_SHOW_DAYS_SESSION_PLANNED) == 1) {
+	if (SettingsApi::getSetting(SettingsApi::SHOW_DAYS_SESSION_PLANNED) == 1) {
 		$sessions = SessionParticipantApi::getAllSessions(LoggedInUserDetails::getUser()->getSessionParticipantInfo());
 		$variables['session-days'] = SessionApi::getAllPlannedDaysForSessions($sessions);
 	}
 
-	if (SettingsApi::getSetting(SettingsApi::SHOW_DAYS_FINAL_REGISTRATION) != 1) {
+	if (SettingsApi::getSetting(SettingsApi::SHOW_DAYS) != 1) {
 		$days = CachedConferenceApi::getDays();
 		$feeAmounts = LoggedInUserDetails::getParticipant()->getFeeAmounts(count($days));
 		$feeAmount = isset($feeAmounts[0]) ? $feeAmounts[0] : null;
