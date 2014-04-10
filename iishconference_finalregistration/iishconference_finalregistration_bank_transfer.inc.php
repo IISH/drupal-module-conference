@@ -31,8 +31,7 @@ function iishconference_finalregistration_bank_transfer() {
 				return '';
 			}
 			else if ($order->get('willpaybybank')) {
-				$ecaSettings = CachedConferenceApi::getSettings();
-				$bankTransferInfo = $ecaSettings[SettingsApi::BANK_TRANSFER_INFO];
+				$bankTransferInfo = SettingsApi::getSetting(SettingsApi::BANK_TRANSFER_INFO);
 				$amount = ConferenceMisc::getReadableAmount($order->get('amount'), true);
 				$finalDate =
 					date('l j F Y', $participant->getBankTransferFinalDate($order->getDateTime('createdat')));

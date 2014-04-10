@@ -14,42 +14,28 @@ class SendEmailApi {
 	/**
 	 * Sends an email that tells the user how to make a bank transfer
 	 *
-	 * @param int|UserApi $userId                The user (id) to whom the email is addressed
-	 * @param string      $paymentNumber         The payment number
-	 * @param string      $paymentAmount         The amount payed
-	 * @param string      $paymentDescription    The payment description
-	 * @param int         $bankTransferFinalDate The final date a bank transfer should have been made
+	 * @param int|UserApi $userId  The user (id) to whom the email is addressed
+	 * @param int         $orderId The payment number / order id
 	 *
 	 * @return bool Returns whether the action was successful or not
 	 */
-	public function sendBankTransferEmail($userId, $paymentNumber, $paymentAmount, $paymentDescription,
-	                                      $bankTransferFinalDate) {
+	public function sendBankTransferEmail($userId, $orderId) {
 		return $this->sendEmail(SettingsApi::BANK_TRANSFER_EMAIL_TEMPLATE_ID, $userId, array(
-			'paymentNumber'         => $paymentNumber,
-			'paymentAmount'         => $paymentAmount,
-			'paymentDescription'    => $paymentDescription,
-			'bankTransferFinalDate' => date('Y/m/d', $bankTransferFinalDate),
+			'orderId' => $orderId
 		));
 	}
 
 	/**
 	 * Sends an email that informs the user his payment has been accepted
 	 *
-	 * @param int|UserApi $userId             The user (id) to whom the email is addressed
-	 * @param string      $paymentNumber      The payment number
-	 * @param string      $paymentAmount      The amount payed
-	 * @param string      $paymentDescription The payment description
-	 * @param string      $orderDescription   The order description
+	 * @param int|UserApi $userId  The user (id) to whom the email is addressed
+	 * @param int         $orderId The payment number / order id
 	 *
 	 * @return bool Returns whether the action was successful or not
 	 */
-	public function sendPaymentAcceptedEmail($userId, $paymentNumber, $paymentAmount, $paymentDescription,
-	                                         $orderDescription) {
+	public function sendPaymentAcceptedEmail($userId, $orderId) {
 		return $this->sendEmail(SettingsApi::PAYMENT_ACCEPTED_EMAIL_TEMPLATE_ID, $userId, array(
-			'paymentNumber'      => $paymentNumber,
-			'paymentAmount'      => $paymentAmount,
-			'paymentDescription' => $paymentDescription,
-			'orderDescription'   => $orderDescription,
+			'orderId' => $orderId
 		));
 	}
 

@@ -4,5 +4,6 @@ package = IISH Conference
 core = 7.x
 version = 7.x-0.0.1
 files[] = PayWayMessage.class.php
+files[] = RefreshOrderApi.class.php
 dependencies[] = iishconference_basemodule
 stylesheets[all][] = iishconference_finalregistration.css

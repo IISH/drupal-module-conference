@@ -14,57 +14,30 @@ function iishconference_finalregistration_accept() {
 
 	// 'POST' indicates that it is a one time response after the payment has been made, in our case, to send an email
 	if ($paymentResponse->isSignValid() && $paymentResponse->get('POST')) {
-		$participant = CRUDApiMisc::getFirstWherePropertyEquals(new ParticipantDateApi(), 'user_id',
-			$paymentResponse->get('userid'));
+		$userId = $paymentResponse->get('userid');
 		$orderId = $paymentResponse->get('orderid');
+
+		$participant = CRUDApiMisc::getFirstWherePropertyEquals(new ParticipantDateApi(), 'user_id', $userId);
 		$participant->setPaymentId($orderId);
 
-		// Get the details of the order in question
-		$orderDetails = new PayWayMessage(array('orderid' => $participant->getPaymentId()));
-		$order = $orderDetails->send('orderDetails');
-
-		// Send the participant an email that his/her payment has been accepted
-		if (!empty($order)) {
-			$creationDate = $order->getDateTime('createdat');
-
-			// Obtain the order description
-			$orderDescription = array();
-			$orderDescription[] = '- ' . $participant->getFeeAmount($creationDate)->getDescriptionWithoutDays();
-
-			foreach ($participant->getExtras() as $extra) {
-				$orderDescription[] = '- ' . $extra;
-			}
-
-			if (SettingsApi::getSetting(SettingsApi::SHOW_ACCOMPANYING_PERSONS)) {
-				$accompanyingPersons = $participant->getAccompanyingPersons();
-				$feeAmountAccompanyingPersons = $participant->getFeeAmount($creationDate,
-					FeeStateApi::getAccompanyingPersonFee())->getDescriptionWithoutDays();
-
-				foreach ($accompanyingPersons as $accompanyingPerson) {
-					$orderDescription[] = '- ' . $accompanyingPerson . ' ' . $feeAmountAccompanyingPersons;
-				}
-			}
-
-			$sendEmailApi = new SendEmailApi();
-			$sendEmailApi->sendPaymentAcceptedEmail(
-				$participant->getUserId(),
-				$orderId,
-				ConferenceMisc::getReadableAmount($order->get('amount'), true),
-				$order->get('com'),
-				implode("\n", $orderDescription)
-			);
-
-			// Make sure that cancelled participants are confirmed again
-			if ($participant->getStateId() == ParticipantStateApi::REMOVED_CANCELLED) {
-				$participant->setState(ParticipantStateApi::PARTICIPANT);
-			}
-
-			$participant->save();
+		// Make sure that cancelled participants are confirmed again
+		if ($participant->getStateId() == ParticipantStateApi::REMOVED_CANCELLED) {
+			$participant->setState(ParticipantStateApi::PARTICIPANT);
 		}
+
+		$participant->save();
+
+		// Also make sure the CMS side is aware of the update of this order
+		$refreshOrderApi = new RefreshOrderApi();
+		$refreshOrderApi->refreshOrder($orderId);
+
+		// Send an email to inform the user his payment has been accepted
+		$sendEmailApi = new SendEmailApi();
+		$sendEmailApi->sendPaymentAcceptedEmail($userId, $orderId);
 	}
 
 	return t('Thank you. The procedure has been completed successfully!') . '<br />' .
-	t('Within a few minutes you will receive an email from us confirming your \'final registration and payment\' ' .
+		t('Within a few minutes you will receive an email from us confirming your \'final registration and payment\' ' .
 		'and you will receive a second email from the payment provider confirming your payment.');
 }
 
