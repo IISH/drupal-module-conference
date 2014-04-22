@@ -106,7 +106,16 @@ function iishconference_networkvolunteers_detail($network) {
 
 	$volunteers = array();
 	foreach (CachedConferenceApi::getVolunteering() as $volunteering) {
-		$volunteers[] = iishconference_networkvolunteers_listofparticipants_details($volunteering, $network);
+		// Make sure we only show chair/discussant, language coach/volunteering if allowed, or additional volunteering
+		$isChairDiscussant = (in_array($volunteering->getId(), array(VolunteeringApi::CHAIR, VolunteeringApi::DISCUSSANT)) !== false);
+		$isLanguage = (in_array($volunteering->getId(), array(VolunteeringApi::COACH, VolunteeringApi::PUPIL)) !== false);
+
+		$showChairDiscussant = (SettingsApi::getSetting(SettingsApi::SHOW_CHAIR_DISCUSSANT_POOL) == 1);
+		$showLanguage = (SettingsApi::getSetting(SettingsApi::SHOW_LANGUAGE_COACH_PUPIL) == 1);
+
+		if (($isChairDiscussant && $showChairDiscussant) || ($isLanguage && $showLanguage) || (!$isChairDiscussant && !$isLanguage)) {
+			$volunteers[] = iishconference_networkvolunteers_listofparticipants_details($volunteering, $network);
+		}
 	}
 
 	$seperator = '<br /><hr /><br />';

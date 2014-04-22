@@ -18,21 +18,12 @@ function preregister_paper_form($form, &$form_state) {
 		'#title' => t('Register a paper'),
 	);
 
-	/* $form['ct'.$ct++] = array(
-		'#type' => 'markup',
-		'#markup' => '<span class="iishconference_container_header">Paper info</span>',
-		'#prefix' => '<div class="iishconference_container_inline">',
-		'#suffix' => '</div>',
-		);*/
-
 	$form['paper']['papertitle'] = array(
 		'#type'          => 'textfield',
 		'#title'         => t('Paper title'),
 		'#required'      => true,
 		'#size'          => 40,
 		'#maxlength'     => 255,
-		//	'#prefix' => '<div class="iishconference_container_inline">',
-		//	'#suffix' => '</div>',
 		'#default_value' => $paper->getTitle(),
 	);
 
@@ -50,8 +41,6 @@ function preregister_paper_form($form, &$form_state) {
 		'#title'         => t('Co-authors'),
 		'#size'          => 40,
 		'#maxlength'     => 255,
-		//	'#prefix'        => '<div class="container-inline bottommargin">',
-		//	'#suffix'        => '</div>',
 		'#default_value' => $paper->getCoAuthors(),
 	);
 
@@ -62,8 +51,6 @@ function preregister_paper_form($form, &$form_state) {
 		'#type'          => 'select',
 		'#title'         => t('Proposed @network', array('@network' => NetworkApi::getNetworkName(true, true))),
 		'#options'       => $networkOptions,
-		//	'#prefix'        => '<div class="iishconference_container_inline">',
-		//	'#suffix'        => '</div>',
 		'#size'          => 3,
 		'#required'      => true,
 		'#default_value' => $paper->getNetworkProposalId(),
@@ -87,8 +74,6 @@ function preregister_paper_form($form, &$form_state) {
 		'#title'         => t('Proposed session'),
 		'#size'          => 40,
 		'#maxlength'     => 255,
-		//'#prefix'        => '<div id="textfields"><div class="iishconference_container_inline">',
-		//'#suffix'        => '</div></div>',
 		'#default_value' => $paper->getSessionProposal(),
 		'#states'        => array(
 			'visible' => array(

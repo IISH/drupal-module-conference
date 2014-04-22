@@ -23,8 +23,6 @@ function preregister_session_form($form, &$form_state) {
 		'#size'          => 40,
 		'#required'      => true,
 		'#maxlength'     => 255,
-		//	'#prefix'        => '<div class="iishconference_container_inline">',
-		//	'#suffix'        => '</div>',
 		'#default_value' => $session->getName(),
 	);
 
@@ -46,8 +44,6 @@ function preregister_session_form($form, &$form_state) {
 		'#type'          => 'select',
 		'#options'       => $networkOptions,
 		'#required'      => true,
-		//	'#prefix'        => '<div class="iishconference_container_inline">',
-		//	'#suffix'        => '</div>',
 		'#size'          => 4,
 		'#default_value' => isset($networkIds[0]) ? $networkIds[0] : null,
 	);

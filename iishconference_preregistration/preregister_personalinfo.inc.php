@@ -185,8 +185,6 @@ function preregister_personalinfo_form($form, &$form_state) {
 		$form['chair_discussant_pool']['volunteerchair_networks'] = array(
 			'#type'          => 'select',
 			'#options'       => $networkOptions,
-			//'#prefix'        => '</span>',
-			//'#suffix'        => '</div>',
 			'#multiple'      => true,
 			'#size'          => 3,
 			'#description'   => '<i>' . t('Use CTRL key to select multiple @networks.',
@@ -209,7 +207,6 @@ function preregister_personalinfo_form($form, &$form_state) {
 		$form['chair_discussant_pool']['volunteerdiscussant'] = array(
 			'#type'          => 'checkbox',
 			'#title'         => t('I would like to volunteer as Discussant'),
-			//	'#prefix'        => '<div class='container-inline'><span style='vertical-align:top;'>',
 			'#default_value' => count($discussantOptions) > 0,
 		);
 
@@ -267,8 +264,6 @@ function preregister_personalinfo_form($form, &$form_state) {
 			'#type'          => 'radios',
 			'#options'       => ConferenceMisc::getLanguageCoachPupils(),
 			'#default_value' => $defaultValue,
-			//'#prefix'        => '<div class='container-inline' style='float:left;width:46%;'>',
-			//'#suffix'        => '</div>',
 		);
 
 		$form['english_language_coach']['coachpupil_networks'] = array(
@@ -276,8 +271,6 @@ function preregister_personalinfo_form($form, &$form_state) {
 			'#options'       => $networkOptions,
 			'#multiple'      => true,
 			'#size'          => 3,
-			//'#prefix'        => '<div class='container-inline'>',
-			//'#suffix'        => '</div>',
 			'#description'   => '<i>' . t('Use CTRL key to select multiple @networks.',
 					array('@networks' => NetworkApi::getNetworkName(false, true))) . '</i>',
 			'#states'        => array(

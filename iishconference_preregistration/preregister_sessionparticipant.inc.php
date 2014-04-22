@@ -62,8 +62,6 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 		'#required'      => true,
 		'#size'          => 40,
 		'#maxlength'     => 100,
-		//'#prefix'        => '<div class="iishconference_container_inline">',
-		//'#suffix'        => '</div>',
 		'#default_value' => $user->getEmail(),
 		'#attributes'    => $readOnlyUser,
 	);
@@ -74,8 +72,6 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 		'#required'      => true,
 		'#size'          => 40,
 		'#maxlength'     => 255,
-		//	'#prefix'        => '<div class="iishconference_container_inline">',
-		//	'#suffix'        => '</div>',
 		'#default_value' => $user->getFirstName(),
 		'#attributes'    => $readOnlyUser,
 	);
@@ -86,8 +82,6 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 		'#required'      => true,
 		'#size'          => 40,
 		'#maxlength'     => 255,
-		//	'#prefix'        => '<div class="iishconference_container_inline">',
-		//	'#suffix'        => '</div>',
 		'#default_value' => $user->getLastName(),
 		'#attributes'    => $readOnlyUser,
 	);
@@ -101,24 +95,30 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 		);
 	}
 
+	// If a field is required, but turns out to be missing in the existing record, allow the user to add a value
+	$userIsReadOnly = ($readOnlyUser['readonly'] === 'readonly');
+	$cvRequired = (SettingsApi::getSetting(SettingsApi::REQUIRED_CV) == 1);
+	$userCv = $user->getCv();
 	if (SettingsApi::getSetting(SettingsApi::SHOW_CV) == 1) {
 		$form['participant']['addparticipantcv'] = array(
 			'#type'          => 'textarea',
 			'#title'         => t('Curriculum Vitae'),
 			'#description'   => '<em>' . t('(max. 200 words)') . '</em>',
 			'#rows'          => 2,
-			'#default_value' => $user->getCv(),
-			'#attributes'    => $readOnlyUser,
+			'#required'      => $cvRequired,
+			'#default_value' => $userCv,
+			'#attributes'    => ($cvRequired && $userIsReadOnly && empty($userCv)) ? array() : $readOnlyUser,
 		);
 	}
 
+	$userCountryId = $user->getCountryId();
 	$form['participant']['addparticipantcountry'] = array(
 		'#type'          => 'select',
 		'#title'         => t('Country'),
 		'#options'       => CRUDApiClient::getAsKeyValueArray(CachedConferenceApi::getCountries()),
 		'#required'      => true,
-		'#default_value' => $user->getCountryId(),
-		'#attributes'    => $readOnlyUser,
+		'#default_value' => $userCountryId,
+		'#attributes'    => ($userIsReadOnly && empty($userCountryId)) ? array() : $readOnlyUser,
 	);
 
 	// + + + + + + + + + + + + + + + + + + + + + + + +
@@ -142,8 +142,6 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 			'<br />' . ConferenceMisc::getCleanHTML(ParticipantTypeApi::getCombinationsNotAllowedText()),
 		'#required'      => true,
 		'#options'       => $participantTypeOptions,
-		//	'#prefix'        => '<div class="iishconference_container_inline">',
-		//	'#suffix'        => '</div>',
 		'#default_value' => $chosenTypeValues,
 	);
 
@@ -172,8 +170,6 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 		'#title'         => t('Paper title'),
 		'#size'          => 40,
 		'#maxlength'     => 255,
-		//	'#prefix'        => '<div class="iishconference_container_inline">',
-		//	'#suffix'        => '</div>',
 		'#default_value' => $paper->getTitle(),
 	);
 
@@ -269,6 +265,12 @@ function preregister_sessionparticipant_form_submit($form, &$form_state) {
 		$participant = ($participant !== null) ? $participant : new ParticipantDateApi();
 	}
 
+	$userCv = $user->getCv();
+	$userCountry = $user->getCountryId();
+	$cvRequired = ((SettingsApi::getSetting(SettingsApi::SHOW_CV) == 1) &&
+		(SettingsApi::getSetting(SettingsApi::REQUIRED_CV) == 1) && empty($userCv));
+	$countryRequired = empty($userCountry);
+
 	// Then we save the user
 	if (!$user->isUpdate() || ($user->getAddedById() == $preRegisterUser->getId()) ||
 		($user->getId() == $preRegisterUser->getId())
@@ -280,6 +282,17 @@ function preregister_sessionparticipant_form_submit($form, &$form_state) {
 
 		if (SettingsApi::getSetting(SettingsApi::SHOW_CV) == 1) {
 			$user->setCv($form_state['values']['addparticipantcv']);
+		}
+
+		$user->save();
+	}
+	// If a field is required, but turns out to be missing in the existing record, allow the user to add a value
+	else if ($cvRequired || $countryRequired) {
+		if ($cvRequired) {
+			$user->setCv($form_state['values']['addparticipantcv']);
+		}
+		if ($countryRequired) {
+			$user->setCountry($form_state['values']['addparticipantcountry']);
 		}
 
 		$user->save();
@@ -360,21 +373,10 @@ function preregister_sessionparticipant_form_back($form, &$form_state) {
  */
 function preregister_sessionparticipant_form_remove($form, &$form_state) {
 	$state = new PreRegistrationState($form_state);
-	$preRegisterUser = $state->getUser();
 	$data = $state->getFormData();
 
-	$user = $data['user'];
-	$participant = $data['participant'];
 	$session = $data['session'];
 	$sessionParticipants = $data['session_participants'];
-
-	/*if ($user->getAddedById() == $preRegisterUser->getId()) {
-		$user->delete();
-	}
-
-	if ($participant->getAddedById() == $preRegisterUser->getId()) {
-		$participant->delete();
-	}*/
 
 	foreach ($sessionParticipants as $sessionParticipant) {
 		$sessionParticipant->delete();

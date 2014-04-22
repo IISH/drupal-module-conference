@@ -241,7 +241,7 @@ class ParticipantDateApi extends CRUDApiClient {
 	 * @return FeeStateApi The fee state of this participant
 	 */
 	public function getFeeState() {
-		if ($this->feeState_id == 0 || $this->feeState_id === null) {
+		if ($this->feeState_id == FeeStateApi::NO_FEE_SELECTED || $this->feeState_id === null) {
 			$feeState = FeeStateApi::getDefaultFee();
 			if (!empty($feeState)) {
 				$this->feeState = $feeState;
