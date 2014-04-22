@@ -96,7 +96,7 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 	}
 
 	// If a field is required, but turns out to be missing in the existing record, allow the user to add a value
-	$userIsReadOnly = ($readOnlyUser['readonly'] === 'readonly');
+	$userIsReadOnly = isset($readOnlyUser['readonly']);
 	$cvRequired = (SettingsApi::getSetting(SettingsApi::REQUIRED_CV) == 1);
 	$userCv = $user->getCv();
 	if (SettingsApi::getSetting(SettingsApi::SHOW_CV) == 1) {
