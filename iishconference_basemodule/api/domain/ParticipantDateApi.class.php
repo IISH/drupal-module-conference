@@ -296,8 +296,8 @@ class ParticipantDateApi extends CRUDApiClient {
 		}
 
 		if (SettingsApi::getSetting(SettingsApi::SHOW_ACCOMPANYING_PERSONS) == 1) {
-			$feeAmountAccompaningPerson = $this->getFeeAmount(null, FeeStateApi::getAccompanyingPersonFee());
-			$totalAmount += (count($this->getAccompanyingPersons()) * $feeAmountAccompaningPerson->getFeeAmount());
+			$feeAmountAccompanyingPerson = $this->getFeeAmount(null, FeeStateApi::getAccompanyingPersonFee());
+			$totalAmount += (count($this->getAccompanyingPersons()) * $feeAmountAccompanyingPerson->getFeeAmount());
 		}
 
 		return $totalAmount;
