@@ -424,10 +424,13 @@ class UserApi extends CRUDApiClient {
 	public function getDaysPresent() {
 		if (!$this->days) {
 			$this->days = array();
-			foreach ($this->daysPresent_day_id as $dayId) {
-				foreach (CachedConferenceApi::getDays() as $day) {
-					if ($day->getId() === $dayId) {
-						$this->days[] = $day;
+
+			if (is_array($this->daysPresent_day_id)) {
+				foreach ($this->daysPresent_day_id as $dayId) {
+					foreach (CachedConferenceApi::getDays() as $day) {
+						if ($day->getId() === $dayId) {
+							$this->days[] = $day;
+						}
 					}
 				}
 			}
