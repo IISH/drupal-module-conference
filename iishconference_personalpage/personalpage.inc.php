@@ -126,10 +126,11 @@ function conference_personalpage_create_registration_info($userDetails, $partici
 			'value' => $participantDateDetails->getFeeState()
 		));
 
-		if (SettingsApi::getSetting(SettingsApi::SHOW_DAYS) == 1) {
+		$days = $userDetails->getDaysPresent();
+		if ((count($days) > 0) && (SettingsApi::getSetting(SettingsApi::SHOW_DAYS) == 1)) {
 			$registeredAndPayedContent[] = theme('iishconference_container_field', array(
 				'label'          => 'I will be present on the following days',
-				'value'          => theme_item_list(array('items' => $userDetails->getDaysPresent())),
+				'value'          => theme('item_list', array('items' => $days)),
 				'valueOnNewLine' => true,
 				'valueIsHTML'    => true,
 			));
