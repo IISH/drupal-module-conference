@@ -153,7 +153,7 @@ function preregister_confirm_form($form, &$form_state) {
 	// ENGLISH LANGUAGE COACH
 
 	$englishCoachingContent = array();
-	if ($showChairDiscussantPool) {
+	if ($showLanguageCoaching) {
 		$coachVolunteering =
 			ParticipantVolunteeringApi::getAllNetworksForVolunteering($allVolunteering, VolunteeringApi::COACH);
 		$pupilVolunteering =
