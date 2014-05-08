@@ -47,9 +47,11 @@ class SessionApi extends CRUDApiClient {
 	public static function getAllPlannedDaysForSessions($sessions) {
 		$daysPlanned = array();
 		foreach ($sessions as $session) {
-			$daysPlanned[] =
-				CRUDApiMisc::getFirstWherePropertyEquals(new SessionRoomDateTimeApi(), 'session_id', $session->getId())
-					->getDay();
+			$sessionRoomDateTime = CRUDApiMisc::getFirstWherePropertyEquals(new SessionRoomDateTimeApi(), 'session_id',
+				$session->getId());
+			if ($sessionRoomDateTime !== null) {
+				$daysPlanned[] = $sessionRoomDateTime->getDay();
+			}
 		}
 		sort($daysPlanned);
 
