@@ -136,10 +136,17 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 		'#title' => t('The roles of the participant in this session'),
 	);
 
+	$description = ParticipantTypeApi::getCombinationsNotAllowedText();
+	if (strlen(trim($description)) > 0) {
+		$description = '<br />' . ConferenceMisc::getCleanHTML($description);
+	}
+	else {
+		$description = '';
+	}
+
 	$form['participant_roles']['addparticipanttype'] = array(
 		'#type'          => 'checkboxes',
-		'#description'   =>
-			'<br />' . ConferenceMisc::getCleanHTML(ParticipantTypeApi::getCombinationsNotAllowedText()),
+		'#description'   => $description,
 		'#required'      => true,
 		'#options'       => $participantTypeOptions,
 		'#default_value' => $chosenTypeValues,
