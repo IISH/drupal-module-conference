@@ -96,19 +96,22 @@ function preregister_paper_form($form, &$form_state) {
 	// AUDIO VISUAL EQUIPMENT
 
 	$equipment = CachedConferenceApi::getEquipment();
-	$equipmentOptions = CRUDApiClient::getAsKeyValueArray($equipment);
 
 	$form['equipment'] = array(
 		'#type'  => 'fieldset',
 		'#title' => t('Audio/visual equipment'),
 	);
 
-	$form['equipment']['audiovisual'] = array(
-		'#type'          => 'checkboxes',
-		'#description'   => t('Select the equipment you will need for your presentation.'),
-		'#options'       => $equipmentOptions,
-		'#default_value' => $paper->getEquipmentIds(),
-	);
+	if (is_array($equipment) && (count($equipment) > 0)) {
+		$equipmentOptions = CRUDApiClient::getAsKeyValueArray($equipment);
+
+		$form['equipment']['audiovisual'] = array(
+			'#type'          => 'checkboxes',
+			'#description'   => t('Select the equipment you will need for your presentation.'),
+			'#options'       => $equipmentOptions,
+			'#default_value' => $paper->getEquipmentIds(),
+		);
+	}
 
 	$form['equipment']['extraaudiovisual'] = array(
 		'#type'          => 'textarea',
@@ -184,14 +187,17 @@ function preregister_paper_form_submit($form, &$form_state) {
 	$paper->setEquipmentComment($form_state['values']['extraaudiovisual']);
 
 	// Save equipment
-	$equipment = array();
-	foreach (CachedConferenceApi::getEquipment() as $equipmentInstance) {
-		$value = $form_state['values']['audiovisual'][$equipmentInstance->getId()];
-		if ($equipmentInstance->getId() == $value) {
-			$equipment[] = $equipmentInstance->getId();
+	$allEquipment = CachedConferenceApi::getEquipment();
+	if (is_array($allEquipment) && (count($allEquipment) > 0)) {
+		$equipment = array();
+		foreach ($allEquipment as $equipmentInstance) {
+			$value = $form_state['values']['audiovisual'][$equipmentInstance->getId()];
+			if ($equipmentInstance->getId() == $value) {
+				$equipment[] = $equipmentInstance->getId();
+			}
 		}
+		$paper->setEquipment($equipment);
 	}
-	$paper->setEquipment($equipment);
 
 	$paper->save();
 
