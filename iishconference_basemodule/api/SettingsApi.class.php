@@ -31,6 +31,7 @@ class SettingsApi {
 	const PREREGISTRATION_STARTS_ON = 'preregistration_starts_on';
 	const PREREGISTRATION_STARTS_ON_MESSAGE = 'preregistration_starts_on_message';
 	const SPECTATOR_NAME = 'spectator_name';
+	const DEFAULT_EQUIPMENT_TEXT = '';
 
 	// Show / hide
 	const SHOW_ACCOMPANYING_PERSONS = 'show_accompanying_persons';
