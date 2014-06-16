@@ -11,6 +11,7 @@ class SettingsApi {
 	const BANK_TRANSFER_CLOSES_ON = 'bank_transfer_closes_on';
 	const BANK_TRANSFER_INFO = 'bank_transfer_info';
 	const COUNTRY_ID = 'country_id';
+	const DEFAULT_EQUIPMENT_TEXT = 'default_equipment_text';
 	const DEFAULT_NETWORK_ID = 'default_network_id';
 	const DEFAULT_ORGANISATION_EMAIL = 'default_organisation_email';
 	const EMAIL_MAX_NUM_TRIES = 'email_max_num_tries';
@@ -31,7 +32,6 @@ class SettingsApi {
 	const PREREGISTRATION_STARTS_ON = 'preregistration_starts_on';
 	const PREREGISTRATION_STARTS_ON_MESSAGE = 'preregistration_starts_on_message';
 	const SPECTATOR_NAME = 'spectator_name';
-	const DEFAULT_EQUIPMENT_TEXT = '';
 
 	// Show / hide
 	const SHOW_ACCOMPANYING_PERSONS = 'show_accompanying_persons';
