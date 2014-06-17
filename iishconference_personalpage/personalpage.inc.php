@@ -184,11 +184,18 @@ function conference_personalpage_create_payment_status(array &$registeredAndPaye
 			$order = $orderDetails->send('orderDetails');
 
 			if (!empty($order)) {
-				if ($order->get('willpaybybank')) {
-					$paymentMethod = t('Payment: by bank transfer');
-				}
-				else {
-					$paymentMethod = t('Payment: online payment');
+				switch ($order->get('paymentmethod')) {
+					case 0:
+						$paymentMethod = t('Payment: online payment');
+						break;
+					case 1:
+						$paymentMethod = t('Payment: bank transfer');
+						break;
+					case 2:
+						$paymentMethod = t('Payment: cash');
+						break;
+					default:
+						$paymentMethod = t('Payment unknown');
 				}
 
 				switch ($order->get('payed')) {
@@ -411,8 +418,15 @@ function conference_personalpage_create_paper_info(array &$paperContent, $paper,
 		'value' => $paper->getEquipmentComment()
 	));
 
+	if ($paper->getFileName() == null) {
+		$paperLinkText = t('Upload paper');
+	}
+	else {
+		$paperLinkText = t('Uploaded paper:') . ' ' . $paper->getFileName();
+	}
+
 	$paperContent[] = '<br /><span class="heavy"> ' .
-		l(t('Upload paper'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page/upload-paper/' .
+		l($paperLinkText, SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page/upload-paper/' .
 			$paper->getId()) . '</span>';
 }
 
