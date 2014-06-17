@@ -24,7 +24,7 @@ function preregister_login_form($form, &$form_state) {
 	$form['login']['submit'] = array(
 		'#type'  => 'submit',
 		'#name'  => 'submit',
-		'#value' => t('Log in'),
+		'#value' => t('Next'),
 	);
 
 	$form['info_block'] = array(
