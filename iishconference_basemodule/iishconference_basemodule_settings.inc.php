@@ -21,14 +21,14 @@ function iishconference_basemodule_settings_form($form, &$form_state) {
 		'#type' => 'textfield',
 		'#title' => t('Client ID'),
 		'#default_value' => variable_get('conference_client_id'),
-		'#description' => t('Enter your client ID for communicating with the API.'),
+		'#description' => t('Enter your client ID for communicating with the API. See table oauth_client_details for details.'),
 	);
 
     $form['api_settings']['conference_client_secret'] = array(
         '#type' => 'textfield',
         '#title' => t('Client secret'),
         '#default_value' => variable_get('conference_client_secret'),
-        '#description' => t('Enter your client secret for communicating with the API.'),
+        '#description' => t('Enter your client secret for communicating with the API. See table oauth_client_details for details.'),
     );
 
     $form['api_settings']['conference_base_url'] = array(
