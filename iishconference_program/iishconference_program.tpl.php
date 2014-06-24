@@ -15,7 +15,7 @@
 <table class="program">
 	<tbody>
 	<tr>
-		<td class="program">
+		<td class="program noprint">
 			<?php foreach ($variables['days'] as $day) : ?>
 				<a href="?day=<?php print $day->getId(); ?>"><?php print $day->getDayFormatted('D j F'); ?></a>
 				<br/>
