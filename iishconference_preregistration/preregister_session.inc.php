@@ -133,6 +133,30 @@ function preregister_session_form($form, &$form_state) {
 }
 
 /**
+ * Implements hook_form_validate()
+ */
+function preregister_session_form_validate($form, &$form_state) {
+	$state = new PreRegistrationState($form_state);
+	$multiPageData = $state->getMultiPageData();
+	$session = $multiPageData['session'];
+
+	$props = new ApiCriteriaBuilder();
+	$props
+		->eq('name', trim($form_state['values']['sessionname']))
+		->eq('addedBy.id', LoggedInUserDetails::getId());
+
+	if ($session->isUpdate()) {
+		$props->ne('id', $session->getId());
+	}
+
+	// Don't allow multiple sessions with the same name
+	$sessions = SessionApi::getListWithCriteria($props->get());
+	if ($sessions->getTotalSize() > 0) {
+		form_set_error('sessionname', t('You already created a session with the same name.'));
+	}
+}
+
+/**
  * Implements hook_form_submit()
  */
 function preregister_session_form_submit($form, &$form_state) {
