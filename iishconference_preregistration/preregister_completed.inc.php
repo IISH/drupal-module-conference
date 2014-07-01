@@ -31,10 +31,9 @@ function preregister_completed() {
 		'</span>'
 	);
 
-	$isFinalRegistrationClosed =
-		strtotime(SettingsApi::getSetting(SettingsApi::FINAL_REGISTRATION_CLOSES_ON)) < strtotime('today');
-
-	if (module_exists('iishconference_finalregistration') && !$isFinalRegistrationClosed) {
+	$finalRegistrationLastDate = strtotime(SettingsApi::getSetting(SettingsApi::FINAL_REGISTRATION_LASTDATE));
+	$isFinalRegistrationOpen = ConferenceMisc::isOpenForLastDate($finalRegistrationLastDate);
+	if (module_exists('iishconference_finalregistration') && $isFinalRegistrationOpen) {
 		$fields[] = '<br /><br />';
 		$fields[] = '<span class="eca_remark heavy">' . t('You have just pre-registered. Please go now to !link.',
 				array('!link' => l(t('final registration and payment'),

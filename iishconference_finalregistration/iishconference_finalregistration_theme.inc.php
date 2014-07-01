@@ -43,6 +43,6 @@ function template_preprocess_iishconference_finalregistration_overview_page_form
 	$variables['invitation-letter'] = $participant->getInvitationLetter();
 	$variables['address'] = $user->getAddress();
 
-	$variables['bank_transfer_open'] =
-		(strtotime(SettingsApi::getSetting(SettingsApi::BANK_TRANSFER_CLOSES_ON)) >= strtotime('today'));
+	$bankTransferLastDate = strtotime(SettingsApi::getSetting(SettingsApi::BANK_TRANSFER_LASTDATE));
+	$variables['bank_transfer_open'] = ConferenceMisc::isOpenForLastDate($bankTransferLastDate);
 }

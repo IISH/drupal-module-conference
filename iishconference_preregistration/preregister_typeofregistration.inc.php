@@ -12,10 +12,10 @@ function preregister_typeofregistration_form($form, &$form_state) {
 	// AUTHOR
 
 	$showAuthor = SettingsApi::getSetting(SettingsApi::SHOW_AUTHOR_REGISTRATION);
-	$authorClosesOn = SettingsApi::getSetting(SettingsApi::AUTHOR_REGISTRATION_CLOSES_ON);
+	$authorClosesOn = SettingsApi::getSetting(SettingsApi::AUTHOR_REGISTRATION_LASTDATE);
 
 	$authorRegistrationClosed =
-		(($authorClosesOn !== null) && (strlen(trim($authorClosesOn)) > 0) && (time() >= strtotime($authorClosesOn)));
+		(($authorClosesOn !== null) && (strlen(trim($authorClosesOn)) > 0) && !ConferenceMisc::isOpenForLastDate(strtotime($authorClosesOn)));
 	$data['authorRegistrationOpen'] = (($showAuthor == 1) && !$authorRegistrationClosed);
 
 	if ($showAuthor == 1) {
@@ -77,10 +77,10 @@ function preregister_typeofregistration_form($form, &$form_state) {
 	// ORGANIZER
 
 	$showOrganizer = SettingsApi::getSetting(SettingsApi::SHOW_ORGANIZER_REGISTRATION);
-	$organizerClosesOn = SettingsApi::getSetting(SettingsApi::ORGANIZER_REGISTRATION_CLOSES_ON);
+	$organizerClosesOn = SettingsApi::getSetting(SettingsApi::ORGANIZER_REGISTRATION_LASTDATE);
 
 	$organizerRegistrationClosed = (($organizerClosesOn !== null) && (strlen(trim($organizerClosesOn)) > 0) &&
-		(time() >= strtotime($organizerClosesOn)));
+		!ConferenceMisc::isOpenForLastDate(strtotime($organizerClosesOn)));
 	$data['organizerRegistrationOpen'] = (($showOrganizer == 1) && !$organizerRegistrationClosed);
 
 	if ($showOrganizer == 1) {

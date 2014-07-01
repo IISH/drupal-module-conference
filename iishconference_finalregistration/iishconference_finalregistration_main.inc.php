@@ -35,7 +35,8 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 		return '';
 	}
 
-	if (strtotime(SettingsApi::getSetting(SettingsApi::FINAL_REGISTRATION_CLOSES_ON)) < strtotime('today')) {
+	$finalRegistrationLastDate = strtotime(SettingsApi::getSetting(SettingsApi::FINAL_REGISTRATION_LASTDATE));
+	if (!ConferenceMisc::isOpenForLastDate($finalRegistrationLastDate)) {
 		drupal_set_message(t('The final registration is closed.'), 'warning');
 
 		return '';
@@ -81,7 +82,7 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 
 				return '';
 			}
-			else if ($order->get('willpaybybank')) {
+			else if ($order->get('paymentmethod') == 1) {
 				$form['will-pay-by-bank'] = array(
 					'#type'   => 'markup',
 					'#markup' =>

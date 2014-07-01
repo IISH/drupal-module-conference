@@ -17,8 +17,8 @@ function preregister_form($form, &$form_state) {
 	$form['#attributes']['class'][] = 'iishconference_form';
 
 	// Load ECA settings
-	$closesOn = SettingsApi::getSetting(SettingsApi::PREREGISTRATION_CLOSES_ON);
-	$startsOn = SettingsApi::getSetting(SettingsApi::PREREGISTRATION_STARTS_ON);
+	$closesOn = SettingsApi::getSetting(SettingsApi::PREREGISTRATION_LASTDATE);
+	$startsOn = SettingsApi::getSetting(SettingsApi::PREREGISTRATION_STARTDATE);
 
 	// Check if user is already registered for the current conference, if so, show message no changes possible
 	if (LoggedInUserDetails::isLoggedIn() && LoggedInUserDetails::isAParticipant()) {
@@ -39,12 +39,12 @@ function preregister_form($form, &$form_state) {
 	}
 
 	// Check if preregistration is closed
-	if (($closesOn !== null) && (strlen(trim($closesOn)) > 0) && (time() >= strtotime($closesOn))) {
+	if (($closesOn !== null) && (strlen(trim($closesOn)) > 0) && (!ConferenceMisc::isOpenForLastDate(strtotime($closesOn)))) {
 		$form['ct1'] = array(
 			'#type'   => 'markup',
 			'#markup' =>
 				'<span class="eca_warning">' .
-				ConferenceMisc::getCleanHTML(SettingsApi::getSetting(SettingsApi::PREREGISTRATION_CLOSES_ON_MESSAGE)) .
+				ConferenceMisc::getCleanHTML(SettingsApi::getSetting(SettingsApi::PREREGISTRATION_LASTDATE_MESSAGE)) .
 				'</span>',
 		);
 
@@ -52,12 +52,12 @@ function preregister_form($form, &$form_state) {
 	}
 
 	// Check if preregistration has started
-	if (($startsOn !== null) && (strlen(trim($startsOn)) > 0) && (time() < strtotime($startsOn))) {
+	if (($startsOn !== null) && (strlen(trim($startsOn)) > 0) && (!ConferenceMisc::isOpenForStartDate(strtotime($startsOn)))) {
 		$form['ct1'] = array(
 			'#type'   => 'markup',
 			'#markup' =>
 				'<span class="eca_warning">' .
-				ConferenceMisc::getCleanHTML(SettingsApi::getSetting(SettingsApi::PREREGISTRATION_STARTS_ON_MESSAGE)) .
+				ConferenceMisc::getCleanHTML(SettingsApi::getSetting(SettingsApi::PREREGISTRATION_STARTDATE_MESSAGE)) .
 				'</span>',
 		);
 

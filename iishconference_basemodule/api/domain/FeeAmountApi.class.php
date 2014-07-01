@@ -34,7 +34,7 @@ class FeeAmountApi extends CRUDApiClient {
 		}
 
 		if ($date === null) {
-			$date = time();
+			$date = strtotime('today');
 		}
 
 		$props = new ApiCriteriaBuilder();

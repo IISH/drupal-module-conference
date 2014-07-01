@@ -263,4 +263,32 @@ document.write('<a hr'+'ef=\"'+'mai'+'lto:'+w+'@'+h1+'.'+h2+'\">'+w+'@'+h1+'.'+h
 
 		return (strlen($newText) < strlen($text)) ? $newText . ' ...' : $newText;
 	}
+
+	/**
+	 * Tests if a given 'last date' is still open (last day has not yet passed)
+	 *
+	 * @param int      $lastDate The 'last date' as a UNIX timestamp
+	 * @param null|int $today    Another UNIX timestamp if you want to change 'today'
+	 *
+	 * @return bool Whether according to the last date, it is still open
+	 */
+	public static function isOpenForLastDate($lastDate, $today = null) {
+		$today = ($today === null) ? strtotime('today') : $today;
+
+		return $today <= $lastDate;
+	}
+
+	/**
+	 * Tests if a given 'start date' is still open (start day has passed)
+	 *
+	 * @param int      $startDate The 'start date' as a UNIX timestamp
+	 * @param null|int $today     Another UNIX timestamp if you want to change 'today'
+	 *
+	 * @return bool Whether according to the start date, it is still open
+	 */
+	public static function isOpenForStartDate($startDate, $today = null) {
+		$today = ($today === null) ? strtotime('today') : $today;
+
+		return $today >= $startDate;
+	}
 } 
