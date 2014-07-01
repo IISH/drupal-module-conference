@@ -89,3 +89,13 @@ table.noborder {
 td.noborder {
 	border: 0;
 }
+
+td.program {
+	vertical-align: top;
+}
+
+@media print {
+	.noprint {
+		display: none !important;
+	}
+}
