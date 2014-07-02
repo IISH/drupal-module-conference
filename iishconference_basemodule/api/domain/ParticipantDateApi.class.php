@@ -312,9 +312,7 @@ class ParticipantDateApi extends CRUDApiClient {
 	 * @return FeeAmountApi The fee amount
 	 */
 	public function getFeeAmount($date = null, $feeState = null) {
-		if ($date === null) {
-			$date = time();
-		}
+		$date = ($date === null) ? strtotime('today') : $date;
 
 		$feeStateId = $this->getFeeStateId();
 		if ($feeState !== null) {
