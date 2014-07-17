@@ -34,6 +34,8 @@ class SettingsApi {
 	const SPECTATOR_NAME = 'spectator_name';
 
 	// Show / hide
+	const HIDE_ALWAYS_IN_ONLINE_PROGRAM = 'hide_always_in_online_program';
+	const HIDE_IF_EMPTY_IN_ONLINE_PROGRAM = 'hide_if_empty_in_online_program';
 	const SHOW_ACCOMPANYING_PERSONS = 'show_accompanying_persons';
 	const SHOW_AUTHOR_REGISTRATION = 'show_author_registration';
 	const SHOW_AWARD = 'show_award';
@@ -45,6 +47,7 @@ class SettingsApi {
 	const SHOW_NETWORK = 'show_network';
 	const SHOW_ORGANIZER_REGISTRATION = 'show_organizer_registration';
 	const SHOW_PROGRAMME_ONLINE = 'show_programme_online';
+	const SHOW_SESSION_CODES = 'show_session_codes';
 	const SHOW_STUDENT = 'show_student';
 
 	// Required fields
@@ -99,5 +102,16 @@ class SettingsApi {
 		else {
 			return null;
 		}
+	}
+
+	/**
+	 * Returns an array of values for the given value returned by 'getSetting'
+	 *
+	 * @param string|null $values The values returned by 'getSetting'
+	 *
+	 * @return array An array of values
+	 */
+	public static function getArrayOfValues($values) {
+		return (is_string($values)) ? explode(';', $values) : array();
 	}
 } 

@@ -83,8 +83,10 @@
 					<strong>
 						<a href="?room=<?php print $session['roomId']; ?>"><?php print $session['roomNumber']; ?></a>-<?php print $session['indexNumber']; ?>
 						-
-						<?php print $session['sessionCode']; ?>
-						: <?php print $variables['highlight']->highlight($session['sessionName']); ?>
+						<?php if (SettingsApi::getSetting(SettingsApi::SHOW_SESSION_CODES) == 1): ?>
+							<?php print $session['sessionCode']; ?> :
+						<?php endif; ?>
+						<?php print $variables['highlight']->highlight($session['sessionName']); ?>
 					</strong>
 
 					<br/>
@@ -96,32 +98,40 @@
 					<table class="program">
 						<tbody>
 						<tr>
-							<td width="50%" class="program">
-								<?php print (count($session['networks']) > 1) ?
-									NetworkApi::getNetworkName(false) . ':' :
-									NetworkApi::getNetworkName() . ':'; ?>
+							<?php $noPlaceForNetwork = 1; ?>
+							<?php if (SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1): ?>
+								<?php $noPlaceForNetwork = 0; ?>
+								<td width="50%" class="program">
+									<?php print (count($session['networks']) > 1) ?
+										NetworkApi::getNetworkName(false) . ':' :
+										NetworkApi::getNetworkName() . ':'; ?>
 
-								<?php foreach ($session['networks'] as $j => $network) : ?>
-									<a
-									href="?network=<?php print $network['networkId']; ?>"><?php print $network['networkName']; ?></a><?php if (count($session['networks']) !==
-										$j + 1
-									) : ?>, <?php endif; ?>
-								<?php endforeach; ?>
-							</td>
+									<?php foreach ($session['networks'] as $j => $network) : ?>
+										<a href="?network=<?php print $network['networkId']; ?>"><?php print $network['networkName']; ?></a>
+										<?php if (count($session['networks']) !==
+											$j + 1
+										) : ?>, <?php endif; ?>
+									<?php endforeach; ?>
+								</td>
+							<?php endif; ?>
 
 							<?php
-							$participantsWithPaper = array();
-							$participantsWithoutPaper = array();
-							foreach ($session['participants'] as $participant) {
-								if ($participant['typeId'] != ParticipantTypeApi::CO_AUTHOR_ID) {
-									if (array_key_exists('paperId', $participant)) {
-										$participantsWithPaper[] = $participant;
-									}
-									else {
-										$participantsWithoutPaper[] = $participant;
+								$alwaysHide = SettingsApi::getSetting(SettingsApi::HIDE_ALWAYS_IN_ONLINE_PROGRAM);
+								$typesToHide = SettingsApi::getArrayOfValues($alwaysHide);
+
+								$participantsWithPaper = array();
+								$participantsWithoutPaper = array();
+								foreach ($session['participants'] as $participant) {
+									if (    ($participant['typeId'] != ParticipantTypeApi::CO_AUTHOR_ID) &&
+											(array_search($participant['typeId'], $typesToHide) === false)) {
+										if (array_key_exists('paperId', $participant)) {
+											$participantsWithPaper[] = $participant;
+										}
+										else {
+											$participantsWithoutPaper[] = $participant;
+										}
 									}
 								}
-							}
 							?>
 
 							<?php foreach ($variables['types'] as $j => $type) :
@@ -134,11 +144,18 @@
 
 								print '<td class="program">';
 
-								if (count($participants) == 0) {
-									print $type . 's: -';
+								$hideIfEmpty = SettingsApi::getSetting(SettingsApi::HIDE_IF_EMPTY_IN_ONLINE_PROGRAM);
+								$typesToHide = SettingsApi::getArrayOfValues($hideIfEmpty);
+								if (count($participants) === 0) {
+									if (array_search($type->getId(), $typesToHide) === false) {
+										print $type . 's: -';
+									}
+									else {
+										print '&nbsp;';
+									}
 								}
 								else if (count($participants) == 1) {
-									print$type . ': ' .
+									print $type . ': ' .
 										$variables['highlight']->highlight($participants[0]['participantName']);
 								}
 								else {
@@ -151,7 +168,7 @@
 								}
 
 								print '</td>';
-								if (($j % 2) == 0) {
+								if (($j % 2) == $noPlaceForNetwork) {
 									print '</tr><tr>';
 								}
 							endforeach; ?>

@@ -34,9 +34,13 @@ function iishconference_program() {
 	$dateTimes = CachedConferenceApi::getSessionDateTimes();
 	$types = CachedConferenceApi::getParticipantTypes();
 
-	// Make sure we filter out co-authors and types with papers
+	// Make sure we filter out co-authors and types with papers and types configured to be hidden
+	$alwaysHide = SettingsApi::getSetting(SettingsApi::HIDE_ALWAYS_IN_ONLINE_PROGRAM);
+	$typesToHide = SettingsApi::getArrayOfValues($alwaysHide);
 	foreach ($types as $i => $type) {
-		if (($type->getId() == ParticipantTypeApi::CO_AUTHOR_ID) || $type->getWithPaper()) {
+		if (    ($type->getId() == ParticipantTypeApi::CO_AUTHOR_ID) ||
+				$type->getWithPaper() ||
+				(array_search($type->getId(), $typesToHide) !== false)) {
 			unset($types[$i]);
 		}
 	}
@@ -172,25 +176,29 @@ function iishconference_program_form($form, &$form_state, $networkId, $textsearc
 
 	// create a list of select options
 	// also add empty option
-	$networks = CachedConferenceApi::getNetworks();
-	$selectListOfNetworks = array();
-	$selectListOfNetworks[0] = '';
-	foreach ($networks as $network) {
-		$selectListOfNetworks[$network->getId()] = $network->getName();
+	$titleTextSearch = t('Search on name');
+	if (SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) {
+		$titleTextSearch = t('or search on name');
+
+		$networks = CachedConferenceApi::getNetworks();
+		$selectListOfNetworks = array();
+		$selectListOfNetworks[0] = '';
+		foreach ($networks as $network) {
+			$selectListOfNetworks[$network->getId()] = $network->getName();
+		}
+
+		$form['network'] = array(
+			'#type' => 'select',
+			'#title' => t('Browse @networks: ', array('@networks' => NetworkApi::getNetworkName(false, true))),
+			'#size' => 1,
+			'#default_value' => is_null($networkId) ? 0 : $networkId,
+			'#options' => $selectListOfNetworks,
+		);
 	}
-
-	$form['network'] = array(
-		'#type'          => 'select',
-		'#title'         => t('Browse @networks: ', array('@networks' => NetworkApi::getNetworkName(false, true))),
-		'#size'          => 1,
-		'#default_value' => is_null($networkId) ? 0 : $networkId,
-		'#options'       => $selectListOfNetworks,
-
-	);
 
 	$form['textsearch'] = array(
 		'#type'          => 'textfield',
-		'#title'         => t('or search on name'),
+		'#title'         => $titleTextSearch,
 		'#size'          => 20,
 		'#maxlength'     => 50,
 		'#default_value' => is_null($textsearch) ? '' : $textsearch,
