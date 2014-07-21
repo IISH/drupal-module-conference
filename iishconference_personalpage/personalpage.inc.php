@@ -148,9 +148,9 @@ function conference_personalpage_create_registration_info($userDetails, $partici
 		if (SettingsApi::getSetting(SettingsApi::SHOW_ACCOMPANYING_PERSONS) == 1) {
 			$accompanyingPersons = $participantDateDetails->getAccompanyingPersons();
 			$registeredAndPayedContent[] = theme('iishconference_container_field', array(
-				'label' => 'My accompanying persons',
+				'label' => 'Accompanying person(s)',
 				'value' => (count($accompanyingPersons) > 0) ? ConferenceMisc::getEnumSingleLine($accompanyingPersons) :
-						t('No accompanying persons')
+						t('No accompanying person')
 			));
 		}
 	}
