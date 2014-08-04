@@ -8,6 +8,7 @@ class LoggedInUserDetails {
 	const USER_STATUS_EXISTS = 1;
 	const USER_STATUS_DISABLED = 2;
 	const USER_STATUS_DELETED = 3;
+	const USER_STATUS_EMAIL_DISCONTINUED = 4;
 
 	/**
 	 * Is the user currently logged in?
