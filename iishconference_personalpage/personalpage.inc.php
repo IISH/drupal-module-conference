@@ -638,9 +638,13 @@ function conference_personalpage_create_links($participantDateDetails) {
 			LoggedInUserDetails::isChair() ||
 			LoggedInUserDetails::isOrganiser())
 	) {
+		$programHeader = SettingsApi::getSetting(SettingsApi::ONLINE_PROGRAM_HEADER);
+		if (($programHeader === null) || (strlen(trim($programHeader)) === 0)) {
+			$programHeader = t('Preliminary Program');
+		}
+
 		$linksContent[] =
-			'&bull; ' . l(SettingsApi::getSetting(SettingsApi::ONLINE_PROGRAM_HEADER),
-				SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'program') . '<br />';
+			'&bull; ' . l($programHeader, SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'program') . '<br />';
 	}
 
 	return theme('iishconference_container', array('fields' => $linksContent));
