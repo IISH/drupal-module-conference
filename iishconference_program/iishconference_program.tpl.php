@@ -7,9 +7,16 @@
 </div>
 
 <?php if (!isset($_GET['paper'])) : ?>
-	<div class="program_day">
+	<div class="program_day showing">
 		<?php print $variables['curShowing']; ?>
 	</div>
+
+	<div class="download-icon-info">
+		<span class="download-icon"></span>
+		<?php print t('Click on this icon to download the paper, if the paper was uploaded by the author.'); ?>
+	</div>
+
+	<div class="clear"></div>
 <?php endif; ?>
 
 <table class="program">
@@ -189,21 +196,29 @@
 							<a href="?day=<?php print $session['dayId']; ?>&amp;time=<?php print $session['timeId']; ?>&amp;paper=<?php print $participant['paperId'] ?>&amp;textsearch=<?php print $variables['textsearch'] ?>">
 								<?php print $variables['highlight']->highlight($participant['paperName']); ?>
 							</a>
-						<?php
-						elseif (is_int($variables['roomId'])) : ?>
+						<?php elseif (is_int($variables['roomId'])) : ?>
 							<a href="?day=<?php print $session['dayId']; ?>&amp;time=<?php print $session['timeId']; ?>&amp;paper=<?php print $participant['paperId'] ?>&amp;room=<?php print $variables['roomId'] ?>">
 								<?php print $variables['highlight']->highlight($participant['paperName']); ?>
 							</a>
-						<?php
-						else : ?>
+						<?php else : ?>
 							<a href="?day=<?php print $session['dayId']; ?>&amp;time=<?php print $session['timeId']; ?>&amp;paper=<?php print $participant['paperId'] ?>">
 								<?php print $variables['highlight']->highlight($participant['paperName']); ?>
 							</a>
 						<?php endif; ?>
-						<br/>
+
+						<?php if ($participant['hasDownload']) : ?>
+							&nbsp;
+							<a href="<?php print $variables['paperDownloadLinkStart'] . $participant['paperId']; ?>"
+								alt="<?php print t('Download paper'); ?>"
+								title="<?php print t('Download paper'); ?>">
+									<span class="download-icon"></span>
+							</a>
+						<?php endif; ?>
+
+						<br />
 					<?php endforeach; ?>
 
-					<br/><br/>
+					<br /><br />
 
 					<?php if ((($i + 1) < count($variables['program'])) &&
 						($session['timeId'] != $variables['program'][$i + 1]['timeId'])

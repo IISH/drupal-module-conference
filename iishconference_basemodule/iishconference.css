@@ -77,6 +77,10 @@
     font-weight: bold;
 }
 
+.clear {
+    clear: both;
+}
+
 textarea.readonly-text, select.readonly-text, input.readonly-text {
     border: 0;
     background-color: transparent;
@@ -88,10 +92,6 @@ table.noborder {
 
 td.noborder {
 	border: 0;
-}
-
-td.program {
-	vertical-align: top;
 }
 
 @media print {
