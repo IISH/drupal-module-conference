@@ -29,9 +29,8 @@
 
 				<input type="hidden" id="paper-id" name="paper-id"
 				       value="<?php print $variables['paper']->getId(); ?>"/>
-				<input type="hidden" id="back-url" name="back-url" value="<?php print$url =
-					(!empty($_SERVER['HTTPS'])) ? "https://" . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] :
-						"http://" . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']; ?>"/>
+				<input type="hidden" id="back-url" name="back-url"
+				       value="<?php print $_SERVER['REQUEST_URI']; ?>" />
 
 				<input type="submit" id="upload-paper" name="upload-paper"
 				       value="<?php print t('Upload new/replace paper'); ?>" class="form-submit"/>
