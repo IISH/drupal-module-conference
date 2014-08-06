@@ -50,3 +50,5 @@ files[] = api/domain/UserApi.class.php
 files[] = api/domain/VolunteeringApi.class.php
 
 stylesheets[all][] = iishconference.css
+
+scripts[] = iishconference.js

@@ -163,7 +163,8 @@ function iishconference_proposednetworkparticipants_detail($network) {
 		));
 		$result .= theme('iishconference_container_field', array(
 			'label'          => t('Paper abstract'),
-			'value'          => ConferenceMisc::getFirstPartOfText($paper->getAbstr()),
+			'value'          => ConferenceMisc::getHTMLForLongText($paper->getAbstr()),
+			'valueIsHTML'    => true,
 			'valueOnNewLine' => true,
 		));
 

@@ -251,17 +251,28 @@ document.write('<a hr'+'ef=\"'+'mai'+'lto:'+w+'@'+h1+'.'+h2+'\">'+w+'@'+h1+'.'+h
 
 	/**
 	 * Only returns the first part of a long piece of text, with (...) indicating that the original is longer.
-	 * If nothing was cut, the (...) will not appear
+	 * Users can toggle between showing all text or the short version.
+	 * If nothing was cut, the (...) will not appear.
 	 *
-	 * @param string $text          The text to cut
+	 * @param string $text          The text to cut (No HTML!)
 	 * @param int    $numberOfWords The number of allowed words from the start
 	 *
-	 * @return string The first part of the text
+	 * @return string The HTML that can be used
 	 */
-	public static function getFirstPartOfText($text, $numberOfWords = 50) {
+	public static function getHTMLForLongText($text, $numberOfWords = 50) {
 		$newText = implode(' ', array_slice(explode(' ', $text), 0, $numberOfWords));
 
-		return (strlen($newText) < strlen($text)) ? $newText . ' ...' : $newText;
+		if (strlen($newText) < strlen($text)) {
+			return '<div class="less-text">' .
+				self::getCleanHTML($newText) .
+				' ... <a href="" class="more">(Show more)</a></div>' .
+				'<div class="more-text">' .
+				self::getCleanHTML($text) .
+				' <a href="" class="less">(Show less)</a></div>';
+		}
+		else {
+			return self::getCleanHTML($newText);
+		}
 	}
 
 	/**

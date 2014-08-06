@@ -81,6 +81,14 @@
     clear: both;
 }
 
+.more-text {
+    display: none;
+}
+
+.less, .more {
+    font-style: italic;
+}
+
 textarea.readonly-text, select.readonly-text, input.readonly-text {
     border: 0;
     background-color: transparent;

@@ -91,7 +91,8 @@ function conference_personalpage_create_personal_info($userDetails, $participant
 	if (SettingsApi::getSetting(SettingsApi::SHOW_CV) == 1) {
 		$personalInfoContent[] = theme('iishconference_container_field', array(
 			'label'          => 'Curriculum Vitae',
-			'value'          => $userDetails->getCv(),
+			'value'          => ConferenceMisc::getHTMLForLongText($userDetails->getCv()),
+			'valueIsHTML'    => true,
 			'valueOnNewLine' => true
 		));
 	}
@@ -354,7 +355,8 @@ function conference_personalpage_create_session_info($userDetails, $participantD
 	));
 	$sessionContent[] = theme('iishconference_container_field', array(
 		'label'          => 'Session abstract',
-		'value'          => $session->getAbstr(),
+		'value'          => ConferenceMisc::getHTMLForLongText($session->getAbstr()),
+		'valueIsHTML'    => true,
 		'valueOnNewLine' => true
 	));
 
@@ -391,7 +393,8 @@ function conference_personalpage_create_paper_info(array &$paperContent, $paper,
 	));
 	$paperContent[] = theme('iishconference_container_field', array(
 		'label'          => 'Abstract',
-		'value'          => $paper->getAbstr(),
+		'value'          => ConferenceMisc::getHTMLForLongText($paper->getAbstr()),
+		'valueIsHTML'    => true,
 		'valueOnNewLine' => true
 	));
 	$paperContent[] = theme('iishconference_container_field', array(
