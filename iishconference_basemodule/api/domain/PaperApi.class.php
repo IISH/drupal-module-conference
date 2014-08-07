@@ -475,6 +475,16 @@ class PaperApi extends CRUDApiClient {
 		$this->toSave['title'] = $title;
 	}
 
+	/**
+	 * The URL that allows the uploader paper to be downloaded
+	 *
+	 * @return string The URL to fetch the uploaded paper
+	 */
+	public function getDownloadURL() {
+		return variable_get('conference_base_url') . variable_get('conference_event_code') . '/' .
+			variable_get('conference_date_code') . '/' . 'userApi/downloadPaper/' . $this->getId();
+	}
+
 	public function __toString() {
 		return $this->getTitle();
 	}

@@ -46,9 +46,6 @@ function conference_upload_paper($paper) {
 		$url = variable_get('conference_base_url') . variable_get('conference_event_code') . '/' .
 			variable_get('conference_date_code') . '/' . 'userApi/uploadPaper?access_token=' . $token;
 
-		$paperDownloadLink = variable_get('conference_base_url') . variable_get('conference_event_code') . '/' .
-			variable_get('conference_date_code') . '/' . 'userApi/downloadPaper/' . $paper->getId();
-
 		$allowedExtensions = SettingsApi::getSetting(SettingsApi::ALLOWED_PAPER_EXTENSIONS);
 		$maxSize = SettingsApi::getSetting(SettingsApi::MAX_UPLOAD_SIZE_PAPER);
 		$form = drupal_get_form('conference_upload_paper_form', $paper);
@@ -85,7 +82,7 @@ function conference_upload_paper($paper) {
 		return theme('conference_upload_paper', array(
 			'paper'             => $paper,
 			'actionUrl'         => $url,
-			'paperDownloadLink' => $paperDownloadLink,
+			'paperDownloadLink' => $paper->getDownloadURL(),
 			'maxSize'           => ConferenceMisc::getReadableFileSize($maxSize),
 			'extensions'        => $allowedExtensions,
 			'form'              => $form,

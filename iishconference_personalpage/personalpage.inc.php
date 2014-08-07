@@ -421,16 +421,21 @@ function conference_personalpage_create_paper_info(array &$paperContent, $paper,
 		'value' => $paper->getEquipmentComment()
 	));
 
+	$paperContent[] = '<br />';
+
+	$uploadPaperUrl = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) .
+		'personal-page/upload-paper/' . $paper->getId();
 	if ($paper->getFileName() == null) {
-		$paperLinkText = t('Upload paper');
+		$paperContent[] = '<span class="heavy"> ' . l(t('Upload paper'), $uploadPaperUrl) . '</span>';
 	}
 	else {
-		$paperLinkText = t('Uploaded paper:') . ' ' . $paper->getFileName();
+		$paperContent[] = theme('iishconference_container_field', array(
+			'label'       => 'Uploaded paper',
+			'value'       => l($paper->getFileName(), $paper->getDownloadURL()) .
+								'&nbsp; <em>(' . l(t('Edit uploaded paper'), $uploadPaperUrl) . ')</em>',
+			'valueIsHTML' => true
+		));
 	}
-
-	$paperContent[] = '<br /><span class="heavy"> ' .
-		l($paperLinkText, SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page/upload-paper/' .
-			$paper->getId()) . '</span>';
 }
 
 /**
