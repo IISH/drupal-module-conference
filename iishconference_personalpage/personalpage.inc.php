@@ -681,7 +681,7 @@ function conference_personalpage_create_links_network($participantDateDetails) {
 		if (module_exists('iishconference_networkparticipants')) {
 			$linksNetworkContent[] = '&bull; ' .
 				l(t('@networks and their Participants', array('@networks' => NetworkApi::getNetworkName(false))),
-					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(true, true) .
+					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(false, true) .
 					'participants') . '<br />';
 		}
 		if (module_exists('iishconference_networkvolunteers')) {
