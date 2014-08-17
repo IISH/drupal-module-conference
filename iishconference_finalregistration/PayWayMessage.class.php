@@ -4,6 +4,15 @@
  * Represents messages from and to PayWay
  */
 class PayWayMessage {
+	const ORDER_NOT_PAYED = 0;
+	const ORDER_PAYED = 1;
+	const ORDER_REFUND_OGONE = 2;
+	const ORDER_REFUND_BANK = 3;
+
+	const ORDER_OGONE_PAYMENT = 0;
+	const ORDER_BANK_PAYMENT = 1;
+	const ORDER_CASH_PAYMENT = 2;
+
 	private $message;
 
 	/**

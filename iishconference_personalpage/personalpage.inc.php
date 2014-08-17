@@ -186,13 +186,13 @@ function conference_personalpage_create_payment_status(array &$registeredAndPaye
 
 			if (!empty($order)) {
 				switch ($order->get('paymentmethod')) {
-					case 0:
+					case PayWayMessage::ORDER_OGONE_PAYMENT:
 						$paymentMethod = t('Payment: online payment');
 						break;
-					case 1:
+					case PayWayMessage::ORDER_BANK_PAYMENT:
 						$paymentMethod = t('Payment: bank transfer');
 						break;
-					case 2:
+					case PayWayMessage::ORDER_CASH_PAYMENT:
 						$paymentMethod = t('Payment: cash');
 						break;
 					default:
@@ -200,14 +200,14 @@ function conference_personalpage_create_payment_status(array &$registeredAndPaye
 				}
 
 				switch ($order->get('payed')) {
-					case 0:
+					case PayWayMessage::ORDER_NOT_PAYED:
 						$paymentStatus = t('(not yet confirmed)');
 						break;
-					case 1:
+					case PayWayMessage::ORDER_PAYED:
 						$paymentStatus = t('(confirmed)');
 						break;
-					case 2:
-					case 3:
+					case PayWayMessage::ORDER_REFUND_OGONE:
+					case PayWayMessage::ORDER_REFUND_BANK:
 						$paymentStatus = t('(refunded)');
 						break;
 					default:

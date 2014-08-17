@@ -66,7 +66,7 @@ function finalregistration_overview_submit($form, &$form_state) {
 		'ownercty'      => ($user->getCountry() !== null) ? $user->getCountry()->getISOCode() : null,
 		'ownertelno'    => $user->getPhone(),
 		'com'           => CachedConferenceApi::getEventDate() . ' ' . t('payment'),
-		'willpaybybank' => !$isPayWayTransaction,
+		'paymentmethod' => ($isPayWayTransaction) ? PayWayMessage::ORDER_OGONE_PAYMENT : PayWayMessage::ORDER_BANK_PAYMENT,
 		'userid'        => LoggedInUserDetails::getId(),
 	));
 	$order = $createOrder->send('createOrder');
