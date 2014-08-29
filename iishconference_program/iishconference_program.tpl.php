@@ -13,7 +13,7 @@
 
 	<div class="download-icon-info">
 		<span class="download-icon"></span>
-		<?php print t('Click on this icon to download the paper, if the paper was uploaded by the author.'); ?>
+		<?php print t('Click on this icon to download the paper.'); ?>
 	</div>
 
 	<div class="clear"></div>
