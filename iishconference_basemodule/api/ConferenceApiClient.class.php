@@ -119,6 +119,7 @@ class ConferenceApiClient {
 					$this->requestCache->set($apiName, $parameters, $http_method, $result);
 				}
 				else {
+					// test env crashes here
 					throw new Exception('Failed to communicate with the conference API: returned ' . $response['code']);
 				}
 			}
