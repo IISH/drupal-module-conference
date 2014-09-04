@@ -329,6 +329,9 @@ function preregister_confirm_form($form, &$form_state) {
 
 	// + + + + + + + + + + + + + + + + + + + + + + + +
 
+	drupal_set_message(t('Please check your data, scroll down, and confirm and finish your pre-registration.'),
+		'warning');
+
 	$confirm = theme('iishconference_container', array('fields' => $personalInfoContent));
 	$confirm .= theme('iishconference_container', array('fields' => $addressContent));
 	$confirm .= theme('iishconference_container', array('fields' => $communicationContent));
