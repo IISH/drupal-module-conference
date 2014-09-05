@@ -87,13 +87,14 @@ class SettingsApi {
 	 * Recommended use for obtaining the value for a certain setting.
 	 * The settings array is obtained from the cache and the value for the given property is returned (if it exists)
 	 *
-	 * @param string $property The name of the property
+	 * @param string $property          The name of the property
+	 * @param bool   $printErrorMessage Whether an error message should be printed on failure
 	 *
 	 * @return mixed The value set for this property for this event, or null if not found
 	 */
-	public static function getSetting($property) {
+	public static function getSetting($property, $printErrorMessage = true) {
 		if (!is_array(self::$cachedSettings)) {
-			self::$cachedSettings = CachedConferenceApi::getSettings();
+			self::$cachedSettings = CachedConferenceApi::getSettings($printErrorMessage);
 		}
 
 		if (is_array(self::$cachedSettings) && isset(self::$cachedSettings[$property])) {
