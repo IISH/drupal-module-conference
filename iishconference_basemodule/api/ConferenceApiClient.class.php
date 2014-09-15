@@ -128,7 +128,7 @@ class ConferenceApiClient {
 				if ($printErrorMessage) {
 					drupal_set_message(t('There are currently problems obtaining the necessary data. ' .
 						'Please try again later. We are sorry for the inconvenience.'), 'error');
-					drupal_deliver_page('');
+					drupal_deliver_html_page('');
 					drupal_exit();
 				}
 				else {

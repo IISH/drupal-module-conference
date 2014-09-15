@@ -38,15 +38,17 @@ class LoggedInUserDetails {
 	/**
 	 * Returns the user details of the currently logged in user, if logged in
 	 *
+	 * @param bool $printErrorMessage Whether an error message should be printed on failure
+	 *
 	 * @return UserApi|null The user details
 	 */
-	public static function getUser() {
+	public static function getUser($printErrorMessage = true) {
 		$user = null;
 		if (isset($_SESSION['conference']['user'])) {
 			$user = unserialize($_SESSION['conference']['user']);
 		}
 		else if (is_int(LoggedInUserDetails::getId())) {
-			$user = CRUDApiMisc::getById(new UserApi(), LoggedInUserDetails::getId());
+			$user = CRUDApiMisc::getById(new UserApi(), LoggedInUserDetails::getId(), $printErrorMessage);
 			$_SESSION['conference']['user'] = serialize($user);
 		}
 
