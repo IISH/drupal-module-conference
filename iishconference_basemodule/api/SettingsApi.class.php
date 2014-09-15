@@ -32,6 +32,7 @@ class SettingsApi {
 	const PREREGISTRATION_STARTDATE = 'preregistration_startdate';
 	const PREREGISTRATION_STARTDATE_MESSAGE = 'preregistration_startdate_message';
 	const SPECTATOR_NAME = 'spectator_name';
+	const DOWNLOAD_PAPER_LASTDATE = 'download_paper_lastdate';
 
 	// Show / hide
 	const HIDE_ALWAYS_IN_ONLINE_PROGRAM = 'hide_always_in_online_program';

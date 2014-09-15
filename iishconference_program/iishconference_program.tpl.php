@@ -11,10 +11,13 @@
 		<?php print $variables['curShowing']; ?>
 	</div>
 
-	<div class="download-icon-info">
-		<span class="download-icon"></span>
-		<?php print t('Click on this icon to download the paper.'); ?>
-	</div>
+	<?php // TODO GCU moet op een andere manier ?>
+	<?php if (SettingsApi::getSetting(SettingsApi::DOWNLOAD_PAPER_LASTDATE) == '' || SettingsApi::getSetting(SettingsApi::DOWNLOAD_PAPER_LASTDATE) >= date("Y-m-d")) : ?>
+		<div class="download-icon-info">
+			<span class="download-icon"></span>
+			<?php print t('Click on the icon to download the paper'); ?>
+		</div>
+	<?php endif; ?>
 
 	<div class="clear"></div>
 <?php endif; ?>
@@ -67,13 +70,16 @@
 				<?php print nl2br(check_plain($variables['paper']->getAbstr())); ?>
 				<br/>
 
-				<?php if (!is_null($variables['paper']->getFileSize()) && ($variables['paper']->getFileSize() > 0)) : ?>
-					<strong><?php print t('Download paper'); ?>:</strong>
-					<a href="<?php print $variables['paperDownloadLinkStart'] . $variables['paper']->getId(); ?>">
-						<?php print $variables['paper']->getFileName(); ?>
-					</a>
-					(<?php print ConferenceMisc::getReadableFileSize($variables['paper']->getFileSize()); ?>)
-					<br/>
+				<?php // TODO GCU moet op een andere manier ?>
+				<?php if (SettingsApi::getSetting(SettingsApi::DOWNLOAD_PAPER_LASTDATE) == '' || SettingsApi::getSetting(SettingsApi::DOWNLOAD_PAPER_LASTDATE) >= date("Y-m-d")) : ?>
+					<?php if (!is_null($variables['paper']->getFileSize()) && ($variables['paper']->getFileSize() > 0)) : ?>
+						<strong><?php print t('Download paper'); ?>:</strong>
+						<a href="<?php print $variables['paperDownloadLinkStart'] . $variables['paper']->getId(); ?>">
+							<?php print $variables['paper']->getFileName(); ?>
+						</a>
+						(<?php print ConferenceMisc::getReadableFileSize($variables['paper']->getFileSize()); ?>)
+						<br/>
+					<?php endif; ?>
 				<?php endif; ?>
 			<?php elseif (count($variables['program']) == 0) : ?>
 				<span class="eca_warning"><?php print t('Nothing found. Please modify your search criteria.'); ?></span>
@@ -206,13 +212,16 @@
 							</a>
 						<?php endif; ?>
 
-						<?php if ($participant['hasDownload']) : ?>
-							&nbsp;
-							<a href="<?php print $variables['paperDownloadLinkStart'] . $participant['paperId']; ?>"
-								alt="<?php print t('Download paper'); ?>"
-								title="<?php print t('Download paper'); ?>">
-									<span class="download-icon"></span>
-							</a>
+						<?php // TODO GCU moet op een andere manier ?>
+						<?php if (SettingsApi::getSetting(SettingsApi::DOWNLOAD_PAPER_LASTDATE) == '' || SettingsApi::getSetting(SettingsApi::DOWNLOAD_PAPER_LASTDATE) >= date("Y-m-d")) : ?>
+							<?php if ($participant['hasDownload']) : ?>
+								&nbsp;
+								<a href="<?php print $variables['paperDownloadLinkStart'] . $participant['paperId']; ?>"
+									alt="<?php print t('Download paper'); ?>"
+									title="<?php print t('Download paper'); ?>">
+										<span class="download-icon"></span>
+								</a>
+							<?php endif; ?>
 						<?php endif; ?>
 
 						<br />
