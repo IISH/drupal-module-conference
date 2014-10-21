@@ -71,7 +71,7 @@ class ParticipantDateApi extends CRUDApiClient {
 	 * @return int[] The ids of all extras chosen by this participant
 	 */
 	public function getExtrasId() {
-		return $this->extras_id;
+		return is_array($this->extras_id) ? $this->extras_id : array();
 	}
 
 	/**
@@ -291,7 +291,7 @@ class ParticipantDateApi extends CRUDApiClient {
 	public function getTotalAmount() {
 		$totalAmount = $this->getFeeAmount()->getFeeAmount();
 
-		foreach ($this->getExtras() as $extra) {
+		foreach ($this->getExtrasOfFinalRegistration() as $extra) {
 			$totalAmount += $extra->getAmount();
 		}
 
@@ -375,6 +375,24 @@ class ParticipantDateApi extends CRUDApiClient {
 		}
 
 		return $this->extras;
+	}
+
+	/**
+	 * Returns all extras chosen by this participant during pre-registration
+	 *
+	 * @return ExtraApi[] All extras chosen by this participant during pre-registration
+	 */
+	public function getExtrasOfPreRegistration() {
+		return ExtraApi::getOnlyPreRegistration($this->getExtras());
+	}
+
+	/**
+	 * Returns all extras chosen by this participant during final registration
+	 *
+	 * @return ExtraApi[] All extras chosen by this participant during final registration
+	 */
+	public function getExtrasOfFinalRegistration() {
+		return ExtraApi::getOnlyFinalRegistration($this->getExtras());
 	}
 
 	/**

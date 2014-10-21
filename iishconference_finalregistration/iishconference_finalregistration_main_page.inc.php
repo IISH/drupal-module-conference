@@ -63,7 +63,7 @@ function finalregistration_main_form($form, &$form_state) {
 	}
 
 	// Any extras from which the participant can choose?
-	$extras = CachedConferenceApi::getExtras();
+	$extras = ExtraApi::getOnlyFinalRegistration(CachedConferenceApi::getExtras());
 	foreach ($extras as $extra) {
 		$description = $extra->getSecondDescription();
 		if ($extra->getAmount() > 0) {
@@ -222,7 +222,7 @@ function finalregistration_main_submit($form, &$form_state) {
 
 	// Save extras
 	$extras = array();
-	foreach (CachedConferenceApi::getExtras() as $extra) {
+	foreach (ExtraApi::getOnlyFinalRegistration(CachedConferenceApi::getExtras()) as $extra) {
 		$value = $form_state['values']['extras_' . $extra->getId()][$extra->getId()];
 		if ($extra->getId() == $value) {
 			$extras[] = $extra->getId();

@@ -9,6 +9,8 @@ class ExtraApi extends CRUDApiClient {
 	protected $description;
 	protected $secondDescription;
 	protected $amount;
+	protected $isFinalRegistration;
+	protected $sortOrder;
 
 	public static function getListWithCriteria(array $properties, $printErrorMessage = true) {
 		return parent::getListWithCriteriaForClass(__CLASS__, $properties, $printErrorMessage);
@@ -66,6 +68,60 @@ class ExtraApi extends CRUDApiClient {
 	 */
 	public function getTitle() {
 		return $this->title;
+	}
+
+	/**
+	 * Whether this extra is shown to the user during final registration rather than pre-registration
+	 *
+	 * @return bool Whether this extra is shown to the user during final registration
+	 */
+	public function isFinalRegistration() {
+		return $this->isFinalRegistration;
+	}
+
+	/**
+	 * The sort order
+	 *
+	 * @return int The sort order
+	 */
+	public function getSortOrder() {
+		return $this->sortOrder;
+	}
+
+	/**
+	 * Returns only the extras for the pre-registration
+	 *
+	 * @param ExtraApi[] $allExtras All of the extras
+	 *
+	 * @return ExtraApi[] Only the extras for the pre-registration
+	 */
+	public static function getOnlyPreRegistration(array $allExtras = array()) {
+		$extras = array();
+		foreach ($allExtras as $extra) {
+			if (!$extra->isFinalRegistration()) {
+				$extras[] = $extra;
+			}
+		}
+
+		return $extras;
+	}
+
+	/**
+	 * Returns only the extras for the final registration
+	 *
+	 * @param ExtraApi[] $allExtras All of the extras
+	 *
+	 * @return ExtraApi[] Only the extras for the final registration
+	 */
+	public static function getOnlyFinalRegistration(array $allExtras = array()) {
+		$extras = array();
+		foreach ($allExtras as $extra) {
+			if ($extra->isFinalRegistration()) {
+				$extras[] = $extra;
+			}
+		}
+
+		return $extras;
 	}
 
 	/**

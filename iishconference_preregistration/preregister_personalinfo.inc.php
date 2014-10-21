@@ -159,6 +159,27 @@ function preregister_personalinfo_form($form, &$form_state) {
 	);
 
 	// + + + + + + + + + + + + + + + + + + + + + + + +
+	// EXTRA'S
+
+	$extras = ExtraApi::getOnlyPreRegistration(CachedConferenceApi::getExtras());
+	if (count($extras) > 0) {
+		$form['extras'] = array(
+			'#type'  => 'fieldset',
+			'#title' => '',
+		);
+
+		foreach ($extras as $extra) {
+			$form['extras']['extras_' . $extra->getId()] = array(
+				'#title'         => $extra->getTitle(),
+				'#type'          => 'checkboxes',
+				'#description'   => $extra->getSecondDescription(),
+				'#options'       => array($extra->getId() => $extra->getDescription()),
+				'#default_value' => $participant->getExtrasId(),
+			);
+		}
+	}
+
+	// + + + + + + + + + + + + + + + + + + + + + + + +
 	// CHAIR / DISCUSSANT POOL
 
 	if ($showChairDiscussantPool) {
@@ -369,6 +390,16 @@ function preregister_personalinfo_form_submit($form, &$form_state) {
 		$participant->setStudent($form_state['values']['student']);
 	}
 	$participant->setUser($user);
+
+	// Don't forget the extras for this participant
+	$extras = array();
+	foreach (ExtraApi::getOnlyPreRegistration(CachedConferenceApi::getExtras()) as $extra) {
+		$value = $form_state['values']['extras_' . $extra->getId()][$extra->getId()];
+		if ($extra->getId() == $value) {
+			$extras[] = $extra->getId();
+		}
+	}
+	$participant->setExtras($extras);
 
 	$participant->save();
 

@@ -28,7 +28,7 @@ function template_preprocess_iishconference_finalregistration_overview_page_form
 	$participant = LoggedInUserDetails::getParticipant();
 
 	$variables['fee-amount-description'] = $participant->getFeeAmount()->getDescriptionWithoutDays();
-	$variables['extras'] = $participant->getExtras();
+	$variables['extras'] = $participant->getExtrasOfFinalRegistration();
 	$variables['total-amount'] = $participant->getTotalAmount();
 
 	if (SettingsApi::getSetting(SettingsApi::SHOW_ACCOMPANYING_PERSONS)) {

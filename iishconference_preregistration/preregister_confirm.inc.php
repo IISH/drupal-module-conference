@@ -112,6 +112,23 @@ function preregister_confirm_form($form, &$form_state) {
 	));
 
 	// + + + + + + + + + + + + + + + + + + + + + + + +
+	// EXTRA'S
+
+	$extrasContent = array();
+	$extras = ExtraApi::getOnlyPreRegistration(CachedConferenceApi::getExtras());
+	if (count($extras) > 0) {
+		$extrasContent = array(theme('iishconference_container_header', array('text' => '')));
+
+		$extrasParticipant = $participant->getExtrasOfPreRegistration();
+		foreach ($extras as $extra) {
+			$extrasContent[] = theme('iishconference_container_field', array(
+				'label' => $extra->getDescription(),
+				'value' => ConferenceMisc::getYesOrNo(array_search($extra, $extrasParticipant) !== false)
+			));
+		}
+	}
+
+	// + + + + + + + + + + + + + + + + + + + + + + + +
 	// CHAIR / DISCUSSANT POOL
 
 	$chairDiscussantContent = array();
@@ -336,6 +353,9 @@ function preregister_confirm_form($form, &$form_state) {
 	$confirm .= theme('iishconference_container', array('fields' => $addressContent));
 	$confirm .= theme('iishconference_container', array('fields' => $communicationContent));
 
+	if (count($extrasContent) > 0) {
+		$confirm .= theme('iishconference_container', array('fields' => $extrasContent));
+	}
 	if (count($chairDiscussantContent) > 0) {
 		$confirm .= theme('iishconference_container', array('fields' => $chairDiscussantContent));
 	}
