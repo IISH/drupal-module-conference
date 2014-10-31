@@ -221,3 +221,22 @@ function iishconference_email_load($id) {
 function iishconference_paper_load($id) {
 	return CRUDApiMisc::getById(new PaperApi(), EasyProtection::easyIntegerProtection($id));
 }
+
+/**
+ * Fetches a event date based on the date code
+ *
+ * @param mixed $yearCode The year code
+ *
+ * @return EventDateApi|null The event date in question, or null if not found
+ */
+function iishconference_date_load($yearCode) {
+	$eventDates = CachedConferenceApi::getEventDates();
+
+	foreach ($eventDates as $eventDate) {
+		if (strtolower($eventDate->getYearCode()) == strtolower($yearCode)) {
+			return $eventDate;
+		}
+	}
+
+	return null;
+}

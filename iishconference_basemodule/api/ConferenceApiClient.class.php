@@ -14,6 +14,8 @@ class ConferenceApiClient {
 	private $conferenceApiUrl;
 	private $conferenceTokenUrl;
 
+	private static $yearCode = null;
+
 	public function __construct() {
 		$clientId = variable_get('conference_client_id');
 		$clientSecret = variable_get('conference_client_secret');
@@ -22,13 +24,35 @@ class ConferenceApiClient {
 		$this->requestCache = SimpleApiCache::getInstance();
 
 		$this->conferenceApiUrl = variable_get('conference_base_url') . variable_get('conference_event_code') . '/' .
-			variable_get('conference_date_code') . '/api/';
+			self::getYearCode() . '/api/';
 		$this->conferenceTokenUrl = variable_get('conference_base_url') . 'oauth/token';
 
 		$this->oAuthClient->setAccessTokenType(Client::ACCESS_TOKEN_BEARER);
 		if ($cachedToken = cache_get('conference_access_token_' . $clientId)) {
 			$this->oAuthClient->setAccessToken($cachedToken->data);
 		}
+	}
+
+	/**
+	 * Returns the year code to use when calling the Conference Management System API
+	 *
+	 * @return string The year code
+	 */
+	public static function getYearCode() {
+		if (self::$yearCode === null) {
+			return variable_get('conference_date_code');
+		}
+
+		return self::$yearCode;
+	}
+
+	/**
+	 * Allows to override the configured year code
+	 *
+	 * @param string $yearCode Override the configured year code with a new year code
+	 */
+	public static function setYearCode($yearCode) {
+		self::$yearCode = $yearCode;
 	}
 
 	/**
@@ -154,4 +178,4 @@ class ConferenceApiClient {
 				time() + 60 * 60 * 12);
 		}
 	}
-} 
+}

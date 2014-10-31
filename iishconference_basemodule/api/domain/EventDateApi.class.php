@@ -15,6 +15,7 @@ class EventDateApi extends CRUDApiClient {
 	private $eventInstance;
 
 	private static $instance;
+	private static $eventDates;
 
 	/**
 	 * There is only one event date, the current, get the singleton instance
@@ -26,10 +27,28 @@ class EventDateApi extends CRUDApiClient {
 	public static function getCurrent($printErrorMessage = true) {
 		if (self::$instance === null) {
 			$eventDateInfo = parent::getClient()->get('eventDateInfo', array(), $printErrorMessage);
-			self::$instance = parent::createNewInstance('EventDateApi', $eventDateInfo);
+			self::$instance = parent::createNewInstance(__CLASS__, $eventDateInfo);
 		}
 
 		return self::$instance;
+	}
+
+	/**
+	 * Retrieve all of the event dates for this event
+	 *
+	 * @param bool $printErrorMessage Whether to print an error message in case of failure
+	 *
+	 * @return EventDateApi[] All of the event dates for this event
+	 */
+	public static function getAllForEvent($printErrorMessage = true) {
+		if (self::$eventDates === null) {
+			self::$eventDates = array();
+			foreach (parent::getClient()->get('eventDates', array(), $printErrorMessage) as $eventDate) {
+				self::$eventDates[] = parent::createNewInstance(__CLASS__, $eventDate);
+            }
+		}
+
+		return self::$eventDates;
 	}
 
 	/**
@@ -106,6 +125,15 @@ class EventDateApi extends CRUDApiClient {
 	 */
 	public function getYearCode() {
 		return $this->yearCode;
+	}
+
+	/**
+	 * Returns the year code of this event date for a URL
+	 *
+	 * @return string The year code of this event date for a URL
+	 */
+	public function getYearCodeURL() {
+		return preg_replace('/\s+/', '-', $this->yearCode);
 	}
 
 	/**

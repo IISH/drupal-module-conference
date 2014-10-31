@@ -3,9 +3,19 @@
 /**
  * Prints the program
  *
+ * @param $yearCode The event date for which to print the program
+ *
  * @return string The HTML for the program
  */
-function iishconference_program() {
+function iishconference_program($yearCode = null) {
+	$eventDate = iishconference_program_get_event_date($yearCode);
+	if ($eventDate === null) {
+		drupal_set_message(t('No program available for the given year!'), 'error');
+		drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'program');
+		return;
+	}
+
+	ConferenceApiClient::setYearCode($eventDate->getYearCodeURL());
 	$queryParameters = drupal_get_query_parameters();
 
 	// Obtain all necessary query parameters
@@ -28,11 +38,12 @@ function iishconference_program() {
 	$paperId = (is_int($paperId) && ($paperId !== 0)) ? $paperId : null;
 	$textsearch = (!is_null($textsearch) && (strlen($textsearch) > 0)) ? urldecode($textsearch) : null;
 
-	$days = CachedConferenceApi::getDays();
-	$networks = CachedConferenceApi::getNetworks();
-	$rooms = CachedConferenceApi::getRooms();
-	$dateTimes = CachedConferenceApi::getSessionDateTimes();
-	$types = CachedConferenceApi::getParticipantTypes();
+	$props = new ApiCriteriaBuilder();
+	$days = DayApi::getListWithCriteria($props->get())->getResults();
+	$networks = NetworkApi::getListWithCriteria($props->get())->getResults();
+	$rooms = RoomApi::getListWithCriteria($props->get())->getResults();
+	$dateTimes = SessionDateTimeApi::getListWithCriteria($props->get())->getResults();
+	$types = ParticipantTypeApi::getListWithCriteria($props->get())->getResults();
 
 	// Make sure we filter out co-authors and types with papers and types configured to be hidden
 	$alwaysHide = SettingsApi::getSetting(SettingsApi::HIDE_ALWAYS_IN_ONLINE_PROGRAM);
@@ -219,4 +230,24 @@ function iishconference_program_unset_default_form_elements($form) {
 	unset($form['#build_id'], $form['form_build_id'], $form['form_id'], $form['btnSubmit']['#name']);
 
 	return $form;
+}
+
+/**
+ * Returns the event date that belongs to the year code, if given
+ * @param string|null $yearCode The year code
+ */
+function iishconference_program_get_event_date($yearCode) {
+	$eventDate = null;
+	if (!empty($yearCode)) {
+		foreach (CachedConferenceApi::getEventDates() as $date) {
+			if (strtolower($date->getYearCodeURL()) == strtolower(trim($yearCode))) {
+				$eventDate = $date;
+			}
+		}
+	}
+	else {
+		$eventDate = CachedConferenceApi::getEventDate();
+	}
+
+	return $eventDate;
 }

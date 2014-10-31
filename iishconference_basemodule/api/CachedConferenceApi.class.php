@@ -5,6 +5,7 @@
  */
 class CachedConferenceApi {
 	private static $nameEventDateCache = 'iishconference_eventdate';
+	private static $nameEventDatesCache = 'iishconference_eventdates';
 	private static $nameNetworksCache = 'iishconference_networks';
 	private static $nameCountriesCache = 'iishconference_countries';
 	private static $nameDaysCache = 'iishconference_days';
@@ -25,6 +26,7 @@ class CachedConferenceApi {
 	public static function updateAll() {
 		try {
 			self::setEventDate(false);
+			self::setEventDates(false);
 			self::setNetworks(false);
 			self::setCountries(false);
 			self::setDays(false);
@@ -50,6 +52,13 @@ class CachedConferenceApi {
 		cache_set(self::$nameEventDateCache, $eventDate, 'cache', CACHE_PERMANENT);
 
 		return $eventDate;
+	}
+
+	public static function setEventDates($printErrorMessage = true) {
+		$eventDates = EventDateApi::getAllForEvent($printErrorMessage);
+		cache_set(self::$nameEventDatesCache, $eventDates, 'cache', CACHE_PERMANENT);
+
+		return $eventDates;
 	}
 
 	public static function setNetworks($printErrorMessage = true) {
@@ -138,6 +147,15 @@ class CachedConferenceApi {
 		}
 		else {
 			return self::setEventDate($printErrorMessage);
+		}
+	}
+
+	public static function getEventDates($printErrorMessage = true) {
+		if ($result = cache_get(self::$nameEventDatesCache, 'cache')) {
+			return $result->data;
+		}
+		else {
+			return self::setEventDates($printErrorMessage);
 		}
 	}
 
