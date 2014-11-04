@@ -26,13 +26,33 @@ class LoggedInUserDetails {
 	 */
 	public static function getId() {
 		$id = null;
-		$storedId = isset($_SESSION['conference']['user_id']) ? $_SESSION['conference']['user_id'] : null;
-
+		$storedId = self::getFromSession('user_id');
 		if (is_int($storedId) && ($storedId > 0)) {
 			$id = $storedId;
 		}
 
 		return $id;
+	}
+
+	/**
+	 * Returns the email address of the currently logged in user, if logged in
+	 *
+	 * @return string|null The email address
+	 */
+	public static function getEmail() {
+		return self::getFromSession('user_email');
+	}
+
+	/**
+	 * Is the user currently logged in a participant?
+	 *
+	 * @return bool Whether the logged in user is a participant
+	 */
+	public static function isAParticipant() {
+		return (
+			(self::getParticipant() !== null) &&
+			(self::getParticipant()->getStateId() !== ParticipantStateApi::DID_NOT_FINISH_REGISTRATION)
+		);
 	}
 
 	/**
@@ -43,26 +63,18 @@ class LoggedInUserDetails {
 	 * @return UserApi|null The user details
 	 */
 	public static function getUser($printErrorMessage = true) {
-		$user = null;
-		if (isset($_SESSION['conference']['user'])) {
-			$user = unserialize($_SESSION['conference']['user']);
+		$userId = self::getId();
+		$user = self::getFromSession('user');
+
+		if ($user !== null) {
+			$user = unserialize($user);
 		}
-		else if (is_int(LoggedInUserDetails::getId())) {
-			$user = CRUDApiMisc::getById(new UserApi(), LoggedInUserDetails::getId(), $printErrorMessage);
-			$_SESSION['conference']['user'] = serialize($user);
+		else if (($user === null) && is_int($userId)) {
+			$user = CRUDApiMisc::getById(new UserApi(), $userId, $printErrorMessage);
+			self::setUser($user);
 		}
 
 		return $user;
-	}
-
-	/**
-	 * Is the user currently logged in a participant?
-	 *
-	 * @return bool Whether the logged in user is a participant
-	 */
-	public static function isAParticipant() {
-		return ((self::getParticipant() !== null) &&
-			(self::getParticipant()->getStateId() !== ParticipantStateApi::DID_NOT_FINISH_REGISTRATION));
 	}
 
 	/**
@@ -71,14 +83,15 @@ class LoggedInUserDetails {
 	 * @return ParticipantDateApi|null The participant details
 	 */
 	public static function getParticipant() {
-		$participant = null;
-		if (isset($_SESSION['conference']['participant'])) {
-			$participant = unserialize($_SESSION['conference']['participant']);
+		$userId = self::getId();
+		$participant = self::getFromSession('participant');
+
+		if ($participant !== null) {
+			$participant = unserialize($participant);
 		}
-		else if (is_int(LoggedInUserDetails::getId())) {
-			$participant = CRUDApiMisc::getFirstWherePropertyEquals(new ParticipantDateApi(), 'user_id',
-				LoggedInUserDetails::getId());
-			$_SESSION['conference']['participant'] = serialize($participant);
+		else if (($participant === null) && is_int($userId)) {
+			$participant = CRUDApiMisc::getFirstWherePropertyEquals(new ParticipantDateApi(), 'user_id', $userId);
+			self::setParticipant($participant);
 		}
 
 		return $participant;
@@ -90,12 +103,7 @@ class LoggedInUserDetails {
 	 * @return bool Whether the logged in user has full rights
 	 */
 	public static function hasFullRights() {
-		$hasFullRights = false;
-		if (isset($_SESSION['conference']['hasFullRights'])) {
-			$hasFullRights = $_SESSION['conference']['hasFullRights'];
-		}
-
-		return $hasFullRights;
+		return (self::getFromSession('hasFullRights') === true);
 	}
 
 	/**
@@ -104,12 +112,7 @@ class LoggedInUserDetails {
 	 * @return bool Whether the logged in user is a network chair
 	 */
 	public static function isNetworkChair() {
-		$isNetworkChair = false;
-		if (isset($_SESSION['conference']['isNetworkChair'])) {
-			$isNetworkChair = $_SESSION['conference']['isNetworkChair'];
-		}
-
-		return $isNetworkChair;
+		return (self::getFromSession('isNetworkChair') === true);
 	}
 
 	/**
@@ -118,12 +121,7 @@ class LoggedInUserDetails {
 	 * @return bool Whether the logged in user is a session chair
 	 */
 	public static function isChair() {
-		$isChair = false;
-		if (isset($_SESSION['conference']['isChair'])) {
-			$isChair = $_SESSION['conference']['isChair'];
-		}
-
-		return $isChair;
+		return (self::getFromSession('isChair') === true);
 	}
 
 	/**
@@ -132,12 +130,7 @@ class LoggedInUserDetails {
 	 * @return bool Whether the logged in user is a session organiser
 	 */
 	public static function isOrganiser() {
-		$isOrganiser = false;
-		if (isset($_SESSION['conference']['isOrganiser'])) {
-			$isOrganiser = $_SESSION['conference']['isOrganiser'];
-		}
-
-		return $isOrganiser;
+		return (self::getFromSession('isOrganiser') === true);
 	}
 
 	/**
@@ -146,12 +139,21 @@ class LoggedInUserDetails {
 	 * @return bool Whether the logged in user is a crew member
 	 */
 	public static function isCrew() {
-		$isCrew = false;
-		if (isset($_SESSION['conference']['isCrew'])) {
-			$isCrew = $_SESSION['conference']['isCrew'];
-		}
+		return (self::getFromSession('isCrew') === true);
+	}
 
-		return $isCrew;
+	/**
+	 * Invalidates the cached user instance
+	 */
+	public static function invalidateUser() {
+		unset($_SESSION['iish_conference']['user']);
+	}
+
+	/**
+	 * Invalidates the cached participant instance
+	 */
+	public static function invalidateParticipant() {
+		unset($_SESSION['iish_conference']['participant']);
 	}
 
 	/**
@@ -194,17 +196,17 @@ class LoggedInUserDetails {
 	 */
 	public static function setCurrentlyLoggedInWithResponse(array $response) {
 		$userStatus = self::USER_STATUS_DOES_NOT_EXISTS;
-		$_SESSION['conference']['user_email'] = null;
-		$_SESSION['conference']['user_id'] = null;
+		$_SESSION['iish_conference']['user_email'] = null;
+		$_SESSION['iish_conference']['user_id'] = null;
 
 		if ($response !== null) {
 			$userStatus = $response['status'];
 			if ($userStatus == LoggedInUserDetails::USER_STATUS_EXISTS) {
-				$_SESSION['conference']['hasFullRights'] = $response['hasFullRights'];
-				$_SESSION['conference']['isNetworkChair'] = $response['isNetworkChair'];
-				$_SESSION['conference']['isChair'] = $response['isChair'];
-				$_SESSION['conference']['isOrganiser'] = $response['isOrganiser'];
-				$_SESSION['conference']['isCrew'] = $response['isCrew'];
+				$_SESSION['iish_conference']['hasFullRights'] = $response['hasFullRights'];
+				$_SESSION['iish_conference']['isNetworkChair'] = $response['isNetworkChair'];
+				$_SESSION['iish_conference']['isChair'] = $response['isChair'];
+				$_SESSION['iish_conference']['isOrganiser'] = $response['isOrganiser'];
+				$_SESSION['iish_conference']['isCrew'] = $response['isCrew'];
 
 				$user = null;
 				if ($response['user'] instanceof UserApi) {
@@ -213,6 +215,7 @@ class LoggedInUserDetails {
 				else if (is_array($response['user'])) {
 					$user = UserApi::getUserFromArray($response['user']);
 				}
+				self::setUser($user);
 
 				$participant = null;
 				if ($response['participant'] instanceof ParticipantDateApi) {
@@ -221,15 +224,78 @@ class LoggedInUserDetails {
 				else if (is_array($response['participant'])) {
 					$participant = ParticipantDateApi::getParticipantDateFromArray($response['participant']);
 				}
+				self::setParticipant($participant);
 
-				$_SESSION['conference']['user_email'] = $user->getEmail();
-				$_SESSION['conference']['user_id'] = $user->getId();
-
-				$_SESSION['conference']['user'] = serialize($user);
-				$_SESSION['conference']['participant'] = serialize($participant);
+				$_SESSION['iish_conference']['created_at'] = time();
 			}
 		}
 
 		return $userStatus;
+	}
+
+	/**
+	 * Caches the user instance in the users session
+	 *
+	 * @param UserApi $user The user in question
+	 */
+	private static function setUser($user) {
+		if ($user !== null) {
+			$_SESSION['iish_conference']['user_email'] = $user->getEmail();
+			$_SESSION['iish_conference']['user_id'] = $user->getId();
+			$_SESSION['iish_conference']['user'] = serialize($user);
+		}
+	}
+
+	/**
+	 * Caches the participant instance in the users session
+	 *
+	 * @param ParticipantDateApi $participant The participant in question
+	 */
+	private static function setParticipant($participant) {
+		if ($participant !== null) {
+			$_SESSION['iish_conference']['participant'] = serialize($participant);
+		}
+	}
+
+	/**
+	 * Loads a property concerning the logged in user from the session.
+	 * If the data stored in the session is expired, the data is automatically refreshed
+	 *
+	 * @param string $property The name of the property in question
+	 *
+	 * @return mixed The stored value for the given property, or false in case it does not exist.
+	 */
+	private static function getFromSession($property) {
+		$expiresIn = 60 * 60 * 24; // Expires in one day time
+		if (isset($_SESSION['iish_conference']['created_at'])) {
+			$time = $_SESSION['iish_conference']['created_at'];
+			if (((($time + $expiresIn) - time()) > 0) && isset($_SESSION['iish_conference'][$property])) {
+				return $_SESSION['iish_conference'][$property];
+			}
+		}
+
+		if (isset($_SESSION['iish_conference']['user_id'])) {
+			$userInfo = self::loadUserInfoFromAPI($_SESSION['iish_conference']['user_id']);
+			self::setCurrentlyLoggedInWithResponse($userInfo);
+
+			if (isset($_SESSION['iish_conference'][$property])) {
+				return $_SESSION['iish_conference'][$property];
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Loads user info from the Conference Management System API
+	 *
+	 * @param int $userId The id of the user in question
+	 *
+	 * @return array|null User information or null if unsuccessful
+	 */
+	private static function loadUserInfoFromAPI($userId) {
+		$userInfoApi = new UserInfoApi();
+
+		return $userInfoApi->userInfo($userId);
 	}
 }

@@ -21,6 +21,7 @@ files[] = api/LoggedInUserDetails.class.php
 files[] = api/MailNewPasswordApi.class.php
 files[] = api/SendEmailApi.class.php
 files[] = api/SettingsApi.class.php
+files[] = api/UserInfoApi.class.php
 
 files[] = api/domain/CountryApi.class.php
 files[] = api/domain/DayApi.class.php

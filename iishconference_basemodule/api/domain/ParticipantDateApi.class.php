@@ -275,8 +275,8 @@ class ParticipantDateApi extends CRUDApiClient {
 		$save = parent::save($printErrorMessage);
 
 		// Make sure to invalidate the cached participant
-		if ($save && isset($_SESSION['conference']['participant'])) {
-			unset($_SESSION['conference']['participant']);
+		if ($save) {
+			LoggedInUserDetails::invalidateParticipant();
 		}
 	}
 
