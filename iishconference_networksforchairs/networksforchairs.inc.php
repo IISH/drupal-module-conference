@@ -45,7 +45,7 @@ function iishconference_networksforchairs_main() {
 		}
 
 		$output .= theme('item_list', array(
-			'title' => t('Your @networks',
+			'title' => iish_t('Your @networks',
 				array('@networks' => NetworkApi::getNetworkName(false, true))),
 			'items' => $links,
 		));
@@ -59,7 +59,7 @@ function iishconference_networksforchairs_main() {
 	}
 
 	$output .= theme('item_list', array(
-		'title' => t('All @networks', array('@networks' => NetworkApi::getNetworkName(false, true))),
+		'title' => iish_t('All @networks', array('@networks' => NetworkApi::getNetworkName(false, true))),
 		'items' => $links,
 	));
 
@@ -124,7 +124,7 @@ function iishconference_networksforchairs_sessions($networkId) {
 			'value' => $network->getName(),
 		));
 		$title .= theme('iishconference_container_field', array(
-			'label'       => t('Chairs in this @network', array('@network' => NetworkApi::getNetworkName(true, true))),
+			'label'       => iish_t('Chairs in this @network', array('@network' => NetworkApi::getNetworkName(true, true))),
 			'value'       => ConferenceMisc::getEnumSingleLine($chairLinks),
 			'valueIsHTML' => true,
 		));
@@ -167,7 +167,7 @@ function iishconference_networksforchairs_sessions($networkId) {
 	$header = theme('iishconference_navigation', array(
 		'list'     => CachedConferenceApi::getNetworks(),
 		'current'  => $network,
-		'prevLink' => l('« ' . t('Go back to @networks list',
+		'prevLink' => l('« ' . iish_t('Go back to @networks list',
 				array('@networks' => NetworkApi::getNetworkName(false, true))),
 			SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) .
 			NetworkApi::getNetworkName(false, true) .
@@ -184,7 +184,7 @@ function iishconference_networksforchairs_sessions($networkId) {
 	}
 
 	$sessionLinks = theme('item_list', array(
-		'title' => t('Sessions'),
+		'title' => iish_t('Sessions'),
 		'type'  => 'ol',
 		'items' => $links,
 	));
@@ -269,7 +269,7 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 	$header = theme('iishconference_navigation', array(
 		'list'     => $sessions,
 		'current'  => ($session === null) ? new EmptyApi() : $session,
-		'prevLink' => l('« ' . t('Go back to sessions list'),
+		'prevLink' => l('« ' . iish_t('Go back to sessions list'),
 			SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) .
 			NetworkApi::getNetworkName(false, true) . 'forchairs/' . $networkId,
 			array('query' => array('search' => $search))),
@@ -290,7 +290,7 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 			'value' => $network->getName(),
 		));
 		$title .= theme('iishconference_container_field', array(
-			'label'       => t('Chairs in this @network', array('@network' => NetworkApi::getNetworkName(true, true))),
+			'label'       => iish_t('Chairs in this @network', array('@network' => NetworkApi::getNetworkName(true, true))),
 			'value'       => ConferenceMisc::getEnumSingleLine($chairLinks),
 			'valueIsHTML' => true,
 		));
@@ -298,19 +298,19 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 	}
 
 	$title .= theme('iishconference_container_field', array(
-		'label' => t('Session'),
-		'value' => ($session === null) ? t('... Individual paper proposals ...') : $session->getName(),
+		'label' => iish_t('Session'),
+		'value' => ($session === null) ? iish_t('... Individual paper proposals ...') : $session->getName(),
 	));
 
 	if ($session !== null) {
 		$title .= theme('iishconference_container_field', array(
-			'label' => t('Session state'),
+			'label' => iish_t('Session state'),
 			'value' => $session->getState()->getDescription(),
 		));
 
 		if ($session->getAddedBy() !== null) {
 			$title .= theme('iishconference_container_field', array(
-				'label'       => t('Session added by'),
+				'label'       => iish_t('Session added by'),
 				'value'       => l($session->getAddedBy()->getFullName(),
 					'mailto:' . $session->getAddedBy()->getEmail(),
 					array('absolute' => true)),
@@ -319,7 +319,7 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 		}
 
 		$title .= theme('iishconference_container_field', array(
-			'label'          => t('Session abstract'),
+			'label'          => iish_t('Session abstract'),
 			'value'          => $session->getAbstr(),
 			'valueOnNewLine' => true,
 		));
@@ -336,14 +336,14 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 		$type = $participant['type'];
 
 		$result = theme('iishconference_container_field', array(
-			'label'       => t('Participant'),
+			'label'       => iish_t('Participant'),
 			'value'       => l($user->getFullName(), 'mailto:' . $user->getEmail(), array('absolute' => true)),
 			'valueIsHTML' => true,
 		));
 
 		if (($user->getOrganisation() !== null) && (strlen($user->getOrganisation()) > 0)) {
 			$result .= theme('iishconference_container_field', array(
-				'label' => t('Organisation'),
+				'label' => iish_t('Organisation'),
 				'value' => $user->getOrganisation(),
 			));
 		}
@@ -352,7 +352,7 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 			(strlen($user->getCv()) > 0)
 		) {
 			$result .= theme('iishconference_container_field', array(
-				'label'          => t('CV'),
+				'label'          => iish_t('CV'),
 				'value'          => $user->getCv(),
 				'valueOnNewLine' => true,
 			));
@@ -360,7 +360,7 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 
 		if ($type) {
 			$result .= theme('iishconference_container_field', array(
-				'label' => t('Type'),
+				'label' => iish_t('Type'),
 				'value' => $type->getType(),
 			));
 		}
@@ -368,15 +368,15 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 		if ($paper) {
 			$result .= '<br />';
 			$result .= theme('iishconference_container_field', array(
-				'label' => t('Paper'),
+				'label' => iish_t('Paper'),
 				'value' => $paper->getTitle(),
 			));
 			$result .= theme('iishconference_container_field', array(
-				'label' => t('Paper state'),
+				'label' => iish_t('Paper state'),
 				'value' => $paper->getState(),
 			));
 			$result .= theme('iishconference_container_field', array(
-				'label'          => t('Paper abstract'),
+				'label'          => iish_t('Paper abstract'),
 				'value'          => $paper->getAbstr(),
 				'valueOnNewLine' => true,
 			));
@@ -416,7 +416,7 @@ function iishconference_networksforchairs_form($form, &$form_state) {
 
 	$form['btnSubmit'] = array(
 		'#type'  => 'submit',
-		'#value' => t('Go'),
+		'#value' => iish_t('Go'),
 	);
 
 	return $form;

@@ -10,10 +10,10 @@
 function iishconference_finalregistration_help($path, $arg) {
 	switch ($path) {
 		case "admin/help#iishconference_finalregistration":
-			$output = '<h3>' . t('About') . '</h3>';
+			$output = '<h3>' . iish_t('About') . '</h3>';
 			$output .= '<p>' .
-				t('The \'Final registration and Payment\' module allows conference users to finalize their registration by making a payment.') . ' ';
-			$output .= t('In order to make payments possible, the module communicates with the \'PayWay\' API, which in turn communicates with \'Ogone\'.') . '</p>';
+				iish_t('The \'Final registration and Payment\' module allows conference users to finalize their registration by making a payment.') . ' ';
+			$output .= iish_t('In order to make payments possible, the module communicates with the \'PayWay\' API, which in turn communicates with \'Ogone\'.') . '</p>';
 
 			return $output;
 	}

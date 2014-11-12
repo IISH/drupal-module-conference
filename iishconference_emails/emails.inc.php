@@ -57,7 +57,7 @@ function conference_emails() {
 			),
 			array(
 				'data' => ($email->getNumTries() >= $maxTries) ?
-						'<font color="red">' . t('Sending failed') . '</font>' : t('Not sent yet')
+						'<font color="red">' . iish_t('Sending failed') . '</font>' : iish_t('Not sent yet')
 			),
 		);
 	}
@@ -78,31 +78,31 @@ function conference_emails() {
 	$tableNotSent = theme_table(
 		array(
 			"header"     => array(
-				array('data' => t('Email subject')),
-				array('data' => t('Date/time created')),
-				array('data' => t('Sending status')),
+				array('data' => iish_t('Email subject')),
+				array('data' => iish_t('Date/time created')),
+				array('data' => iish_t('Sending status')),
 			),
 			"rows"       => $rowsNotSent,
 			"attributes" => array(),
 			"sticky"     => true,
 			"caption"    => null,
 			"colgroups"  => array(),
-			"empty"      => t('No emails found!'),
+			"empty"      => iish_t('No emails found!'),
 		)
 	);
 
 	$tableSent = theme_table(
 		array(
 			"header"     => array(
-				array('data' => t('Email subject')),
-				array('data' => t('Date/time sent')),
+				array('data' => iish_t('Email subject')),
+				array('data' => iish_t('Date/time sent')),
 			),
 			"rows"       => $rowsSent,
 			"attributes" => array(),
 			"sticky"     => true,
 			"caption"    => null,
 			"colgroups"  => array(),
-			"empty"      => t('No emails found!'),
+			"empty"      => iish_t('No emails found!'),
 		)
 	);
 
@@ -111,7 +111,7 @@ function conference_emails() {
 		array(
 			'fields' => array(
 				theme('iishconference_container_header',
-					array('text' => t('Emails that have not been sent to you yet'))),
+					array('text' => iish_t('Emails that have not been sent to you yet'))),
 				$tableNotSent
 			)
 		)
@@ -120,7 +120,7 @@ function conference_emails() {
 		array(
 			'fields' => array(
 				theme('iishconference_container_header',
-					array('text' => t('Emails that have been sent to you'))),
+					array('text' => iish_t('Emails that have been sent to you'))),
 				$tableSent
 			)
 		)

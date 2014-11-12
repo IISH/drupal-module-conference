@@ -51,9 +51,9 @@ function iishconference_electionadvisory_form($form, &$form_state) {
 	$candidatesKeyValue = CRUDApiClient::getAsKeyValueArray($candidates);
 
 	$form['candidates'] = array(
-		'#title'       => t('Candidates'),
+		'#title'       => iish_t('Candidates'),
 		'#type'        => 'checkboxes',
-		'#description' => t('Please vote for @nrChoices persons for the election board.',
+		'#description' => iish_t('Please vote for @nrChoices persons for the election board.',
 			array('@nrChoices' => $nrChoices)),
 		'#options'     => $candidatesKeyValue,
 		'#required'    => true,
@@ -62,7 +62,7 @@ function iishconference_electionadvisory_form($form, &$form_state) {
 	$form['submit-votes'] = array(
 		'#type'  => 'submit',
 		'#name'  => 'submit-votes',
-		'#value' => t('Submit votes'),
+		'#value' => iish_t('Submit votes'),
 	);
 
 	return $form;
@@ -81,7 +81,7 @@ function iishconference_electionadvisory_form_validate($form, &$form_state) {
 	}
 
 	if ($count !== $nrChoices) {
-		form_set_error('candidates', t('Make sure to vote for exactly @nrChoices persons for the election board.',
+		form_set_error('candidates', iish_t('Make sure to vote for exactly @nrChoices persons for the election board.',
 			array('@nrChoices' => $nrChoices)));
 	}
 }

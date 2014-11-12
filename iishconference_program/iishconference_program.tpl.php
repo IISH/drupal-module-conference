@@ -1,5 +1,6 @@
-<?php if (SettingsApi::getSetting(SettingsApi::ONLINE_PROGRAM_UNDER_CONSTRUCTION) != '') : ?>
-	<h1><?php print SettingsApi::getSetting(SettingsApi::ONLINE_PROGRAM_UNDER_CONSTRUCTION); ?></h1>
+<?php $underConstruction = iish_t('Under construction'); ?>
+<?php if ($underConstruction != '') : ?>
+	<h1><?php print $underConstruction; ?></h1>
 <?php endif; ?>
 
 <div class="container-inline bottommargin">
@@ -15,7 +16,7 @@
 	<?php if (SettingsApi::getSetting(SettingsApi::DOWNLOAD_PAPER_LASTDATE) == '' || SettingsApi::getSetting(SettingsApi::DOWNLOAD_PAPER_LASTDATE) >= date("Y-m-d")) : ?>
 		<div class="download-icon-info">
 			<span class="download-icon"></span>
-			<?php print t('Click on the icon to download the paper'); ?>
+			<?php print iish_t('Click on the icon to download the paper'); ?>
 		</div>
 	<?php endif; ?>
 
@@ -42,13 +43,13 @@
 				<?php endforeach; ?>
 				<br/>
 			<?php endforeach; ?>
-			<a href="?day=0"><?php print t('All days'); ?></a>
+			<a href="?day=0"><?php print iish_t('All days'); ?></a>
 		</td>
 
 		<td class="program">
 			<?php if (isset($_GET['paper'])) : ?>
 				<a href="<?php print $variables['back-url-query']; ?>">
-					<?php print t('Go back'); ?>
+					<?php print iish_t('Go back'); ?>
 				</a>
 				<br/><br/>
 
@@ -58,12 +59,12 @@
 				<?php if (!is_null($variables['paper']->getCoAuthors()) &&
 					(strlen($variables['paper']->getCoAuthors()) > 0)
 				) : ?>
-					<strong><?php print t('Co-author(s)'); ?>:</strong>
+					<strong><?php print iish_t('Co-author(s)'); ?>:</strong>
 					<?php print $variables['paper']->getCoAuthors(); ?>
 					<br/>
 				<?php endif; ?>
 
-				<strong><?php print t('Author'); ?>:</strong>
+				<strong><?php print iish_t('Author'); ?>:</strong>
 				<?php print $variables['paper']->getUser(); ?>
 				<br/><br/>
 
@@ -73,7 +74,7 @@
 				<?php // TODO GCU moet op een andere manier ?>
 				<?php if (SettingsApi::getSetting(SettingsApi::DOWNLOAD_PAPER_LASTDATE) == '' || SettingsApi::getSetting(SettingsApi::DOWNLOAD_PAPER_LASTDATE) >= date("Y-m-d")) : ?>
 					<?php if (!is_null($variables['paper']->getFileSize()) && ($variables['paper']->getFileSize() > 0)) : ?>
-						<strong><?php print t('Download paper'); ?>:</strong>
+						<strong><?php print iish_t('Download paper'); ?>:</strong>
 						<a href="<?php print $variables['paperDownloadLinkStart'] . $variables['paper']->getId(); ?>">
 							<?php print $variables['paper']->getFileName(); ?>
 						</a>
@@ -82,7 +83,7 @@
 					<?php endif; ?>
 				<?php endif; ?>
 			<?php elseif (count($variables['program']) == 0) : ?>
-				<span class="eca_warning"><?php print t('Nothing found. Please modify your search criteria.'); ?></span>
+				<span class="eca_warning"><?php print iish_t('Nothing found. Please modify your search criteria.'); ?></span>
 			<?php
 			else : ?>
 				<?php foreach ($variables['program'] as $i => $session) : ?>
@@ -217,8 +218,8 @@
 							<?php if ($participant['hasDownload']) : ?>
 								&nbsp;
 								<a href="<?php print $variables['paperDownloadLinkStart'] . $participant['paperId']; ?>"
-									alt="<?php print t('Download paper'); ?>"
-									title="<?php print t('Download paper'); ?>">
+									alt="<?php print iish_t('Download paper'); ?>"
+									title="<?php print iish_t('Download paper'); ?>">
 										<span class="download-icon"></span>
 								</a>
 							<?php endif; ?>

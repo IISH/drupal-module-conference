@@ -1,5 +1,5 @@
 <p><?php print ConferenceMisc::getCleanHTML($network->getComment()); ?></p>
-<span class="chair-title"><?php print t('Chairs') . ':'; ?></span>
+<span class="chair-title"><?php print iish_t('Chairs') . ':'; ?></span>
 
 <?php foreach ($network->getChairs() as $chair) : ?>
 	<div class="chair">

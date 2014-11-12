@@ -18,7 +18,7 @@ function conference_changepassword_form($form, &$form_state) {
 	$ct = 0;
 	$form['ct' . $ct++] = array(
 		'#type'   => 'markup',
-		'#markup' => '<div><br />' . t('Please enter twice your new password.') . '</div>',
+		'#markup' => '<div><br />' . iish_t('Please enter twice your new password.') . '</div>',
 	);
 
 	$form['new_password'] = array(
@@ -48,13 +48,13 @@ function conference_changepassword_form($form, &$form_state) {
 
 	$form['submit'] = array(
 		'#type'  => 'submit',
-		'#value' => t('Change'),
+		'#value' => iish_t('Change'),
 	);
 
 	$form['ct' . $ct++] = array(
 		'#type'   => 'markup',
 		'#markup' => '<div><span class="eca_warning">' .
-			t('The new password must be at least 8 characters long and contain at least one lowercase character, ' .
+			iish_t('The new password must be at least 8 characters long and contain at least one lowercase character, ' .
 				'one upper case character and one digit.') .
 			'</span></div>',
 	);
@@ -66,7 +66,7 @@ function conference_changepassword_form($form, &$form_state) {
  * Implements hook_form_validate()
  */
 function conference_changepassword_form_validate($form, &$form_state) {
-	$error_message = t('The new password must be at least 8 characters long and contain at least ' .
+	$error_message = iish_t('The new password must be at least 8 characters long and contain at least ' .
 		'one lowercase character, one upper case character and one digit.');
 
 	// check length of new password
@@ -76,7 +76,7 @@ function conference_changepassword_form_validate($form, &$form_state) {
 
 	// check if the new passwords are equal
 	if ($form_state['values']['new_password'] != $form_state['values']['confirm_password']) {
-		form_set_error('confirm_password', t('The confirm password is not equal to the new password.'));
+		form_set_error('confirm_password', iish_t('The confirm password is not equal to the new password.'));
 	}
 
 	// check if new passwords contain at least one lowercase, one uppercase, one digit

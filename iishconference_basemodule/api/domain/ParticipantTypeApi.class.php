@@ -58,7 +58,7 @@ class ParticipantTypeApi extends CRUDApiClient {
 		$text = array();
 		foreach (CachedConferenceApi::getParticipantTypes() as $type) {
 			if (count($type->getNotInCombinationWith()) > 0) {
-				$text[] = t('The role @type is not allowed in combination with the role(s) @types',
+				$text[] = iish_t('The role @type is not allowed in combination with the role(s) @types',
 					array('@type'  => $type->getType(),
 					      '@types' => implode(', ', $type->getNotInCombinationWith())));
 			}

@@ -14,12 +14,12 @@ function preregister_session_form($form, &$form_state) {
 
 	$form['session'] = array(
 		'#type'  => 'fieldset',
-		'#title' => t('Session info')
+		'#title' => iish_t('Session info')
 	);
 
 	$form['session']['sessionname'] = array(
 		'#type'          => 'textfield',
-		'#title'         => t('Session name'),
+		'#title'         => iish_t('Session name'),
 		'#size'          => 40,
 		'#required'      => true,
 		'#maxlength'     => 255,
@@ -28,8 +28,8 @@ function preregister_session_form($form, &$form_state) {
 
 	$form['session']['sessionabstract'] = array(
 		'#type'          => 'textarea',
-		'#title'         => t('Abstract'),
-		'#description'   => '<em>(' . t('max. 1.000 words') . ')</em>',
+		'#title'         => iish_t('Abstract'),
+		'#description'   => '<em>(' . iish_t('max. 1.000 words') . ')</em>',
 		'#rows'          => 3,
 		'#required'      => true,
 		'#default_value' => $session->getAbstr(),
@@ -65,13 +65,13 @@ function preregister_session_form($form, &$form_state) {
 
 	$form['session_participants'] = array(
 		'#type'  => 'fieldset',
-		'#title' => t('Participants'),
+		'#title' => iish_t('Participants'),
 	);
 
 	$form['session_participants']['submit_participant'] = array(
 		'#type'   => 'submit',
 		'#name'   => 'submit_participant',
-		'#value'  => t('New participant'),
+		'#value'  => iish_t('New participant'),
 		'#suffix' => '<br /><br />',
 	);
 
@@ -79,7 +79,7 @@ function preregister_session_form($form, &$form_state) {
 	foreach ($users as $user) {
 		$prefix = '';
 		if ($printOr) {
-			$prefix = ' &nbsp;' . t('or') . '<br /><br />';
+			$prefix = ' &nbsp;' . iish_t('or') . '<br /><br />';
 			$printOr = false;
 		}
 
@@ -101,7 +101,7 @@ function preregister_session_form($form, &$form_state) {
 	$form['submit_back'] = array(
 		'#type'                    => 'submit',
 		'#name'                    => 'submit_back',
-		'#value'                   => t('Back'),
+		'#value'                   => iish_t('Back'),
 		'#submit'                  => array('preregister_form_submit'),
 		'#limit_validation_errors' => array(),
 	);
@@ -109,7 +109,7 @@ function preregister_session_form($form, &$form_state) {
 	$form['submit'] = array(
 		'#type'  => 'submit',
 		'#name'  => 'submit',
-		'#value' => t('Save session'),
+		'#value' => iish_t('Save session'),
 	);
 
 	// We can only remove a session if it has been persisted
@@ -117,12 +117,12 @@ function preregister_session_form($form, &$form_state) {
 		$form['submit_remove'] = array(
 			'#type'                    => 'submit',
 			'#name'                    => 'submit_remove',
-			'#value'                   => t('Remove session'),
+			'#value'                   => iish_t('Remove session'),
 			'#submit'                  => array('preregister_form_submit'),
 			'#limit_validation_errors' => array(),
 			'#attributes'              => array('onclick' =>
 				                                    'if (!confirm("' .
-				                                    t('Are you sure you want to remove this session?') .
+				                                    iish_t('Are you sure you want to remove this session?') .
 				                                    '")) { return false; }'),
 		);
 	}
@@ -152,7 +152,7 @@ function preregister_session_form_validate($form, &$form_state) {
 	// Don't allow multiple sessions with the same name
 	$sessions = SessionApi::getListWithCriteria($props->get());
 	if ($sessions->getTotalSize() > 0) {
-		form_set_error('sessionname', t('You already created a session with the same name.'));
+		form_set_error('sessionname', iish_t('You already created a session with the same name.'));
 	}
 }
 
@@ -186,7 +186,7 @@ function preregister_session_form_submit($form, &$form_state) {
 
 		$organiser->save();
 		drupal_set_message(t('You are added as organizer to this session.') . '<br />' .
-			t('Please add participants to the session.'), 'status');
+			iish_t('Please add participants to the session.'), 'status');
 	}
 
 	// Now find out if we have to add a participant or simply save the session

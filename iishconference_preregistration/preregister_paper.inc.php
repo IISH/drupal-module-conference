@@ -15,12 +15,12 @@ function preregister_paper_form($form, &$form_state) {
 
 	$form['paper'] = array(
 		'#type'  => 'fieldset',
-		'#title' => t('Register a paper'),
+		'#title' => iish_t('Register a paper'),
 	);
 
 	$form['paper']['papertitle'] = array(
 		'#type'          => 'textfield',
-		'#title'         => t('Paper title'),
+		'#title'         => iish_t('Paper title'),
 		'#required'      => true,
 		'#size'          => 40,
 		'#maxlength'     => 255,
@@ -29,16 +29,16 @@ function preregister_paper_form($form, &$form_state) {
 
 	$form['paper']['paperabstract'] = array(
 		'#type'          => 'textarea',
-		'#title'         => t('Abstract'),
+		'#title'         => iish_t('Abstract'),
 		'#required'      => true,
-		'#description'   => '<em>' . t('(max. 500 words)') . '</em>',
+		'#description'   => '<em>' . iish_t('(max. 500 words)') . '</em>',
 		'#rows'          => 2,
 		'#default_value' => $paper->getAbstr(),
 	);
 
 	$form['paper']['coauthors'] = array(
 		'#type'          => 'textfield',
-		'#title'         => t('Co-authors'),
+		'#title'         => iish_t('Co-authors'),
 		'#size'          => 40,
 		'#maxlength'     => 255,
 		'#default_value' => $paper->getCoAuthors(),
@@ -49,7 +49,7 @@ function preregister_paper_form($form, &$form_state) {
 
 	$form['paper']['proposednetwork'] = array(
 		'#type'          => 'select',
-		'#title'         => t('Proposed @network', array('@network' => NetworkApi::getNetworkName(true, true))),
+		'#title'         => iish_t('Proposed @network', array('@network' => NetworkApi::getNetworkName(true, true))),
 		'#options'       => $networkOptions,
 		'#size'          => 3,
 		'#required'      => true,
@@ -64,14 +64,14 @@ function preregister_paper_form($form, &$form_state) {
 
 	$form['paper']['partofexistingsession'] = array(
 		'#type'          => 'checkbox',
-		'#title'         => t('Is this part of an existing session?'),
+		'#title'         => iish_t('Is this part of an existing session?'),
 		'#default_value' => (($paper->getSessionProposal() !== null) &&
 				(strlen(trim($paper->getSessionProposal())) > 0)),
 	);
 
 	$form['paper']['proposedsession'] = array(
 		'#type'          => 'textfield',
-		'#title'         => t('Proposed session'),
+		'#title'         => iish_t('Proposed session'),
 		'#size'          => 40,
 		'#maxlength'     => 255,
 		'#default_value' => $paper->getSessionProposal(),
@@ -85,7 +85,7 @@ function preregister_paper_form($form, &$form_state) {
 	if ((SettingsApi::getSetting(SettingsApi::SHOW_AWARD) == 1) && $participant->getStudent()) {
 		$form['paper']['award'] = array(
 			'#type'          => 'checkbox',
-			'#title'         => t('Would you like to participate in the "@awardName"?',
+			'#title'         => iish_t('Would you like to participate in the "@awardName"?',
 					array('@awardName' => SettingsApi::getSetting(SettingsApi::AWARD_NAME))) . '&nbsp; <em>(' .
 				l(t('more about the award'), 'award', array('attributes' => array('target' => '_blank'))) . ')</em>',
 			'#default_value' => $participant->getAward(),
@@ -99,7 +99,7 @@ function preregister_paper_form($form, &$form_state) {
 
 	$form['equipment'] = array(
 		'#type'  => 'fieldset',
-		'#title' => t('Audio/visual equipment'),
+		'#title' => iish_t('Audio/visual equipment'),
 	);
 
 	if (is_array($equipment) && (count($equipment) > 0)) {
@@ -107,7 +107,7 @@ function preregister_paper_form($form, &$form_state) {
 
 		$form['equipment']['audiovisual'] = array(
 			'#type'          => 'checkboxes',
-			'#description'   => t('Select the equipment you will need for your presentation.'),
+			'#description'   => iish_t('Select the equipment you will need for your presentation.'),
 			'#options'       => $equipmentOptions,
 			'#default_value' => $paper->getEquipmentIds(),
 		);
@@ -115,8 +115,8 @@ function preregister_paper_form($form, &$form_state) {
 
 	$form['equipment']['extraaudiovisual'] = array(
 		'#type'          => 'textarea',
-		'#title'         => t('Extra audio/visual request'),
-		'#description'   => ConferenceMisc::getCleanHTML(SettingsApi::getSetting(SettingsApi::DEFAULT_EQUIPMENT_TEXT)),
+		'#title'         => iish_t('Extra audio/visual request'),
+		'#description'   => iish_t('Every room has a beamer and powerpoint available.'),
 		'#rows'          => 2,
 		'#default_value' => $paper->getEquipmentComment(),
 	);
@@ -126,7 +126,7 @@ function preregister_paper_form($form, &$form_state) {
 	$form['submit_back'] = array(
 		'#type'                    => 'submit',
 		'#name'                    => 'submit_back',
-		'#value'                   => t('Back'),
+		'#value'                   => iish_t('Back'),
 		'#submit'                  => array('preregister_form_submit'),
 		'#limit_validation_errors' => array(),
 	);
@@ -134,7 +134,7 @@ function preregister_paper_form($form, &$form_state) {
 	$form['submit'] = array(
 		'#type'  => 'submit',
 		'#name'  => 'submit',
-		'#value' => t('Save paper'),
+		'#value' => iish_t('Save paper'),
 	);
 
 	// We can only remove a paper if it has been persisted
@@ -142,12 +142,12 @@ function preregister_paper_form($form, &$form_state) {
 		$form['submit_remove'] = array(
 			'#type'                    => 'submit',
 			'#name'                    => 'submit_remove',
-			'#value'                   => t('Remove paper'),
+			'#value'                   => iish_t('Remove paper'),
 			'#submit'                  => array('preregister_form_submit'),
 			'#limit_validation_errors' => array(),
 			'#attributes'              => array('onclick' =>
 				                                    'if (!confirm("' .
-				                                    t('Are you sure you want to remove this paper?') .
+				                                    iish_t('Are you sure you want to remove this paper?') .
 				                                    '")) { return false; }'),
 		);
 	}
@@ -162,7 +162,7 @@ function preregister_paper_form_validate($form, &$form_state) {
 	if ($form_state['values']['partofexistingsession']) {
 		if (strlen(trim($form_state['values']['proposedsession'])) === 0) {
 			form_set_error('proposedsession',
-				t('Proposed session field is required if you check \'Is part of an existing session?\'.'));
+				iish_t('Proposed session field is required if you check \'Is part of an existing session?\'.'));
 		}
 	}
 }

@@ -15,7 +15,7 @@ class ConferenceMisc {
 	 * @return string Either 'yes' or 'no'
 	 */
 	public static function getYesOrNo($booleanValue) {
-		return $booleanValue ? t('yes') : t('no');
+		return $booleanValue ? iish_t('yes') : iish_t('no');
 	}
 
 	/**
@@ -39,8 +39,8 @@ class ConferenceMisc {
 	public static function getGenders() {
 		return array(
 			''  => '',
-			'M' => t('Male'),
-			'F' => t('Female'),
+			'M' => iish_t('Male'),
+			'F' => iish_t('Female'),
 		);
 	}
 
@@ -64,9 +64,9 @@ class ConferenceMisc {
 	 */
 	public static function getLanguageCoachPupils() {
 		return array(
-			''      => t('not applicable'),
-			'coach' => t('I would like to be an English Language Coach'),
-			'pupil' => t('I need some help from an English Language Coach'),
+			''      => iish_t('not applicable'),
+			'coach' => iish_t('I would like to be an English Language Coach'),
+			'pupil' => iish_t('I need some help from an English Language Coach'),
 		);
 	}
 
@@ -166,7 +166,7 @@ class ConferenceMisc {
 	public static function getInfoBlock($emptyRows = 2) {
 		return
 			str_repeat('<br />', $emptyRows) . '<div class="eca_warning">' .
-				t('For any remarks or questions, please contact: ') .
+				iish_t('For any remarks or questions, please contact: ') .
 				self::encryptEmailAddress(SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL)) .
 			'</div>';
 	}
@@ -234,7 +234,7 @@ document.write('<a hr'+'ef=\"'+'mai'+'lto:'+w+'@'+h1+'.'+h2+'\">'+w+'@'+h1+'.'+h
 	 */
 	public static function getEnumSingleLine(array $items, $seperator = ', ', $seperatorEnd = null) {
 		if ($seperatorEnd === null) {
-			$seperatorEnd = ' ' . t('and') . ' ';
+			$seperatorEnd = ' ' . iish_t('and') . ' ';
 		}
 
 		$line = '';
@@ -301,5 +301,28 @@ document.write('<a hr'+'ef=\"'+'mai'+'lto:'+w+'@'+h1+'.'+h2+'\">'+w+'@'+h1+'.'+h
 		$today = ($today === null) ? strtotime('today') : $today;
 
 		return $today >= $startDate;
+	}
+
+	/**
+	 * Override of the default t function of Drupal
+	 * Will translate the text first using the translations CMS API
+	 *
+	 * @param string $string                A string containing the English string to translate
+	 * @param array  $args                  An associative array of replacements to make after translation.
+	 *                                      Based on the first character of the key, the value is escaped and/or themed.
+	 *                                      See format_string() for details
+	 * @param bool   $callOriginalTFunction Whether to include a call to the original t function
+	 *
+	 * @return null|string
+	 */
+	public static function translate($string, array $args = array(), $callOriginalTFunction = true) {
+		$text = TranslationsApi::getTranslation($string);
+
+		if ($callOriginalTFunction) {
+			return t($text, $args);
+		}
+		else {
+			return $text;
+		}
 	}
 } 

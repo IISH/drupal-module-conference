@@ -37,7 +37,7 @@ function conference_personalpage_main() {
  * @return string The personal info container in HTML
  */
 function conference_personalpage_create_personal_info($userDetails, $participantDateDetails) {
-	$personalInfoContent = array(theme('iishconference_container_header', array('text' => t('Personal Info'))));
+	$personalInfoContent = array(theme('iishconference_container_header', array('text' => iish_t('Personal Info'))));
 
 	$personalInfoContent[] = theme('iishconference_container_field', array(
 		'label' => 'First name',
@@ -113,7 +113,7 @@ function conference_personalpage_create_registration_info($userDetails, $partici
 
 	if (LoggedInUserDetails::isAParticipant()) {
 		$registeredAndPayedContent[] = '<span class="eca_remark heavy">' .
-			t('You have pre-registered for the @conference',
+			iish_t('You have pre-registered for the @conference',
 				array('@conference' => CachedConferenceApi::getEventDate()->getLongNameAndYear())) . '</span>';
 
 		$registeredAndPayedContent[] = '<br />';
@@ -151,13 +151,13 @@ function conference_personalpage_create_registration_info($userDetails, $partici
 			$registeredAndPayedContent[] = theme('iishconference_container_field', array(
 				'label' => 'Accompanying person(s)',
 				'value' => (count($accompanyingPersons) > 0) ? ConferenceMisc::getEnumSingleLine($accompanyingPersons) :
-						t('No accompanying person')
+						iish_t('No accompanying person')
 			));
 		}
 	}
 	else {
 		$registeredAndPayedContent[] = '<span class="eca_warning">' .
-			t('You are not registered for the @conference. Please go to the !link.',
+			iish_t('You are not registered for the @conference. Please go to the !link.',
 				array('@conference' => CachedConferenceApi::getEventDate()->getLongNameAndYear(),
 				      '!link'       => l(t('pre-registration form'),
 					      SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'pre-registration'))) . '</span>';
@@ -173,11 +173,11 @@ function conference_personalpage_create_registration_info($userDetails, $partici
  * @param ParticipantDateApi $participantDateDetails    The participant of whom to check the payment status
  */
 function conference_personalpage_create_payment_status(array &$registeredAndPayedContent, $participantDateDetails) {
-	$paymentMethod = t('Payment: none');
-	$paymentStatus = t('(Final registration and payment has not started yet)');
+	$paymentMethod = iish_t('Payment: none');
+	$paymentStatus = iish_t('(Final registration and payment has not started yet)');
 
 	if (module_exists('iishconference_finalregistration')) {
-		$paymentStatus = t('(!link)', array('!link' => l(t('Final registration and payment'),
+		$paymentStatus = iish_t('(!link)', array('!link' => l(t('Final registration and payment'),
 			SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration')));
 
 		if (!is_null($participantDateDetails->getPaymentId()) && ($participantDateDetails->getPaymentId() !== 0)) {
@@ -187,35 +187,35 @@ function conference_personalpage_create_payment_status(array &$registeredAndPaye
 			if (!empty($order)) {
 				switch ($order->get('paymentmethod')) {
 					case PayWayMessage::ORDER_OGONE_PAYMENT:
-						$paymentMethod = t('Payment: online payment');
+						$paymentMethod = iish_t('Payment: online payment');
 						break;
 					case PayWayMessage::ORDER_BANK_PAYMENT:
-						$paymentMethod = t('Payment: bank transfer');
+						$paymentMethod = iish_t('Payment: bank transfer');
 						break;
 					case PayWayMessage::ORDER_CASH_PAYMENT:
-						$paymentMethod = t('Payment: cash');
+						$paymentMethod = iish_t('Payment: cash');
 						break;
 					default:
-						$paymentMethod = t('Payment unknown');
+						$paymentMethod = iish_t('Payment unknown');
 				}
 
 				switch ($order->get('payed')) {
 					case PayWayMessage::ORDER_NOT_PAYED:
-						$paymentStatus = t('(not yet confirmed)');
+						$paymentStatus = iish_t('(not yet confirmed)');
 						break;
 					case PayWayMessage::ORDER_PAYED:
-						$paymentStatus = t('(confirmed)');
+						$paymentStatus = iish_t('(confirmed)');
 						break;
 					case PayWayMessage::ORDER_REFUND_OGONE:
 					case PayWayMessage::ORDER_REFUND_BANK:
-						$paymentStatus = t('(refunded)');
+						$paymentStatus = iish_t('(refunded)');
 						break;
 					default:
-						$paymentStatus = t('(status unknown)');
+						$paymentStatus = iish_t('(status unknown)');
 				}
 			}
 			else {
-				$paymentMethod = t('Payment information is currently unavailable');
+				$paymentMethod = iish_t('Payment information is currently unavailable');
 				$paymentStatus = '';
 			}
 		}
@@ -242,7 +242,7 @@ function conference_personalpage_create_sessions_info($userDetails, $participant
 		foreach ($sessions as $i => $session) {
 			$sessionPapers = PaperApi::getPapersWithSession($papers, $session->getId());
 
-			$header = t('Session @count of @total', array('@count' => $i + 1, '@total' => count($sessions)));
+			$header = iish_t('Session @count of @total', array('@count' => $i + 1, '@total' => count($sessions)));
 			$sessionContent = array(theme('iishconference_container_header', array('text' => $header)));
 
 			conference_personalpage_create_session_info($userDetails, $participantDateDetails, $sessionContent,
@@ -271,7 +271,7 @@ function conference_personalpage_create_papers_info($userDetails, $participantDa
 		$noSessionPapers = PaperApi::getPapersWithoutSession($papers);
 
 		foreach ($noSessionPapers as $i => $paper) {
-			$header = t('Paper  @count of @total', array('@count' => $i + 1, '@total' => count($noSessionPapers)));
+			$header = iish_t('Paper  @count of @total', array('@count' => $i + 1, '@total' => count($noSessionPapers)));
 			$paperContent = array(theme('iishconference_container_header', array('text' => $header)));
 
 			conference_personalpage_create_paper_info($paperContent, $paper, $participantDateDetails);
@@ -306,11 +306,11 @@ function conference_personalpage_create_session_info($userDetails, $participantD
 		$networks = $session->getNetworks();
 		foreach ($networks as $network) {
 			$sessionContent[] = theme('iishconference_container_field', array(
-				'label' => t('@network name', array('@network' => NetworkApi::getNetworkName())),
+				'label' => iish_t('@network name', array('@network' => NetworkApi::getNetworkName())),
 				'value' => $network->getName()
 			));
 			$sessionContent[] = theme('iishconference_container_field', array(
-				'label' => t('Chairs of this @network',
+				'label' => iish_t('Chairs of this @network',
 					array('@network' => NetworkApi::getNetworkName(true, true))),
 				'value' => implode(', ', $network->getChairs())
 			));
@@ -363,15 +363,15 @@ function conference_personalpage_create_session_info($userDetails, $participantD
 	if (count($sessionPapers) > 0) {
 		foreach ($sessionPapers as $paper) {
 			$sessionContent[] = '<br />';
-			$sessionContent[] = theme('iishconference_container_header', array('text' => t('Paper')));
+			$sessionContent[] = theme('iishconference_container_header', array('text' => iish_t('Paper')));
 
 			conference_personalpage_create_paper_info($sessionContent, $paper, $participantDateDetails);
 		}
 	}
 	else {
 		$sessionContent[] = '<br />';
-		$sessionContent[] = theme('iishconference_container_header', array('text' => t('Paper')));
-		$sessionContent[] = t('No paper.');
+		$sessionContent[] = theme('iishconference_container_header', array('text' => iish_t('Paper')));
+		$sessionContent[] = iish_t('No paper.');
 	}
 }
 
@@ -461,7 +461,7 @@ function conference_personalpage_create_chair_discussant_info($participantDateDe
 		CRUDApiClient::sort($networksAsDiscussant);
 
 		$chairDiscussantContent[] =
-			theme('iishconference_container_header', array('text' => t('Chair / Discussant pool')));
+			theme('iishconference_container_header', array('text' => iish_t('Chair / Discussant pool')));
 
 		$chairDiscussantContent[] = theme('iishconference_container_field', array(
 			'label' => 'I would like to volunteer as Chair?',
@@ -517,12 +517,12 @@ function conference_personalpage_create_language_info($participantDateDetails) {
 
 		$languageFound = false;
 		$languageContent =
-			array(theme('iishconference_container_header', array('text' => t('English Language Coach'))));
+			array(theme('iishconference_container_header', array('text' => iish_t('English Language Coach'))));
 
 		if ((SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) && (count($networksAsCoach) > 0)) {
 			$languageFound = true;
 			$languageContent[] = theme('iishconference_container_field', array(
-				'label' => t('I would like to be an English Language Coach in the following @networks',
+				'label' => iish_t('I would like to be an English Language Coach in the following @networks',
 					array('@networks' => NetworkApi::getNetworkName(false, true))),
 				'value' => implode(', ', $networksAsCoach),
 			));
@@ -530,7 +530,7 @@ function conference_personalpage_create_language_info($participantDateDetails) {
 		else if (count($networksAsCoach) > 0) {
 			$languageFound = true;
 			$languageContent[] = theme('iishconference_container_field', array(
-				'label' => t('I would like to be an English Language Coach'),
+				'label' => iish_t('I would like to be an English Language Coach'),
 				'value' => ConferenceMisc::getYesOrNo(true),
 			));
 		}
@@ -564,21 +564,21 @@ function conference_personalpage_create_language_info($participantDateDetails) {
 				else {
 					if (SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) {
 						$list[] = '<strong>' . $network->getName() . '</strong>: <em>' .
-							t('No language coaches found in this @network!',
+							iish_t('No language coaches found in this @network!',
 								array('@network' => NetworkApi::getNetworkName(true, true))) . '</em>';
 					}
 					else {
-						$list[] = '<em>' . t('No language coaches found!') . '</em>';
+						$list[] = '<em>' . iish_t('No language coaches found!') . '</em>';
 					}
 				}
 			}
 
 			if (SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) {
-				$languageCoachLabel = t('I need some help from one of the following English Language Coaches ' .
+				$languageCoachLabel = iish_t('I need some help from one of the following English Language Coaches ' .
 					'in each chosen @network', array('@network' => NetworkApi::getNetworkName(true, true)));
 			}
 			else {
-				$languageCoachLabel = t('I need some help from one of the following English Language Coaches');
+				$languageCoachLabel = iish_t('I need some help from one of the following English Language Coaches');
 			}
 
 			$languageContent[] = theme('iishconference_container_field', array(
@@ -607,7 +607,7 @@ function conference_personalpage_create_language_info($participantDateDetails) {
  * @return string The links container in HTML
  */
 function conference_personalpage_create_links($participantDateDetails) {
-	$linksContent = array(theme('iishconference_container_header', array('text' => t('Links'))));
+	$linksContent = array(theme('iishconference_container_header', array('text' => iish_t('Links'))));
 
 	// show pre registration link if not registered or participant state is 'not finished' or 'new participant'
 	if (module_exists('iishconference_preregistration') &&
@@ -646,13 +646,9 @@ function conference_personalpage_create_links($participantDateDetails) {
 			LoggedInUserDetails::isChair() ||
 			LoggedInUserDetails::isOrganiser())
 	) {
-		$programHeader = SettingsApi::getSetting(SettingsApi::ONLINE_PROGRAM_HEADER);
-		if (($programHeader === null) || (strlen(trim($programHeader)) === 0)) {
-			$programHeader = t('Preliminary Program');
-		}
-
 		$linksContent[] =
-			'&bull; ' . l($programHeader, SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'program') . '<br />';
+			'&bull; ' . l(iish_t('Preliminary Program'),
+				SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'program') . '<br />';
 	}
 
 	return theme('iishconference_container', array('fields' => $linksContent));
@@ -669,7 +665,7 @@ function conference_personalpage_create_links_network($participantDateDetails) {
 	if (LoggedInUserDetails::hasFullRights() || LoggedInUserDetails::isNetworkChair()) {
 		$linksNetworkContent =
 			array(theme('iishconference_container_header',
-				array('text' => t('Links for chairs of a @network',
+				array('text' => iish_t('Links for chairs of a @network',
 					array('@network' => NetworkApi::getNetworkName(true, true))))));
 
 		if (module_exists('iishconference_networksforchairs')) {

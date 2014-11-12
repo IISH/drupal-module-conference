@@ -19,6 +19,7 @@ class CachedConferenceApi {
 	private static $nameExtrasCache = 'iishconference_extras';
 	private static $nameVolunteeringCache = 'iishconference_volunteering';
 	private static $nameSettingsCache = 'iishconference_settings';
+	private static $nameTranslationsCache = 'iishconference_translations';
 
 	/**
 	 * Updates all caches
@@ -40,6 +41,7 @@ class CachedConferenceApi {
 			self::setExtras(false);
 			self::setVolunteering(false);
 			self::setSettings(false);
+			self::setTranslations(false);
 		}
 		catch (Exception $exception) {
 			watchdog_exception('conference api', $exception,
@@ -141,6 +143,14 @@ class CachedConferenceApi {
 		return $settings;
 	}
 
+	public static function setTranslations($printErrorMessage = true) {
+		$translationsApi = new TranslationsApi();
+		$translations = $translationsApi->translations($printErrorMessage);
+		cache_set(self::$nameTranslationsCache, $translations, 'cache', CACHE_PERMANENT);
+
+		return $translations;
+	}
+
 	public static function getEventDate($printErrorMessage = true) {
 		if ($result = cache_get(self::$nameEventDateCache, 'cache')) {
 			return $result->data;
@@ -227,6 +237,15 @@ class CachedConferenceApi {
 		}
 		else {
 			return self::setSettings($printErrorMessage);
+		}
+	}
+
+	public static function getTranslations($printErrorMessage = true) {
+		if ($result = cache_get(self::$nameTranslationsCache, 'cache')) {
+			return $result->data;
+		}
+		else {
+			return self::setTranslations($printErrorMessage);
 		}
 	}
 }

@@ -21,7 +21,7 @@ function iishconference_program_menu() {
 	$extraPath = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU);
 
 	$items[$extraPath . 'program'] = array(
-		'title'           => SettingsApi::getSetting(SettingsApi::ONLINE_PROGRAM_HEADER),
+		'title'           => iish_t('Preliminary Program'),
 		'page callback'   => 'iishconference_program',
 		'access callback' => true,
 		'type'            => MENU_NORMAL_ITEM,

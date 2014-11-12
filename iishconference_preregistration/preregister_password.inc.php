@@ -12,7 +12,7 @@ function preregister_password_form($form, &$form_state) {
 
 	$form['login_with_password']['help_text'] = array(
 		'#type'   => 'markup',
-		'#markup' => '<div class="bottommargin">' . t('Please enter your password.') . '</div>',
+		'#markup' => '<div class="bottommargin">' . iish_t('Please enter your password.') . '</div>',
 	);
 
 	$form['login_with_password']['email'] = array(
@@ -35,7 +35,7 @@ function preregister_password_form($form, &$form_state) {
 	$form['login_with_password']['login'] = array(
 		'#type'  => 'submit',
 		'#name'  => 'login',
-		'#value' => t('Next'),
+		'#value' => iish_t('Next'),
 	);
 
 	// Lost password URL

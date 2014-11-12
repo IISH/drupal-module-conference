@@ -59,7 +59,7 @@ function iishconference_program($yearCode = null) {
 
 	// What time slot is showing?
 	$showing = '';
-	$showingTimeSlot = t('all days');
+	$showingTimeSlot = iish_t('all days');
 
 	// if network id, room id or text search is not empty, then show all days
 	if (!is_null($networkId) || !is_null($roomId) || !is_null($textsearch)) {
@@ -79,7 +79,7 @@ function iishconference_program($yearCode = null) {
 		else if (!is_null($roomId)) {
 			foreach ($rooms as $room) {
 				if ($room->getId() === $roomId) {
-					$showing = t('room') . ' ' . $room->getRoomNumber();
+					$showing = iish_t('room') . ' ' . $room->getRoomNumber();
 				}
 			}
 
@@ -87,14 +87,14 @@ function iishconference_program($yearCode = null) {
 			$textsearch = null;
 		}
 		else if (!is_null($textsearch)) {
-			$showing = t('text search') . ': ' . $textsearch;
+			$showing = iish_t('text search') . ': ' . $textsearch;
 
 			$networkId = null;
 			$roomId = null;
 		}
 	}
 	else {
-		$showing = t('all days');
+		$showing = iish_t('all days');
 		$showingTimeSlot = '';
 	}
 
@@ -102,7 +102,7 @@ function iishconference_program($yearCode = null) {
 	if (is_null($dayId)) {
 		$dayId = $days[0]->getId(); // find first date
 		$showing = $days[0]->getDayFormatted("l j F Y");
-		$showingTimeSlot = t('entire day');
+		$showingTimeSlot = iish_t('entire day');
 	}
 	else if ($dayId === 0) {
 		$dayId = null;
@@ -111,7 +111,7 @@ function iishconference_program($yearCode = null) {
 		foreach ($days as $day) {
 			if ($day->getId() === $dayId) {
 				$showing = $day->getDayFormatted("l j F Y");
-				$showingTimeSlot = t('entire day');
+				$showingTimeSlot = iish_t('entire day');
 			}
 		}
 	}
@@ -120,12 +120,12 @@ function iishconference_program($yearCode = null) {
 		foreach ($dateTimes as $dateTime) {
 			if ($dateTime->getId() === $timeId) {
 				$showing .= ' ' . $dateTime->getPeriod(true);
-				$showingTimeSlot = t('single time slot');
+				$showingTimeSlot = iish_t('single time slot');
 			}
 		}
 	}
 
-	$curShowing = t('Showing') . ': ' . $showing;
+	$curShowing = iish_t('Showing') . ': ' . $showing;
 	$curShowing .= (strlen($showingTimeSlot) > 0) ? ' (' . $showingTimeSlot . ')' : '';
 
 	// Search for the paper
@@ -187,9 +187,9 @@ function iishconference_program_form($form, &$form_state, $networkId, $textsearc
 
 	// create a list of select options
 	// also add empty option
-	$titleTextSearch = t('Search on name');
+	$titleTextSearch = iish_t('Search on name');
 	if (SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) {
-		$titleTextSearch = t('or search on name');
+		$titleTextSearch = iish_t('or search on name');
 
 		$networks = CachedConferenceApi::getNetworks();
 		$selectListOfNetworks = array();
@@ -200,7 +200,7 @@ function iishconference_program_form($form, &$form_state, $networkId, $textsearc
 
 		$form['network'] = array(
 			'#type' => 'select',
-			'#title' => t('Browse @networks: ', array('@networks' => NetworkApi::getNetworkName(false, true))),
+			'#title' => iish_t('Browse @networks: ', array('@networks' => NetworkApi::getNetworkName(false, true))),
 			'#size' => 1,
 			'#default_value' => is_null($networkId) ? 0 : $networkId,
 			'#options' => $selectListOfNetworks,
@@ -217,7 +217,7 @@ function iishconference_program_form($form, &$form_state, $networkId, $textsearc
 
 	$form['btnSubmit'] = array(
 		'#type'  => 'submit',
-		'#value' => t('Go'),
+		'#value' => iish_t('Go'),
 	);
 
 	return $form;

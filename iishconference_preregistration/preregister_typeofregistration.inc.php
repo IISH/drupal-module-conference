@@ -21,7 +21,7 @@ function preregister_typeofregistration_form($form, &$form_state) {
 	if ($showAuthor == 1) {
 		$form['author'] = array(
 			'#type'  => 'fieldset',
-			'#title' => t('I would like to propose a paper'),
+			'#title' => iish_t('I would like to propose a paper'),
 		);
 
 		if (!$authorRegistrationClosed) {
@@ -42,7 +42,7 @@ function preregister_typeofregistration_form($form, &$form_state) {
 				$form['author']['submit_paper'] = array(
 					'#type'   => 'submit',
 					'#name'   => 'submit_paper',
-					'#value'  => t('Add a new paper'),
+					'#value'  => iish_t('Add a new paper'),
 					'#suffix' => '<br /><br />',
 				);
 			}
@@ -51,14 +51,14 @@ function preregister_typeofregistration_form($form, &$form_state) {
 			foreach ($papers as $paper) {
 				$prefix = '';
 				if ($printOr  && $canSubmitNewPaper) {
-					$prefix = ' &nbsp;' . t('or') . '<br /><br />';
+					$prefix = ' &nbsp;' . iish_t('or') . '<br /><br />';
 					$printOr = false;
 				}
 
 				$form['author']['submit_paper_' . $paper->getId()] = array(
 					'#name'   => 'submit_paper_' . $paper->getId(),
 					'#type'   => 'submit',
-					'#value'  => t('Edit paper'),
+					'#value'  => iish_t('Edit paper'),
 					'#prefix' => $prefix,
 					'#suffix' => ' ' . $paper->getTitle() . '<br /><br />',
 				);
@@ -67,8 +67,8 @@ function preregister_typeofregistration_form($form, &$form_state) {
 		else {
 			$form['author']['closed_message'] = array(
 				'#type'   => 'markup',
-				'#markup' => '<font color="red">' . t('It is no longer possible to pre-register a paper.') . '<br/ >' .
-					t('You can still pre-register for the conference as a spectator.') . '</font>',
+				'#markup' => '<font color="red">' . iish_t('It is no longer possible to pre-register a paper.') . '<br/ >' .
+					iish_t('You can still pre-register for the conference as a spectator.') . '</font>',
 			);
 		}
 	}
@@ -86,7 +86,7 @@ function preregister_typeofregistration_form($form, &$form_state) {
 	if ($showOrganizer == 1) {
 		$form['organizer'] = array(
 			'#type'  => 'fieldset',
-			'#title' => t('I\'m an organizer and I would like to propose a session (including multiple participants and papers)'),
+			'#title' => iish_t('I\'m an organizer and I would like to propose a session (including multiple participants and papers)'),
 		);
 
 		if (!$organizerRegistrationClosed) {
@@ -96,7 +96,7 @@ function preregister_typeofregistration_form($form, &$form_state) {
 			$form['organizer']['submit_session'] = array(
 				'#type'   => 'submit',
 				'#name'   => 'submit_session',
-				'#value'  => t('Add a new session'),
+				'#value'  => iish_t('Add a new session'),
 				'#suffix' => '<br /><br />',
 			);
 
@@ -104,14 +104,14 @@ function preregister_typeofregistration_form($form, &$form_state) {
 			foreach ($sessions as $session) {
 				$prefix = '';
 				if ($printOr) {
-					$prefix = ' &nbsp;' . t('or') . '<br /><br />';
+					$prefix = ' &nbsp;' . iish_t('or') . '<br /><br />';
 					$printOr = false;
 				}
 
 				$form['organizer']['submit_session_' . $session->getId()] = array(
 					'#name'   => 'submit_session_' . $session->getId(),
 					'#type'   => 'submit',
-					'#value'  => t('Edit session'),
+					'#value'  => iish_t('Edit session'),
 					'#prefix' => $prefix,
 					'#suffix' => ' ' . $session->getName() . '<br /><br />',
 				);
@@ -120,8 +120,8 @@ function preregister_typeofregistration_form($form, &$form_state) {
 		else {
 			$form['organizer']['closed_message'] = array(
 				'#type'   => 'markup',
-				'#markup' => '<font color="red">' . t('It is no longer possible to propose a session.') . '<br/ >' .
-					t('You can still pre-register for the conference as a spectator.') . '</font>',
+				'#markup' => '<font color="red">' . iish_t('It is no longer possible to propose a session.') . '<br/ >' .
+					iish_t('You can still pre-register for the conference as a spectator.') . '</font>',
 			);
 		}
 	}
@@ -131,13 +131,12 @@ function preregister_typeofregistration_form($form, &$form_state) {
 
 	$form['spectator'] = array(
 		'#type'  => 'fieldset',
-		'#title' => t('I would like to register as a @spectator',
-			array('@spectator' => strtolower(SettingsApi::getSetting(SettingsApi::SPECTATOR_NAME)))),
+		'#title' => iish_t('I would like to register as a spectator'),
 	);
 
 	$form['spectator']['help_text'] = array(
 		'#type'   => 'markup',
-		'#markup' => t('Then you may skip this page and go right away to the confirmation page.'),
+		'#markup' => iish_t('Then you may skip this page and go right away to the confirmation page.'),
 	);
 
 	// + + + + + + + + + + + + + + + + + + + + + + + +
@@ -145,7 +144,7 @@ function preregister_typeofregistration_form($form, &$form_state) {
 	$form['submit_back'] = array(
 		'#type'                    => 'submit',
 		'#name'                    => 'submit_back',
-		'#value'                   => t('Back to personal info'),
+		'#value'                   => iish_t('Back to personal info'),
 		'#submit'                  => array('preregister_form_submit'),
 		'#limit_validation_errors' => array(),
 	);
@@ -153,7 +152,7 @@ function preregister_typeofregistration_form($form, &$form_state) {
 	$form['submit'] = array(
 		'#type'  => 'submit',
 		'#name'  => 'submit',
-		'#value' => t('Next to confirmation page'),
+		'#value' => iish_t('Next to confirmation page'),
 	);
 
 	$state->setFormData($data);

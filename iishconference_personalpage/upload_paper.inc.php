@@ -99,9 +99,9 @@ function conference_upload_paper_form($form, &$form_state) {
 	$form['remove-paper'] = array(
 		'#type'       => 'submit',
 		'#name'       => 'remove-paper',
-		'#value'      => t('Remove uploaded paper'),
+		'#value'      => iish_t('Remove uploaded paper'),
 		'#attributes' => array('onclick' =>
-			                       'if (!confirm("' . t('Are you sure you want to remove the uploaded paper?') .
+			                       'if (!confirm("' . iish_t('Are you sure you want to remove the uploaded paper?') .
 			                       '")) { return false; }'),
 	);
 

@@ -10,7 +10,7 @@ function preregister_login_form($form, &$form_state) {
 
 	$form['login']['help_text'] = array(
 		'#type'   => 'markup',
-		'#markup' => '<div class="bottommargin">' . t('Please enter your e-mail address.') . '</div>',
+		'#markup' => '<div class="bottommargin">' . iish_t('Please enter your e-mail address.') . '</div>',
 	);
 
 	$form['login']['email'] = array(
@@ -24,7 +24,7 @@ function preregister_login_form($form, &$form_state) {
 	$form['login']['submit'] = array(
 		'#type'  => 'submit',
 		'#name'  => 'submit',
-		'#value' => t('Next'),
+		'#value' => iish_t('Next'),
 	);
 
 	$form['info_block'] = array(
@@ -36,15 +36,15 @@ function preregister_login_form($form, &$form_state) {
 		'#type'   => 'markup',
 		'#markup' => '<div class="eca_warning">
 			<br />
-			<strong>' . t('Comments') . '</strong>
+			<strong>' . iish_t('Comments') . '</strong>
 			<br />
 			<ol>
 				<li>' .
-			t('Please disable (or minimize the size of) the cache in your browser (Internet Explorer, Firefox, Chrome)') . '</li>
+			iish_t('Please disable (or minimize the size of) the cache in your browser (Internet Explorer, Firefox, Chrome)') . '</li>
 				<li>' .
-			t('Use the back/next buttons in the form, do NOT use the browser back button') . '</li>
+			iish_t('Use the back/next buttons in the form, do NOT use the browser back button') . '</li>
 				<li>' .
-			t('Prepare your abstract beforehand. Do NOT type your abstract in the form field, but COPY it into the form field') . '</li>
+			iish_t('Prepare your abstract beforehand. Do NOT type your abstract in the form field, but COPY it into the form field') . '</li>
 			</ol>
 		</div>',
 	);
@@ -59,7 +59,7 @@ function preregister_login_form_validate($form, &$form_state) {
 	$email = trim($form_state['values']['email']);
 
 	if (!valid_email_address($email)) {
-		form_set_error('email', t('The e-mail address appears to be invalid.'));
+		form_set_error('email', iish_t('The e-mail address appears to be invalid.'));
 	}
 }
 

@@ -7,9 +7,9 @@ function conference_lostpassword_form($form, &$form_state) {
 	$ct = 0;
 	$form['ct' . $ct++] = array(
 		'#type'   => 'markup',
-		'#markup' => '<div>' . t('Please enter your e-mail address.') . '<br />' .
-		             t('We will send you a new link you can use to confirm your email.') . '<br />' .
-		             t('After confirmation you will receive a new password.') . '<br /><br /></div>',
+		'#markup' => '<div>' . iish_t('Please enter your e-mail address.') . '<br />' .
+		             iish_t('We will send you a new link you can use to confirm your email.') . '<br />' .
+		             iish_t('After confirmation you will receive a new password.') . '<br /><br /></div>',
 	);
 
 	$form['email'] = array(
@@ -37,7 +37,7 @@ function conference_lostpassword_form_validate($form, &$form_state) {
 	$email = strtolower(trim($form_state['values']['email']));
 
 	if (!valid_email_address($email)) {
-		form_set_error('email', t('The email address appears to be invalid.'));
+		form_set_error('email', iish_t('The email address appears to be invalid.'));
 	}
 }
 
@@ -53,7 +53,7 @@ function conference_lostpassword_form_submit($form, &$form_state) {
 		switch ($status) {
 			case LostPasswordApi::USER_STATUS_EXISTS:
 				drupal_set_message(t("We have received your request for a new password.") . "<br>" .
-				                   t("We have sent you an e-mail you have to confirm before we will send you a new password."),
+				                   iish_t("We have sent you an e-mail you have to confirm before we will send you a new password."),
 				                   'status');
 				break;
 			case LostPasswordApi::USER_STATUS_DISABLED:

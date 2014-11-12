@@ -4,34 +4,26 @@
  * API that returns settings set in the CMS
  */
 class SettingsApi {
-	const ACCOMPANYING_PERSON_DESCRIPTION = 'accompanying_person_description';
 	const ALLOWED_PAPER_EXTENSIONS = 'allowed_paper_extensions';
 	const AUTHOR_REGISTRATION_LASTDATE = 'author_registration_lastdate';
 	const AWARD_NAME = 'award_name';
 	const BANK_TRANSFER_LASTDATE = 'bank_transfer_lastdate';
 	const BANK_TRANSFER_INFO = 'bank_transfer_info';
 	const COUNTRY_ID = 'country_id';
-	const DEFAULT_EQUIPMENT_TEXT = 'default_equipment_text';
 	const DEFAULT_NETWORK_ID = 'default_network_id';
 	const DEFAULT_ORGANISATION_EMAIL = 'default_organisation_email';
 	const EMAIL_MAX_NUM_TRIES = 'email_max_num_tries';
 	const FINAL_REGISTRATION_LASTDATE = 'final_registration_lastdate';
-	const FINAL_REGISTRATION_INTRO_TEXT = 'final_registration_intro_text';
 	const MAX_PAPERS_PER_PERSON_PER_SESSION = 'max_papers_per_person_per_session';
 	const MAX_UPLOAD_SIZE_PAPER = 'max_upload_size_paper';
 	const NETWORK_NAME_PLURAL = 'network_name_plural';
 	const NETWORK_NAME_SINGULAR = 'network_name_singular';
 	const NUM_CANDIDATE_VOTES_ADVISORY_BOARD = 'num_candidate_votes_advisory_board';
-	const ONLINE_PROGRAM_HEADER = 'online_program_header';
-	const ONLINE_PROGRAM_UNDER_CONSTRUCTION = 'online_program_under_construction';
 	const ORGANIZER_REGISTRATION_LASTDATE = 'organizer_registration_lastdate';
 	const PATH_FOR_ADMIN_MENU = 'path_for_admin_menu';
 	const PATH_FOR_MENU = 'path_for_menu';
 	const PREREGISTRATION_LASTDATE = 'preregistration_lastdate';
-	const PREREGISTRATION_LASTDATE_MESSAGE = 'preregistration_lastdate_message';
 	const PREREGISTRATION_STARTDATE = 'preregistration_startdate';
-	const PREREGISTRATION_STARTDATE_MESSAGE = 'preregistration_startdate_message';
-	const SPECTATOR_NAME = 'spectator_name';
 	const DOWNLOAD_PAPER_LASTDATE = 'download_paper_lastdate';
 
 	// Show / hide

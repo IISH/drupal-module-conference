@@ -28,12 +28,12 @@ function preregister_personalinfo_form($form, &$form_state) {
 
 	$form['personal_info'] = array(
 		'#type'  => 'fieldset',
-		'#title' => t('Personal info'),
+		'#title' => iish_t('Personal info'),
 	);
 
 	$form['personal_info']['firstname'] = array(
 		'#type'          => 'textfield',
-		'#title'         => t('First name'),
+		'#title'         => iish_t('First name'),
 		'#size'          => 40,
 		'#maxlength'     => 255,
 		'#required'      => true,
@@ -42,7 +42,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 
 	$form['personal_info']['lastname'] = array(
 		'#type'          => 'textfield',
-		'#title'         => t('Last name'),
+		'#title'         => iish_t('Last name'),
 		'#size'          => 40,
 		'#maxlength'     => 255,
 		'#required'      => true,
@@ -50,7 +50,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 	);
 
 	$form['personal_info']['gender'] = array(
-		'#title'         => t('Gender'),
+		'#title'         => iish_t('Gender'),
 		'#type'          => 'select',
 		'#options'       => ConferenceMisc::getGenders(),
 		'#default_value' => $user->getGender(),
@@ -58,7 +58,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 
 	$form['personal_info']['organisation'] = array(
 		'#type'          => 'textfield',
-		'#title'         => t('Organisation'),
+		'#title'         => iish_t('Organisation'),
 		'#size'          => 40,
 		'#maxlength'     => 255,
 		'#required'      => true,
@@ -67,7 +67,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 
 	$form['personal_info']['department'] = array(
 		'#type'          => 'textfield',
-		'#title'         => t('Department'),
+		'#title'         => iish_t('Department'),
 		'#size'          => 40,
 		'#maxlength'     => 255,
 		'#required'      => true,
@@ -76,7 +76,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 
 	$form['personal_info']['email'] = array(
 		'#type'          => 'textfield',
-		'#title'         => t('E-mail'),
+		'#title'         => iish_t('E-mail'),
 		'#size'          => 40,
 		'#maxlength'     => 100,
 		'#default_value' => $user->getEmail(),
@@ -86,7 +86,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 	if (SettingsApi::getSetting(SettingsApi::SHOW_STUDENT) == 1) {
 		$form['personal_info']['student'] = array(
 			'#type'          => 'checkbox',
-			'#title'         => t('Please check if you are a (PhD) student'),
+			'#title'         => iish_t('Please check if you are a (PhD) student'),
 			'#default_value' => $participant->getStudent(),
 		);
 	}
@@ -94,8 +94,8 @@ function preregister_personalinfo_form($form, &$form_state) {
 	if (SettingsApi::getSetting(SettingsApi::SHOW_CV) == 1) {
 		$form['personal_info']['cv'] = array(
 			'#type'          => 'textarea',
-			'#title'         => t('Curriculum Vitae'),
-			'#description'   => '<em>' . t('(max. 200 words)') . '</em>',
+			'#title'         => iish_t('Curriculum Vitae'),
+			'#description'   => '<em>' . iish_t('(max. 200 words)') . '</em>',
 			'#rows'          => 2,
 			'#required'      => SettingsApi::getSetting(SettingsApi::REQUIRED_CV) == 1,
 			'#default_value' => $user->getCv(),
@@ -107,12 +107,12 @@ function preregister_personalinfo_form($form, &$form_state) {
 
 	$form['address'] = array(
 		'#type'  => 'fieldset',
-		'#title' => t('Address'),
+		'#title' => iish_t('Address'),
 	);
 
 	$form['address']['city'] = array(
 		'#type'          => 'textfield',
-		'#title'         => t('City'),
+		'#title'         => iish_t('City'),
 		'#size'          => 40,
 		'#maxlength'     => 255,
 		'#required'      => true,
@@ -121,7 +121,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 
 	$form['address']['country'] = array(
 		'#type'          => 'select',
-		'#title'         => t('Country'),
+		'#title'         => iish_t('Country'),
 		'#options'       => CRUDApiClient::getAsKeyValueArray(CachedConferenceApi::getCountries()),
 		'#required'      => true,
 		'#default_value' => $user->getCountryId(),
@@ -132,12 +132,12 @@ function preregister_personalinfo_form($form, &$form_state) {
 
 	$form['communication_means'] = array(
 		'#type'  => 'fieldset',
-		'#title' => t('Communication Means'),
+		'#title' => iish_t('Communication Means'),
 	);
 
 	$form['communication_means']['phone'] = array(
 		'#type'          => 'textfield',
-		'#title'         => t('Phone number'),
+		'#title'         => iish_t('Phone number'),
 		'#size'          => 40,
 		'#maxlength'     => 100,
 		'#default_value' => $user->getPhone(),
@@ -145,7 +145,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 
 	$form['communication_means']['mobile'] = array(
 		'#type'          => 'textfield',
-		'#title'         => t('Mobile number'),
+		'#title'         => iish_t('Mobile number'),
 		'#size'          => 40,
 		'#maxlength'     => 100,
 		'#default_value' => $user->getMobile(),
@@ -154,7 +154,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 	$form['communication_means']['extra_info'] = array(
 		'#type'   => 'markup',
 		'#markup' => '<span class="extra_info">' .
-			t('Please enter international numbers (including country prefix etc.)') .
+			iish_t('Please enter international numbers (including country prefix etc.)') .
 			'</span>',
 	);
 
@@ -193,12 +193,12 @@ function preregister_personalinfo_form($form, &$form_state) {
 
 		$form['chair_discussant_pool'] = array(
 			'#type'  => 'fieldset',
-			'#title' => t('Chair / discussant pool'),
+			'#title' => iish_t('Chair / discussant pool'),
 		);
 
 		$form['chair_discussant_pool']['volunteerchair'] = array(
 			'#type'          => 'checkbox',
-			'#title'         => t('I would like to volunteer as Chair'),
+			'#title'         => iish_t('I would like to volunteer as Chair'),
 			//'#prefix'        => '<div class='container-inline'><span style='vertical-align:top;'>',
 			'#default_value' => count($chairOptions) > 0,
 		);
@@ -208,7 +208,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 			'#options'       => $networkOptions,
 			'#multiple'      => true,
 			'#size'          => 3,
-			'#description'   => '<i>' . t('Use CTRL key to select multiple @networks.',
+			'#description'   => '<i>' . iish_t('Use CTRL key to select multiple @networks.',
 					array('@networks' => NetworkApi::getNetworkName(false, true))) . '</i>',
 			'#states'        => array(
 				'visible' => array(
@@ -227,7 +227,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 
 		$form['chair_discussant_pool']['volunteerdiscussant'] = array(
 			'#type'          => 'checkbox',
-			'#title'         => t('I would like to volunteer as Discussant'),
+			'#title'         => iish_t('I would like to volunteer as Discussant'),
 			'#default_value' => count($discussantOptions) > 0,
 		);
 
@@ -238,7 +238,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 			//'#suffix'        => '</div>',
 			'#multiple'      => true,
 			'#size'          => 3,
-			'#description'   => '<i>' . t('Use CTRL key to select multiple @networks.',
+			'#description'   => '<i>' . iish_t('Use CTRL key to select multiple @networks.',
 					array('@networks' => NetworkApi::getNetworkName(false, true))) . '</i>',
 			'#states'        => array(
 				'visible' => array(
@@ -270,7 +270,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 
 		$form['english_language_coach'] = array(
 			'#type'  => 'fieldset',
-			'#title' => t('English Language Coach'),
+			'#title' => iish_t('English Language Coach'),
 		);
 
 		$defaultValue = '';
@@ -292,7 +292,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 			'#options'       => $networkOptions,
 			'#multiple'      => true,
 			'#size'          => 3,
-			'#description'   => '<i>' . t('Use CTRL key to select multiple @networks.',
+			'#description'   => '<i>' . iish_t('Use CTRL key to select multiple @networks.',
 					array('@networks' => NetworkApi::getNetworkName(false, true))) . '</i>',
 			'#states'        => array(
 				'visible' => array(
@@ -316,7 +316,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 	$form['submit'] = array(
 		'#type'  => 'submit',
 		'#name'  => 'submit',
-		'#value' => t('Next'),
+		'#value' => iish_t('Next'),
 	);
 
 	return $form;
@@ -331,7 +331,7 @@ function preregister_personalinfo_form_validate($form, &$form_state) {
 		if ($form_state['values']['volunteerchair']) {
 			if (count($form_state['values']['volunteerchair_networks']) === 0) {
 				form_set_error('volunteerchair',
-					t('Please select a @network or uncheck the field \'I would like to volunteer as Chair\'.',
+					iish_t('Please select a @network or uncheck the field \'I would like to volunteer as Chair\'.',
 						array('@network' => NetworkApi::getNetworkName(true, false))));
 			}
 		}
@@ -340,7 +340,7 @@ function preregister_personalinfo_form_validate($form, &$form_state) {
 		if ($form_state['values']['volunteerdiscussant']) {
 			if (count($form_state['values']['volunteerdiscussant_networks']) === 0) {
 				form_set_error('volunteerdiscussant',
-					t('Please select a @network or uncheck the field \'I would like to volunteer as Discussant\'.',
+					iish_t('Please select a @network or uncheck the field \'I would like to volunteer as Discussant\'.',
 						array('@network' => NetworkApi::getNetworkName(true, false))));
 			}
 		}
@@ -351,7 +351,7 @@ function preregister_personalinfo_form_validate($form, &$form_state) {
 		if (in_array($form_state['values']['coachpupil'], array('coach', 'pupil'))) {
 			if (count($form_state['values']['coachpupil_networks']) === 0) {
 				form_set_error('coachpupil',
-					t('Please select a @network or select \'not applicable\' at English language coach.',
+					iish_t('Please select a @network or select \'not applicable\' at English language coach.',
 						array('@network' => NetworkApi::getNetworkName(true, false)))
 				);
 			}

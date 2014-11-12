@@ -53,12 +53,12 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 
 	$form['participant'] = array(
 		'#type'  => 'fieldset',
-		'#title' => t('Add a participant'),
+		'#title' => iish_t('Add a participant'),
 	);
 
 	$form['participant']['addparticipantemail'] = array(
 		'#type'          => 'textfield',
-		'#title'         => t('E-mail'),
+		'#title'         => iish_t('E-mail'),
 		'#required'      => true,
 		'#size'          => 40,
 		'#maxlength'     => 100,
@@ -68,7 +68,7 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 
 	$form['participant']['addparticipantfirstname'] = array(
 		'#type'          => 'textfield',
-		'#title'         => t('First name'),
+		'#title'         => iish_t('First name'),
 		'#required'      => true,
 		'#size'          => 40,
 		'#maxlength'     => 255,
@@ -78,7 +78,7 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 
 	$form['participant']['addparticipantlastname'] = array(
 		'#type'          => 'textfield',
-		'#title'         => t('Last name'),
+		'#title'         => iish_t('Last name'),
 		'#required'      => true,
 		'#size'          => 40,
 		'#maxlength'     => 255,
@@ -89,7 +89,7 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 	if (SettingsApi::getSetting(SettingsApi::SHOW_STUDENT) == 1) {
 		$form['participant']['addparticipantstudent'] = array(
 			'#type'          => 'checkbox',
-			'#title'         => t('Please check if this participant is a (PhD) student'),
+			'#title'         => iish_t('Please check if this participant is a (PhD) student'),
 			'#default_value' => $participant->getStudent(),
 			'#attributes'    => $readOnlyParticipant,
 		);
@@ -102,8 +102,8 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 	if (SettingsApi::getSetting(SettingsApi::SHOW_CV) == 1) {
 		$form['participant']['addparticipantcv'] = array(
 			'#type'          => 'textarea',
-			'#title'         => t('Curriculum Vitae'),
-			'#description'   => '<em>' . t('(max. 200 words)') . '</em>',
+			'#title'         => iish_t('Curriculum Vitae'),
+			'#description'   => '<em>' . iish_t('(max. 200 words)') . '</em>',
 			'#rows'          => 2,
 			'#required'      => $cvRequired,
 			'#default_value' => $userCv,
@@ -114,7 +114,7 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 	$userCountryId = $user->getCountryId();
 	$form['participant']['addparticipantcountry'] = array(
 		'#type'          => 'select',
-		'#title'         => t('Country'),
+		'#title'         => iish_t('Country'),
 		'#options'       => CRUDApiClient::getAsKeyValueArray(CachedConferenceApi::getCountries()),
 		'#required'      => true,
 		'#default_value' => $userCountryId,
@@ -133,7 +133,7 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 
 	$form['participant_roles'] = array(
 		'#type'  => 'fieldset',
-		'#title' => t('The roles of the participant in this session'),
+		'#title' => iish_t('The roles of the participant in this session'),
 	);
 
 	$description = ParticipantTypeApi::getCombinationsNotAllowedText();
@@ -168,13 +168,13 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 
 	$form['participant_paper'] = array(
 		'#type'   => 'fieldset',
-		'#title'  => t('Add paper for participant'),
+		'#title'  => iish_t('Add paper for participant'),
 		'#states' => array('visible' => $visibleStates),
 	);
 
 	$form['participant_paper']['addparticipantpapertitle'] = array(
 		'#type'          => 'textfield',
-		'#title'         => t('Paper title'),
+		'#title'         => iish_t('Paper title'),
 		'#size'          => 40,
 		'#maxlength'     => 255,
 		'#default_value' => $paper->getTitle(),
@@ -182,8 +182,8 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 
 	$form['participant_paper']['addparticipantpaperabstract'] = array(
 		'#type'          => 'textarea',
-		'#title'         => t('Paper abstract'),
-		'#description'   => '<em>' . t('(max. 500 words)') . '</em>',
+		'#title'         => iish_t('Paper abstract'),
+		'#description'   => '<em>' . iish_t('(max. 500 words)') . '</em>',
 		'#rows'          => 3,
 		'#default_value' => $paper->getAbstr(),
 	);
@@ -193,7 +193,7 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 	$form['submit_back'] = array(
 		'#type'                    => 'submit',
 		'#name'                    => 'submit_back',
-		'#value'                   => t('Back'),
+		'#value'                   => iish_t('Back'),
 		'#submit'                  => array('preregister_form_submit'),
 		'#limit_validation_errors' => array(),
 	);
@@ -201,7 +201,7 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 	$form['submit'] = array(
 		'#type'  => 'submit',
 		'#name'  => 'submit',
-		'#value' => t('Save participant'),
+		'#value' => iish_t('Save participant'),
 	);
 
 	// We can only remove a participant from a session if he/she has already been added to session
@@ -209,12 +209,12 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 		$form['submit_remove'] = array(
 			'#type'                    => 'submit',
 			'#name'                    => 'submit_remove',
-			'#value'                   => t('Remove participant from session'),
+			'#value'                   => iish_t('Remove participant from session'),
 			'#submit'                  => array('preregister_form_submit'),
 			'#limit_validation_errors' => array(),
 			'#attributes'              => array('onclick' =>
 	            'if (!confirm("' .
-	            t('Are you sure you want to remove this participant? ' .
+	            iish_t('Are you sure you want to remove this participant? ' .
 		            '(The participant will only be removed from this session).') .
 	            '")) { return false; }'),
 		);
@@ -230,7 +230,7 @@ function preregister_sessionparticipant_form_validate($form, &$form_state) {
 	$email = trim($form_state['values']['addparticipantemail']);
 
 	if (!valid_email_address($email)) {
-		form_set_error('addparticipantemail', t('The e-mail address appears to be invalid.'));
+		form_set_error('addparticipantemail', iish_t('The e-mail address appears to be invalid.'));
 	}
 
 	if (!ParticipantTypeApi::isCombinationOfTypesAllowed($form_state['values']['addparticipanttype'])) {
@@ -240,10 +240,10 @@ function preregister_sessionparticipant_form_validate($form, &$form_state) {
 
 	if (ParticipantTypeApi::containsTypeWithPaper($form_state['values']['addparticipanttype'])) {
 		if (strlen(trim($form_state['values']['addparticipantpapertitle'])) === 0) {
-			form_set_error('addparticipantpapertitle', t('Paper title is required with the selected type(s).'));
+			form_set_error('addparticipantpapertitle', iish_t('Paper title is required with the selected type(s).'));
 		}
 		if (strlen(trim($form_state['values']['addparticipantpaperabstract'])) === 0) {
-			form_set_error('addparticipantpaperabstract', t('Paper abstract is required with the selected type(s).'));
+			form_set_error('addparticipantpaperabstract', iish_t('Paper abstract is required with the selected type(s).'));
 		}
 	}
 }

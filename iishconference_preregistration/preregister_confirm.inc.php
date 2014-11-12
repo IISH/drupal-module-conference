@@ -41,7 +41,7 @@ function preregister_confirm_form($form, &$form_state) {
 	// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 	// PERSONAL INFO
 
-	$personalInfoContent = array(theme('iishconference_container_header', array('text' => t('Personal Info'))));
+	$personalInfoContent = array(theme('iishconference_container_header', array('text' => iish_t('Personal Info'))));
 
 	$personalInfoContent[] = theme('iishconference_container_field', array(
 		'label' => 'First name',
@@ -86,7 +86,7 @@ function preregister_confirm_form($form, &$form_state) {
 	// + + + + + + + + + + + + + + + + + + + + + + + +
 	// ADDRESS
 
-	$addressContent = array(theme('iishconference_container_header', array('text' => t('Address'))));
+	$addressContent = array(theme('iishconference_container_header', array('text' => iish_t('Address'))));
 
 	$addressContent[] = theme('iishconference_container_field', array(
 		'label' => 'City',
@@ -100,7 +100,7 @@ function preregister_confirm_form($form, &$form_state) {
 	// + + + + + + + + + + + + + + + + + + + + + + + +
 	// COMMUNICATION MEANS
 
-	$communicationContent = array(theme('iishconference_container_header', array('text' => t('Communication Means'))));
+	$communicationContent = array(theme('iishconference_container_header', array('text' => iish_t('Communication Means'))));
 
 	$communicationContent[] = theme('iishconference_container_field', array(
 		'label' => 'Phone number',
@@ -139,7 +139,7 @@ function preregister_confirm_form($form, &$form_state) {
 			ParticipantVolunteeringApi::getAllNetworksForVolunteering($allVolunteering, VolunteeringApi::DISCUSSANT);
 
 		$chairDiscussantContent =
-			array(theme('iishconference_container_header', array('text' => t('Chair / discussant pool'))));
+			array(theme('iishconference_container_header', array('text' => iish_t('Chair / discussant pool'))));
 
 		$chairDiscussantContent[] = theme('iishconference_container_field', array(
 			'label' => 'I would like to volunteer as Chair?',
@@ -177,7 +177,7 @@ function preregister_confirm_form($form, &$form_state) {
 			ParticipantVolunteeringApi::getAllNetworksForVolunteering($allVolunteering, VolunteeringApi::PUPIL);
 
 		$englishCoachingContent =
-			array(theme('iishconference_container_header', array('text' => t('English Language Coach'))));
+			array(theme('iishconference_container_header', array('text' => iish_t('English Language Coach'))));
 
 		$englishCoachingContent[] = theme('iishconference_container_field', array(
 			'label' => ConferenceMisc::getLanguageCoachPupil('coach'),
@@ -209,7 +209,7 @@ function preregister_confirm_form($form, &$form_state) {
 
 	$papersContent = array();
 	foreach ($papers as $i => $paper) {
-		$paperContent = array(theme('iishconference_container_header', array('text' => t('Paper @count of @total',
+		$paperContent = array(theme('iishconference_container_header', array('text' => iish_t('Paper @count of @total',
 			array('@count' => $i + 1, '@total' => count($papers))))));
 
 		$paperContent[] = theme('iishconference_container_field', array(
@@ -263,7 +263,7 @@ function preregister_confirm_form($form, &$form_state) {
 
 		// + + + + + + + + + + + + + + + + + + + + + + + +
 
-		$sessionContent = array(theme('iishconference_container_header', array('text' => t('Session @count of @total',
+		$sessionContent = array(theme('iishconference_container_header', array('text' => iish_t('Session @count of @total',
 			array('@count' => $i + 1, '@total' => count($sessions))))));
 
 		$sessionContent[] = theme('iishconference_container_field', array(
@@ -380,7 +380,7 @@ function preregister_confirm_form($form, &$form_state) {
 	$form['submit_back_personalinfo'] = array(
 		'#type'                    => 'submit',
 		'#name'                    => 'submit_back_personalinfo',
-		'#value'                   => t('Back to personal info page'),
+		'#value'                   => iish_t('Back to personal info page'),
 		'#submit'                  => array('preregister_form_submit'),
 		'#limit_validation_errors' => array(),
 	);
@@ -394,7 +394,7 @@ function preregister_confirm_form($form, &$form_state) {
 		$form['submit_back_typeofregistration'] = array(
 			'#type'                    => 'submit',
 			'#name'                    => 'submit_back_typeofregistration',
-			'#value'                   => t('Back to previous step'),
+			'#value'                   => iish_t('Back to previous step'),
 			'#submit'                  => array('preregister_form_submit'),
 			'#limit_validation_errors' => array(),
 		);
@@ -403,7 +403,7 @@ function preregister_confirm_form($form, &$form_state) {
 	$form['submit'] = array(
 		'#type'  => 'submit',
 		'#name'  => 'submit',
-		'#value' => t('Confirm and finish pre-registration'),
+		'#value' => iish_t('Confirm and finish pre-registration'),
 	);
 
 	return $form;

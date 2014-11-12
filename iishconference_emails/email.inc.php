@@ -47,13 +47,13 @@ function conference_email_main($email) {
 				'label' => 'Original email sent on',
 				'value' => (!is_null($email->getDateTimeSent()) ?
 						$email->getDateTimeSentFormatted('j F Y H:i:s') :
-						t('Not sent yet'))
+						iish_t('Not sent yet'))
 			)),
 			theme('iishconference_container_field', array(
 				'label' => 'Copies of this email sent on',
 				'value' => (!is_null($email->getDateTimesSentCopy()) ?
 						implode(', ', $email->getDateTimesSentCopyFormatted('j F Y H:i:s')) :
-						t('No copies sent yet'))
+						iish_t('No copies sent yet'))
 			)),
 			'<br />',
 			theme('iishconference_container_field', array(
@@ -90,7 +90,7 @@ function conference_email_form($form, &$form_state) {
 	$form['resend'] = array(
 		'#type'  => 'submit',
 		'#name'  => 'resend',
-		'#value' => t('(Re)send email now'),
+		'#value' => iish_t('(Re)send email now'),
 	);
 
 	return $form;

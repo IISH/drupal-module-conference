@@ -23,8 +23,8 @@ function conference_confirmlostpassword_form($form, &$form_state) {
 		$form['ct' . $ct++] = array(
 			'#type'   => 'markup',
 			'#markup' => '<div class="bottommargin">' .
-			             t('Please enter the ID and CODE we have sent you via e-mail and click on Confirm.') .
-			             '<br />' . t('After the CODE is confirmed we will send you a new password.') .
+			             iish_t('Please enter the ID and CODE we have sent you via e-mail and click on Confirm.') .
+			             '<br />' . iish_t('After the CODE is confirmed we will send you a new password.') .
 			             '</div>',
 		);
 
@@ -66,11 +66,11 @@ function conference_confirmlostpassword_form($form, &$form_state) {
 function conference_confirmlostpassword_form_validate($form, &$form_state) {
 	// regexp only integers
 	if (EasyProtection::easyIntegerProtection($form_state['values']['id']) === null) {
-		form_set_error('id', t('The ID appears to be invalid.'));
+		form_set_error('id', iish_t('The ID appears to be invalid.'));
 	}
 	// regexp only digits and characters
 	if (EasyProtection::easyStringProtection($form_state['values']['code']) === '') {
-		form_set_error('code', t('The CODE appears to be invalid.'));
+		form_set_error('code', iish_t('The CODE appears to be invalid.'));
 	}
 }
 

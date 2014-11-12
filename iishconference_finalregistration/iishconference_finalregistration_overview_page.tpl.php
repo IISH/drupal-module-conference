@@ -1,6 +1,6 @@
 <div id="final-registration-overview">
 	<span class="final-registration-overview-header">
-		<?php print t('Order description:'); ?>
+		<?php print iish_t('Order description:'); ?>
 	</span>
 
 	<ul>
@@ -18,7 +18,7 @@
 
 		<li>
 			<span class="final-registration-overview-total">
-				<?php print t('Total amount') . ':'; ?>
+				<?php print iish_t('Total amount') . ':'; ?>
 				<?php print ConferenceMisc::getReadableAmount($variables['total-amount']); ?>
 			</span>
 		</li>
@@ -26,7 +26,7 @@
 
 	<?php if (SettingsApi::getSetting(SettingsApi::SHOW_DAYS) == 1) : ?>
 		<span class="final-registration-overview-header">
-			<?php print t('You have indicated to be present on the following days:'); ?>
+			<?php print iish_t('You have indicated to be present on the following days:'); ?>
 		</span>
 
 		<ul>
@@ -38,7 +38,7 @@
 
 	<?php if ($variables['invitation-letter']) : ?>
 		<span class="final-registration-overview-header">
-			<?php print t('In addition, you also indicated that an invitation letter should be send to:'); ?>
+			<?php print iish_t('In addition, you also indicated that an invitation letter should be send to:'); ?>
 		</span>
 
 		<ul>
@@ -62,7 +62,7 @@
 			<?php unset($variables['form']['bank_transfer']); ?>
 
 			<span class="eca_warning">
-				<?php print t('It is no longer possible to pay via bank transfer, please make an online payment.'); ?>
+				<?php print iish_t('It is no longer possible to pay via bank transfer, please make an online payment.'); ?>
 			</span>
 		<?php endif; ?>
 

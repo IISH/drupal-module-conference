@@ -9,7 +9,7 @@
  */
 function iishconference_userblock_block_info() {
 	$blocks['user_block'] = array(
-		'info'       => t('User logged in?'),
+		'info'       => iish_t('User logged in?'),
 		'cache'      => DRUPAL_NO_CACHE,
 		'status'     => true,
 		'region'     => 'header',
@@ -42,13 +42,13 @@ function iishconference_userblock_block_view($delta = '') {
 function iishconference_userblock_block_content() {
 	try {
 		if (LoggedInUserDetails::isLoggedIn()) {
-			return '<span class="conference-userblock">' . t('Welcome') . ' ' .
+			return '<span class="conference-userblock">' . iish_t('Welcome') . ' ' .
 			l(LoggedInUserDetails::getUser(false)->getFullName(),
 				SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU, false) . 'personal-page') . ' | ' .
 			l(t('Log out'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'logout') . '</span>';
 		}
 		else {
-			return '<span class="conference-userblock">' . t('Please !link.',
+			return '<span class="conference-userblock">' . iish_t('Please !link.',
 				array('!link' => l(t('log in'),
 					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU, false) . 'login'))) . '</span>';
 		}

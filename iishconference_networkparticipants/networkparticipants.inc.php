@@ -36,7 +36,7 @@ function iishconference_networkparticipants_main() {
 	if (count($links) > 0) {
 		return theme('item_list',
 			array(
-				'title' => t('Your @networks', array('@networks' => NetworkApi::getNetworkName(false, true))),
+				'title' => iish_t('Your @networks', array('@networks' => NetworkApi::getNetworkName(false, true))),
 				'items' => $links,
 			));
 	}
@@ -82,7 +82,7 @@ function iishconference_networkparticipants_detail($network) {
 			drupal_add_http_header('Content-Type', 'application/vnd.ms-excel');
 			drupal_add_http_header('Content-Disposition',
 				'attachment; filename=' .
-				t('Participants in @networkName @network on @date',
+				iish_t('Participants in @networkName @network on @date',
 					array('@networkName' => NetworkApi::getNetworkName(true, true),
 					      '@network'     => $networkName,
 					      '@date'        => date('m-d-Y'))) . '.xls;');

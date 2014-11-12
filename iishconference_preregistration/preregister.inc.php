@@ -25,7 +25,7 @@ function preregister_form($form, &$form_state) {
 		$form['ct1'] = array(
 			'#type'   => 'markup',
 			'#markup' => '<span class="eca_warning">' .
-				t('You are already pre-registered for the @codeYear. It is not allowed to modify online ' .
+				iish_t('You are already pre-registered for the @codeYear. It is not allowed to modify online ' .
 					'your data after your data has been checked by the conference organization. If you would like to ' .
 					'make some changes please send an e-mail to @code. Please go to your !link to check the data.',
 					array('@codeYear' => CachedConferenceApi::getEventDate()->getLongNameAndYear(),
@@ -44,7 +44,12 @@ function preregister_form($form, &$form_state) {
 			'#type'   => 'markup',
 			'#markup' =>
 				'<span class="eca_warning">' .
-				ConferenceMisc::getCleanHTML(SettingsApi::getSetting(SettingsApi::PREREGISTRATION_LASTDATE_MESSAGE)) .
+				ConferenceMisc::getCleanHTML(iish_t('Please note it is no longer possible to pre-register online.
+					If you wish to register as listener, you can do so at the conference desk in CITY.
+					If you have been in touch with the network chairs or session organizers about a paper proposal
+					and still have to pre-register, please contact the secretariat at EMAIL@EMAIL.NL
+					It is still possible to do the Final Registration and Payment via http://URL.
+					If you haven\'t payed the conference fee, please do it as soon as possible.')) .
 				'</span>',
 		);
 
@@ -57,7 +62,7 @@ function preregister_form($form, &$form_state) {
 			'#type'   => 'markup',
 			'#markup' =>
 				'<span class="eca_warning">' .
-				ConferenceMisc::getCleanHTML(SettingsApi::getSetting(SettingsApi::PREREGISTRATION_STARTDATE_MESSAGE)) .
+				ConferenceMisc::getCleanHTML(iish_t('The pre-registration for this conference has not started yet.')) .
 				'</span>',
 		);
 

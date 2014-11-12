@@ -13,9 +13,9 @@ function conference_changeuser_form($form, &$form_state, $value) {
 
 	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::hasFullRights()) {
 		drupal_set_message(t('Access denied.') . '<br />' .
-			t('Current user ( @user ) is not a conference crew member.',
+			iish_t('Current user ( @user ) is not a conference crew member.',
 				array('@user' => LoggedInUserDetails::getUser())) . '<br />' .
-			t('Please !login as a crew member.',
+			iish_t('Please !login as a crew member.',
 				array('!login' => l(t('log out and login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 					array('query' => drupal_get_destination())))), 'error');
 
@@ -27,7 +27,7 @@ function conference_changeuser_form($form, &$form_state, $value) {
 	// show change user page
 	$form['ct' . $ct++] = array(
 		'#type'   => 'markup',
-		'#markup' => '<div><br />' . t('Please enter # or e-mail of user.') . '</div>',
+		'#markup' => '<div><br />' . iish_t('Please enter # or e-mail of user.') . '</div>',
 	);
 
 	$form['user_id'] = array(
@@ -63,11 +63,11 @@ function conference_changeuser_form_submit($form, &$form_state) {
 
 	if ($userInfo) {
 		if ($userInfo['isCrew']) {
-			form_set_error('user_id', t('You cannot change into a crew member.'));
+			form_set_error('user_id', iish_t('You cannot change into a crew member.'));
 			$form_state['rebuild'] = true;
 		}
 		else if ($userInfo['hasFullRights']) {
-			form_set_error('user_id', t('You cannot change into an administrator.'));
+			form_set_error('user_id', iish_t('You cannot change into an administrator.'));
 			$form_state['rebuild'] = true;
 		}
 		else {
@@ -95,7 +95,7 @@ function conference_changeuser_form_submit($form, &$form_state) {
 		}
 	}
 	else {
-		form_set_error('user_id', t("Cannot find user..."));
+		form_set_error('user_id', iish_t("Cannot find user..."));
 		$form['rebuild'] = true;
 	}
 }

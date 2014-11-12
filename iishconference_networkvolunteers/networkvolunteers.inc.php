@@ -34,7 +34,7 @@ function iishconference_networkvolunteers_main() {
 
 	if (count($links) > 0) {
 		return theme('item_list', array(
-			'title' => t('Your @networks', array('@networks' => NetworkApi::getNetworkName(false, true))),
+			'title' => iish_t('Your @networks', array('@networks' => NetworkApi::getNetworkName(false, true))),
 			'items' => $links,
 		));
 	}
@@ -82,7 +82,7 @@ function iishconference_networkvolunteers_detail($network) {
 		'list'     => iishconference_networkvolunteers_get_networks(),
 		'current'  => $network,
 		'prevLink' => l('« ' .
-			t('Go back to @networks list', array('@networks' => NetworkApi::getNetworkName(false, true))),
+			iish_t('Go back to @networks list', array('@networks' => NetworkApi::getNetworkName(false, true))),
 			SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(true, true) .
 			'volunteers'),
 		'curUrl'   => SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(true, true) .
@@ -99,7 +99,7 @@ function iishconference_networkvolunteers_detail($network) {
 		'value' => $network->getName(),
 	));
 	$title .= theme('iishconference_container_field', array(
-		'label'       => t('Chairs in this @network', array('@network' => NetworkApi::getNetworkName(true, true))),
+		'label'       => iish_t('Chairs in this @network', array('@network' => NetworkApi::getNetworkName(true, true))),
 		'value'       => ConferenceMisc::getEnumSingleLine($chairLinks),
 		'valueIsHTML' => true,
 	));
@@ -133,7 +133,7 @@ function iishconference_networkvolunteers_detail($network) {
  */
 function iishconference_networkvolunteers_listofparticipants_details($volunteering, $network) {
 	$header = theme('iishconference_container_header', array(
-		'text' => t('@name volunteers', array('@name' => $volunteering->getDescription())),
+		'text' => iish_t('@name volunteers', array('@name' => $volunteering->getDescription())),
 	));
 
 	$props = new ApiCriteriaBuilder();
@@ -161,17 +161,17 @@ function iishconference_networkvolunteers_listofparticipants_details($volunteeri
 	return $header . theme_table(
 		array(
 			"header"     => array(
-				array('data' => t('Last name')),
-				array('data' => t('First name')),
-				array('data' => t('E-mail')),
-				array('data' => t('Organisation')),
+				array('data' => iish_t('Last name')),
+				array('data' => iish_t('First name')),
+				array('data' => iish_t('E-mail')),
+				array('data' => iish_t('Organisation')),
 			),
 			"rows"       => $rows,
 			"attributes" => array(),
 			"sticky"     => true,
 			"caption"    => null,
 			"colgroups"  => array(),
-			"empty"      => t('No volunteers found!'),
+			"empty"      => iish_t('No volunteers found!'),
 		)
 	);
 }

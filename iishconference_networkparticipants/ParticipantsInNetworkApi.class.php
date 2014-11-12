@@ -28,9 +28,9 @@ class ParticipantsInNetworkApi {
 		$response = $this->client->get(self::$apiName, array(
 			'networkId' => $networkId,
 			'excel'     => $excel,
-			'firstName' => t('First name'),
-			'lastName'  => t('Last name'),
-			'email'     => t('E-mail'),
+			'firstName' => iish_t('First name'),
+			'lastName'  => iish_t('Last name'),
+			'email'     => iish_t('E-mail'),
 		));
 
 		return (($response !== null) && $response['success']) ? $this->processResponse($response, $excel) : false;

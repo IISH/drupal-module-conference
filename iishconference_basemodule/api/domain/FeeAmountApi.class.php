@@ -171,10 +171,10 @@ class FeeAmountApi extends CRUDApiClient {
 	 */
 	public function getDescription() {
 		if ($this->numDaysStart == $this->numDaysEnd) {
-			$days = $this->numDaysStart . ' ' . t('day');
+			$days = $this->numDaysStart . ' ' . iish_t('day');
 		}
 		else {
-			$days = $this->numDaysStart . '-' . $this->numDaysEnd . ' ' . t('days');
+			$days = $this->numDaysStart . '-' . $this->numDaysEnd . ' ' . iish_t('days');
 		}
 
 		$name = $this->getFeeState()->getName();

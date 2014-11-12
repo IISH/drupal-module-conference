@@ -22,9 +22,9 @@ function finalregistration_main_form($form, &$form_state) {
 	// Start with the days
 	if (SettingsApi::getSetting(SettingsApi::SHOW_DAYS) == 1) {
 		$form['days_present'] = array(
-			'#title'         => t('Days present'),
+			'#title'         => iish_t('Days present'),
 			'#type'          => 'checkboxes',
-			'#description'   => t('Please select the days you will be present.') . ' <span class="heavy">' .
+			'#description'   => iish_t('Please select the days you will be present.') . ' <span class="heavy">' .
 				FeeAmountApi::getFeeAmountsDescription($feeAmounts) . '</span>.',
 			'#options'       => $days,
 			'#default_value' => $user->getDaysPresentDayId(),
@@ -42,16 +42,16 @@ function finalregistration_main_form($form, &$form_state) {
 
 	if (!$isCountryExempt && $isSessionParticipant) {
 		$form['invitation_letter'] = array(
-			'#title'         => t('Invitation letter'),
+			'#title'         => iish_t('Invitation letter'),
 			'#type'          => 'checkbox',
-			'#description'   => t('Please check if you will need an invitation letter.'),
+			'#description'   => iish_t('Please check if you will need an invitation letter.'),
 			'#default_value' => $participant->getInvitationLetter(),
 		);
 
 		$form['address'] = array(
-			'#title'         => t('Address'),
+			'#title'         => iish_t('Address'),
 			'#type'          => 'textarea',
-			'#description'   => t('Please enter the full address to which we have to send the invitation letter. ' .
+			'#description'   => iish_t('Please enter the full address to which we have to send the invitation letter. ' .
 				'This includes your name, address, zipcode and country.'),
 			'#default_value' => $user->getAddress(),
 			'#states'        => array(
@@ -96,8 +96,8 @@ function finalregistration_main_form($form, &$form_state) {
 			'#suffix' => '</div>',
 		);
 
-		$title = t('Accompanying persons');
-		$description = SettingsApi::getSetting(SettingsApi::ACCOMPANYING_PERSON_DESCRIPTION);
+		$title = iish_t('Accompanying persons');
+		$description = iish_t('Please leave this field empty if you have no accompanying person.');
 		$description .= ' <span class="heavy">' .
 			FeeAmountApi::getFeeAmountsDescription($accompanyingPersonFees) . '</span>.';
 		$form['accompanying_persons']['person']['#tree'] = true;
@@ -130,7 +130,7 @@ function finalregistration_main_form($form, &$form_state) {
 		$form['accompanying_persons']['add_person'] = array(
 			'#type'                    => 'submit',
 			'#name'                    => 'add_person',
-			'#value'                   => t('Add one more person'),
+			'#value'                   => iish_t('Add one more person'),
 			'#submit'                  => array('finalregistration_add_person'),
 			'#limit_validation_errors' => array(),
 			'#ajax'                    => array(
@@ -138,7 +138,7 @@ function finalregistration_main_form($form, &$form_state) {
 				'wrapper'  => 'accompanying-persons-wrapper',
 				'progress' => array(
 					'type'    => 'throbber',
-					'message' => t('Please wait...'),
+					'message' => iish_t('Please wait...'),
 				),
 			),
 		);
@@ -148,7 +148,7 @@ function finalregistration_main_form($form, &$form_state) {
 			$form['accompanying_persons']['remove_person'] = array(
 				'#type'                    => 'submit',
 				'#name'                    => 'remove_person',
-				'#value'                   => t('Remove the last person'),
+				'#value'                   => iish_t('Remove the last person'),
 				'#submit'                  => array('finalregistration_remove_person'),
 				'#limit_validation_errors' => array(),
 				'#ajax'                    => array(
@@ -156,7 +156,7 @@ function finalregistration_main_form($form, &$form_state) {
 					'wrapper'  => 'accompanying-persons-wrapper',
 					'progress' => array(
 						'type'    => 'throbber',
-						'message' => t('Please wait...'),
+						'message' => iish_t('Please wait...'),
 					),
 				),
 			);
@@ -166,7 +166,7 @@ function finalregistration_main_form($form, &$form_state) {
 	$form['next'] = array(
 		'#type'  => 'submit',
 		'#name'  => 'next',
-		'#value' => t('Next step'),
+		'#value' => iish_t('Next step'),
 	);
 
 	return $form;
@@ -184,7 +184,7 @@ function finalregistration_main_validate($form, &$form_state) {
 		if (($form_state['values']['invitation_letter'] === 1) &&
 			(strlen(trim($form_state['values']['address'])) === 0)
 		) {
-			form_set_error('address', t('Please enter your address, so we can send the invitation letter to you.'));
+			form_set_error('address', iish_t('Please enter your address, so we can send the invitation letter to you.'));
 		}
 	}
 }

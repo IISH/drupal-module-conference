@@ -13,7 +13,7 @@ function conference_login_form($form, &$form_state) {
 
 	$form['ct' . $ct++] = array(
 		'#type'   => 'markup',
-		'#markup' => '<div class="bottommargin">' . t('Please enter your e-mail address and password.') . '</div>',
+		'#markup' => '<div class="bottommargin">' . iish_t('Please enter your e-mail address and password.') . '</div>',
 	);
 
 	$default_email_value = '';
@@ -59,7 +59,7 @@ function conference_login_form($form, &$form_state) {
 	// pre-registration url
 	$form['ct' . $ct++] = array(
 		'#type'   => 'markup',
-		'#markup' => '<div class="largertopmargin">' . t('If you don\'t have an account please go to !link.',
+		'#markup' => '<div class="largertopmargin">' . iish_t('If you don\'t have an account please go to !link.',
 				array('!link' => l(t('Pre-registration form'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'pre-registration'))) .
 			'</div>',
 	);
@@ -82,7 +82,7 @@ function conference_login_form($form, &$form_state) {
  */
 function conference_login_form_validate($form, &$form_state) {
 	if (!valid_email_address(trim($form_state['values']['email']))) {
-		form_set_error('email', t('The e-mail address appears to be invalid.'));
+		form_set_error('email', iish_t('The e-mail address appears to be invalid.'));
 	}
 }
 

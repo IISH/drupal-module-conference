@@ -36,8 +36,8 @@ function iishconference_finalregistration_accept() {
 		$sendEmailApi->sendPaymentAcceptedEmail($userId, $orderId);
 	}
 
-	return t('Thank you. The procedure has been completed successfully!') . '<br />' .
-		t('Within a few minutes you will receive an email from us confirming your \'final registration and payment\' ' .
+	return iish_t('Thank you. The procedure has been completed successfully!') . '<br />' .
+		iish_t('Within a few minutes you will receive an email from us confirming your \'final registration and payment\' ' .
 		'and you will receive a second email from the payment provider confirming your payment.');
 }
 
@@ -47,7 +47,7 @@ function iishconference_finalregistration_accept() {
  * @return string The message for the user
  */
 function iishconference_finalregistration_decline() {
-	return t('Unfortunately, your payment has been declined. Please try to finish your final registration ' .
+	return iish_t('Unfortunately, your payment has been declined. Please try to finish your final registration ' .
 		'at a later moment or try a different payment method.');
 }
 
@@ -57,8 +57,8 @@ function iishconference_finalregistration_decline() {
  * @return string The message for the user
  */
 function iishconference_finalregistration_exception() {
-	return t('Unfortunately, your payment result is uncertain at the moment.') . '<br />' .
-	t('Please contact !email to request information on your payment transaction.',
+	return iish_t('Unfortunately, your payment result is uncertain at the moment.') . '<br />' .
+	iish_t('Please contact !email to request information on your payment transaction.',
 		array('!email' => ConferenceMisc::encryptEmailAddress(
 				SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL))));
 }

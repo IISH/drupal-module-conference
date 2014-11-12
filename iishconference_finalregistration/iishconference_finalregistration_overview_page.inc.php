@@ -16,25 +16,25 @@ function finalregistration_overview_form($form, &$form_state) {
 	$form['back'] = array(
 		'#type'  => 'submit',
 		'#name'  => 'back',
-		'#value' => t('Previous step'),
+		'#value' => iish_t('Previous step'),
 	);
 
 	$form['confirm'] = array(
 		'#type'  => 'submit',
 		'#name'  => 'confirm',
-		'#value' => t('Confirm'),
+		'#value' => iish_t('Confirm'),
 	);
 
 	$form['payway'] = array(
 		'#type'  => 'submit',
 		'#name'  => 'payway',
-		'#value' => t('Make online payment'),
+		'#value' => iish_t('Make online payment'),
 	);
 
 	$form['bank_transfer'] = array(
 		'#type'  => 'submit',
 		'#name'  => 'bank_transfer',
-		'#value' => t('Make payment by bank transfer'),
+		'#value' => iish_t('Make payment by bank transfer'),
 	);
 
 	return $form;
@@ -65,7 +65,7 @@ function finalregistration_overview_submit($form, &$form_state) {
 		'ownertown'     => $user->getCity(),
 		'ownercty'      => ($user->getCountry() !== null) ? $user->getCountry()->getISOCode() : null,
 		'ownertelno'    => $user->getPhone(),
-		'com'           => CachedConferenceApi::getEventDate() . ' ' . t('payment'),
+		'com'           => CachedConferenceApi::getEventDate() . ' ' . iish_t('payment'),
 		'paymentmethod' => ($isPayWayTransaction) ? PayWayMessage::ORDER_OGONE_PAYMENT : PayWayMessage::ORDER_BANK_PAYMENT,
 		'userid'        => LoggedInUserDetails::getId(),
 	));

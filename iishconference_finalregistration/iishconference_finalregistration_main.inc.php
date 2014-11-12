@@ -75,7 +75,7 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 			if ($order->get('payed') == 1) {
 				drupal_set_message(t('You already finished the final registration for the @conference.') .
 					'<br />' .
-					t('If you have questions please contact the secretariat at !email .',
+					iish_t('If you have questions please contact the secretariat at !email .',
 						array('@conference' => CachedConferenceApi::getEventDate()->getLongNameAndYear(),
 						      '!email'      => ConferenceMisc::encryptEmailAddress(
 								      SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL)))));
@@ -87,11 +87,11 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 					'#type'   => 'markup',
 					'#markup' =>
 						'<span class="eca_warning">' .
-						t('You chose to finish your final registration by bank transfer.') . '<br />' .
-						t('!link for the bank transfer information.', array('!link' => l(t('Click here'),
+						iish_t('You chose to finish your final registration by bank transfer.') . '<br />' .
+						iish_t('!link for the bank transfer information.', array('!link' => l(t('Click here'),
 							SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) .
 							'final-registration/bank-transfer'))) .
-						'<br />' . t('Please continue if you want to choose a different payment method.') .
+						'<br />' . iish_t('Please continue if you want to choose a different payment method.') .
 						'</span>',
 				);
 			}

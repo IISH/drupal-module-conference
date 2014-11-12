@@ -41,6 +41,6 @@ class DayApi extends CRUDApiClient {
 	}
 
 	public function  __toString() {
-		return t('Day') . ' ' . $this->getDayNumber() . ': ' . $this->getDayFormatted('l j F Y');
+		return iish_t('Day') . ' ' . $this->getDayNumber() . ': ' . $this->getDayFormatted('l j F Y');
 	}
 } 
