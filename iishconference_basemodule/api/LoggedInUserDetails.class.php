@@ -146,14 +146,18 @@ class LoggedInUserDetails {
 	 * Invalidates the cached user instance
 	 */
 	public static function invalidateUser() {
-		unset($_SESSION['iish_conference']['user']);
+		if (isset($_SESSION['iish_conference']['user'])) {
+			unset($_SESSION['iish_conference']['user']);
+		}
 	}
 
 	/**
 	 * Invalidates the cached participant instance
 	 */
 	public static function invalidateParticipant() {
-		unset($_SESSION['iish_conference']['participant']);
+		if (isset($_SESSION['iish_conference']['participant'])) {
+			unset($_SESSION['iish_conference']['participant']);
+		}
 	}
 
 	/**
