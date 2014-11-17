@@ -23,6 +23,7 @@ class PaperApi extends CRUDApiClient {
 	private $paperState;
 	private $equipment;
 	private $user;
+	private $session;
 	private $addedBy;
 
 	public function __construct($new = true) {
@@ -107,6 +108,19 @@ class PaperApi extends CRUDApiClient {
 	 */
 	public function getSessionId() {
 		return $this->session_id;
+	}
+
+	/**
+	 * Returns the session of this paper
+	 *
+	 * @return SessionApi|null The session of this paper
+	 */
+	public function getSession() {
+		if (!$this->session) {
+			$this->session = CRUDApiMisc::getById(new SessionApi(), $this->session_id);
+		}
+
+		return $this->session;
 	}
 
 	/**

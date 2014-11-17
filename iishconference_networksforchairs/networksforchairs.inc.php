@@ -10,13 +10,13 @@ function iishconference_networksforchairs_main() {
 		// redirect to login page
 		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 				array('query' => drupal_get_destination())));
-		die(t('Go to !login page.', array('!login' => l(t('login'),
+		die(iish_t('Go to !login page.', array('!login' => l(iish_t('login'),
 			SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 			array('query' => drupal_get_destination())))));
 	}
 
 	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
-		drupal_set_message(t('Access denied. You are not a chair of a @network.',
+		drupal_set_message(iish_t('Access denied. You are not a chair of a @network.',
 			array('@network' => NetworkApi::getNetworkName(true, true))), 'error');
 
 		return '';
@@ -78,13 +78,13 @@ function iishconference_networksforchairs_sessions($networkId) {
 		// redirect to login page
 		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 				array('query' => drupal_get_destination())));
-		die(t('Go to !login page.',
-			array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+		die(iish_t('Go to !login page.',
+			array('!login' => l(iish_t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 				array('query' => drupal_get_destination())))));
 	}
 
 	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
-		drupal_set_message(t('Access denied. You are not a chair of a @network.',
+		drupal_set_message(iish_t('Access denied. You are not a chair of a @network.',
 			array('@network' => NetworkApi::getNetworkName(true, true))), 'error');
 
 		return '';
@@ -107,7 +107,7 @@ function iishconference_networksforchairs_sessions($networkId) {
 		$network = CRUDApiMisc::getById(new NetworkApi(), $networkId);
 
 		if (!$network) {
-			drupal_set_message(t('The @network does not exist.',
+			drupal_set_message(iish_t('The @network does not exist.',
 				array('@network' => NetworkApi::getNetworkName(true, true))), 'error');
 
 			drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(false, true)
@@ -159,7 +159,7 @@ function iishconference_networksforchairs_sessions($networkId) {
 	}
 
 	if ($network !== null) {
-		$links[] = l(t('... Individual paper proposals ...'),
+		$links[] = l(iish_t('... Individual paper proposals ...'),
 			SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) .
 			NetworkApi::getNetworkName(false, true) . 'forchairs/' . $networkId . '/-1');
 	}
@@ -205,13 +205,13 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 		// redirect to login page
 		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 				array('query' => drupal_get_destination())));
-		die(t('Go to !login page.',
-			array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+		die(iish_t('Go to !login page.',
+			array('!login' => l(iish_t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 				array('query' => drupal_get_destination())))));
 	}
 
 	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
-		drupal_set_message(t('Access denied. You are not a chair of a @network.',
+		drupal_set_message(iish_t('Access denied. You are not a chair of a @network.',
 			array('@network' => NetworkApi::getNetworkName(true, true))), 'error');
 
 		return '';
@@ -237,14 +237,14 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 	// or the network and/or session do not exist
 	// Also show error when no network is chosen, but neither is a session search term
 	if (($networkId > 0) && (!$network || ($session && !in_array($network->getId(), $session->getNetworksId())))) {
-		drupal_set_message(t('The @network and/or session do not exist!',
+		drupal_set_message(iish_t('The @network and/or session do not exist!',
 			array('@network' => NetworkApi::getNetworkName(true, true))), 'error');
 
 		drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(false, true)
 			. 'forchairs');
 	}
 	else if (($networkId <= 0) && ($search === null)) {
-		drupal_set_message(t('No @network or search parameter given!',
+		drupal_set_message(iish_t('No @network or search parameter given!',
 			array('@network' => NetworkApi::getNetworkName(true, true))), 'error');
 
 		drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(false, true)

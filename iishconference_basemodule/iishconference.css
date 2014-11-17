@@ -8,8 +8,8 @@
     -webkit-border-radius: 5px;
 	padding: 10px;
 	margin-bottom: 20px;
-	float: left;
-	width: 100%;
+	/*float: left;
+	width: 100%;*/
 }
 
 .iishconference_container_header, .iishconference_form fieldset.form-wrapper > legend {
@@ -21,6 +21,10 @@
 
 .iishconference_form fieldset.form-wrapper > legend {
     margin-bottom: 0;
+}
+
+.iishconference_form fieldset.form-wrapper select {
+	max-width: 600px;
 }
 
 .iishconference_container_label {
@@ -48,8 +52,12 @@
 /* OTHER CSS */
 
 .iishconference_form .form-type-textfield label, .iishconference_form .form-type-select label,
-.iishconference_form .form-type-password label, .iishconference_inline {
+.iishconference_form .form-type-password label, .iishconference_inline, .form-item-session-inline {
     display: inline-block;
+}
+
+.iishconference_new_line {
+	display: block;
 }
 
 .extra_info {

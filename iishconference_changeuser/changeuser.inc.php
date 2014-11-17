@@ -7,16 +7,16 @@ function conference_changeuser_form($form, &$form_state, $value) {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
 		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
-		die(t('Go to !login page.', array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+		die(iish_t('Go to !login page.', array('!login' => l(iish_t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 			array('query' => drupal_get_destination())))));
 	}
 
 	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::hasFullRights()) {
-		drupal_set_message(t('Access denied.') . '<br />' .
+		drupal_set_message(iish_t('Access denied.') . '<br />' .
 			iish_t('Current user ( @user ) is not a conference crew member.',
 				array('@user' => LoggedInUserDetails::getUser())) . '<br />' .
 			iish_t('Please !login as a crew member.',
-				array('!login' => l(t('log out and login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+				array('!login' => l(iish_t('log out and login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 					array('query' => drupal_get_destination())))), 'error');
 
 		return '';
@@ -73,7 +73,7 @@ function conference_changeuser_form_submit($form, &$form_state) {
 		else {
 			$userStatus = LoggedInUserDetails::setCurrentlyLoggedInWithResponse($userInfo);
 			if ($userStatus == LoggedInUserDetails::USER_STATUS_EXISTS) {
-				drupal_set_message(t("User changed."));
+				drupal_set_message(iish_t("User changed."));
 
 				// redirect to personal page
 				$form_state['redirect'] = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page';
@@ -81,13 +81,13 @@ function conference_changeuser_form_submit($form, &$form_state) {
 			else {
 				switch ($userStatus) {
 					case LoggedInUserDetails::USER_STATUS_DISABLED:
-						drupal_set_message(t("Account is disabled."), 'error');
+						drupal_set_message(iish_t("Account is disabled."), 'error');
 						break;
 					case LoggedInUserDetails::USER_STATUS_DELETED:
-						drupal_set_message(t("Account is deleted"), 'error');
+						drupal_set_message(iish_t("Account is deleted"), 'error');
 						break;
 					default:
-						drupal_set_message(t("Incorrect email / id."), 'error');
+						drupal_set_message(iish_t("Incorrect email / id."), 'error');
 				}
 
 				$form_state['rebuild'] = true;

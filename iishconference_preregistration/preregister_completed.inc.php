@@ -19,14 +19,15 @@ function preregister_completed() {
 		'<br />' .
 		iish_t('If you would like to modify your registration please send an email to !email.',
 			array('!email' =>
-				      ConferenceMisc::encryptEmailAddress(SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL)))) .
+				      ConferenceMisc::encryptEmailAddress(
+					      SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL)))) .
 		'</span>',
 
 		'<br /><br />',
 
 		'<span class="eca_remark heavy">' .
 		iish_t('Go to your !link.',
-			array('!link' => l(t('personal page'),
+			array('!link' => l(iish_t('personal page'),
 				SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page'))) .
 		'</span>'
 	);
@@ -36,7 +37,7 @@ function preregister_completed() {
 	if (module_exists('iishconference_finalregistration') && $isFinalRegistrationOpen) {
 		$fields[] = '<br /><br />';
 		$fields[] = '<span class="eca_remark heavy">' . iish_t('You have just pre-registered. Please go now to !link.',
-				array('!link' => l(t('final registration and payment'),
+				array('!link' => l(iish_t('final registration and payment'),
 					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration'))) . '</span>';
 	}
 

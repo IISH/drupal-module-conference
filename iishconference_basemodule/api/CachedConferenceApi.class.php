@@ -20,6 +20,7 @@ class CachedConferenceApi {
 	private static $nameVolunteeringCache = 'iishconference_volunteering';
 	private static $nameSettingsCache = 'iishconference_settings';
 	private static $nameTranslationsCache = 'iishconference_translations';
+	private static $nameSessionsKeyValueCache = 'iishconference_sessions_key_value';
 
 	/**
 	 * Updates all caches
@@ -42,6 +43,7 @@ class CachedConferenceApi {
 			self::setVolunteering(false);
 			self::setSettings(false);
 			self::setTranslations(false);
+			self::setSessionsKeyValue(false);
 		}
 		catch (Exception $exception) {
 			watchdog_exception('conference api', $exception,
@@ -151,6 +153,20 @@ class CachedConferenceApi {
 		return $translations;
 	}
 
+	public static function setSessionsKeyValue($printErrorMessage = true) {
+		$props = new ApiCriteriaBuilder();
+		$sessions = SessionApi::getListWithCriteria(
+			$props
+				->sort('name', 'asc')
+				->get()
+		)->getResults();
+		$sessionsKeyValue = CRUDApiClient::getAsKeyValueArray($sessions);
+
+		cache_set(self::$nameSessionsKeyValueCache, $sessionsKeyValue, 'cache', CACHE_PERMANENT);
+
+		return $sessionsKeyValue;
+	}
+
 	public static function getEventDate($printErrorMessage = true) {
 		if ($result = cache_get(self::$nameEventDateCache, 'cache')) {
 			return $result->data;
@@ -246,6 +262,15 @@ class CachedConferenceApi {
 		}
 		else {
 			return self::setTranslations($printErrorMessage);
+		}
+	}
+
+	public static function getSessionsKeyValue($printErrorMessage = true) {
+		if ($result = cache_get(self::$nameSessionsKeyValueCache, 'cache')) {
+			return $result->data;
+		}
+		else {
+			return self::setSessionsKeyValue($printErrorMessage);
 		}
 	}
 }

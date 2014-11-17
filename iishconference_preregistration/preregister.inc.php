@@ -1,13 +1,15 @@
 <?php
 
-require_once 'preregister_login.inc.php';
-require_once 'preregister_password.inc.php';
-require_once 'preregister_personalinfo.inc.php';
-require_once 'preregister_typeofregistration.inc.php';
-require_once 'preregister_paper.inc.php';
-require_once 'preregister_session.inc.php';
-require_once 'preregister_sessionparticipant.inc.php';
-require_once 'preregister_confirm.inc.php';
+require_once 'pages/preregister_login.inc.php';
+require_once 'pages/preregister_password.inc.php';
+require_once 'pages/preregister_personalinfo.inc.php';
+require_once 'pages/preregister_typeofregistration.inc.php';
+require_once 'pages/preregister_paper.inc.php';
+require_once 'pages/preregister_session.inc.php';
+require_once 'pages/preregister_sessionparticipant.inc.php';
+require_once 'pages/preregister_sessionparticipanttypes.inc.php';
+require_once 'pages/preregister_comments.inc.php';
+require_once 'pages/preregister_confirm.inc.php';
 
 /**
  * Primary form builder for the pre registration
@@ -30,7 +32,7 @@ function preregister_form($form, &$form_state) {
 					'make some changes please send an e-mail to @code. Please go to your !link to check the data.',
 					array('@codeYear' => CachedConferenceApi::getEventDate()->getLongNameAndYear(),
 					      '@code'     => CachedConferenceApi::getEventDate()->getEvent()->getShortName(),
-					      '!link'     => l(t('personal page'),
+					      '!link'     => l(iish_t('personal page'),
 						      SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page'))) .
 				'</span>',
 		);
@@ -45,11 +47,13 @@ function preregister_form($form, &$form_state) {
 			'#markup' =>
 				'<span class="eca_warning">' .
 				ConferenceMisc::getCleanHTML(iish_t('Please note it is no longer possible to pre-register online.
-					If you wish to register as listener, you can do so at the conference desk in CITY.
+					If you wish to register as listener, you can do so at the conference desk.
 					If you have been in touch with the network chairs or session organizers about a paper proposal
-					and still have to pre-register, please contact the secretariat at EMAIL@EMAIL.NL
-					It is still possible to do the Final Registration and Payment via http://URL.
-					If you haven\'t payed the conference fee, please do it as soon as possible.')) .
+					and still have to pre-register, please contact the secretariat at !email.
+					It is still possible to do the Final Registration and Payment..
+					If you haven\'t payed the conference fee, please do it as soon as possible.',
+					array('!email' => ConferenceMisc::encryptEmailAddress(
+							SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL))))) .
 				'</span>',
 		);
 

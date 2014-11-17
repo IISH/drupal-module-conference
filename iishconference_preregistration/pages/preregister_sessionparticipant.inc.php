@@ -15,16 +15,7 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 	$participant = CRUDApiMisc::getFirstWherePropertyEquals(new ParticipantDateApi(), 'user_id', $user->getId());
 	$participant = ($participant === null) ? new ParticipantDateApi() : $participant;
 
-	// Now collect the paper added to this session
-	$props = new ApiCriteriaBuilder();
-	$paper = PaperApi::getListWithCriteria(
-		$props
-			->eq('session_id', $session->getId())
-			->eq('user_id', $user->getId())
-			->get()
-	)->getFirstResult();
-
-	$paper = ($paper !== null) ? $paper : new PaperApi();
+	$paper = PreRegistrationUtils::getPaperForSessionAndUser($state, $session, $user);
 
 	$state->setFormData(array('session'              => $session,
 	                          'user'                 => $user,
@@ -213,10 +204,10 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 			'#submit'                  => array('preregister_form_submit'),
 			'#limit_validation_errors' => array(),
 			'#attributes'              => array('onclick' =>
-	            'if (!confirm("' .
-	            iish_t('Are you sure you want to remove this participant? ' .
-		            '(The participant will only be removed from this session).') .
-	            '")) { return false; }'),
+				                                    'if (!confirm("' .
+				                                    iish_t('Are you sure you want to remove this participant? ' .
+					                                    '(The participant will only be removed from this session).') .
+				                                    '")) { return false; }'),
 		);
 	}
 
@@ -227,6 +218,11 @@ function preregister_sessionparticipant_form($form, &$form_state) {
  * Implements hook_form_validate()
  */
 function preregister_sessionparticipant_form_validate($form, &$form_state) {
+	$state = new PreRegistrationState($form_state);
+
+	$multiPageData = $state->getMultiPageData();
+	$session = $multiPageData['session'];
+
 	$email = trim($form_state['values']['addparticipantemail']);
 
 	if (!valid_email_address($email)) {
@@ -243,7 +239,24 @@ function preregister_sessionparticipant_form_validate($form, &$form_state) {
 			form_set_error('addparticipantpapertitle', iish_t('Paper title is required with the selected type(s).'));
 		}
 		if (strlen(trim($form_state['values']['addparticipantpaperabstract'])) === 0) {
-			form_set_error('addparticipantpaperabstract', iish_t('Paper abstract is required with the selected type(s).'));
+			form_set_error('addparticipantpaperabstract',
+				iish_t('Paper abstract is required with the selected type(s).'));
+		}
+	}
+
+	if (PreRegistrationUtils::useSessions()) {
+		$email = strtolower(trim($form_state['values']['addparticipantemail']));
+		$foundUser = CRUDApiMisc::getFirstWherePropertyEquals(new UserApi(), 'email', $email);
+
+		if ($foundUser !== null) {
+			$sessionParticipants = PreRegistrationUtils::getSessionParticipantsNotAddedByUserForSessionAndUser(
+				$state, $session, $foundUser
+			);
+
+			if (count($sessionParticipants) > 0) {
+				form_set_error('addparticipantemail',
+					iish_t('This participant has already been added to this session by another organizer.'));
+			}
 		}
 	}
 }
@@ -267,8 +280,9 @@ function preregister_sessionparticipant_form_submit($form, &$form_state) {
 	$foundUser = CRUDApiMisc::getFirstWherePropertyEquals(new UserApi(), 'email', $email);
 	if ($foundUser !== null) {
 		$user = $foundUser;
-		$participant =
-			CRUDApiMisc::getFirstWherePropertyEquals(new ParticipantDateApi(), 'user_id', $foundUser->getId());
+		$participant = CRUDApiMisc::getFirstWherePropertyEquals(
+			new ParticipantDateApi(), 'user_id', $foundUser->getId()
+		);
 		$participant = ($participant !== null) ? $participant : new ParticipantDateApi();
 	}
 
@@ -323,6 +337,7 @@ function preregister_sessionparticipant_form_submit($form, &$form_state) {
 		$paper->setSession($session);
 		$paper->setTitle($form_state['values']['addparticipantpapertitle']);
 		$paper->setAbstr($form_state['values']['addparticipantpaperabstract']);
+		$paper->setAddedBy($preRegisterUser);
 
 		$paper->save();
 	}
@@ -347,6 +362,7 @@ function preregister_sessionparticipant_form_submit($form, &$form_state) {
 				$sessionParticipant->setSession($session);
 				$sessionParticipant->setUser($user);
 				$sessionParticipant->setType($typeId);
+				$sessionParticipant->setAddedBy($preRegisterUser);
 				$sessionParticipant->save();
 			}
 		}
@@ -359,7 +375,7 @@ function preregister_sessionparticipant_form_submit($form, &$form_state) {
 	// Now go back to the session form
 	$state->setMultiPageData(array('session' => $session));
 
-	return 'preregister_session_form';
+	return PreRegistrationPage::SESSION;
 }
 
 /**
@@ -372,7 +388,7 @@ function preregister_sessionparticipant_form_back($form, &$form_state) {
 	$session = $data['session'];
 	$state->setMultiPageData(array('session' => $session));
 
-	return 'preregister_session_form';
+	return PreRegistrationPage::SESSION;
 }
 
 /**
@@ -392,5 +408,5 @@ function preregister_sessionparticipant_form_remove($form, &$form_state) {
 	// Now go back to the session page
 	$state->setMultiPageData(array('session' => $session));
 
-	return 'preregister_session_form';
+	return PreRegistrationPage::SESSION;
 }

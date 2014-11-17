@@ -10,14 +10,14 @@ function iishconference_electionadvisory_main() {
 		// redirect to login page
 		header('Location: ' .
 		url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
-		die(t('Go to !login page.',
-			array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+		die(iish_t('Go to !login page.',
+			array('!login' => l(iish_t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 				array('query' => drupal_get_destination())))));
 	}
 
 	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
 		$networkName = NetworkApi::getNetworkName(true, true);
-		drupal_set_message(t('Access denied. You are not a chair of a @network.', array('@network' => $networkName)),
+		drupal_set_message(iish_t('Access denied. You are not a chair of a @network.', array('@network' => $networkName)),
 			'error');
 
 		return '';
@@ -32,7 +32,7 @@ function iishconference_electionadvisory_main() {
 	)->getTotalSize();
 
 	if ($hasVotedCount > 0) {
-		drupal_set_message(t('You already voted for the advisory board!'), 'warning');
+		drupal_set_message(iish_t('You already voted for the advisory board!'), 'warning');
 
 		return '';
 	}

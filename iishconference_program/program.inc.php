@@ -10,7 +10,7 @@
 function iishconference_program($yearCode = null) {
 	$eventDate = iishconference_program_get_event_date($yearCode);
 	if ($eventDate === null) {
-		drupal_set_message(t('No program available for the given year!'), 'error');
+		drupal_set_message(iish_t('No program available for the given year!'), 'error');
 		drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'program');
 		return;
 	}

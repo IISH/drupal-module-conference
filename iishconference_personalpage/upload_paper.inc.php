@@ -24,18 +24,18 @@ function conference_upload_paper($paper) {
 		// redirect to login page
 		header('Location: ' .
 		url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
-		die(t('Go to !login page.',
-			array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+		die(iish_t('Go to !login page.',
+			array('!login' => l(iish_t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 				array('query' => drupal_get_destination())))));
 	}
 
 	if (empty($paper)) {
-		drupal_set_message(t('Unfortunately, this paper does not seem to exist.'), 'error');
+		drupal_set_message(iish_t('Unfortunately, this paper does not seem to exist.'), 'error');
 
 		drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page');
 	}
 	else if ($paper->getUserId() !== LoggedInUserDetails::getId()) {
-		drupal_set_message(t('You are only allowed to upload a paper for your own papers.'), 'error');
+		drupal_set_message(iish_t('You are only allowed to upload a paper for your own papers.'), 'error');
 
 		drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page');
 	}
@@ -54,28 +54,28 @@ function conference_upload_paper($paper) {
 		if (isset($params['e'])) {
 			switch ($params['e']) {
 				case UPLOAD_PAPER_ERROR_NONE:
-					drupal_set_message(t('Your paper has been successfully uploaded!'), 'status');
+					drupal_set_message(iish_t('Your paper has been successfully uploaded!'), 'status');
 					break;
 				case UPLOAD_PAPER_ERROR_ID_NOT_FOUND:
-					drupal_set_message(t('Your paper could not be found!'), 'error');
+					drupal_set_message(iish_t('Your paper could not be found!'), 'error');
 					break;
 				case UPLOAD_PAPER_ERROR_USER_NOT_ALLOWED:
-					drupal_set_message(t('You are not allowed to upload your paper!'), 'error');
+					drupal_set_message(iish_t('You are not allowed to upload your paper!'), 'error');
 					break;
 				case UPLOAD_PAPER_ERROR_EMPTY_FILE:
-					drupal_set_message(t('You have not uploaded a file!'), 'error');
+					drupal_set_message(iish_t('You have not uploaded a file!'), 'error');
 					break;
 				case UPLOAD_PAPER_ERROR_LARGE_FILE:
-					drupal_set_message(t('The file you uploaded is too large! The maximum size is @maxSize!',
+					drupal_set_message(iish_t('The file you uploaded is too large! The maximum size is @maxSize!',
 						array('@maxSize' => ConferenceMisc::getReadableFileSize($maxSize))), 'error');
 					break;
 				case UPLOAD_PAPER_ERROR_EXT_NOT_ALLOWED:
-					drupal_set_message(t('You can only upload files with the following extensions: @extensions',
+					drupal_set_message(iish_t('You can only upload files with the following extensions: @extensions',
 						array('@extensions' => $allowedExtensions)), 'error');
 					break;
 				case UPLOAD_PAPER_ERROR_OTHER:
 				default:
-					drupal_set_message(t('An undefined error has occurred!'), 'error');
+					drupal_set_message(iish_t('An undefined error has occurred!'), 'error');
 			}
 		}
 
@@ -116,6 +116,6 @@ function conference_upload_paper_form_submit($form, &$form_state) {
 
 	$removePaperApi = new RemovePaperApi();
 	if ($removePaperApi->removePaper($paper)) {
-		drupal_set_message(t('Your paper has been successfully removed!'), 'status');
+		drupal_set_message(iish_t('Your paper has been successfully removed!'), 'status');
 	}
 }

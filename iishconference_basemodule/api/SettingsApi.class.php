@@ -12,6 +12,7 @@ class SettingsApi {
 	const COUNTRY_ID = 'country_id';
 	const DEFAULT_NETWORK_ID = 'default_network_id';
 	const DEFAULT_ORGANISATION_EMAIL = 'default_organisation_email';
+	const DOWNLOAD_PAPER_LASTDATE = 'download_paper_lastdate';
 	const EMAIL_MAX_NUM_TRIES = 'email_max_num_tries';
 	const FINAL_REGISTRATION_LASTDATE = 'final_registration_lastdate';
 	const MAX_PAPERS_PER_PERSON_PER_SESSION = 'max_papers_per_person_per_session';
@@ -24,7 +25,9 @@ class SettingsApi {
 	const PATH_FOR_MENU = 'path_for_menu';
 	const PREREGISTRATION_LASTDATE = 'preregistration_lastdate';
 	const PREREGISTRATION_STARTDATE = 'preregistration_startdate';
-	const DOWNLOAD_PAPER_LASTDATE = 'download_paper_lastdate';
+	const PREREGISTRATION_SESSIONS = 'preregistration_sessions';
+	const SESSION_NAME_PLURAL = 'session_name_plural';
+	const SESSION_NAME_SINGULAR = 'session_name_singular';
 
 	// Show / hide
 	const HIDE_ALWAYS_IN_ONLINE_PROGRAM = 'hide_always_in_online_program';
@@ -36,12 +39,15 @@ class SettingsApi {
 	const SHOW_CV = 'show_cv';
 	const SHOW_DAYS = 'show_days';
 	const SHOW_DAYS_SESSION_PLANNED = 'show_days_session_planned';
+	const SHOW_EQUIPMENT = 'show_equipment';
+	const SHOW_GENERAL_COMMENTS = 'show_general_comments';
 	const SHOW_LANGUAGE_COACH_PUPIL = 'show_language_coach_pupil';
 	const SHOW_NETWORK = 'show_network';
 	const SHOW_ORGANIZER_REGISTRATION = 'show_organizer_registration';
 	const SHOW_PROGRAMME_ONLINE = 'show_programme_online';
 	const SHOW_SESSION_CODES = 'show_session_codes';
 	const SHOW_STUDENT = 'show_student';
+	const SHOW_SESSION_PARTICIPANT_TYPES_REGISTRATION = 'show_session_participant_types_registration';
 
 	// Required fields
 	const REQUIRED_CV = 'required_cv';

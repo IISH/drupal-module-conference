@@ -45,11 +45,11 @@ function iishconference_userblock_block_content() {
 			return '<span class="conference-userblock">' . iish_t('Welcome') . ' ' .
 			l(LoggedInUserDetails::getUser(false)->getFullName(),
 				SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU, false) . 'personal-page') . ' | ' .
-			l(t('Log out'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'logout') . '</span>';
+			l(iish_t('Log out'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'logout') . '</span>';
 		}
 		else {
 			return '<span class="conference-userblock">' . iish_t('Please !link.',
-				array('!link' => l(t('log in'),
+				array('!link' => l(iish_t('log in'),
 					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU, false) . 'login'))) . '</span>';
 		}
 	}

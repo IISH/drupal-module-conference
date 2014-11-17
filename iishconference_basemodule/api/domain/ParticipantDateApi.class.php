@@ -14,6 +14,7 @@ class ParticipantDateApi extends CRUDApiClient {
 	protected $student;
 	protected $award;
 	protected $accompanyingPersons;
+	protected $extraInfo;
 	protected $extras_id;
 	protected $addedBy_id;
 
@@ -201,6 +202,27 @@ class ParticipantDateApi extends CRUDApiClient {
 		$this->toSave['student'] = $this->student;
 
 		$this->setLowerFeeRequested($this->student);
+	}
+
+	/**
+	 * Returns extra information about the participant
+	 *
+	 * @return string Extra information about the participant
+	 */
+	public function getExtraInfo() {
+		return $this->extraInfo;
+	}
+
+	/**
+	 * Sets extra information about the participant
+	 *
+	 * @param string $extraInfo Extra information about the participant
+	 */
+	public function setExtraInfo($extraInfo) {
+		$extraInfo = (($extraInfo !== null) && strlen(trim($extraInfo)) > 0) ? trim($extraInfo) : null;
+
+		$this->extraInfo = $extraInfo;
+		$this->toSave['extraInfo'] = $extraInfo;
 	}
 
 	/**

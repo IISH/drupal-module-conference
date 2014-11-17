@@ -17,49 +17,68 @@ function preregister_session_form($form, &$form_state) {
 		'#title' => iish_t('Session info')
 	);
 
-	$form['session']['sessionname'] = array(
-		'#type'          => 'textfield',
-		'#title'         => iish_t('Session name'),
-		'#size'          => 40,
-		'#required'      => true,
-		'#maxlength'     => 255,
-		'#default_value' => $session->getName(),
-	);
+	if (!PreRegistrationUtils::useSessions()) {
+		$form['session']['sessionname'] = array(
+			'#type'          => 'textfield',
+			'#title'         => iish_t('Session name'),
+			'#size'          => 40,
+			'#required'      => true,
+			'#maxlength'     => 255,
+			'#default_value' => $session->getName(),
+		);
 
-	$form['session']['sessionabstract'] = array(
-		'#type'          => 'textarea',
-		'#title'         => iish_t('Abstract'),
-		'#description'   => '<em>(' . iish_t('max. 1.000 words') . ')</em>',
-		'#rows'          => 3,
-		'#required'      => true,
-		'#default_value' => $session->getAbstr(),
-	);
+		$form['session']['sessionabstract'] = array(
+			'#type'          => 'textarea',
+			'#title'         => iish_t('Abstract'),
+			'#description'   => '<em>(' . iish_t('max. 1.000 words') . ')</em>',
+			'#rows'          => 3,
+			'#required'      => true,
+			'#default_value' => $session->getAbstr(),
+		);
 
-	$networks = CachedConferenceApi::getNetworks();
-	$networkOptions = CRUDApiClient::getAsKeyValueArray($networks);
+		$networkIds = $session->getNetworksId();
+		$form['session']['sessioninnetwork'] = array(
+			'#title'         => NetworkApi::getNetworkName(),
+			'#type'          => 'select',
+			'#options'       => CRUDApiClient::getAsKeyValueArray(CachedConferenceApi::getNetworks()),
+			'#required'      => true,
+			'#size'          => 4,
+			'#default_value' => isset($networkIds[0]) ? $networkIds[0] : null,
+		);
 
-	$networkIds = $session->getNetworksId();
-	$form['session']['sessioninnetwork'] = array(
-		'#title'         => NetworkApi::getNetworkName(),
-		'#type'          => 'select',
-		'#options'       => $networkOptions,
-		'#required'      => true,
-		'#size'          => 4,
-		'#default_value' => isset($networkIds[0]) ? $networkIds[0] : null,
-	);
+		PreRegistrationUtils::hideAndSetDefaultNetwork($form['session']['sessioninnetwork']);
+	}
+	else {
+		$markup = array();
 
-	if (SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) != 1) {
-		$form['session']['sessioninnetwork']['#access'] = false;
-		$form['session']['sessioninnetwork']['#default_value'] =
-			SettingsApi::getSetting(SettingsApi::DEFAULT_NETWORK_ID);
+		$markup[] = theme('iishconference_container_field', array(
+			'label' => 'Session name',
+			'value' => $session->getName(),
+		));
+
+		$markup[] = theme('iishconference_container_field', array(
+			'label'          => 'Abstract',
+			'value'          => $session->getAbstr(),
+			'valueOnNewLine' => true,
+		));
+
+		if (PreRegistrationUtils::showNetworks()) {
+			$markup[] = theme('iishconference_container_field', array(
+				'label' => 'Networks',
+				'value' => implode(', ', $session->getNetworks())
+			));
+		}
+
+		$form['session']['info'] = array(
+			'#type'   => 'markup',
+			'#markup' => implode('', $markup),
+		);
 	}
 
 	// + + + + + + + + + + + + + + + + + + + + + + + +
 	// SESSION PARTICIPANTS
 
-	$sessionParticipants =
-		CRUDApiMisc::getAllWherePropertyEquals(new SessionParticipantApi(), 'session_id', $session->getId())
-			->getResults();
+	$sessionParticipants = PreRegistrationUtils::getSessionParticipantsAddedByUserForSession($state, $session);
 	$users = SessionParticipantApi::getAllUsers($sessionParticipants);
 	$data['session_participants'] = $sessionParticipants;
 
@@ -83,8 +102,11 @@ function preregister_session_form($form, &$form_state) {
 			$printOr = false;
 		}
 
-		$roles = SessionParticipantApi::getAllTypesOfUserForSession($sessionParticipants,
-			$user->getId(), $session->getId());
+		$roles = SessionParticipantApi::getAllTypesOfUserForSession(
+			$sessionParticipants,
+			$user->getId(),
+			$session->getId()
+		);
 
 		$form['session_participants']['submit_participant_' . $user->getId()] = array(
 			'#name'   => 'submit_participant_' . $user->getId(),
@@ -106,14 +128,16 @@ function preregister_session_form($form, &$form_state) {
 		'#limit_validation_errors' => array(),
 	);
 
-	$form['submit'] = array(
-		'#type'  => 'submit',
-		'#name'  => 'submit',
-		'#value' => iish_t('Save session'),
-	);
+	if (!PreRegistrationUtils::useSessions()) {
+		$form['submit'] = array(
+			'#type'  => 'submit',
+			'#name'  => 'submit',
+			'#value' => iish_t('Save session'),
+		);
+	}
 
 	// We can only remove a session if it has been persisted
-	if ($session->isUpdate()) {
+	if (!PreRegistrationUtils::useSessions() && $session->isUpdate()) {
 		$form['submit_remove'] = array(
 			'#type'                    => 'submit',
 			'#name'                    => 'submit_remove',
@@ -136,23 +160,25 @@ function preregister_session_form($form, &$form_state) {
  * Implements hook_form_validate()
  */
 function preregister_session_form_validate($form, &$form_state) {
-	$state = new PreRegistrationState($form_state);
-	$multiPageData = $state->getMultiPageData();
-	$session = $multiPageData['session'];
+	if (!PreRegistrationUtils::useSessions()) {
+		$state = new PreRegistrationState($form_state);
+		$multiPageData = $state->getMultiPageData();
+		$session = $multiPageData['session'];
 
-	$props = new ApiCriteriaBuilder();
-	$props
-		->eq('name', trim($form_state['values']['sessionname']))
-		->eq('addedBy.id', LoggedInUserDetails::getId());
+		$props = new ApiCriteriaBuilder();
+		$props
+			->eq('name', trim($form_state['values']['sessionname']))
+			->eq('addedBy.id', $state->getUser()->getId());
 
-	if ($session->isUpdate()) {
-		$props->ne('id', $session->getId());
-	}
+		if ($session->isUpdate()) {
+			$props->ne('id', $session->getId());
+		}
 
-	// Don't allow multiple sessions with the same name
-	$sessions = SessionApi::getListWithCriteria($props->get());
-	if ($sessions->getTotalSize() > 0) {
-		form_set_error('sessionname', iish_t('You already created a session with the same name.'));
+		// Don't allow multiple sessions with the same name
+		$sessions = SessionApi::getListWithCriteria($props->get());
+		if ($sessions->getTotalSize() > 0) {
+			form_set_error('sessionname', iish_t('You already created a session with the same name.'));
+		}
 	}
 }
 
@@ -166,27 +192,29 @@ function preregister_session_form_submit($form, &$form_state) {
 	$multiPageData = $state->getMultiPageData();
 	$session = $multiPageData['session'];
 
-	// Save session information
-	$session->setName($form_state['values']['sessionname']);
-	$session->setAbstr($form_state['values']['sessionabstract']);
+	if (!PreRegistrationUtils::useSessions()) {
+		// Save session information
+		$session->setName($form_state['values']['sessionname']);
+		$session->setAbstr($form_state['values']['sessionabstract']);
 
-	$networkId = EasyProtection::easyIntegerProtection($form_state['values']['sessioninnetwork']);
-	$session->setNetworks(array($networkId));
+		$networkId = EasyProtection::easyIntegerProtection($form_state['values']['sessioninnetwork']);
+		$session->setNetworks(array($networkId));
 
-	// Before we persist this data, is this a new session?
-	$newSession = !$session->isUpdate();
-	$session->save();
+		// Before we persist this data, is this a new session?
+		$newSession = !$session->isUpdate();
+		$session->save();
 
-	// Also add the current user to the session as an organiser if this is a new session
-	if ($newSession) {
-		$organiser = new SessionParticipantApi();
-		$organiser->setUser($user);
-		$organiser->setSession($session);
-		$organiser->setType(ParticipantTypeApi::ORGANIZER_ID);
+		// Also add the current user to the session as an organiser if this is a new session
+		if ($newSession) {
+			$organiser = new SessionParticipantApi();
+			$organiser->setUser($user);
+			$organiser->setSession($session);
+			$organiser->setType(ParticipantTypeApi::ORGANIZER_ID);
 
-		$organiser->save();
-		drupal_set_message(t('You are added as organizer to this session.') . '<br />' .
-			iish_t('Please add participants to the session.'), 'status');
+			$organiser->save();
+			drupal_set_message(iish_t('You are added as organizer to this session.') . '<br />' .
+				iish_t('Please add participants to the session.'), 'status');
+		}
 	}
 
 	// Now find out if we have to add a participant or simply save the session
@@ -196,7 +224,7 @@ function preregister_session_form_submit($form, &$form_state) {
 	if ($submitName === 'submit') {
 		$state->setMultiPageData(array());
 
-		return 'preregister_typeofregistration_form';
+		return PreRegistrationPage::TYPE_OF_REGISTRATION;
 	}
 
 	if ($submitName === 'submit_participant') {
@@ -217,22 +245,24 @@ function preregister_session_form_back($form, &$form_state) {
 	$state = new PreRegistrationState($form_state);
 	$state->setMultiPageData(array());
 
-	return 'preregister_typeofregistration_form';
+	return PreRegistrationPage::TYPE_OF_REGISTRATION;
 }
 
 /**
- * Remove the session
+ * Remove the session, if created by them
  */
 function preregister_session_form_remove($form, &$form_state) {
-	$state = new PreRegistrationState($form_state);
-	$multiPageData = $state->getMultiPageData();
+	if (!PreRegistrationUtils::useSessions()) {
+		$state = new PreRegistrationState($form_state);
+		$multiPageData = $state->getMultiPageData();
 
-	$session = $multiPageData['session'];
-	$session->delete();
+		$session = $multiPageData['session'];
+		$session->delete();
 
-	$state->setMultiPageData(array());
+		$state->setMultiPageData(array());
+	}
 
-	return 'preregister_typeofregistration_form';
+	return PreRegistrationPage::TYPE_OF_REGISTRATION;
 }
 
 /**
@@ -247,8 +277,6 @@ function preregister_session_form_remove($form, &$form_state) {
  * unless the session participant cannot be edited by the user
  */
 function preregister_session_set_sessionparticipant($state, $session, $id) {
-	$preRegisterUser = $state->getUser();
-
 	// Make sure the session participant can be edited
 	if ($id !== null) {
 		$user = CRUDApiMisc::getById(new UserApi(), $id);
@@ -256,33 +284,26 @@ function preregister_session_set_sessionparticipant($state, $session, $id) {
 		if ($user === null) {
 			drupal_set_message('The user you try to edit could not be found!', 'error');
 
-			return 'preregister_session_form';
+			return PreRegistrationPage::SESSION;
 		}
 	}
 	else {
 		$user = new UserApi();
 	}
 
-	// Now collect the with which roles we added the participant to a session
-	$props = new ApiCriteriaBuilder();
-	$sessionParticipants = SessionParticipantApi::getListWithCriteria(
-		$props
-			->eq('session_id', $session->getId())
-			->eq('user_id', $id)
-			->eq('addedBy_id', $preRegisterUser->getId())
-			->get()
-	)->getResults();
+	// Now collect the roles with which we added the participant to a session
+	$sessionParticipants = PreRegistrationUtils::getSessionParticipantsAddedByUserForSessionAndUser($state, $session, $user);
 
 	// Did we add the participant to the session with roles or is it a new user?
 	if ($user->isUpdate() && (count($sessionParticipants) === 0)) {
 		drupal_set_message('You can only edit the users you created or added to a session!', 'error');
 
-		return 'preregister_session_form';
+		return PreRegistrationPage::SESSION;
 	}
 
 	$state->setMultiPageData(array('session'              => $session,
 	                               'user'                 => $user,
 	                               'session_participants' => $sessionParticipants));
 
-	return 'preregister_sessionparticipant_form';
+	return PreRegistrationPage::SESSION_PARTICIPANT;
 }

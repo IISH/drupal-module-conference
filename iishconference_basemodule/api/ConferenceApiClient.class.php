@@ -150,7 +150,7 @@ class ConferenceApiClient {
 			catch (Exception $exception) {
 				// Print error message by interrupting the current page building and delivering an empty page with an error message
 				if ($printErrorMessage) {
-					drupal_set_message(t('There are currently problems obtaining the necessary data. ' .
+					drupal_set_message(iish_t('There are currently problems obtaining the necessary data. ' .
 						'Please try again later. We are sorry for the inconvenience.'), 'error');
 					drupal_deliver_html_page('');
 					drupal_exit();

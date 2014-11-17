@@ -166,8 +166,8 @@ class ConferenceMisc {
 	public static function getInfoBlock($emptyRows = 2) {
 		return
 			str_repeat('<br />', $emptyRows) . '<div class="eca_warning">' .
-				iish_t('For any remarks or questions, please contact: ') .
-				self::encryptEmailAddress(SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL)) .
+			iish_t('For any remarks or questions, please contact: ') .
+			self::encryptEmailAddress(SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL)) .
 			'</div>';
 	}
 
@@ -264,11 +264,11 @@ document.write('<a hr'+'ef=\"'+'mai'+'lto:'+w+'@'+h1+'.'+h2+'\">'+w+'@'+h1+'.'+h
 
 		if (strlen($newText) < strlen($text)) {
 			return '<div class="less-text">' .
-				self::getCleanHTML($newText) .
-				' ... <a href="" class="more">(Show more)</a></div>' .
-				'<div class="more-text">' .
-				self::getCleanHTML($text) .
-				' <a href="" class="less">(Show less)</a></div>';
+			self::getCleanHTML($newText) .
+			' ... <a href="" class="more">(Show more)</a></div>' .
+			'<div class="more-text">' .
+			self::getCleanHTML($text) .
+			' <a href="" class="less">(Show less)</a></div>';
 		}
 		else {
 			return self::getCleanHTML($newText);
@@ -306,6 +306,7 @@ document.write('<a hr'+'ef=\"'+'mai'+'lto:'+w+'@'+h1+'.'+h2+'\">'+w+'@'+h1+'.'+h
 	/**
 	 * Override of the default t function of Drupal
 	 * Will translate the text first using the translations CMS API
+	 * It will then replace all occurences of network and session in the text
 	 *
 	 * @param string $string                A string containing the English string to translate
 	 * @param array  $args                  An associative array of replacements to make after translation.
@@ -316,13 +317,48 @@ document.write('<a hr'+'ef=\"'+'mai'+'lto:'+w+'@'+h1+'.'+h2+'\">'+w+'@'+h1+'.'+h
 	 * @return null|string
 	 */
 	public static function translate($string, array $args = array(), $callOriginalTFunction = true) {
-		$text = TranslationsApi::getTranslation($string);
+		$string = TranslationsApi::getTranslation($string);
+
+		$string = self::replaceNetwork($string);
+		$string = self::replaceSession($string);
 
 		if ($callOriginalTFunction) {
-			return t($text, $args);
+			return t($string, $args);
 		}
 		else {
-			return $text;
+			return $string;
 		}
+	}
+
+	/**
+	 * Replaces all occurences of 'network' in a string with the replacement found in the setting
+	 *
+	 * @param string $string The original text string
+	 *
+	 * @return string The new text string
+	 */
+	public static function replaceNetwork($string) {
+		$string = str_replace('network', NetworkApi::getNetworkName(true, true), $string);
+		$string = str_replace('networks', NetworkApi::getNetworkName(false, true), $string);
+		$string = str_replace('Network', NetworkApi::getNetworkName(true, false), $string);
+		$string = str_replace('Networks', NetworkApi::getNetworkName(false, false), $string);
+
+		return $string;
+	}
+
+	/**
+	 * Replaces all occurences of 'session' in a string with the replacement found in the setting
+	 *
+	 * @param string $string The original text string
+	 *
+	 * @return string The new text string
+	 */
+	public static function replaceSession($string) {
+		$string = str_replace('session', SessionApi::getSessionName(true, true), $string);
+		$string = str_replace('sessions', SessionApi::getSessionName(false, true), $string);
+		$string = str_replace('Session', SessionApi::getSessionName(true, false), $string);
+		$string = str_replace('Sessions', SessionApi::getSessionName(false, false), $string);
+
+		return $string;
 	}
 } 

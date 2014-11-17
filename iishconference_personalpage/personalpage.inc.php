@@ -8,8 +8,8 @@ function conference_personalpage_main() {
 		// redirect to login page
 		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 				array('query' => drupal_get_destination())));
-		die(t('Go to !login page.',
-			array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+		die(iish_t('Go to !login page.',
+			array('!login' => l(iish_t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 				array('query' => drupal_get_destination())))));
 	}
 
@@ -159,7 +159,7 @@ function conference_personalpage_create_registration_info($userDetails, $partici
 		$registeredAndPayedContent[] = '<span class="eca_warning">' .
 			iish_t('You are not registered for the @conference. Please go to the !link.',
 				array('@conference' => CachedConferenceApi::getEventDate()->getLongNameAndYear(),
-				      '!link'       => l(t('pre-registration form'),
+				      '!link'       => l(iish_t('pre-registration form'),
 					      SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'pre-registration'))) . '</span>';
 	}
 
@@ -177,7 +177,7 @@ function conference_personalpage_create_payment_status(array &$registeredAndPaye
 	$paymentStatus = iish_t('(Final registration and payment has not started yet)');
 
 	if (module_exists('iishconference_finalregistration')) {
-		$paymentStatus = iish_t('(!link)', array('!link' => l(t('Final registration and payment'),
+		$paymentStatus = iish_t('(!link)', array('!link' => l(iish_t('Final registration and payment'),
 			SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration')));
 
 		if (!is_null($participantDateDetails->getPaymentId()) && ($participantDateDetails->getPaymentId() !== 0)) {
@@ -404,7 +404,7 @@ function conference_personalpage_create_paper_info(array &$paperContent, $paper,
 
 	if ((SettingsApi::getSetting(SettingsApi::SHOW_AWARD) == 1) && $participant->getStudent()) {
 		$awardText = ConferenceMisc::getYesOrNo($participant->getAward());
-		$awardText .= '&nbsp; <em>(' . l(t('more about the award'), 'award') . ')</em>';
+		$awardText .= '&nbsp; <em>(' . l(iish_t('more about the award'), 'award') . ')</em>';
 		$paperContent[] = theme('iishconference_container_field', array(
 			'label'       => SettingsApi::getSetting(SettingsApi::AWARD_NAME) . '?',
 			'value'       => $awardText,
@@ -426,13 +426,13 @@ function conference_personalpage_create_paper_info(array &$paperContent, $paper,
 	$uploadPaperUrl = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) .
 		'personal-page/upload-paper/' . $paper->getId();
 	if ($paper->getFileName() == null) {
-		$paperContent[] = '<span class="heavy"> ' . l(t('Upload paper'), $uploadPaperUrl) . '</span>';
+		$paperContent[] = '<span class="heavy"> ' . l(iish_t('Upload paper'), $uploadPaperUrl) . '</span>';
 	}
 	else {
 		$paperContent[] = theme('iishconference_container_field', array(
 			'label'       => 'Uploaded paper',
 			'value'       => l($paper->getFileName(), $paper->getDownloadURL()) .
-								'&nbsp; <em>(' . l(t('Edit uploaded paper'), $uploadPaperUrl) . ')</em>',
+								'&nbsp; <em>(' . l(iish_t('Edit uploaded paper'), $uploadPaperUrl) . ')</em>',
 			'valueIsHTML' => true
 		));
 	}
@@ -616,27 +616,27 @@ function conference_personalpage_create_links($participantDateDetails) {
 			$participantDateDetails->getStateId() === ParticipantStateApi::NEW_PARTICIPANT)
 	) {
 		$linksContent[] =
-			'&bull; ' . l(t('Pre-registration form'),
+			'&bull; ' . l(iish_t('Pre-registration form'),
 				SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'pre-registration') . '<br />';
 	}
 	if (module_exists('iishconference_changepassword')) {
 		$linksContent[] =
 			'&bull; ' .
-			l(t('Change password'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'change-password') . '<br />';
+			l(iish_t('Change password'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'change-password') . '<br />';
 	}
 	if (module_exists('iishconference_finalregistration')) {
 		$linksContent[] = '&bull; ' .
-			l(t('Final registration and payment'),
+			l(iish_t('Final registration and payment'),
 				SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration') . '<br />';
 	}
 	if (module_exists('iishconference_emails')) {
 		$linksContent[] =
-			'&bull; ' . l(t('List of e-mails sent to you'),
+			'&bull; ' . l(iish_t('List of e-mails sent to you'),
 				SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'emails') . '<br />';
 	}
 	if (module_exists('iishconference_logout')) {
 		$linksContent[] =
-			'&bull; ' . l(t('Logout'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'logout') . '<br />';
+			'&bull; ' . l(iish_t('Logout'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'logout') . '<br />';
 	}
 	// check if live or crew or network chair or chair or organizer
 	if (module_exists('iishconference_program') && (
@@ -669,31 +669,31 @@ function conference_personalpage_create_links_network($participantDateDetails) {
 					array('@network' => NetworkApi::getNetworkName(true, true))))));
 
 		if (module_exists('iishconference_networksforchairs')) {
-			$linksNetworkContent[] = '&bull; ' . l(t('@networks, Sessions & Participants (and papers)',
+			$linksNetworkContent[] = '&bull; ' . l(iish_t('@networks, Sessions & Participants (and papers)',
 						array('@networks' => NetworkApi::getNetworkName(false))),
 					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(false, true) .
 					'forchairs') . '<br />';
 		}
 		if (module_exists('iishconference_networkparticipants')) {
 			$linksNetworkContent[] = '&bull; ' .
-				l(t('@networks and their Participants', array('@networks' => NetworkApi::getNetworkName(false))),
+				l(iish_t('@networks and their Participants', array('@networks' => NetworkApi::getNetworkName(false))),
 					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(false, true) .
 					'participants') . '<br />';
 		}
 		if (module_exists('iishconference_networkvolunteers')) {
-			$linksNetworkContent[] = '&bull; ' . l(t('@networks and their Volunteers (Chair/Discussant)',
+			$linksNetworkContent[] = '&bull; ' . l(iish_t('@networks and their Volunteers (Chair/Discussant)',
 						array('@networks' => NetworkApi::getNetworkName(false))),
 					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(true, true) .
 					'volunteers') . '<br />';
 		}
 		if (module_exists('iishconference_proposednetworkparticipants')) {
-			$linksNetworkContent[] = '&bull; ' . l(t('Participants and their proposed @networks',
+			$linksNetworkContent[] = '&bull; ' . l(iish_t('Participants and their proposed @networks',
 						array('@networks' => NetworkApi::getNetworkName(false, true))),
 					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'proposed' .
 					NetworkApi::getNetworkName(true, true) . 'participants') . '<br />';
 		}
 		if (module_exists('iishconference_electionadvisory')) {
-			$linksNetworkContent[] = '&bull; ' . l(t('Election \'Advisory board\''),
+			$linksNetworkContent[] = '&bull; ' . l(iish_t('Election \'Advisory board\''),
 					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'election-advisory-board') . '<br />';
 		}
 

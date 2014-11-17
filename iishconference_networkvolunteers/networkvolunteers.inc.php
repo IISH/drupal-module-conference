@@ -10,13 +10,13 @@ function iishconference_networkvolunteers_main() {
 		// redirect to login page
 		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 				array('query' => drupal_get_destination())));
-		die(t('Go to !login page.',
-			array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+		die(iish_t('Go to !login page.',
+			array('!login' => l(iish_t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 				array('query' => drupal_get_destination())))));
 	}
 
 	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
-		drupal_set_message(t('Access denied. You are not a chair of a @network.',
+		drupal_set_message(iish_t('Access denied. You are not a chair of a @network.',
 			array('@network' => NetworkApi::getNetworkName(true, true))), 'error');
 
 		return '';
@@ -39,7 +39,7 @@ function iishconference_networkvolunteers_main() {
 		));
 	}
 	else {
-		drupal_set_message(t('No @networks found!', array('@networks' => NetworkApi::getNetworkName(false, true))),
+		drupal_set_message(iish_t('No @networks found!', array('@networks' => NetworkApi::getNetworkName(false, true))),
 			'warning');
 
 		return '';
@@ -58,20 +58,20 @@ function iishconference_networkvolunteers_detail($network) {
 		// redirect to login page
 		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 				array('query' => drupal_get_destination())));
-		die(t('Go to !login page.',
-			array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+		die(iish_t('Go to !login page.',
+			array('!login' => l(iish_t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 				array('query' => drupal_get_destination())))));
 	}
 
 	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
-		drupal_set_message(t('Access denied. You are not a chair of a @network.',
+		drupal_set_message(iish_t('Access denied. You are not a chair of a @network.',
 			array('@network' => NetworkApi::getNetworkName(true, true))), 'error');
 
 		return '';
 	}
 
 	if (empty($network)) {
-		drupal_set_message(t('The @network could not be found.',
+		drupal_set_message(iish_t('The @network could not be found.',
 			array('@network' => NetworkApi::getNetworkName(true, true))), 'error');
 
 		drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(true, true) .

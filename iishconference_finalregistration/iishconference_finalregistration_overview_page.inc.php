@@ -102,7 +102,7 @@ function finalregistration_overview_submit($form, &$form_state) {
 		}
 	}
 	else {
-		drupal_set_message(t('Currently it is not possible to proceed to create a new order. Please try again later...'),
+		drupal_set_message(iish_t('Currently it is not possible to proceed to create a new order. Please try again later...'),
 			'error');
 	}
 }

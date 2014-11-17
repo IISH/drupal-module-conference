@@ -52,7 +52,7 @@ function conference_login_form($form, &$form_state) {
 	// lost password url
 	$form['ct' . $ct++] = array(
 		'#type'   => 'markup',
-		'#markup' => '<div class="largertopmargin">' . l(t('Lost password'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) .
+		'#markup' => '<div class="largertopmargin">' . l(iish_t('Lost password'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) .
 				'lost-password') . '</div>',
 	);
 
@@ -60,7 +60,7 @@ function conference_login_form($form, &$form_state) {
 	$form['ct' . $ct++] = array(
 		'#type'   => 'markup',
 		'#markup' => '<div class="largertopmargin">' . iish_t('If you don\'t have an account please go to !link.',
-				array('!link' => l(t('Pre-registration form'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'pre-registration'))) .
+				array('!link' => l(iish_t('Pre-registration form'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'pre-registration'))) .
 			'</div>',
 	);
 
@@ -101,13 +101,13 @@ function conference_login_form_submit($form, &$form_state) {
 
 		switch ($user_status) {
 			case LoggedInUserDetails::USER_STATUS_DISABLED:
-				drupal_set_message(t("Account is disabled."), 'error');
+				drupal_set_message(iish_t("Account is disabled."), 'error');
 				break;
 			case LoggedInUserDetails::USER_STATUS_DELETED:
-				drupal_set_message(t("Account is deleted"), 'error');
+				drupal_set_message(iish_t("Account is deleted"), 'error');
 				break;
 			default:
-				drupal_set_message(t("Incorrect email / password combination."), 'error');
+				drupal_set_message(iish_t("Incorrect email / password combination."), 'error');
 		}
 	}
 }

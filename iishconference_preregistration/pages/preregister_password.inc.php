@@ -43,7 +43,7 @@ function preregister_password_form($form, &$form_state) {
 		'#type'   => 'markup',
 		'#markup' =>
 			'<div class="largertopmargin">' .
-			l(t('Lost password'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'lost-password') .
+			l(iish_t('Lost password'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'lost-password') .
 			'</div>',
 	);
 
@@ -60,18 +60,18 @@ function preregister_password_form_submit($form, &$form_state) {
 	$userStatus = $loginApi->login($state->getEmail(), $form_state['values']['password']);
 
 	if ($userStatus == LoggedInUserDetails::USER_STATUS_EXISTS) {
-		return 'preregister_personalinfo_form';
+		return PreRegistrationPage::PERSONAL_INFO;
 	}
 	else {
 		switch ($userStatus) {
 			case LoggedInUserDetails::USER_STATUS_DISABLED:
 			case LoggedInUserDetails::USER_STATUS_DELETED:
-				drupal_set_message(t('The account with the given email address is disabled.'), 'error');
+				drupal_set_message(iish_t('The account with the given email address is disabled.'), 'error');
 				break;
 			case LoggedInUserDetails::USER_STATUS_DOES_NOT_EXISTS:
-				drupal_set_message(t('Incorrect email / password combination.'), 'error');
+				drupal_set_message(iish_t('Incorrect email / password combination.'), 'error');
 		}
 
-		return 'preregister_password_form';
+		return PreRegistrationPage::PASSWORD;
 	}
 }

@@ -11,33 +11,6 @@ function preregister_confirm_form($form, &$form_state) {
 	$showChairDiscussantPool = (SettingsApi::getSetting(SettingsApi::SHOW_CHAIR_DISCUSSANT_POOL) == 1);
 	$showLanguageCoaching = (SettingsApi::getSetting(SettingsApi::SHOW_LANGUAGE_COACH_PUPIL) == 1);
 
-	$allVolunteering = array();
-	if ($showChairDiscussantPool || $showLanguageCoaching) {
-		$allVolunteering =
-			CRUDApiMisc::getAllWherePropertyEquals(new ParticipantVolunteeringApi(), 'participantDate_id',
-				$participant->getId())->getResults();
-	}
-
-	$showPapers = SettingsApi::getSetting(SettingsApi::SHOW_AUTHOR_REGISTRATION);
-	$showSessions = SettingsApi::getSetting(SettingsApi::SHOW_ORGANIZER_REGISTRATION);
-
-	$papers = array();
-	if ($showPapers) {
-		$props = new ApiCriteriaBuilder();
-		$papers = PaperApi::getListWithCriteria(
-			$props
-				->eq('user_id', $user->getId())
-				->eq('addedBy_id', $user->getId())
-				->get()
-		)->getResults();
-	}
-
-	$sessions = array();
-	if ($showSessions) {
-		$sessions =
-			CRUDApiMisc::getAllWherePropertyEquals(new SessionApi(), 'addedBy_id', $user->getId())->getResults();
-	}
-
 	// + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 	// PERSONAL INFO
 
@@ -100,7 +73,8 @@ function preregister_confirm_form($form, &$form_state) {
 	// + + + + + + + + + + + + + + + + + + + + + + + +
 	// COMMUNICATION MEANS
 
-	$communicationContent = array(theme('iishconference_container_header', array('text' => iish_t('Communication Means'))));
+	$communicationContent =
+		array(theme('iishconference_container_header', array('text' => iish_t('Communication Means'))));
 
 	$communicationContent[] = theme('iishconference_container_field', array(
 		'label' => 'Phone number',
@@ -132,6 +106,8 @@ function preregister_confirm_form($form, &$form_state) {
 	// CHAIR / DISCUSSANT POOL
 
 	$chairDiscussantContent = array();
+	$allVolunteering = PreRegistrationUtils::getAllVolunteeringOfUser($state);
+
 	if ($showChairDiscussantPool) {
 		$chairVolunteering =
 			ParticipantVolunteeringApi::getAllNetworksForVolunteering($allVolunteering, VolunteeringApi::CHAIR);
@@ -146,7 +122,7 @@ function preregister_confirm_form($form, &$form_state) {
 			'value' => ConferenceMisc::getYesOrNo(count($chairVolunteering) > 0)
 		));
 
-		if ((SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) && (count($chairVolunteering) > 0)) {
+		if (PreRegistrationUtils::showNetworks() && (count($chairVolunteering) > 0)) {
 			$chairDiscussantContent[] = theme('iishconference_container_field', array(
 				'label' => NetworkApi::getNetworkName(false),
 				'value' => implode(', ', $chairVolunteering)
@@ -158,7 +134,7 @@ function preregister_confirm_form($form, &$form_state) {
 			'value' => ConferenceMisc::getYesOrNo(count($discussantVolunteering) > 0)
 		));
 
-		if ((SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) && (count($discussantVolunteering) > 0)) {
+		if (PreRegistrationUtils::showNetworks() && (count($discussantVolunteering) > 0)) {
 			$chairDiscussantContent[] = theme('iishconference_container_field', array(
 				'label' => NetworkApi::getNetworkName(false),
 				'value' => implode(', ', $discussantVolunteering)
@@ -184,7 +160,7 @@ function preregister_confirm_form($form, &$form_state) {
 			'value' => ConferenceMisc::getYesOrNo(count($coachVolunteering) > 0)
 		));
 
-		if ((SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) && (count($coachVolunteering) > 0)) {
+		if (PreRegistrationUtils::showNetworks() && (count($coachVolunteering) > 0)) {
 			$englishCoachingContent[] = theme('iishconference_container_field', array(
 				'label' => NetworkApi::getNetworkName(false),
 				'value' => implode(', ', $coachVolunteering)
@@ -196,7 +172,7 @@ function preregister_confirm_form($form, &$form_state) {
 			'value' => ConferenceMisc::getYesOrNo(count($pupilVolunteering) > 0)
 		));
 
-		if ((SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) && (count($pupilVolunteering) > 0)) {
+		if (PreRegistrationUtils::showNetworks() && (count($pupilVolunteering) > 0)) {
 			$englishCoachingContent[] = theme('iishconference_container_field', array(
 				'label' => NetworkApi::getNetworkName(false),
 				'value' => implode(', ', $pupilVolunteering)
@@ -208,6 +184,8 @@ function preregister_confirm_form($form, &$form_state) {
 	// PAPERS
 
 	$papersContent = array();
+	$papers = PreRegistrationUtils::getPapersOfUser($state);
+
 	foreach ($papers as $i => $paper) {
 		$paperContent = array(theme('iishconference_container_header', array('text' => iish_t('Paper @count of @total',
 			array('@count' => $i + 1, '@total' => count($papers))))));
@@ -226,6 +204,27 @@ function preregister_confirm_form($form, &$form_state) {
 			'value' => $paper->getCoAuthors()
 		));
 
+		if (!PreRegistrationUtils::useSessions()) {
+			/*if (PreRegistrationUtils::showNetworks()) {
+				$paperContent[] = theme('iishconference_container_field', array(
+					'label' => 'Proposed network',
+					'value' => $paper->getNetworkProposal()
+				));
+			}
+
+			$paperContent[] = theme('iishconference_container_field', array(
+				'label' => 'Proposed session',
+				'value' => $paper->getSessionProposal()
+			));*/
+			$abc = 123; // TODO
+		}
+		else {
+			$paperContent[] = theme('iishconference_container_field', array(
+				'label' => 'Proposed session',
+				'value' => $paper->getSession()
+			));
+		}
+
 		if ((SettingsApi::getSetting(SettingsApi::SHOW_AWARD) == 1) && $participant->getStudent()) {
 			$paperContent[] = theme('iishconference_container_field', array(
 				'label'       => SettingsApi::getSetting(SettingsApi::AWARD_NAME) . '?',
@@ -234,14 +233,16 @@ function preregister_confirm_form($form, &$form_state) {
 			));
 		}
 
-		$paperContent[] = theme('iishconference_container_field', array(
-			'label' => 'Audio/visual equipment',
-			'value' => implode(', ', $paper->getEquipment())
-		));
-		$paperContent[] = theme('iishconference_container_field', array(
-			'label' => 'Extra audio/visual request',
-			'value' => $paper->getEquipmentComment()
-		));
+		if (SettingsApi::getSetting(SettingsApi::SHOW_EQUIPMENT) == 1) {
+			$paperContent[] = theme('iishconference_container_field', array(
+				'label' => 'Audio/visual equipment',
+				'value' => implode(', ', $paper->getEquipment())
+			));
+			$paperContent[] = theme('iishconference_container_field', array(
+				'label' => 'Extra audio/visual request',
+				'value' => $paper->getEquipmentComment()
+			));
+		}
 
 		$papersContent[] = $paperContent;
 	}
@@ -250,21 +251,20 @@ function preregister_confirm_form($form, &$form_state) {
 	// SESSIONS
 
 	$sessionsContent = array();
+	$sessionParticipants = PreRegistrationUtils::getSessionParticipantsAddedByUser($state);
+	$sessions = SessionParticipantApi::getAllSessions($sessionParticipants);
+
 	foreach ($sessions as $i => $session) {
 		$networks = $session->getNetworks();
 
-		$sessionParticipants =
-			CRUDApiMisc::getAllWherePropertyEquals(new SessionParticipantApi(), 'session_id', $session->getId())
-				->getResults();
-		$sessionPapers =
-			CRUDApiMisc::getAllWherePropertyEquals(new PaperApi(), 'session_id', $session->getId())->getResults();
-
+		$sessionParticipants = PreRegistrationUtils::getSessionParticipantsAddedByUserForSession($state, $session);
 		$users = SessionParticipantApi::getAllUsers($sessionParticipants);
 
 		// + + + + + + + + + + + + + + + + + + + + + + + +
 
-		$sessionContent = array(theme('iishconference_container_header', array('text' => iish_t('Session @count of @total',
-			array('@count' => $i + 1, '@total' => count($sessions))))));
+		$sessionContent =
+			array(theme('iishconference_container_header', array('text' => iish_t('Session @count of @total',
+				array('@count' => $i + 1, '@total' => count($sessions))))));
 
 		$sessionContent[] = theme('iishconference_container_field', array(
 			'label' => 'Session name',
@@ -277,18 +277,22 @@ function preregister_confirm_form($form, &$form_state) {
 			'valueOnNewLine' => true
 		));
 
-		$sessionContent[] = theme('iishconference_container_field', array(
-			'label' => NetworkApi::getNetworkName(),
-			'value' => isset($networks[0]) ? $networks[0] : null
-		));
+		if (PreRegistrationUtils::showNetworks()) {
+			$sessionContent[] = theme('iishconference_container_field', array(
+				'label' => NetworkApi::getNetworkName(),
+				'value' => isset($networks[0]) ? $networks[0] : null
+			));
+		}
 
 		foreach ($users as $user) {
 			$participant =
 				CRUDApiMisc::getFirstWherePropertyEquals(new ParticipantDateApi(), 'user_id', $user->getId());
-			$paper = PaperApi::getPapersOfUser($sessionPapers, $user->getId());
-			$paper = isset($paper[0]) ? $paper[0] : null;
-			$types = SessionParticipantApi::getAllTypesOfUserForSession($sessionParticipants, $user->getId(),
-				$session->getId());
+			$roles = SessionParticipantApi::getAllTypesOfUserForSession(
+				$sessionParticipants,
+				$user->getId(),
+				$session->getId()
+			);
+			$paper = PreRegistrationUtils::getPaperForSessionAndUser($state, $session, $user);
 
 			$sessionContent[] = '<br />';
 			$sessionContent[] = theme('iishconference_container_field', array(
@@ -325,10 +329,10 @@ function preregister_confirm_form($form, &$form_state) {
 			));
 			$sessionContent[] = theme('iishconference_container_field', array(
 				'label' => 'Type(s)',
-				'value' => implode(', ', $types),
+				'value' => implode(', ', $roles),
 			));
 
-			if ($paper !== null) {
+			if ($paper->isUpdate()) {
 				$sessionContent[] = theme('iishconference_container_field', array(
 					'label' => 'Paper title',
 					'value' => $paper->getTitle()
@@ -345,8 +349,46 @@ function preregister_confirm_form($form, &$form_state) {
 	}
 
 	// + + + + + + + + + + + + + + + + + + + + + + + +
+	// SESSION PARTICIPANT TYPES
 
-	drupal_set_message(t('Please check your data, scroll down, and confirm and finish your pre-registration.'),
+	$sessionParticipantTypesContent = array();
+	$participantTypes = PreRegistrationUtils::getParticipantTypesForUser();
+
+	foreach ($participantTypes as $participantType) {
+		$sessionParticipants = PreRegistrationUtils::getSessionParticipantsOfUserWithType($state, $participantType);
+
+		if (count($sessionParticipants) > 0) {
+			$sessionParticipantTypeContent = array(theme('iishconference_container_header',
+				array('text' => iish_t('@type in sessions', array('@type' => $participantType)))));
+
+			$sessionParticipantTypeContent[] = theme('item_list', array(
+				'title' => '',
+				'type'  => 'ul',
+				'items' => $sessions,
+			));
+
+			$sessionParticipantTypesContent[] = $sessionParticipantTypeContent;
+		}
+	}
+
+	// + + + + + + + + + + + + + + + + + + + + + + + +
+	// GENERAL COMMENTS
+
+	$generalComments = array();
+	if ((SettingsApi::getSetting(SettingsApi::SHOW_GENERAL_COMMENTS) == 1) &&
+		(strlen($participant->getExtraInfo()) > 0)
+	) {
+		$generalComments = array(theme('iishconference_container_header', array('text' => iish_t('General comments'))));
+
+		$generalComments[] = theme('iishconference_container_field', array(
+			'label' => '',
+			'value' => $participant->getExtraInfo(),
+		));
+	}
+
+	// + + + + + + + + + + + + + + + + + + + + + + + +
+
+	drupal_set_message(iish_t('Please check your data, scroll down, and confirm and finish your pre-registration.'),
 		'warning');
 
 	$confirm = theme('iishconference_container', array('fields' => $personalInfoContent));
@@ -369,6 +411,13 @@ function preregister_confirm_form($form, &$form_state) {
 	foreach ($sessionsContent as $sessionContent) {
 		$confirm .= theme('iishconference_container', array('fields' => $sessionContent));
 	}
+	foreach ($sessionParticipantTypesContent as $sessionParticipantTypeContent) {
+		$confirm .= theme('iishconference_container', array('fields' => $sessionParticipantTypeContent));
+	}
+
+	if (count($generalComments) > 0) {
+		$confirm .= theme('iishconference_container', array('fields' => $generalComments));
+	}
 
 	// + + + + + + + + + + + + + + + + + + + + + + + +
 
@@ -385,16 +434,24 @@ function preregister_confirm_form($form, &$form_state) {
 		'#limit_validation_errors' => array(),
 	);
 
-	// Allow the user to move to the 'type of registration' page if either author
-	// or organizer registration had been / is possible
-	$showAuthor = SettingsApi::getSetting(SettingsApi::SHOW_AUTHOR_REGISTRATION);
-	$showOrganizer = SettingsApi::getSetting(SettingsApi::SHOW_ORGANIZER_REGISTRATION);
+	$typeOfRegistrationPage = new PreRegistrationPage(PreRegistrationPage::TYPE_OF_REGISTRATION);
+	$commentsPage = new PreRegistrationPage(PreRegistrationPage::COMMENTS);
 
-	if (($showAuthor == 1) || ($showOrganizer == 1)) {
+	if ($typeOfRegistrationPage->isOpen()) {
 		$form['submit_back_typeofregistration'] = array(
 			'#type'                    => 'submit',
 			'#name'                    => 'submit_back_typeofregistration',
-			'#value'                   => iish_t('Back to previous step'),
+			'#value'                   => iish_t('Back to type of registration page'),
+			'#submit'                  => array('preregister_form_submit'),
+			'#limit_validation_errors' => array(),
+		);
+	}
+
+	if ($commentsPage->isOpen()) {
+		$form['submit_back_comments'] = array(
+			'#type'                    => 'submit',
+			'#name'                    => 'submit_back_comments',
+			'#value'                   => iish_t('Back to general comments page'),
 			'#submit'                  => array('preregister_form_submit'),
 			'#limit_validation_errors' => array(),
 		);
@@ -446,12 +503,14 @@ function preregister_confirm_form_back($form, &$form_state) {
 	// Now find out if to which step we have to go to
 	$submitName = $form_state['triggering_element']['#name'];
 
-	// Move to the 'type of registration' page if either author or organizer registration had been / is possible
-	$showAuthor = SettingsApi::getSetting(SettingsApi::SHOW_AUTHOR_REGISTRATION);
-	$showOrganizer = SettingsApi::getSetting(SettingsApi::SHOW_ORGANIZER_REGISTRATION);
+	$typeOfRegistrationPage = new PreRegistrationPage(PreRegistrationPage::TYPE_OF_REGISTRATION);
+	$commentsPage = new PreRegistrationPage(PreRegistrationPage::COMMENTS);
 
-	if (($submitName === 'submit_back_typeofregistration') && (($showAuthor == 1) || ($showOrganizer == 1))) {
+	if (($submitName === 'submit_back_typeofregistration') && $typeOfRegistrationPage->isOpen()) {
 		return 'preregister_typeofregistration_form';
+	}
+	else if (($submitName === 'submit_back_comments') && $commentsPage->isOpen()) {
+		return 'preregister_comments_form';
 	}
 	else {
 		return 'preregister_personalinfo_form';

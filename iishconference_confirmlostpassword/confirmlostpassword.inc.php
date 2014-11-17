@@ -101,19 +101,19 @@ function conference_confirmlostpassword_set_message($id, $code) {
 
 	switch ($status) {
 		case ConfirmLostPasswordApi::ACCEPT:
-			drupal_set_message(t('We have sent you an e-mail with your new password.'), 'status');
+			drupal_set_message(iish_t('We have sent you an e-mail with your new password.'), 'status');
 			$ret = true;
 			break;
 		case ConfirmLostPasswordApi::PASSWORD_ALREADY_SENT:
-			drupal_set_message(t('We already sent you an email with your new password. Please check your email!'),
+			drupal_set_message(iish_t('We already sent you an email with your new password. Please check your email!'),
 				'warning');
 			$ret = true;
 			break;
 		case ConfirmLostPasswordApi::CODE_EXPIRED:
-			drupal_set_message(t('The CODE has been expired. Please request a new CODE.'), 'error');
+			drupal_set_message(iish_t('The CODE has been expired. Please request a new CODE.'), 'error');
 			break;
 		default:
-			drupal_set_message(t('ID / CODE combination not found.'), 'error');
+			drupal_set_message(iish_t('ID / CODE combination not found.'), 'error');
 	}
 
 	return $ret;

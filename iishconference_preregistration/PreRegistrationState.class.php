@@ -37,10 +37,10 @@ class PreRegistrationState {
 	public function getCurrentStep() {
 		if (!isset($this->formState['pre_registration']['step'])) {
 			if (LoggedInUserDetails::isLoggedIn()) {
-				$this->formState['pre_registration']['step'] = 'preregister_personalinfo_form';
+				$this->formState['pre_registration']['step'] = PreRegistrationPage::PERSONAL_INFO;
 			}
 			else {
-				$this->formState['pre_registration']['step'] = 'preregister_login_form';
+				$this->formState['pre_registration']['step'] = PreRegistrationPage::LOGIN;
 			}
 		}
 

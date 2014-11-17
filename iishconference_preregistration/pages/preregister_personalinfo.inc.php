@@ -11,15 +11,8 @@ function preregister_personalinfo_form($form, &$form_state) {
 	$showChairDiscussantPool = (SettingsApi::getSetting(SettingsApi::SHOW_CHAIR_DISCUSSANT_POOL) == 1);
 	$showLanguageCoaching = (SettingsApi::getSetting(SettingsApi::SHOW_LANGUAGE_COACH_PUPIL) == 1);
 
-	$allVolunteering = array();
-	$networkOptions = array();
-	if ($showChairDiscussantPool || $showLanguageCoaching) {
-		$allVolunteering =
-			CRUDApiMisc::getAllWherePropertyEquals(new ParticipantVolunteeringApi(), 'participantDate_id',
-				$participant->getId())->getResults();
-		$networks = CachedConferenceApi::getNetworks();
-		$networkOptions = CRUDApiClient::getAsKeyValueArray($networks);
-	}
+	$allVolunteering = PreRegistrationUtils::getAllVolunteeringOfUser($state);
+	$networkOptions = CRUDApiClient::getAsKeyValueArray(CachedConferenceApi::getNetworks());
 
 	$state->setFormData(array('volunteering' => $allVolunteering));
 
@@ -185,11 +178,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 	if ($showChairDiscussantPool) {
 		$chairVolunteering =
 			ParticipantVolunteeringApi::getAllNetworksForVolunteering($allVolunteering, VolunteeringApi::CHAIR);
-		$discussantVolunteering =
-			ParticipantVolunteeringApi::getAllNetworksForVolunteering($allVolunteering, VolunteeringApi::DISCUSSANT);
-
 		$chairOptions = array_keys(CRUDApiClient::getAsKeyValueArray($chairVolunteering));
-		$discussantOptions = array_keys(CRUDApiClient::getAsKeyValueArray($discussantVolunteering));
 
 		$form['chair_discussant_pool'] = array(
 			'#type'  => 'fieldset',
@@ -199,17 +188,15 @@ function preregister_personalinfo_form($form, &$form_state) {
 		$form['chair_discussant_pool']['volunteerchair'] = array(
 			'#type'          => 'checkbox',
 			'#title'         => iish_t('I would like to volunteer as Chair'),
-			//'#prefix'        => '<div class='container-inline'><span style='vertical-align:top;'>',
 			'#default_value' => count($chairOptions) > 0,
 		);
 
 		$form['chair_discussant_pool']['volunteerchair_networks'] = array(
 			'#type'          => 'select',
-			'#options'       => $networkOptions,
+			'#options'       => CRUDApiClient::getAsKeyValueArray(CachedConferenceApi::getNetworks()),
 			'#multiple'      => true,
 			'#size'          => 3,
-			'#description'   => '<i>' . iish_t('Use CTRL key to select multiple @networks.',
-					array('@networks' => NetworkApi::getNetworkName(false, true))) . '</i>',
+			'#description'   => '<i>' . iish_t('Use CTRL key to select multiple networks.') . '</i>',
 			'#states'        => array(
 				'visible' => array(
 					':input[name="volunteerchair"]' => array('checked' => true),
@@ -218,12 +205,13 @@ function preregister_personalinfo_form($form, &$form_state) {
 			'#default_value' => $chairOptions,
 		);
 
-		if (SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) != 1) {
-			$networkId = SettingsApi::getSetting(SettingsApi::DEFAULT_NETWORK_ID);
-			$form['chair_discussant_pool']['volunteerchair_networks']['#access'] = false;
-			$form['chair_discussant_pool']['volunteerchair_networks']['#default_value'] =
-				array($networkId => $networkId);
-		}
+		PreRegistrationUtils::hideAndSetDefaultNetwork($form['chair_discussant_pool']['volunteerchair_networks']);
+
+		// + + + + + + + + + + + + + + + + + + + + + + + +
+
+		$discussantVolunteering =
+			ParticipantVolunteeringApi::getAllNetworksForVolunteering($allVolunteering, VolunteeringApi::DISCUSSANT);
+		$discussantOptions = array_keys(CRUDApiClient::getAsKeyValueArray($discussantVolunteering));
 
 		$form['chair_discussant_pool']['volunteerdiscussant'] = array(
 			'#type'          => 'checkbox',
@@ -233,13 +221,10 @@ function preregister_personalinfo_form($form, &$form_state) {
 
 		$form['chair_discussant_pool']['volunteerdiscussant_networks'] = array(
 			'#type'          => 'select',
-			'#options'       => $networkOptions,
-			//'#prefix'        => '</span>',
-			//'#suffix'        => '</div>',
+			'#options'       => CRUDApiClient::getAsKeyValueArray(CachedConferenceApi::getNetworks()),
 			'#multiple'      => true,
 			'#size'          => 3,
-			'#description'   => '<i>' . iish_t('Use CTRL key to select multiple @networks.',
-					array('@networks' => NetworkApi::getNetworkName(false, true))) . '</i>',
+			'#description'   => '<i>' . iish_t('Use CTRL key to select multiple networks.') . '</i>',
 			'#states'        => array(
 				'visible' => array(
 					':input[name="volunteerdiscussant"]' => array('checked' => true),
@@ -248,12 +233,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 			'#default_value' => $discussantOptions,
 		);
 
-		if (SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) != 1) {
-			$networkId = SettingsApi::getSetting(SettingsApi::DEFAULT_NETWORK_ID);
-			$form['chair_discussant_pool']['volunteerdiscussant_networks']['#access'] = false;
-			$form['chair_discussant_pool']['volunteerdiscussant_networks']['#default_value'] =
-				array($networkId => $networkId);
-		}
+		PreRegistrationUtils::hideAndSetDefaultNetwork($form['chair_discussant_pool']['volunteerdiscussant_networks']);
 	}
 
 	// + + + + + + + + + + + + + + + + + + + + + + + +
@@ -268,11 +248,6 @@ function preregister_personalinfo_form($form, &$form_state) {
 		$coachOptions = array_keys(CRUDApiClient::getAsKeyValueArray($coachVolunteering));
 		$pupilOptions = array_keys(CRUDApiClient::getAsKeyValueArray($pupilVolunteering));
 
-		$form['english_language_coach'] = array(
-			'#type'  => 'fieldset',
-			'#title' => iish_t('English Language Coach'),
-		);
-
 		$defaultValue = '';
 		if (count($coachOptions) > 0) {
 			$defaultValue = 'coach';
@@ -280,6 +255,11 @@ function preregister_personalinfo_form($form, &$form_state) {
 		else if (count($pupilOptions) > 0) {
 			$defaultValue = 'pupil';
 		}
+
+		$form['english_language_coach'] = array(
+			'#type'  => 'fieldset',
+			'#title' => iish_t('English Language Coach'),
+		);
 
 		$form['english_language_coach']['coachpupil'] = array(
 			'#type'          => 'radios',
@@ -292,8 +272,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 			'#options'       => $networkOptions,
 			'#multiple'      => true,
 			'#size'          => 3,
-			'#description'   => '<i>' . iish_t('Use CTRL key to select multiple @networks.',
-					array('@networks' => NetworkApi::getNetworkName(false, true))) . '</i>',
+			'#description'   => '<i>' . iish_t('Use CTRL key to select multiple networks.') . '</i>',
 			'#states'        => array(
 				'visible' => array(
 					array(':input[name="coachpupil"]' => array('value' => 'coach')),
@@ -304,11 +283,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 			'#default_value' => (count($coachOptions) > 0) ? $coachOptions : $pupilOptions,
 		);
 
-		if (SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) != 1) {
-			$networkId = SettingsApi::getSetting(SettingsApi::DEFAULT_NETWORK_ID);
-			$form['english_language_coach']['coachpupil_networks']['#access'] = false;
-			$form['english_language_coach']['coachpupil_networks']['#default_value'] = array($networkId => $networkId);
-		}
+		PreRegistrationUtils::hideAndSetDefaultNetwork($form['english_language_coach']['coachpupil_networks']);
 	}
 
 	// + + + + + + + + + + + + + + + + + + + + + + + +
@@ -331,8 +306,8 @@ function preregister_personalinfo_form_validate($form, &$form_state) {
 		if ($form_state['values']['volunteerchair']) {
 			if (count($form_state['values']['volunteerchair_networks']) === 0) {
 				form_set_error('volunteerchair',
-					iish_t('Please select a @network or uncheck the field \'I would like to volunteer as Chair\'.',
-						array('@network' => NetworkApi::getNetworkName(true, false))));
+					iish_t('Please select a network or uncheck the field \'I would like to volunteer as Chair\'.')
+				);
 			}
 		}
 
@@ -340,8 +315,8 @@ function preregister_personalinfo_form_validate($form, &$form_state) {
 		if ($form_state['values']['volunteerdiscussant']) {
 			if (count($form_state['values']['volunteerdiscussant_networks']) === 0) {
 				form_set_error('volunteerdiscussant',
-					iish_t('Please select a @network or uncheck the field \'I would like to volunteer as Discussant\'.',
-						array('@network' => NetworkApi::getNetworkName(true, false))));
+					iish_t('Please select a network or uncheck the field \'I would like to volunteer as Discussant\'.')
+				);
 			}
 		}
 	}
@@ -351,8 +326,7 @@ function preregister_personalinfo_form_validate($form, &$form_state) {
 		if (in_array($form_state['values']['coachpupil'], array('coach', 'pupil'))) {
 			if (count($form_state['values']['coachpupil_networks']) === 0) {
 				form_set_error('coachpupil',
-					iish_t('Please select a @network or select \'not applicable\' at English language coach.',
-						array('@network' => NetworkApi::getNetworkName(true, false)))
+					iish_t('Please select a network or select \'not applicable\' at English language coach.')
 				);
 			}
 		}
@@ -438,15 +412,18 @@ function preregister_personalinfo_form_submit($form, &$form_state) {
 		$instance->delete();
 	}
 
-	// Move to the 'type of registration' page if either author or organizer registration had been / is possible
-	$showAuthor = SettingsApi::getSetting(SettingsApi::SHOW_AUTHOR_REGISTRATION);
-	$showOrganizer = SettingsApi::getSetting(SettingsApi::SHOW_ORGANIZER_REGISTRATION);
+	// Find out which page to go to next
+	$typeOfRegistrationPage = new PreRegistrationPage(PreRegistrationPage::TYPE_OF_REGISTRATION);
+	$commentsPage = new PreRegistrationPage(PreRegistrationPage::COMMENTS);
 
-	if (($showAuthor == 1) || ($showOrganizer == 1)) {
-		return 'preregister_typeofregistration_form';
+	if ($typeOfRegistrationPage->isOpen()) {
+		return PreRegistrationPage::TYPE_OF_REGISTRATION;
+	}
+	else if ($commentsPage->isOpen()) {
+		return PreRegistrationPage::COMMENTS;
 	}
 	else {
-		return 'preregister_confirm_form';
+		return PreRegistrationPage::CONFIRM;
 	}
 }
 

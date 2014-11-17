@@ -15,17 +15,17 @@ function conference_email_main($email) {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
 		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login', array('query' => drupal_get_destination())));
-		die(t('Go to !login page.', array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+		die(iish_t('Go to !login page.', array('!login' => l(iish_t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 			array('query' => drupal_get_destination())))));
 	}
 
 	if (empty($email)) {
-		drupal_set_message(t('Unfortunately, this email does not seem to exist.'), 'error');
+		drupal_set_message(iish_t('Unfortunately, this email does not seem to exist.'), 'error');
 
 		drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'emails');
 	}
 	if ($email->getUserId() !== LoggedInUserDetails::getId()) {
-		drupal_set_message(t('You are only allowed to see emails sent to you.'), 'error');
+		drupal_set_message(iish_t('You are only allowed to see emails sent to you.'), 'error');
 
 		drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'emails');
 	}
@@ -34,9 +34,9 @@ function conference_email_main($email) {
 
 	$emailPage = theme('iishconference_container_inline', array(
 		'inline' => array(
-			l(t('Go back to your emails'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'emails'),
+			l(iish_t('Go back to your emails'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'emails'),
 			'&nbsp;',
-			l(t('Go back to your personal page'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page'),
+			l(iish_t('Go back to your personal page'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page'),
 			'<br /><br />',
 		)
 	));
@@ -106,7 +106,7 @@ function conference_email_form_submit($form, &$form_state) {
 	$email = $form_state['build_info']['args'][0];
 	$resendEmailApi = new ResendEmailApi();
 	if ($resendEmailApi->resendEmail($email)) {
-		drupal_set_message(t('Your request for this email has been received and the email has just been sent to you. ' .
+		drupal_set_message(iish_t('Your request for this email has been received and the email has just been sent to you. ' .
 		                     'It can take a while before you will actually receive the email.'), 'status');
 	}
 }

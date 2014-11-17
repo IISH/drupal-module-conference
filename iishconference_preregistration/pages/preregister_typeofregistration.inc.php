@@ -5,37 +5,21 @@
  */
 function preregister_typeofregistration_form($form, &$form_state) {
 	$state = new PreRegistrationState($form_state);
-	$user = $state->getUser();
 	$data = array();
 
 	// + + + + + + + + + + + + + + + + + + + + + + + +
 	// AUTHOR
 
-	$showAuthor = SettingsApi::getSetting(SettingsApi::SHOW_AUTHOR_REGISTRATION);
-	$authorClosesOn = SettingsApi::getSetting(SettingsApi::AUTHOR_REGISTRATION_LASTDATE);
-
-	$authorRegistrationClosed =
-		(($authorClosesOn !== null) && (strlen(trim($authorClosesOn)) > 0) && !ConferenceMisc::isOpenForLastDate(strtotime($authorClosesOn)));
-	$data['authorRegistrationOpen'] = (($showAuthor == 1) && !$authorRegistrationClosed);
-
-	if ($showAuthor == 1) {
+	if (SettingsApi::getSetting(SettingsApi::SHOW_AUTHOR_REGISTRATION) == 1) {
 		$form['author'] = array(
 			'#type'  => 'fieldset',
 			'#title' => iish_t('I would like to propose a paper'),
 		);
 
-		if (!$authorRegistrationClosed) {
-			$props = new ApiCriteriaBuilder();
-			$paperResults = PaperApi::getListWithCriteria(
-				$props
-					->eq('addedBy_id', $user->getId())
-					->eq('user_id', $user->getId())
-					->get()
-			);
-			$papers = $paperResults->getResults();
-
+		if (PreRegistrationUtils::isAuthorRegistrationOpen()) {
+			$papers = PreRegistrationUtils::getPapersOfUser($state);
 			$maxPapers = SettingsApi::getSetting(SettingsApi::MAX_PAPERS_PER_PERSON_PER_SESSION);
-			$canSubmitNewPaper = (($maxPapers === null) || ($paperResults->getTotalSize() < $maxPapers));
+			$canSubmitNewPaper = (($maxPapers === null) || (count($papers) < $maxPapers));
 			$data['canSubmitNewPaper'] = $canSubmitNewPaper;
 
 			if ($canSubmitNewPaper) {
@@ -50,7 +34,7 @@ function preregister_typeofregistration_form($form, &$form_state) {
 			$printOr = true;
 			foreach ($papers as $paper) {
 				$prefix = '';
-				if ($printOr  && $canSubmitNewPaper) {
+				if ($printOr && $canSubmitNewPaper) {
 					$prefix = ' &nbsp;' . iish_t('or') . '<br /><br />';
 					$printOr = false;
 				}
@@ -67,7 +51,8 @@ function preregister_typeofregistration_form($form, &$form_state) {
 		else {
 			$form['author']['closed_message'] = array(
 				'#type'   => 'markup',
-				'#markup' => '<font color="red">' . iish_t('It is no longer possible to pre-register a paper.') . '<br/ >' .
+				'#markup' =>
+					'<font color="red">' . iish_t('It is no longer possible to pre-register a paper.') . '<br/ >' .
 					iish_t('You can still pre-register for the conference as a spectator.') . '</font>',
 			);
 		}
@@ -76,32 +61,42 @@ function preregister_typeofregistration_form($form, &$form_state) {
 	// + + + + + + + + + + + + + + + + + + + + + + + +
 	// ORGANIZER
 
-	$showOrganizer = SettingsApi::getSetting(SettingsApi::SHOW_ORGANIZER_REGISTRATION);
-	$organizerClosesOn = SettingsApi::getSetting(SettingsApi::ORGANIZER_REGISTRATION_LASTDATE);
-
-	$organizerRegistrationClosed = (($organizerClosesOn !== null) && (strlen(trim($organizerClosesOn)) > 0) &&
-		!ConferenceMisc::isOpenForLastDate(strtotime($organizerClosesOn)));
-	$data['organizerRegistrationOpen'] = (($showOrganizer == 1) && !$organizerRegistrationClosed);
-
-	if ($showOrganizer == 1) {
+	if (SettingsApi::getSetting(SettingsApi::SHOW_ORGANIZER_REGISTRATION) == 1) {
 		$form['organizer'] = array(
 			'#type'  => 'fieldset',
 			'#title' => iish_t('I\'m an organizer and I would like to propose a session (including multiple participants and papers)'),
 		);
 
-		if (!$organizerRegistrationClosed) {
-			$sessions = CRUDApiMisc::getAllWherePropertyEquals(new SessionApi(), 'addedBy_id', $user->getId())
-				->getResults();
+		if (PreRegistrationUtils::isOrganizerRegistrationOpen()) {
+			if (PreRegistrationUtils::useSessions()) {
+				$form['organizer']['submit_existing_session'] = array(
+					'#type'  => 'submit',
+					'#name'  => 'submit_existing_session',
+					'#value' => iish_t('Organize session'),
+				);
 
-			$form['organizer']['submit_session'] = array(
-				'#type'   => 'submit',
-				'#name'   => 'submit_session',
-				'#value'  => iish_t('Add a new session'),
-				'#suffix' => '<br /><br />',
-			);
+				// Use 'session-inline' to trigger css styling on the parent/wrapper div of this select
+				$form['organizer']['session-inline'] = array(
+					'#type'    => 'select',
+					'#title'   => '',
+					'#options' => CachedConferenceApi::getSessionsKeyValue(),
+					'#suffix'  => '<br /><br />',
+				);
+			}
+			else {
+				$form['organizer']['submit_session'] = array(
+					'#type'   => 'submit',
+					'#name'   => 'submit_session',
+					'#value'  => iish_t('Add a new session'),
+					'#suffix' => '<br /><br />',
+				);
+			}
+
+			$sessionParticipants = PreRegistrationUtils::getSessionParticipantsAddedByUser($state);
+			$sessions = SessionParticipantApi::getAllSessions($sessionParticipants);
 
 			$printOr = true;
-			foreach ($sessions as $session) {
+			foreach (array_unique($sessions) as $session) {
 				$prefix = '';
 				if ($printOr) {
 					$prefix = ' &nbsp;' . iish_t('or') . '<br /><br />';
@@ -120,9 +115,49 @@ function preregister_typeofregistration_form($form, &$form_state) {
 		else {
 			$form['organizer']['closed_message'] = array(
 				'#type'   => 'markup',
-				'#markup' => '<font color="red">' . iish_t('It is no longer possible to propose a session.') . '<br/ >' .
+				'#markup' =>
+					'<font color="red">' . iish_t('It is no longer possible to propose a session.') . '<br/ >' .
 					iish_t('You can still pre-register for the conference as a spectator.') . '</font>',
 			);
+		}
+	}
+
+	// + + + + + + + + + + + + + + + + + + + + + + + +
+	// SESSION PARTICIPANT TYPES
+
+	$participantTypes = PreRegistrationUtils::getParticipantTypesForUser();
+	if (count($participantTypes) > 0) {
+		$typesOr = strtolower(implode(' or ', $participantTypes));
+		$form['sessionparticipanttypes'] = array(
+			'#type'  => 'fieldset',
+			'#title' => iish_t('I would like to register as a @types in one or multiple sessions',
+				array('@types' => $typesOr)),
+		);
+
+		$form['sessionparticipanttypes']['submit_sessionparticipanttypes'] = array(
+			'#type'   => 'submit',
+			'#name'   => 'submit_sessionparticipanttypes',
+			'#value'  => iish_t('Register as a @types', array('@types' => $typesOr)),
+			'#suffix' => '<br /><br />',
+		);
+
+		foreach ($participantTypes as $participantType) {
+			$sessionParticipants = PreRegistrationUtils::getSessionParticipantsOfUserWithType($state, $participantType);
+
+			if (count($sessionParticipants) > 0) {
+				$sessions = CRUDApiClient::getForMethod($sessionParticipants, 'getSession');
+
+				$form['sessionparticipanttypes']['type_' . $participantType->getId()] = array(
+					'#type'   => 'markup',
+					'#markup' => '<strong>' . iish_t('I would like to be a @type in the sessions',
+							array('@type' => strtolower($participantType))) . ':</strong>' .
+						theme('item_list', array(
+								'type'  => 'ul',
+								'items' => $sessions,
+							)
+						),
+				);
+			}
 		}
 	}
 
@@ -141,6 +176,13 @@ function preregister_typeofregistration_form($form, &$form_state) {
 
 	// + + + + + + + + + + + + + + + + + + + + + + + +
 
+	$commentsPage = new PreRegistrationPage(PreRegistrationPage::COMMENTS);
+
+	$valueNextPage = iish_t('Next to confirmation page');
+	if ($commentsPage->isOpen()) {
+		$valueNextPage = iish_t('Next to general comments page');
+	}
+
 	$form['submit_back'] = array(
 		'#type'                    => 'submit',
 		'#name'                    => 'submit_back',
@@ -152,7 +194,7 @@ function preregister_typeofregistration_form($form, &$form_state) {
 	$form['submit'] = array(
 		'#type'  => 'submit',
 		'#name'  => 'submit',
-		'#value' => iish_t('Next to confirmation page'),
+		'#value' => $valueNextPage,
 	);
 
 	$state->setFormData($data);
@@ -169,10 +211,17 @@ function preregister_typeofregistration_form_submit($form, &$form_state) {
 	$submitName = $form_state['triggering_element']['#name'];
 
 	if ($submitName === 'submit') {
-		return 'preregister_confirm_form';
+		$commentsPage = new PreRegistrationPage(PreRegistrationPage::COMMENTS);
+
+		if ($commentsPage->isOpen()) {
+			return PreRegistrationPage::COMMENTS;
+		}
+		else {
+			return PreRegistrationPage::CONFIRM;
+		}
 	}
 
-	if ($data['authorRegistrationOpen']) {
+	if (PreRegistrationUtils::isAuthorRegistrationOpen()) {
 		if (($submitName === 'submit_paper') && $data['canSubmitNewPaper']) {
 			return preregister_typeofregistration_set_paper($state, null);
 		}
@@ -184,7 +233,7 @@ function preregister_typeofregistration_form_submit($form, &$form_state) {
 		}
 	}
 
-	if ($data['organizerRegistrationOpen']) {
+	if (PreRegistrationUtils::isOrganizerRegistrationOpen()) {
 		if ($submitName === 'submit_session') {
 			return preregister_typeofregistration_set_session($state, null);
 		}
@@ -194,23 +243,33 @@ function preregister_typeofregistration_form_submit($form, &$form_state) {
 
 			return preregister_typeofregistration_set_session($state, $id);
 		}
+
+		if ($submitName === 'submit_existing_session') {
+			$id = EasyProtection::easyIntegerProtection($form_state['values']['session-inline']);
+
+			return preregister_typeofregistration_set_session($state, $id, true);
+		}
 	}
 
-	return 'preregister_typeofregistration_form';
+	if ($submitName === 'submit_sessionparticipanttypes') {
+		return PreRegistrationPage::SESSION_PARTICIPANT_TYPES;
+	}
+
+	return PreRegistrationPage::TYPE_OF_REGISTRATION;
 }
 
 /**
  * What is the previous page?
  */
 function preregister_typeofregistration_form_back($form, &$form_state) {
-	return 'preregister_personalinfo_form';
+	return PreRegistrationPage::PERSONAL_INFO;
 }
 
 /**
  * Check access to the edit page for the specified paper id and prepare a paper instance for the paper edit step
  *
  * @param PreRegistrationState $state The pre-registration flow
- * @param int|null            $id   The paper id
+ * @param int|null             $id    The paper id
  *
  * @return string The function name of the next step, which is the paper edit form,
  * unless the paper cannot be edited by the user
@@ -225,12 +284,12 @@ function preregister_typeofregistration_set_paper($state, $id) {
 		if ($paper === null) {
 			drupal_set_message('The paper you try to edit could not be found!', 'error');
 
-			return 'preregister_typeofregistration_form';
+			return PreRegistrationPage::PERSONAL_INFO;
 		}
 		else if (($paper->getAddedById() != $user->getId()) || ($paper->getUserId() != $user->getId())) {
 			drupal_set_message('You can only edit the papers you created!', 'error');
 
-			return 'preregister_typeofregistration_form';
+			return PreRegistrationPage::PERSONAL_INFO;
 		}
 	}
 	else {
@@ -239,19 +298,20 @@ function preregister_typeofregistration_set_paper($state, $id) {
 
 	$state->setMultiPageData(array('paper' => $paper));
 
-	return 'preregister_paper_form';
+	return PreRegistrationPage::PAPER;
 }
 
 /**
  * Check access to the edit page for the specified session id and prepare a session instance for the session edit step
  *
- * @param PreRegistrationState $state The pre-registration flow
- * @param int|null            $id   The session id
+ * @param PreRegistrationState $state          The pre-registration flow
+ * @param int|null             $id             The session id
+ * @param bool                 $addAsOrganizer Whether to add the user as organizer to the session right away
  *
  * @return string The function name of the next step, which is the session edit form,
  * unless the session cannot be edited by the user
  */
-function preregister_typeofregistration_set_session($state, $id) {
+function preregister_typeofregistration_set_session($state, $id, $addAsOrganizer = false) {
 	$user = $state->getUser();
 
 	// Make sure the session can be edited
@@ -261,21 +321,32 @@ function preregister_typeofregistration_set_session($state, $id) {
 		if ($session === null) {
 			drupal_set_message('The session you try to edit could not be found!', 'error');
 
-			return 'preregister_typeofregistration_form';
+			return PreRegistrationPage::TYPE_OF_REGISTRATION;
 		}
-		else if ($session->getAddedById() != $user->getId()) {
+		else if (!PreRegistrationUtils::useSessions() && ($session->getAddedById() != $user->getId())) {
 			drupal_set_message('You can only edit the sessions you created!', 'error');
 
-			return 'preregister_typeofregistration_form';
+			return PreRegistrationPage::TYPE_OF_REGISTRATION;
 		}
 	}
 	else {
 		$session = new SessionApi();
 	}
 
+	if (PreRegistrationUtils::useSessions() && $addAsOrganizer) {
+		$organiser = new SessionParticipantApi();
+		$organiser->setUser($user);
+		$organiser->setSession($session);
+		$organiser->setType(ParticipantTypeApi::ORGANIZER_ID);
+
+		$organiser->save();
+		drupal_set_message(iish_t('You are added as organizer to this session.') . '<br />' .
+			iish_t('Please add participants to the session.'), 'status');
+	}
+
 	$state->setMultiPageData(array('session' => $session));
 
-	return 'preregister_session_form';
+	return PreRegistrationPage::SESSION;
 }
 
 

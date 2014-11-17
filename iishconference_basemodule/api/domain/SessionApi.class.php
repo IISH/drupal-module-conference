@@ -59,6 +59,29 @@ class SessionApi extends CRUDApiClient {
 	}
 
 	/**
+	 * Returns the session name of the current conference
+	 *
+	 * @param bool $singular  Whether the singular or plural form should be returned
+	 * @param bool $lowercase Whether it should be all lowercase
+	 *
+	 * @return string The session name
+	 */
+	public static function getSessionName($singular = true, $lowercase = false) {
+		if ($singular) {
+			$sessionName = SettingsApi::getSetting(SettingsApi::SESSION_NAME_SINGULAR);
+		}
+		else {
+			$sessionName = SettingsApi::getSetting(SettingsApi::SESSION_NAME_PLURAL);
+		}
+
+		if ($lowercase) {
+			$sessionName = strtolower($sessionName);
+		}
+
+		return $sessionName;
+	}
+
+	/**
 	 * Returns the abstract of this session
 	 *
 	 * @return string The abstract of this session

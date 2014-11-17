@@ -75,8 +75,8 @@ function preregister_login_form_submit($form, &$form_state) {
 
 	// If the user is not found, then this must be a new user, otherwise he/she must login with password first
 	if ($user === null) {
-		return 'preregister_personalinfo_form';
+		return PreRegistrationPage::PERSONAL_INFO;
 	}
 
-	return 'preregister_password_form';
+	return PreRegistrationPage::PASSWORD;
 }

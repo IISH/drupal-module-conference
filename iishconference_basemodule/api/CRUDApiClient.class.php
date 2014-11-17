@@ -48,6 +48,24 @@ abstract class CRUDApiClient {
 	}
 
 	/**
+	 * Peforms the given method on each element in the list
+	 * TODO: 5.2?
+	 *
+	 * @param CRUDApiClient[] $crudList   A list with CRUDApiClient instances
+	 * @param string          $methodName The name of the method in question
+	 *
+	 * @return array The results of the given method call on each instance of the given list
+	 */
+	public static function getForMethod(array $crudList, $methodName) {
+		$list = array();
+		foreach ($crudList as $crudInstance) {
+			$list[] = $crudInstance->$methodName();
+		}
+
+		return $list;
+	}
+
+	/**
 	 * Return the previous and next item in a list of records
 	 *
 	 * @param CRUDApiClient[] $crudList All records ordered

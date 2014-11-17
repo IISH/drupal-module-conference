@@ -38,7 +38,7 @@
 
 			<div>
 				<?php print drupal_render($variables['form']); ?>
-				<?php print l(t('Go back to your personal page'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page'); ?>
+				<?php print l(iish_t('Go back to your personal page'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page'); ?>
 			</div>
 		</div>
 	</div>

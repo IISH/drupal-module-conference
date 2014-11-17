@@ -20,15 +20,15 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 		// redirect to login page
 		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 				array('query' => drupal_get_destination())));
-		die(t('Go to !login page.',
-			array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+		die(iish_t('Go to !login page.',
+			array('!login' => l(iish_t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 				array('query' => drupal_get_destination())))));
 	}
 
 	if (!LoggedInUserDetails::isAParticipant()) {
-		drupal_set_message(t('You are not registered for the @conference conference. Please go to !link.',
+		drupal_set_message(iish_t('You are not registered for the @conference conference. Please go to !link.',
 				array('@conference' => CachedConferenceApi::getEventDate()->getLongNameAndYear(),
-				      '!link'       => l(t('pre-registration form'),
+				      '!link'       => l(iish_t('pre-registration form'),
 					      SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'pre-registration'))),
 			'warning');
 
@@ -37,7 +37,7 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 
 	$finalRegistrationLastDate = strtotime(SettingsApi::getSetting(SettingsApi::FINAL_REGISTRATION_LASTDATE));
 	if (!ConferenceMisc::isOpenForLastDate($finalRegistrationLastDate)) {
-		drupal_set_message(t('The final registration is closed.'), 'warning');
+		drupal_set_message(iish_t('The final registration is closed.'), 'warning');
 
 		return '';
 	}
@@ -47,7 +47,7 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 	$feeAmounts = $participant->getFeeAmounts();
 
 	if (count($feeAmounts) === 0) {
-		drupal_set_message(t('Something is wrong with your fee, please contact !email.',
+		drupal_set_message(iish_t('Something is wrong with your fee, please contact !email.',
 				array('!email' => ConferenceMisc::encryptEmailAddress(
 						SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL)))),
 			'error');
@@ -59,7 +59,7 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 		$accompanyingPersonsFeeState = FeeStateApi::getAccompanyingPersonFee();
 
 		if (($accompanyingPersonsFeeState === null) || (count($accompanyingPersonsFeeState->getFeeAmounts()) === 0)) {
-			drupal_set_message(t('Something is wrong with your fee, please contact !email .',
+			drupal_set_message(iish_t('Something is wrong with your fee, please contact !email .',
 				array('!email' => ConferenceMisc::encryptEmailAddress(
 						SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL)))), 'error');
 
@@ -73,7 +73,7 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 
 		if (!empty($order)) {
 			if ($order->get('payed') == 1) {
-				drupal_set_message(t('You already finished the final registration for the @conference.') .
+				drupal_set_message(iish_t('You already finished the final registration for the @conference.') .
 					'<br />' .
 					iish_t('If you have questions please contact the secretariat at !email .',
 						array('@conference' => CachedConferenceApi::getEventDate()->getLongNameAndYear(),
@@ -88,7 +88,7 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 					'#markup' =>
 						'<span class="eca_warning">' .
 						iish_t('You chose to finish your final registration by bank transfer.') . '<br />' .
-						iish_t('!link for the bank transfer information.', array('!link' => l(t('Click here'),
+						iish_t('!link for the bank transfer information.', array('!link' => l(iish_t('Click here'),
 							SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) .
 							'final-registration/bank-transfer'))) .
 						'<br />' . iish_t('Please continue if you want to choose a different payment method.') .
@@ -97,7 +97,7 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 			}
 		}
 		else {
-			drupal_set_message(t('Currently it is not possible to proceed with the final registration. ' .
+			drupal_set_message(iish_t('Currently it is not possible to proceed with the final registration. ' .
 				'Please try again later...'), 'error');
 
 			return '';

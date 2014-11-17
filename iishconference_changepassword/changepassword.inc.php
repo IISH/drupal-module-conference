@@ -9,8 +9,8 @@ function conference_changepassword_form($form, &$form_state) {
 		header('Location: ' .
 			url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 				array('query' => drupal_get_destination())));
-		die(t('Go to !login page.',
-			array('!login' => l(t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
+		die(iish_t('Go to !login page.',
+			array('!login' => l(iish_t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 				array('query' => drupal_get_destination())))));
 	}
 
@@ -96,9 +96,9 @@ function conference_changepassword_form_submit($form, &$form_state) {
 		$form_state['values']['new_password'],
 		$form_state['values']['confirm_password'])
 	) {
-		drupal_set_message(t('Password is successfully changed!'), 'status');
+		drupal_set_message(iish_t('Password is successfully changed!'), 'status');
 	}
 	else {
-		drupal_set_message(t('We failed to change your password, please try again later.'), 'error');
+		drupal_set_message(iish_t('We failed to change your password, please try again later.'), 'error');
 	}
 }
