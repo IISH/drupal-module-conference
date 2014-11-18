@@ -128,36 +128,48 @@ function preregister_typeofregistration_form($form, &$form_state) {
 	$participantTypes = PreRegistrationUtils::getParticipantTypesForUser();
 	if (count($participantTypes) > 0) {
 		$typesOr = strtolower(implode(' or ', $participantTypes));
-		$form['sessionparticipanttypes'] = array(
-			'#type'  => 'fieldset',
-			'#title' => iish_t('I would like to register as a @types in one or multiple sessions',
-				array('@types' => $typesOr)),
-		);
 
-		$form['sessionparticipanttypes']['submit_sessionparticipanttypes'] = array(
-			'#type'   => 'submit',
-			'#name'   => 'submit_sessionparticipanttypes',
-			'#value'  => iish_t('Register as a @types', array('@types' => $typesOr)),
-			'#suffix' => '<br /><br />',
-		);
+		if (PreRegistrationUtils::isAuthorRegistrationOpen()) {
+			$form['sessionparticipanttypes'] = array(
+				'#type'  => 'fieldset',
+				'#title' => iish_t('I would like to register as a @types in one or multiple sessions',
+					array('@types' => $typesOr)),
+			);
 
-		foreach ($participantTypes as $participantType) {
-			$sessionParticipants = PreRegistrationUtils::getSessionParticipantsOfUserWithType($state, $participantType);
+			$form['sessionparticipanttypes']['submit_sessionparticipanttypes'] = array(
+				'#type'   => 'submit',
+				'#name'   => 'submit_sessionparticipanttypes',
+				'#value'  => iish_t('Register as a @types', array('@types' => $typesOr)),
+				'#suffix' => '<br /><br />',
+			);
 
-			if (count($sessionParticipants) > 0) {
-				$sessions = CRUDApiClient::getForMethod($sessionParticipants, 'getSession');
+			foreach ($participantTypes as $participantType) {
+				$sessionParticipants = PreRegistrationUtils::getSessionParticipantsOfUserWithType($state, $participantType);
 
-				$form['sessionparticipanttypes']['type_' . $participantType->getId()] = array(
-					'#type'   => 'markup',
-					'#markup' => '<strong>' . iish_t('I would like to be a @type in the sessions',
-							array('@type' => strtolower($participantType))) . ':</strong>' .
-						theme('item_list', array(
-								'type'  => 'ul',
-								'items' => $sessions,
-							)
-						),
-				);
+				if (count($sessionParticipants) > 0) {
+					$sessions = CRUDApiClient::getForMethod($sessionParticipants, 'getSession');
+
+					$form['sessionparticipanttypes']['type_' . $participantType->getId()] = array(
+						'#type'   => 'markup',
+						'#markup' => '<strong>' . iish_t('I would like to be a @type in the sessions',
+								array('@type' => strtolower($participantType))) . ':</strong>' .
+							theme('item_list', array(
+									'type'  => 'ul',
+									'items' => $sessions,
+								)
+							),
+					);
+				}
 			}
+		}
+		else {
+			$form['sessionparticipanttypes']['closed_message'] = array(
+				'#type'   => 'markup',
+				'#markup' =>
+					'<font color="red">' . iish_t('It is no longer possible to pre-register as @types ' .
+						'in one or multiple sessions.', array('@types' => $typesOr)) . '<br/ >' .
+					iish_t('You can still pre-register for the conference as a spectator.') . '</font>',
+			);
 		}
 	}
 
@@ -251,7 +263,7 @@ function preregister_typeofregistration_form_submit($form, &$form_state) {
 		}
 	}
 
-	if ($submitName === 'submit_sessionparticipanttypes') {
+	if (PreRegistrationUtils::isAuthorRegistrationOpen() && ($submitName === 'submit_sessionparticipanttypes')) {
 		return PreRegistrationPage::SESSION_PARTICIPANT_TYPES;
 	}
 

@@ -204,21 +204,7 @@ function preregister_confirm_form($form, &$form_state) {
 			'value' => $paper->getCoAuthors()
 		));
 
-		if (!PreRegistrationUtils::useSessions()) {
-			/*if (PreRegistrationUtils::showNetworks()) {
-				$paperContent[] = theme('iishconference_container_field', array(
-					'label' => 'Proposed network',
-					'value' => $paper->getNetworkProposal()
-				));
-			}
-
-			$paperContent[] = theme('iishconference_container_field', array(
-				'label' => 'Proposed session',
-				'value' => $paper->getSessionProposal()
-			));*/
-			$abc = 123; // TODO
-		}
-		else {
+		if (PreRegistrationUtils::useSessions()) {
 			$paperContent[] = theme('iishconference_container_field', array(
 				'label' => 'Proposed session',
 				'value' => $paper->getSession()
@@ -285,7 +271,7 @@ function preregister_confirm_form($form, &$form_state) {
 		}
 
 		foreach ($users as $user) {
-			$participant =
+			$participantInSession =
 				CRUDApiMisc::getFirstWherePropertyEquals(new ParticipantDateApi(), 'user_id', $user->getId());
 			$roles = SessionParticipantApi::getAllTypesOfUserForSession(
 				$sessionParticipants,
@@ -311,7 +297,7 @@ function preregister_confirm_form($form, &$form_state) {
 			if (SettingsApi::getSetting(SettingsApi::SHOW_STUDENT) == 1) {
 				$sessionContent[] = theme('iishconference_container_field', array(
 					'label' => '(PhD) Student?',
-					'value' => ConferenceMisc::getYesOrNo($participant->getStudent())
+					'value' => ConferenceMisc::getYesOrNo($participantInSession->getStudent())
 				));
 			}
 
@@ -356,6 +342,7 @@ function preregister_confirm_form($form, &$form_state) {
 
 	foreach ($participantTypes as $participantType) {
 		$sessionParticipants = PreRegistrationUtils::getSessionParticipantsOfUserWithType($state, $participantType);
+		$sessions = SessionParticipantApi::getAllSessions($sessionParticipants);
 
 		if (count($sessionParticipants) > 0) {
 			$sessionParticipantTypeContent = array(theme('iishconference_container_header',

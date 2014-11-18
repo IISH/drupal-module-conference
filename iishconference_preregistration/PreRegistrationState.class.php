@@ -122,19 +122,15 @@ class PreRegistrationState {
 	 * @return UserApi The user instance
 	 */
 	public function getUser() {
-		if (!isset($this->formState['pre_registration']['user'])) {
-			if (LoggedInUserDetails::isLoggedIn() && (LoggedInUserDetails::getUser() !== null)) {
-				$this->formState['pre_registration']['user'] = serialize(LoggedInUserDetails::getUser());
-			}
-			else {
-				$user = new UserApi();
-				$user->setEmail($this->formState['pre_registration']['email']);
-
-				$this->formState['pre_registration']['user'] = serialize($user);
-			}
+		if (LoggedInUserDetails::isLoggedIn() && (LoggedInUserDetails::getUser() !== null)) {
+			return LoggedInUserDetails::getUser();
 		}
+		else {
+			$user = new UserApi();
+			$user->setEmail($this->formState['pre_registration']['email']);
 
-		return unserialize($this->formState['pre_registration']['user']);
+			return serialize($user);
+		}
 	}
 
 	/**
@@ -143,27 +139,11 @@ class PreRegistrationState {
 	 * @return ParticipantDateApi The participant instance
 	 */
 	public function getParticipant() {
-		if (!isset($this->formState['pre_registration']['participant'])) {
-			if (LoggedInUserDetails::isLoggedIn() && (LoggedInUserDetails::getParticipant() !== null)) {
-				$this->formState['pre_registration']['participant'] = serialize(LoggedInUserDetails::getParticipant());
-			}
-			else {
-				$this->formState['pre_registration']['participant'] = serialize(new ParticipantDateApi());
-			}
+		if (LoggedInUserDetails::isLoggedIn() && (LoggedInUserDetails::getParticipant() !== null)) {
+			return LoggedInUserDetails::getParticipant();
 		}
-
-		return unserialize($this->formState['pre_registration']['participant']);
-	}
-
-	/**
-	 * Updates the user and participant instances that are cached during the pre-registration.
-	 * Should only be used by the personal info form
-	 *
-	 * @param UserApi            $user        The user instance
-	 * @param ParticipantDateApi $participant The participant instance
-	 */
-	public function updateUserAndParticipant($user, $participant) {
-		$this->formState['pre_registration']['user'] = serialize($user);
-		$this->formState['pre_registration']['participant'] = serialize($participant);
+		else {
+			return new ParticipantDateApi();
+		}
 	}
 } 

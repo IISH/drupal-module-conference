@@ -376,9 +376,6 @@ function preregister_personalinfo_form_submit($form, &$form_state) {
 	$participant->setExtras($extras);
 
 	$participant->save();
-
-	// Make sure the correct changes are also cached correctly
-	$state->updateUserAndParticipant($user, $participant);
 	LoggedInUserDetails::setCurrentlyLoggedIn($user);
 
 	// Then the volunteering options (chair / discussant / language coach / language pupil)
