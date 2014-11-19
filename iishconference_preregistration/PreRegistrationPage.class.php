@@ -56,10 +56,10 @@ class PreRegistrationPage {
 	private static function isTypeOfRegistrationOpen() {
 		$showAuthor = SettingsApi::getSetting(SettingsApi::SHOW_AUTHOR_REGISTRATION);
 		$showOrganizer = SettingsApi::getSetting(SettingsApi::SHOW_ORGANIZER_REGISTRATION);
-		//$types = SettingsApi::getSetting(SettingsApi::SHOW_SESSION_PARTICIPANT_TYPES_REGISTRATION);
-		//$typesToShow = SettingsApi::getArrayOfValues($types);
+		$types = SettingsApi::getSetting(SettingsApi::SHOW_SESSION_PARTICIPANT_TYPES_REGISTRATION);
+		$typesToShow = SettingsApi::getArrayOfValues($types);
 
-		return (($showAuthor == 1) || ($showOrganizer == 1)/* || (count($typesToShow) > 0)*/);
+		return (($showAuthor == 1) || ($showOrganizer == 1) || (count($typesToShow) > 0));
 	}
 
 	/**

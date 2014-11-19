@@ -129,7 +129,7 @@ class PreRegistrationState {
 			$user = new UserApi();
 			$user->setEmail($this->formState['pre_registration']['email']);
 
-			return serialize($user);
+			return $user;
 		}
 	}
 
