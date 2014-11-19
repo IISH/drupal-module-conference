@@ -17,7 +17,7 @@ function preregister_comments_form($form, &$form_state) {
 	$form['comments']['comment'] = array(
 		'#type'          => 'textarea',
 		'#title'         => '',
-		'#rows'          => 20,
+		'#rows'          => 10,
 		'#default_value' => $participant->getExtraInfo(),
 	);
 

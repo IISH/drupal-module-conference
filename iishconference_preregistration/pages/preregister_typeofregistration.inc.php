@@ -69,18 +69,19 @@ function preregister_typeofregistration_form($form, &$form_state) {
 
 		if (PreRegistrationUtils::isOrganizerRegistrationOpen()) {
 			if (PreRegistrationUtils::useSessions()) {
+				// Use 'session-inline' to trigger css styling on the parent/wrapper div of this select
+				$form['organizer']['session-inline'] = array(
+					'#type'         => 'select',
+					'#title'        => iish_t('Session'),
+					'#options'      => CachedConferenceApi::getSessionsKeyValue(),
+					'#empty_option' => '- ' . iish_t('Select a session') . ' -',
+				);
+
 				$form['organizer']['submit_existing_session'] = array(
 					'#type'  => 'submit',
 					'#name'  => 'submit_existing_session',
 					'#value' => iish_t('Organize session'),
-				);
-
-				// Use 'session-inline' to trigger css styling on the parent/wrapper div of this select
-				$form['organizer']['session-inline'] = array(
-					'#type'    => 'select',
-					'#title'   => '',
-					'#options' => CachedConferenceApi::getSessionsKeyValue(),
-					'#suffix'  => '<br /><br />',
+					'#suffix'       => '<br /><br />',
 				);
 			}
 			else {
@@ -144,7 +145,8 @@ function preregister_typeofregistration_form($form, &$form_state) {
 			);
 
 			foreach ($participantTypes as $participantType) {
-				$sessionParticipants = PreRegistrationUtils::getSessionParticipantsOfUserWithType($state, $participantType);
+				$sessionParticipants =
+					PreRegistrationUtils::getSessionParticipantsOfUserWithType($state, $participantType);
 
 				if (count($sessionParticipants) > 0) {
 					$sessions = CRUDApiClient::getForMethod($sessionParticipants, 'getSession');
@@ -340,6 +342,11 @@ function preregister_typeofregistration_set_session($state, $id, $addAsOrganizer
 
 			return PreRegistrationPage::TYPE_OF_REGISTRATION;
 		}
+	}
+	else if (PreRegistrationUtils::useSessions()) {
+		drupal_set_message('Please select the session you would like to organize!', 'error');
+
+		return PreRegistrationPage::TYPE_OF_REGISTRATION;
 	}
 	else {
 		$session = new SessionApi();
