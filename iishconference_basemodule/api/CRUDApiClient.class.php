@@ -25,7 +25,7 @@ abstract class CRUDApiClient {
 	public static function getAsKeyValueArray(array $crudList) {
 		$list = array();
 		foreach ($crudList as $crudInstance) {
-			$list[$crudInstance->getId()] = $crudInstance->__toString();
+			$list[$crudInstance->getId()] = iish_t($crudInstance->__toString());
 		}
 
 		return $list;
