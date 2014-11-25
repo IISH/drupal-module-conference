@@ -40,6 +40,7 @@ class SettingsApi {
 	const SHOW_DAYS = 'show_days';
 	const SHOW_DAYS_SESSION_PLANNED = 'show_days_session_planned';
 	const SHOW_EQUIPMENT = 'show_equipment';
+	const SHOW_FINISH_LATER_BUTTON = 'show_finish_later_button';
 	const SHOW_GENERAL_COMMENTS = 'show_general_comments';
 	const SHOW_LANGUAGE_COACH_PUPIL = 'show_language_coach_pupil';
 	const SHOW_NETWORK = 'show_network';

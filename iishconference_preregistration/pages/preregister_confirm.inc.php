@@ -413,32 +413,19 @@ function preregister_confirm_form($form, &$form_state) {
 		'#markup' => $confirm,
 	);
 
-	$form['submit_back_personalinfo'] = array(
+	$form['submit_back'] = array(
 		'#type'                    => 'submit',
-		'#name'                    => 'submit_back_personalinfo',
-		'#value'                   => iish_t('Back to personal info page'),
+		'#name'                    => 'submit_back',
+		'#value'                   => iish_t('Back to previous step'),
 		'#submit'                  => array('preregister_form_submit'),
 		'#limit_validation_errors' => array(),
 	);
 
-	$typeOfRegistrationPage = new PreRegistrationPage(PreRegistrationPage::TYPE_OF_REGISTRATION);
-	$commentsPage = new PreRegistrationPage(PreRegistrationPage::COMMENTS);
-
-	if ($typeOfRegistrationPage->isOpen()) {
-		$form['submit_back_typeofregistration'] = array(
+	if (SettingsApi::getSetting(SettingsApi::SHOW_FINISH_LATER_BUTTON) == 1) {
+		$form['submit_back_personalpage'] = array(
 			'#type'                    => 'submit',
-			'#name'                    => 'submit_back_typeofregistration',
-			'#value'                   => iish_t('Back to type of registration page'),
-			'#submit'                  => array('preregister_form_submit'),
-			'#limit_validation_errors' => array(),
-		);
-	}
-
-	if ($commentsPage->isOpen()) {
-		$form['submit_back_comments'] = array(
-			'#type'                    => 'submit',
-			'#name'                    => 'submit_back_comments',
-			'#value'                   => iish_t('Back to general comments page'),
+			'#name'                    => 'submit_back_personalpage',
+			'#value'                   => iish_t('Save and finish pre-registration later'),
 			'#submit'                  => array('preregister_form_submit'),
 			'#limit_validation_errors' => array(),
 		);
@@ -490,16 +477,22 @@ function preregister_confirm_form_back($form, &$form_state) {
 	// Now find out if to which step we have to go to
 	$submitName = $form_state['triggering_element']['#name'];
 
-	$typeOfRegistrationPage = new PreRegistrationPage(PreRegistrationPage::TYPE_OF_REGISTRATION);
-	$commentsPage = new PreRegistrationPage(PreRegistrationPage::COMMENTS);
-
-	if (($submitName === 'submit_back_typeofregistration') && $typeOfRegistrationPage->isOpen()) {
-		return 'preregister_typeofregistration_form';
-	}
-	else if (($submitName === 'submit_back_comments') && $commentsPage->isOpen()) {
-		return 'preregister_comments_form';
+	if ((SettingsApi::getSetting(SettingsApi::SHOW_FINISH_LATER_BUTTON) == 1) &&
+		($submitName === 'submit_back_personalpage')) {
+		drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page');
 	}
 	else {
-		return 'preregister_personalinfo_form';
+		$typeOfRegistrationPage = new PreRegistrationPage(PreRegistrationPage::TYPE_OF_REGISTRATION);
+		$commentsPage = new PreRegistrationPage(PreRegistrationPage::COMMENTS);
+
+		if ($commentsPage->isOpen()) {
+			return 'preregister_comments_form';
+		}
+		else if ($typeOfRegistrationPage->isOpen()) {
+			return 'preregister_typeofregistration_form';
+		}
+		else {
+			return 'preregister_personalinfo_form';
+		}
 	}
 }
