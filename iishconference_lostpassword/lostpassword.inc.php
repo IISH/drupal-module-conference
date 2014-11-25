@@ -14,7 +14,7 @@ function conference_lostpassword_form($form, &$form_state) {
 
 	$form['email'] = array(
 		'#type'      => 'textfield',
-		'#title'     => 'E-mail',
+		'#title'     => iish_t('E-mail'),
 		'#size'      => 20,
 		'#maxlength' => 100,
 		'#required'  => true,

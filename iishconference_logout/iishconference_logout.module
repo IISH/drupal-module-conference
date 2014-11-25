@@ -21,7 +21,7 @@ function iishconference_logout_menu() {
 	$extraPath = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU);
 
 	$items[$extraPath . 'logout'] = array(
-		'title'           => 'Logout',
+		'title'           => iish_t('Logout', array(), false),
 		'description'     => 'logout page ...description...',
 		'page callback'   => 'drupal_get_form',
 		'page arguments'  => array('conference_logout_form'),

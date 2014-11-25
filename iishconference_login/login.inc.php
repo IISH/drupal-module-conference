@@ -25,7 +25,7 @@ function conference_login_form($form, &$form_state) {
 
 	$form['email'] = array(
 		'#type'          => 'textfield',
-		'#title'         => 'E-mail',
+		'#title'         => iish_t('E-mail'),
 		'#size'          => 20,
 		'#maxlength'     => 255,
 		'#prefix'        => '<div class="container-inline bottommargin">',
@@ -36,7 +36,7 @@ function conference_login_form($form, &$form_state) {
 
 	$form['password'] = array(
 		'#type'      => 'password',
-		'#title'     => 'Password',
+		'#title'     => iish_t('Password'),
 		'#size'      => 20,
 		'#maxlength' => 50,
 		'#prefix'    => '<div class="container-inline bottommargin">',
@@ -46,7 +46,7 @@ function conference_login_form($form, &$form_state) {
 
 	$form['submit_button_next'] = array(
 		'#type'  => 'submit',
-		'#value' => 'Log in'
+		'#value' => iish_t('Log in')
 	);
 
 	// lost password url

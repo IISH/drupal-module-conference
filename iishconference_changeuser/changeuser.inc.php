@@ -32,7 +32,7 @@ function conference_changeuser_form($form, &$form_state, $value) {
 
 	$form['user_id'] = array(
 		'#type'          => 'textfield',
-		'#title'         => 'User # or e-mail',
+		'#title'         => iish_t('User # or e-mail'),
 		'#size'          => 20,
 		'#maxlength'     => 100,
 		'#required'      => true,

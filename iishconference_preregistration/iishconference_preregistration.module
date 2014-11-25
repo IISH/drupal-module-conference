@@ -20,7 +20,8 @@ function iishconference_preregistration_menu() {
 	$extraPath = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU);
 
 	$items[$extraPath . 'pre-registration'] = array(
-		'title'           => iish_t('Pre-registration for the', array(), false) . ' ' . CachedConferenceApi::getEventDate()->getLongNameAndYear(),
+		'title'           => iish_t('Pre-registration for the', array(), false) . ' ' .
+			CachedConferenceApi::getEventDate()->getLongNameAndYear(),
 		'page callback'   => 'drupal_get_form',
 		'page arguments'  => array('preregister_form'),
 		'access callback' => true,

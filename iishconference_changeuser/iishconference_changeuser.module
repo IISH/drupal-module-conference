@@ -21,7 +21,7 @@ function iishconference_changeuser_menu() {
 	$extraAdminPath = SettingsApi::getSetting(SettingsApi::PATH_FOR_ADMIN_MENU);
 
 	$items[$extraAdminPath . 'change-user/%'] = array(
-		'title'           => 'Change user',
+		'title'           => iish_t('Change user', array(), false),
 		'page callback'   => 'drupal_get_form',
 		'page arguments'  => array('conference_changeuser_form', 3),
 		'access callback' => true,

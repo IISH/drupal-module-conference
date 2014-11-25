@@ -26,7 +26,8 @@ function iishconference_finalregistration_menu() {
 	$extraPath = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU);
 
 	$items[$extraPath . 'final-registration'] = array(
-		'title'           => 'Final registration and payment for the ' . CachedConferenceApi::getEventDate(),
+		'title'           => iish_t('Final registration and payment for the', array(), false) . ' ' .
+			CachedConferenceApi::getEventDate(),
 		'page callback'   => 'drupal_get_form',
 		'page arguments'  => array('iishconference_finalregistration_main_form'),
 		'access callback' => true,
@@ -35,7 +36,7 @@ function iishconference_finalregistration_menu() {
 	);
 
 	$items[$extraPath . 'final-registration/bank-transfer'] = array(
-		'title'           => 'Bank transfer information',
+		'title'           => iish_t('Bank transfer information', array(), false),
 		'page callback'   => 'iishconference_finalregistration_bank_transfer',
 		'access callback' => true,
 		'type'            => MENU_CALLBACK,
@@ -43,7 +44,7 @@ function iishconference_finalregistration_menu() {
 	);
 
 	$items[$extraPath . 'final-registration/accept'] = array(
-		'title'           => 'Thank you for finishing your registration',
+		'title'           => iish_t('Thank you for finishing your registration', array(), false),
 		'page callback'   => 'iishconference_finalregistration_accept',
 		'access callback' => true,
 		'type'            => MENU_CALLBACK,
@@ -51,7 +52,7 @@ function iishconference_finalregistration_menu() {
 	);
 
 	$items[$extraPath . 'final-registration/decline'] = array(
-		'title'           => 'Your payment was declined',
+		'title'           => iish_t('Your payment was declined', array(), false),
 		'page callback'   => 'iishconference_finalregistration_decline',
 		'access callback' => true,
 		'type'            => MENU_CALLBACK,
@@ -59,7 +60,7 @@ function iishconference_finalregistration_menu() {
 	);
 
 	$items[$extraPath . 'final-registration/exception'] = array(
-		'title'           => 'Something went wrong with your payment',
+		'title'           => iish_t('Something went wrong with your payment', array(), false),
 		'page callback'   => 'iishconference_finalregistration_exception',
 		'access callback' => true,
 		'type'            => MENU_CALLBACK,

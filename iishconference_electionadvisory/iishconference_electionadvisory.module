@@ -17,7 +17,7 @@ function iishconference_electionadvisory_menu() {
 	$extraPath = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU);
 
 	$items[$extraPath . 'election-advisory-board'] = array(
-		'title'           => 'Election \'Advisory board\'',
+		'title'           => iish_t('Election \'Advisory board\'', array(), false),
 		'page callback'   => 'iishconference_electionadvisory_main',
 		'access callback' => true,
 		'type'            => MENU_NORMAL_ITEM,

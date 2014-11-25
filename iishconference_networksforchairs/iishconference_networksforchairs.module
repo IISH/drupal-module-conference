@@ -22,8 +22,7 @@ function iishconference_networksforchairs_menu() {
 	$networkNamePlural = NetworkApi::getNetworkName(false);
 
 	$items[$extraPath . strtolower($networkNamePlural) . 'forchairs'] = array(
-		'title'           => '@networks, Sessions & Participants',
-		'title arguments' => array('@networks' => $networkNamePlural),
+		'title'           => iish_t('Networks, Sessions & Participants', array(), false),
 		'page callback'   => 'iishconference_networksforchairs_main',
 		'access callback' => true,
 		'type'            => MENU_NORMAL_ITEM,
@@ -31,8 +30,7 @@ function iishconference_networksforchairs_menu() {
 	);
 
 	$items[$extraPath . strtolower($networkNamePlural) . 'forchairs/%'] = array(
-		'title'           => '@networks, Sessions & Participants',
-		'title arguments' => array('@networks' => $networkNamePlural),
+		'title'           => iish_t('Networks, Sessions & Participants', array(), false),
 		'page callback'   => 'iishconference_networksforchairs_sessions',
 		'page arguments'  => array(2),
 		'access callback' => true,
@@ -41,8 +39,7 @@ function iishconference_networksforchairs_menu() {
 	);
 
 	$items[$extraPath . strtolower($networkNamePlural) . 'forchairs/%/%'] = array(
-		'title'           => '@networks, Sessions & Participants',
-		'title arguments' => array('@networks' => $networkNamePlural),
+		'title'           => iish_t('Networks, Sessions & Participants', array(), false),
 		'page callback'   => 'iishconference_networksforchairs_papers',
 		'page arguments'  => array(2, 3),
 		'access callback' => true,

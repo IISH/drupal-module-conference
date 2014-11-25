@@ -15,7 +15,7 @@ function iishconference_login_menu() {
 	$extraPath = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU);
 
 	$items[$extraPath . 'login'] = array(
-		'title'           => 'Login',
+		'title'           => iish_t('Login', array(), false),
 		'description'     => 'login page ...description...',
 		'page callback'   => 'drupal_get_form',
 		'page arguments'  => array('conference_login_form'),

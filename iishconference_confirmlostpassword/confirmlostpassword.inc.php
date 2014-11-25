@@ -30,7 +30,7 @@ function conference_confirmlostpassword_form($form, &$form_state) {
 
 		$form['id'] = array(
 			'#type'          => 'textfield',
-			'#title'         => 'ID',
+			'#title'         => iish_t('ID'),
 			'#size'          => 20,
 			'#maxlength'     => 50,
 			'#required'      => true,
@@ -41,7 +41,7 @@ function conference_confirmlostpassword_form($form, &$form_state) {
 
 		$form['code'] = array(
 			'#type'          => 'textfield',
-			'#title'         => 'CODE',
+			'#title'         => iish_t('CODE'),
 			'#size'          => 20,
 			'#maxlength'     => 50,
 			'#required'      => true,

@@ -23,7 +23,7 @@ function conference_changepassword_form($form, &$form_state) {
 
 	$form['new_password'] = array(
 		'#type'      => 'password',
-		'#title'     => 'New password',
+		'#title'     => iish_t('New password'),
 		'#size'      => 20,
 		'#maxlength' => 50,
 		'#required'  => true,
@@ -33,7 +33,7 @@ function conference_changepassword_form($form, &$form_state) {
 
 	$form['confirm_password'] = array(
 		'#type'      => 'password',
-		'#title'     => 'Confirm new password',
+		'#title'     => iish_t('Confirm new password'),
 		'#size'      => 20,
 		'#maxlength' => 50,
 		'#required'  => true,

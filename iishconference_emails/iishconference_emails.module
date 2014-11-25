@@ -20,7 +20,7 @@ function iishconference_emails_menu() {
 	$extraPath = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU);
 
 	$items[$extraPath . 'emails'] = array(
-		'title'           => 'Emails',
+		'title'           => iish_t('Emails', array(), false),
 		'description'     => 'Allows a participant to read all their emails concerning the conference and resend them',
 		'page callback'   => 'conference_emails',
 		'access callback' => true,
@@ -29,7 +29,7 @@ function iishconference_emails_menu() {
 	);
 
 	$items[$extraPath . 'emails/%iishconference_email'] = array(
-		'title'           => 'Email',
+		'title'           => iish_t('Email', array(), false),
 		'description'     => 'Allows a participant to read and resend an email previously sent to them',
 		'page callback'   => 'conference_email_main',
 		'page arguments'  => array(2),

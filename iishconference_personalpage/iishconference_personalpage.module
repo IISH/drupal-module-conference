@@ -21,7 +21,7 @@ function iishconference_personalpage_menu() {
 	$extraPath = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU);
 
 	$items[$extraPath . 'personal-page'] = array(
-		'title'           => 'Personal page',
+		'title'           => iish_t('Personal page', array(), false),
 		'description'     => 'personal page ...description...',
 		'page callback'   => 'conference_personalpage_main',
 		'access callback' => true,
@@ -30,7 +30,7 @@ function iishconference_personalpage_menu() {
 	);
 
 	$items[$extraPath . 'personal-page/upload-paper/%iishconference_paper'] = array(
-		'title'           => 'Upload paper',
+		'title'           => iish_t('Upload paper', array(), false),
 		'description'     => 'Allows a participant to upload a paper',
 		'page callback'   => 'conference_upload_paper',
 		'page arguments'  => array(3),

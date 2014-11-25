@@ -19,12 +19,10 @@ function iishconference_networks_menu() {
 	$items = array();
 
 	$extraPath = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU);
-	$networkNameSingular = NetworkApi::getNetworkName();
 	$networkNamePlural = NetworkApi::getNetworkName(false);
 
 	$items[$extraPath . strtolower($networkNamePlural)] = array(
-		'title'           => '@networks',
-		'title arguments' => array('@networks' => $networkNamePlural),
+		'title'           => iish_t('Networks', array(), false),
 		'page callback'   => 'iishconference_networks',
 		'access callback' => true,
 		'type'            => MENU_NORMAL_ITEM,
