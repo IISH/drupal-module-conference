@@ -23,8 +23,7 @@ function iishconference_network_detail($network) {
 		return theme('conference_network_detail', array('network' => $network));
 	}
 
-	drupal_set_message(iish_t('The @network could unfortunately not be found!',
-		array('@network' => NetworkApi::getNetworkName(true, true))), 'error');
+	drupal_set_message(iish_t('The network could unfortunately not be found!'), 'error');
 
 	drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(false, true));
 }

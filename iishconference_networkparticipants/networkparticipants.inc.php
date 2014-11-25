@@ -10,13 +10,13 @@ function iishconference_networkparticipants_main() {
 		// redirect to login page
 		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
 				array('query' => drupal_get_destination())));
-		die(iish_t('Go to !login page.', array('!login' => l(iish_t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU)
-			. 'login', array('query' => drupal_get_destination())))));
+		die(iish_t('Go to !login page.',
+			array('!login' => l(iish_t('login'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU)
+				. 'login', array('query' => drupal_get_destination())))));
 	}
 
 	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
-		drupal_set_message(iish_t('Access denied. You are not a chair of a @network.',
-			array('@network' => NetworkApi::getNetworkName(true, true))), 'error');
+		drupal_set_message(iish_t('Access denied. You are not a chair of a network.'), 'error');
 
 		return '';
 	}
@@ -36,13 +36,12 @@ function iishconference_networkparticipants_main() {
 	if (count($links) > 0) {
 		return theme('item_list',
 			array(
-				'title' => iish_t('Your @networks', array('@networks' => NetworkApi::getNetworkName(false, true))),
+				'title' => iish_t('Your networks'),
 				'items' => $links,
 			));
 	}
 	else {
-		drupal_set_message(iish_t('No @networks found!', array('@networks' => NetworkApi::getNetworkName(false, true))),
-			'warning');
+		drupal_set_message(iish_t('No networks found!'), 'warning');
 
 		return '';
 	}
@@ -66,8 +65,7 @@ function iishconference_networkparticipants_detail($network) {
 	}
 
 	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
-		drupal_set_message(iish_t('Access denied. You are not a chair of a @network.',
-				array('@network' => NetworkApi::getNetworkName(true, true))), 'error');
+		drupal_set_message(iish_t('Access denied. You are not a chair of a network.'), 'error');
 
 		return '';
 	}
@@ -82,10 +80,8 @@ function iishconference_networkparticipants_detail($network) {
 			drupal_add_http_header('Content-Type', 'application/vnd.ms-excel');
 			drupal_add_http_header('Content-Disposition',
 				'attachment; filename=' .
-				iish_t('Participants in @networkName @network on @date',
-					array('@networkName' => NetworkApi::getNetworkName(true, true),
-					      '@network'     => $networkName,
-					      '@date'        => date('m-d-Y'))) . '.xls;');
+				iish_t('Participants in network @name on @date',
+					array('@name' => $networkName, '@date' => date('m-d-Y'))) . '.xls;');
 			drupal_add_http_header('Content-Transfer-Encoding', 'binary');
 			drupal_add_http_header('Content-Length', strlen($participants));
 

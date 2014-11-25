@@ -124,7 +124,7 @@ function preregister_confirm_form($form, &$form_state) {
 
 		if (PreRegistrationUtils::showNetworks() && (count($chairVolunteering) > 0)) {
 			$chairDiscussantContent[] = theme('iishconference_container_field', array(
-				'label' => NetworkApi::getNetworkName(false),
+				'label' => 'Networks',
 				'value' => implode(', ', $chairVolunteering)
 			));
 		}
@@ -136,7 +136,7 @@ function preregister_confirm_form($form, &$form_state) {
 
 		if (PreRegistrationUtils::showNetworks() && (count($discussantVolunteering) > 0)) {
 			$chairDiscussantContent[] = theme('iishconference_container_field', array(
-				'label' => NetworkApi::getNetworkName(false),
+				'label' => 'Networks',
 				'value' => implode(', ', $discussantVolunteering)
 			));
 		}
@@ -162,7 +162,7 @@ function preregister_confirm_form($form, &$form_state) {
 
 		if (PreRegistrationUtils::showNetworks() && (count($coachVolunteering) > 0)) {
 			$englishCoachingContent[] = theme('iishconference_container_field', array(
-				'label' => NetworkApi::getNetworkName(false),
+				'label' => 'Networks',
 				'value' => implode(', ', $coachVolunteering)
 			));
 		}
@@ -174,7 +174,7 @@ function preregister_confirm_form($form, &$form_state) {
 
 		if (PreRegistrationUtils::showNetworks() && (count($pupilVolunteering) > 0)) {
 			$englishCoachingContent[] = theme('iishconference_container_field', array(
-				'label' => NetworkApi::getNetworkName(false),
+				'label' => 'Networks',
 				'value' => implode(', ', $pupilVolunteering)
 			));
 		}
@@ -265,7 +265,7 @@ function preregister_confirm_form($form, &$form_state) {
 
 		if (PreRegistrationUtils::showNetworks()) {
 			$sessionContent[] = theme('iishconference_container_field', array(
-				'label' => NetworkApi::getNetworkName(),
+				'label' => 'Network',
 				'value' => isset($networks[0]) ? $networks[0] : null
 			));
 		}

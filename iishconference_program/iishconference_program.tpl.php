@@ -117,8 +117,7 @@
 								<?php $noPlaceForNetwork = 0; ?>
 								<td width="50%" class="program">
 									<?php print (count($session['networks']) > 1) ?
-										NetworkApi::getNetworkName(false) . ':' :
-										NetworkApi::getNetworkName() . ':'; ?>
+										t('Networks') . ':' : t('Network') . ':'; ?>
 
 									<?php foreach ($session['networks'] as $j => $network) : ?>
 										<a href="?network=<?php print $network['networkId']; ?>"><?php print $network['networkName']; ?></a>

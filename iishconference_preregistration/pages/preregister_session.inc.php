@@ -38,7 +38,7 @@ function preregister_session_form($form, &$form_state) {
 
 		$networkIds = $session->getNetworksId();
 		$form['session']['sessioninnetwork'] = array(
-			'#title'         => NetworkApi::getNetworkName(),
+			'#title'         => iish_t('Network'),
 			'#type'          => 'select',
 			'#options'       => CRUDApiClient::getAsKeyValueArray(CachedConferenceApi::getNetworks()),
 			'#required'      => true,

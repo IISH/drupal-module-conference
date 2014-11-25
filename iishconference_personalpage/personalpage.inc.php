@@ -306,12 +306,11 @@ function conference_personalpage_create_session_info($userDetails, $participantD
 		$networks = $session->getNetworks();
 		foreach ($networks as $network) {
 			$sessionContent[] = theme('iishconference_container_field', array(
-				'label' => iish_t('@network name', array('@network' => NetworkApi::getNetworkName())),
+				'label' => 'Network name',
 				'value' => $network->getName()
 			));
 			$sessionContent[] = theme('iishconference_container_field', array(
-				'label' => iish_t('Chairs of this @network',
-					array('@network' => NetworkApi::getNetworkName(true, true))),
+				'label' => 'Chairs of this network',
 				'value' => implode(', ', $network->getChairs())
 			));
 			$sessionContent[] = '<br />';
@@ -470,7 +469,7 @@ function conference_personalpage_create_chair_discussant_info($participantDateDe
 
 		if ((SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) && (count($networksAsChair) > 0)) {
 			$chairDiscussantContent[] = theme('iishconference_container_field', array(
-				'label' => NetworkApi::getNetworkName(false),
+				'label' => 'Networks',
 				'value' => implode(', ', $networksAsChair)
 			));
 		}
@@ -482,7 +481,7 @@ function conference_personalpage_create_chair_discussant_info($participantDateDe
 
 		if ((SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) && (count($networksAsDiscussant) > 0)) {
 			$chairDiscussantContent[] = theme('iishconference_container_field', array(
-				'label' => NetworkApi::getNetworkName(false),
+				'label' => 'Networks',
 				'value' => implode(', ', $networksAsDiscussant)
 			));
 		}
@@ -522,8 +521,7 @@ function conference_personalpage_create_language_info($participantDateDetails) {
 		if ((SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) && (count($networksAsCoach) > 0)) {
 			$languageFound = true;
 			$languageContent[] = theme('iishconference_container_field', array(
-				'label' => iish_t('I would like to be an English Language Coach in the following @networks',
-					array('@networks' => NetworkApi::getNetworkName(false, true))),
+				'label' => iish_t('I would like to be an English Language Coach in the following networks'),
 				'value' => implode(', ', $networksAsCoach),
 			));
 		}
@@ -564,8 +562,7 @@ function conference_personalpage_create_language_info($participantDateDetails) {
 				else {
 					if (SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) {
 						$list[] = '<strong>' . $network->getName() . '</strong>: <em>' .
-							iish_t('No language coaches found in this @network!',
-								array('@network' => NetworkApi::getNetworkName(true, true))) . '</em>';
+							iish_t('No language coaches found in this network!') . '</em>';
 					}
 					else {
 						$list[] = '<em>' . iish_t('No language coaches found!') . '</em>';
@@ -575,7 +572,7 @@ function conference_personalpage_create_language_info($participantDateDetails) {
 
 			if (SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) {
 				$languageCoachLabel = iish_t('I need some help from one of the following English Language Coaches ' .
-					'in each chosen @network', array('@network' => NetworkApi::getNetworkName(true, true)));
+					'in each chosen network');
 			}
 			else {
 				$languageCoachLabel = iish_t('I need some help from one of the following English Language Coaches');
@@ -664,31 +661,26 @@ function conference_personalpage_create_links($participantDateDetails) {
 function conference_personalpage_create_links_network($participantDateDetails) {
 	if (LoggedInUserDetails::hasFullRights() || LoggedInUserDetails::isNetworkChair()) {
 		$linksNetworkContent =
-			array(theme('iishconference_container_header',
-				array('text' => iish_t('Links for chairs of a @network',
-					array('@network' => NetworkApi::getNetworkName(true, true))))));
+			array(theme('iishconference_container_header', array('text' => iish_t('Links for chairs of a network'))));
 
 		if (module_exists('iishconference_networksforchairs')) {
-			$linksNetworkContent[] = '&bull; ' . l(iish_t('@networks, Sessions & Participants (and papers)',
-						array('@networks' => NetworkApi::getNetworkName(false))),
+			$linksNetworkContent[] = '&bull; ' . l(iish_t('Networks, Sessions & Participants (and papers)'),
 					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(false, true) .
 					'forchairs') . '<br />';
 		}
 		if (module_exists('iishconference_networkparticipants')) {
 			$linksNetworkContent[] = '&bull; ' .
-				l(iish_t('@networks and their Participants', array('@networks' => NetworkApi::getNetworkName(false))),
+				l(iish_t('Networks and their Participants'),
 					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(false, true) .
 					'participants') . '<br />';
 		}
 		if (module_exists('iishconference_networkvolunteers')) {
-			$linksNetworkContent[] = '&bull; ' . l(iish_t('@networks and their Volunteers (Chair/Discussant)',
-						array('@networks' => NetworkApi::getNetworkName(false))),
+			$linksNetworkContent[] = '&bull; ' . l(iish_t('Networks and their Volunteers (Chair/Discussant)'),
 					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(true, true) .
 					'volunteers') . '<br />';
 		}
 		if (module_exists('iishconference_proposednetworkparticipants')) {
-			$linksNetworkContent[] = '&bull; ' . l(iish_t('Participants and their proposed @networks',
-						array('@networks' => NetworkApi::getNetworkName(false, true))),
+			$linksNetworkContent[] = '&bull; ' . l(iish_t('Participants and their proposed networks'),
 					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'proposed' .
 					NetworkApi::getNetworkName(true, true) . 'participants') . '<br />';
 		}

@@ -200,7 +200,7 @@ function iishconference_program_form($form, &$form_state, $networkId, $textsearc
 
 		$form['network'] = array(
 			'#type' => 'select',
-			'#title' => iish_t('Browse @networks: ', array('@networks' => NetworkApi::getNetworkName(false, true))),
+			'#title' => iish_t('Browse networks') . ': ',
 			'#size' => 1,
 			'#default_value' => is_null($networkId) ? 0 : $networkId,
 			'#options' => $selectListOfNetworks,

@@ -16,8 +16,7 @@ function iishconference_networksforchairs_main() {
 	}
 
 	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
-		drupal_set_message(iish_t('Access denied. You are not a chair of a @network.',
-			array('@network' => NetworkApi::getNetworkName(true, true))), 'error');
+		drupal_set_message(iish_t('Access denied. You are not a chair of a network.'), 'error');
 
 		return '';
 	}
@@ -45,8 +44,7 @@ function iishconference_networksforchairs_main() {
 		}
 
 		$output .= theme('item_list', array(
-			'title' => iish_t('Your @networks',
-				array('@networks' => NetworkApi::getNetworkName(false, true))),
+			'title' => iish_t('Your networks'),
 			'items' => $links,
 		));
 	}
@@ -59,7 +57,7 @@ function iishconference_networksforchairs_main() {
 	}
 
 	$output .= theme('item_list', array(
-		'title' => iish_t('All @networks', array('@networks' => NetworkApi::getNetworkName(false, true))),
+		'title' => iish_t('All networks'),
 		'items' => $links,
 	));
 
@@ -84,8 +82,7 @@ function iishconference_networksforchairs_sessions($networkId) {
 	}
 
 	if (!LoggedInUserDetails::isCrew() && !LoggedInUserDetails::isNetworkChair()) {
-		drupal_set_message(iish_t('Access denied. You are not a chair of a @network.',
-			array('@network' => NetworkApi::getNetworkName(true, true))), 'error');
+		drupal_set_message(iish_t('Access denied. You are not a chair of a network.'), 'error');
 
 		return '';
 	}
@@ -107,8 +104,7 @@ function iishconference_networksforchairs_sessions($networkId) {
 		$network = CRUDApiMisc::getById(new NetworkApi(), $networkId);
 
 		if (!$network) {
-			drupal_set_message(iish_t('The @network does not exist.',
-				array('@network' => NetworkApi::getNetworkName(true, true))), 'error');
+			drupal_set_message(iish_t('The network does not exist.'), 'error');
 
 			drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(false, true)
 				. 'forchairs');
@@ -120,11 +116,11 @@ function iishconference_networksforchairs_sessions($networkId) {
 		}
 
 		$title = theme('iishconference_container_field', array(
-			'label' => NetworkApi::getNetworkName(),
+			'label' => 'Network',
 			'value' => $network->getName(),
 		));
 		$title .= theme('iishconference_container_field', array(
-			'label'       => iish_t('Chairs in this @network', array('@network' => NetworkApi::getNetworkName(true, true))),
+			'label'       => 'Chairs in this network',
 			'value'       => ConferenceMisc::getEnumSingleLine($chairLinks),
 			'valueIsHTML' => true,
 		));
@@ -167,8 +163,7 @@ function iishconference_networksforchairs_sessions($networkId) {
 	$header = theme('iishconference_navigation', array(
 		'list'     => CachedConferenceApi::getNetworks(),
 		'current'  => $network,
-		'prevLink' => l('« ' . iish_t('Go back to @networks list',
-				array('@networks' => NetworkApi::getNetworkName(false, true))),
+		'prevLink' => l('« ' . iish_t('Go back to networks list'),
 			SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) .
 			NetworkApi::getNetworkName(false, true) .
 			'forchairs'),
@@ -237,15 +232,13 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 	// or the network and/or session do not exist
 	// Also show error when no network is chosen, but neither is a session search term
 	if (($networkId > 0) && (!$network || ($session && !in_array($network->getId(), $session->getNetworksId())))) {
-		drupal_set_message(iish_t('The @network and/or session do not exist!',
-			array('@network' => NetworkApi::getNetworkName(true, true))), 'error');
+		drupal_set_message(iish_t('The network and/or session do not exist!'), 'error');
 
 		drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(false, true)
 			. 'forchairs');
 	}
 	else if (($networkId <= 0) && ($search === null)) {
-		drupal_set_message(iish_t('No @network or search parameter given!',
-			array('@network' => NetworkApi::getNetworkName(true, true))), 'error');
+		drupal_set_message(iish_t('No network or search parameter given!'), 'error');
 
 		drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(false, true)
 			. 'forchairs');
@@ -286,11 +279,11 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 		}
 
 		$title = theme('iishconference_container_field', array(
-			'label' => NetworkApi::getNetworkName(),
+			'label' => 'Network',
 			'value' => $network->getName(),
 		));
 		$title .= theme('iishconference_container_field', array(
-			'label'       => iish_t('Chairs in this @network', array('@network' => NetworkApi::getNetworkName(true, true))),
+			'label'       => 'Chairs in this network',
 			'value'       => ConferenceMisc::getEnumSingleLine($chairLinks),
 			'valueIsHTML' => true,
 		));
@@ -298,19 +291,19 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 	}
 
 	$title .= theme('iishconference_container_field', array(
-		'label' => iish_t('Session'),
+		'label' => 'Session',
 		'value' => ($session === null) ? iish_t('... Individual paper proposals ...') : $session->getName(),
 	));
 
 	if ($session !== null) {
 		$title .= theme('iishconference_container_field', array(
-			'label' => iish_t('Session state'),
+			'label' => 'Session state',
 			'value' => $session->getState()->getDescription(),
 		));
 
 		if ($session->getAddedBy() !== null) {
 			$title .= theme('iishconference_container_field', array(
-				'label'       => iish_t('Session added by'),
+				'label'       => 'Session added by',
 				'value'       => l($session->getAddedBy()->getFullName(),
 					'mailto:' . $session->getAddedBy()->getEmail(),
 					array('absolute' => true)),
@@ -319,7 +312,7 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 		}
 
 		$title .= theme('iishconference_container_field', array(
-			'label'          => iish_t('Session abstract'),
+			'label'          => 'Session abstract',
 			'value'          => $session->getAbstr(),
 			'valueOnNewLine' => true,
 		));
@@ -336,14 +329,14 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 		$type = $participant['type'];
 
 		$result = theme('iishconference_container_field', array(
-			'label'       => iish_t('Participant'),
+			'label'       => 'Participant',
 			'value'       => l($user->getFullName(), 'mailto:' . $user->getEmail(), array('absolute' => true)),
 			'valueIsHTML' => true,
 		));
 
 		if (($user->getOrganisation() !== null) && (strlen($user->getOrganisation()) > 0)) {
 			$result .= theme('iishconference_container_field', array(
-				'label' => iish_t('Organisation'),
+				'label' => 'Organisation',
 				'value' => $user->getOrganisation(),
 			));
 		}
@@ -352,7 +345,7 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 			(strlen($user->getCv()) > 0)
 		) {
 			$result .= theme('iishconference_container_field', array(
-				'label'          => iish_t('CV'),
+				'label'          => 'CV',
 				'value'          => $user->getCv(),
 				'valueOnNewLine' => true,
 			));
@@ -360,7 +353,7 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 
 		if ($type) {
 			$result .= theme('iishconference_container_field', array(
-				'label' => iish_t('Type'),
+				'label' => 'Type',
 				'value' => $type->getType(),
 			));
 		}
@@ -368,15 +361,15 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 		if ($paper) {
 			$result .= '<br />';
 			$result .= theme('iishconference_container_field', array(
-				'label' => iish_t('Paper'),
+				'label' => 'Paper',
 				'value' => $paper->getTitle(),
 			));
 			$result .= theme('iishconference_container_field', array(
-				'label' => iish_t('Paper state'),
+				'label' => 'Paper state',
 				'value' => $paper->getState(),
 			));
 			$result .= theme('iishconference_container_field', array(
-				'label'          => iish_t('Paper abstract'),
+				'label'          => 'Paper abstract',
 				'value'          => $paper->getAbstr(),
 				'valueOnNewLine' => true,
 			));
@@ -407,7 +400,7 @@ function iishconference_networksforchairs_form($form, &$form_state) {
 
 	$form['search'] = array(
 		'#type'      => 'textfield',
-		'#title'     => 'Filter on session name',
+		'#title'     => iish_t('Filter on session name'),
 		'#size'      => 20,
 		'#maxlength' => 50,
 		'#prefix'    => '<div class="iishconference_inline">',
