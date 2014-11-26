@@ -155,6 +155,13 @@ function conference_personalpage_create_registration_info($userDetails, $partici
 			));
 		}
 	}
+	else if (LoggedInUserDetails::isAParticipantWithoutConfirmation()) {
+		$registeredAndPayedContent[] = '<span class="eca_warning">' .
+			iish_t('You have not finished the pre-registration for the @conference. Please go to the !link.',
+				array('@conference' => CachedConferenceApi::getEventDate()->getLongNameAndYear(),
+				      '!link'       => l(iish_t('pre-registration form'),
+					      SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'pre-registration'))) . '</span>';
+	}
 	else {
 		$registeredAndPayedContent[] = '<span class="eca_warning">' .
 			iish_t('You are not registered for the @conference. Please go to the !link.',
@@ -282,14 +289,6 @@ function conference_personalpage_create_papers_info($userDetails, $participantDa
 
 	return $papersContainers;
 }
-
-/**
- * Adds session info to a session ccntent holder
- *
- * @param array      $sessionContent The session content holder to add info to
- * @param PaperApi[] $sessionPapers  The papers in this session
- * @param SessionApi $session        The session in question
- */
 
 /**
  * Adds session info to a session ccntent holder

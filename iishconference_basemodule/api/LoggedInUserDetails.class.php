@@ -56,6 +56,18 @@ class LoggedInUserDetails {
 	}
 
 	/**
+	 * Is the user currently logged in a participant who did not finish his/her registration yet?
+	 *
+	 * @return bool hether the logged in user is a participant who did not finish his/her registration yet
+	 */
+	public static function isAParticipantWithoutConfirmation() {
+		return (
+			(self::getParticipant() !== null) &&
+			(self::getParticipant()->getStateId() == ParticipantStateApi::DID_NOT_FINISH_REGISTRATION)
+		);
+	}
+
+	/**
 	 * Returns the user details of the currently logged in user, if logged in
 	 *
 	 * @param bool $printErrorMessage Whether an error message should be printed on failure
