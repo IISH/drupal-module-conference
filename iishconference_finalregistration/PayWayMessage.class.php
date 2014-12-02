@@ -190,7 +190,7 @@ class PayWayMessage {
 	 */
 	private function redirectToPayWay() {
 		header('Location: ' . SettingsApi::getSetting(SettingsApi::PAYWAY_ADDRESS) . 'payment?' .
-			http_build_query($this->message));
+			http_build_query($this->message, null, '&'));
 		die();
 	}
 } 

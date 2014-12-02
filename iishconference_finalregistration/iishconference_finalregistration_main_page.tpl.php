@@ -22,11 +22,13 @@
 <div id="final-registration-welcome">
 	<?php print iish_t('Welcome @name,', array('@name' => LoggedInUserDetails::getUser())); ?>
 	<br /><br />
-	<?php print ConferenceMisc::getCleanHTML(iish_t('This is the first page of the \'Final Registration and Payment\'
-		procedure. Please enter which days you will be present and the total conference fee will be computed
-		automatically. You can pay with your CreditCard/iDeal or via bank transfer. If the process is completely
-		finished, (including payment) you will receive a confirmation email from our payment provider
-		and a confirmation email.')); ?>
+	<?php print ConferenceMisc::getCleanHTML(iish_t(
+		'This is the first page of the \'Final Registration and Payment\' ' .
+		'procedure. Please enter which days you will be present and the total conference fee will be computed ' .
+		'automatically. You can pay with your CreditCard/iDeal or via bank transfer. If the process is completely ' .
+		'finished, (including payment) you will receive a confirmation email from our payment provider ' .
+		'and a confirmation email.'
+	)); ?>
 
 	<?php if (SettingsApi::getSetting(SettingsApi::SHOW_DAYS) != 1) : ?>
 		<br /><br />
