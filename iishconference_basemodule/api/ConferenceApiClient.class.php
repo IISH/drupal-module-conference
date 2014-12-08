@@ -11,8 +11,6 @@ require_once('GrantType/ClientCredentials.php');
 class ConferenceApiClient {
 	private $oAuthClient;
 	private $requestCache;
-	private $conferenceApiUrl;
-	private $conferenceTokenUrl;
 
 	private static $yearCode = null;
 
@@ -22,10 +20,6 @@ class ConferenceApiClient {
 
 		$this->oAuthClient = new Client($clientId, $clientSecret);
 		$this->requestCache = SimpleApiCache::getInstance();
-
-		$this->conferenceApiUrl = variable_get('conference_base_url') . variable_get('conference_event_code') . '/' .
-			self::getYearCode() . '/api/';
-		$this->conferenceTokenUrl = variable_get('conference_base_url') . 'oauth/token';
 
 		$this->oAuthClient->setAccessTokenType(Client::ACCESS_TOKEN_BEARER);
 		if ($cachedToken = cache_get('conference_access_token_' . $clientId)) {
@@ -127,7 +121,7 @@ class ConferenceApiClient {
 		$result = $this->requestCache->get($apiName, $parameters, $http_method);
 
 		if (!$result) {
-			$url = $this->conferenceApiUrl . $apiName;
+			$url = $this->getUrl() . $apiName;
 
 			try {
 				$response = $this->oAuthClient->fetch($url, $parameters, $http_method);
@@ -169,7 +163,7 @@ class ConferenceApiClient {
 	 */
 	private function requestNewToken() {
 		$response =
-			$this->oAuthClient->getAccessToken($this->conferenceTokenUrl, ClientCredentials::GRANT_TYPE, array());
+			$this->oAuthClient->getAccessToken($this->getTokenUrl(), ClientCredentials::GRANT_TYPE, array());
 
 		if ($response['code'] === 200) {
 			$token = $response['result']['access_token'];
@@ -177,5 +171,24 @@ class ConferenceApiClient {
 			cache_set('conference_access_token_' . $this->oAuthClient->getClientId(), $token, 'cache',
 				time() + 60 * 60 * 12);
 		}
+	}
+
+	/**
+	 * Returns the url (without the api name) for a API call to the Conference Management System API
+	 *
+	 * @return string The url for a API call to the Conference Management System API
+	 */
+	private static function getUrl() {
+		return variable_get('conference_base_url') . variable_get('conference_event_code') .
+		'/' . self::getYearCode() . '/api/';
+	}
+
+	/**
+	 *  Returns the url (without the api name) for a token request to the Conference Management System API
+	 *
+	 * @return string Returns the url for a token request to the Conference Management System API
+	 */
+	private static function getTokenUrl() {
+		return variable_get('conference_base_url') . 'oauth/token';
 	}
 }
