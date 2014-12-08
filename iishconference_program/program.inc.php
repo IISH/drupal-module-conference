@@ -145,7 +145,7 @@ function iishconference_program($yearCode = null) {
 		$backUrl = "?day=" . $dayId . "&time=" . $timeId;
 	}
 
-	$form = drupal_get_form('iishconference_program_form', $networkId, $textsearch);
+	$form = drupal_get_form('iishconference_program_form', $networks, $networkId, $textsearch);
 
 	$highlight = new Highlighter(explode(' ', $textsearch));
 	$highlight->setOpeningTag('<span class="highlight">');
@@ -180,7 +180,7 @@ function iishconference_program($yearCode = null) {
 /**
  * TODOEXPLAIN
  */
-function iishconference_program_form($form, &$form_state, $networkId, $textsearch) {
+function iishconference_program_form($form, &$form_state, $networks, $networkId, $textsearch) {
 	$form['#method'] = 'get';
 	$form['#token'] = false;
 	$form['#after_build'] = array('iishconference_program_unset_default_form_elements');
@@ -191,7 +191,6 @@ function iishconference_program_form($form, &$form_state, $networkId, $textsearc
 	if (SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) {
 		$titleTextSearch = iish_t('or search on name');
 
-		$networks = CachedConferenceApi::getNetworks();
 		$selectListOfNetworks = array();
 		$selectListOfNetworks[0] = '';
 		foreach ($networks as $network) {
