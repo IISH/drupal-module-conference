@@ -635,16 +635,10 @@ function conference_personalpage_create_links($participantDateDetails) {
 			'&bull; ' . l(iish_t('Logout'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'logout') . '<br />';
 	}
 	// check if live or crew or network chair or chair or organizer
-	if (module_exists('iishconference_program') && (
-			(SettingsApi::getSetting(SettingsApi::SHOW_PROGRAMME_ONLINE) == 1) ||
-			LoggedInUserDetails::hasFullRights() ||
-			LoggedInUserDetails::isNetworkChair() ||
-			LoggedInUserDetails::isChair() ||
-			LoggedInUserDetails::isOrganiser())
-	) {
+	if (module_exists('iishconference_programme') && ConferenceMisc::mayLoggedInUserSeeProgramme()) {
 		$linksContent[] =
-			'&bull; ' . l(iish_t('Preliminary Program'),
-				SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'program') . '<br />';
+			'&bull; ' . l(iish_t('Preliminary Programme'),
+				SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'programme') . '<br />';
 	}
 
 	return theme('iishconference_container', array('fields' => $linksContent));

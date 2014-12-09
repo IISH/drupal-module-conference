@@ -10,6 +10,7 @@ class EventDateApi extends CRUDApiClient {
 	protected $dateAsText;
 	protected $description;
 	protected $longDescription;
+	protected $lastDate;
 	protected $event;
 
 	private $eventInstance;
@@ -45,7 +46,7 @@ class EventDateApi extends CRUDApiClient {
 			self::$eventDates = array();
 			foreach (parent::getClient()->get('eventDates', array(), $printErrorMessage) as $eventDate) {
 				self::$eventDates[] = parent::createNewInstance(__CLASS__, $eventDate);
-            }
+			}
 		}
 
 		return self::$eventDates;
@@ -134,6 +135,15 @@ class EventDateApi extends CRUDApiClient {
 	 */
 	public function getYearCodeURL() {
 		return preg_replace('/\s+/', '-', $this->yearCode);
+	}
+
+	/**
+	 * Indicates whether this event date is also the latest date
+	 *
+	 * @return bool Whether this event date is also the latest date
+	 */
+	public function isLastDate() {
+		return $this->lastDate;
 	}
 
 	/**

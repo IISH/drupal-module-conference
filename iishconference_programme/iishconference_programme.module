@@ -3,11 +3,11 @@
 /**
  * Implements hook_help()
  */
-function iishconference_program_help($path, $arg) {
+function iishconference_programme_help($path, $arg) {
 	switch ($path) {
 		// Module help for the block module
-		case "admin/help#iishconference_program":
-			return '<p><strong>About the \'Show Conference Program\' module</strong><br><br>...</p>';
+		case "admin/help#iishconference_programme":
+			return '<p><strong>About the \'Show Conference Programme\' module</strong><br><br>...</p>';
 			break;
 	}
 }
@@ -15,17 +15,17 @@ function iishconference_program_help($path, $arg) {
 /**
  * Implements hook_menu()
  */
-function iishconference_program_menu() {
+function iishconference_programme_menu() {
 	$items = array();
 
 	$extraPath = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU);
 
-	$items[$extraPath . 'program'] = array(
-		'title'           => iish_t('Preliminary Program', array(), false),
-		'page callback'   => 'iishconference_program',
+	$items[$extraPath . 'programme'] = array(
+		'title'           => iish_t('Preliminary Programme', array(), false),
+		'page callback'   => 'iishconference_programme',
 		'access callback' => true,
 		'type'            => MENU_NORMAL_ITEM,
-		'file'            => 'program.inc.php',
+		'file'            => 'programme.inc.php',
 	);
 
 	return $items;
@@ -34,16 +34,17 @@ function iishconference_program_menu() {
 /**
  * Implements hook_theme()
  */
-function iishconference_program_theme() {
+function iishconference_programme_theme() {
 	return array(
-		'iishconference_program' => array(
-			'template'  => 'iishconference_program',
+		'iishconference_programme' => array(
+			'template'  => 'iishconference_programme',
 			'variables' => array(
+				'eventDate'              => null,
 				'form'                   => null,
 				'days'                   => null,
 				'date-times'             => null,
 				'types'                  => null,
-				'program'                => null,
+				'programme'              => null,
 				'paper'                  => null,
 				'back-url-query'         => null,
 				'highlight'              => null,
@@ -51,6 +52,7 @@ function iishconference_program_theme() {
 				'roomId'                 => null,
 				'textsearch'             => null,
 				'curShowing'             => null,
+				'downloadPaperIsOpen'    => null,
 				'paperDownloadLinkStart' => null,
 			),
 		),

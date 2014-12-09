@@ -1,0 +1,8 @@
+name = Show programme
+description = Allows users to see the currently planned programme and search in the programme
+package = IISH Conference
+core = 7.x
+version = 7.x-0.0.1
+files[] = ProgrammeApi.class.php
+dependencies[] = iishconference_basemodule
+stylesheets[all][] = conference_programme.css

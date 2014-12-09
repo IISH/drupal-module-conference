@@ -304,9 +304,25 @@ document.write('<a hr'+'ef=\"'+'mai'+'lto:'+w+'@'+h1+'.'+h2+'\">'+w+'@'+h1+'.'+h
 	}
 
 	/**
+	 * Whether the (logged in?) user may see the current online programme
+	 *
+	 * @return bool Whether the (logged in?) user may see the current online programme
+	 */
+	public static function mayLoggedInUserSeeProgramme() {
+		return (
+			(SettingsApi::getSetting(SettingsApi::SHOW_PROGRAMME_ONLINE) == 1) ||
+			LoggedInUserDetails::isCrew() ||
+			LoggedInUserDetails::isChair() ||
+			LoggedInUserDetails::isOrganiser() ||
+			LoggedInUserDetails::isNetworkChair() ||
+			LoggedInUserDetails::hasFullRights()
+		);
+	}
+
+	/**
 	 * Override of the default t function of Drupal
 	 * Will translate the text first using the translations CMS API
-	 * It will then replace all occurences of network and session in the text
+	 * It will then replace all occurrences of network and session in the text
 	 *
 	 * @param string $string                A string containing the English string to translate
 	 * @param array  $args                  An associative array of replacements to make after translation.

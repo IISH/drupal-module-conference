@@ -1,19 +1,13 @@
-<?php $underConstruction = iish_t('Under construction'); ?>
-<?php if ($underConstruction != '') : ?>
-	<h1><?php print $underConstruction; ?></h1>
-<?php endif; ?>
-
 <div class="container-inline bottommargin">
 	<?php print drupal_render($variables['form']); ?>
 </div>
 
 <?php if (!isset($_GET['paper'])) : ?>
-	<div class="program_day showing">
+	<div class="programme_day showing">
 		<?php print $variables['curShowing']; ?>
 	</div>
 
-	<?php // TODO GCU moet op een andere manier ?>
-	<?php if (SettingsApi::getSetting(SettingsApi::DOWNLOAD_PAPER_LASTDATE) == '' || SettingsApi::getSetting(SettingsApi::DOWNLOAD_PAPER_LASTDATE) >= date("Y-m-d")) : ?>
+	<?php if ($eventDate->isLastDate() && $downloadPaperIsOpen) : ?>
 		<div class="download-icon-info">
 			<span class="download-icon"></span>
 			<?php print iish_t('Click on the icon to download the paper'); ?>
@@ -23,10 +17,10 @@
 	<div class="clear"></div>
 <?php endif; ?>
 
-<table class="program">
+<table class="programme">
 	<tbody>
 	<tr>
-		<td class="program noprint">
+		<td class="programme noprint">
 			<?php foreach ($variables['days'] as $day) : ?>
 				<a href="?day=<?php print $day->getId(); ?>"><?php print $day->getDayFormatted('D j F'); ?></a>
 				<br/>
@@ -46,7 +40,7 @@
 			<a href="?day=0"><?php print iish_t('All days'); ?></a>
 		</td>
 
-		<td class="program">
+		<td class="programme">
 			<?php if (isset($_GET['paper'])) : ?>
 				<a href="<?php print $variables['back-url-query']; ?>">
 					<?php print iish_t('Go back'); ?>
@@ -71,8 +65,7 @@
 				<?php print nl2br(check_plain($variables['paper']->getAbstr())); ?>
 				<br/>
 
-				<?php // TODO GCU moet op een andere manier ?>
-				<?php if (SettingsApi::getSetting(SettingsApi::DOWNLOAD_PAPER_LASTDATE) == '' || SettingsApi::getSetting(SettingsApi::DOWNLOAD_PAPER_LASTDATE) >= date("Y-m-d")) : ?>
+				<?php if ($eventDate->isLastDate() && $downloadPaperIsOpen) : ?>
 					<?php if (!is_null($variables['paper']->getFileSize()) && ($variables['paper']->getFileSize() > 0)) : ?>
 						<strong><?php print iish_t('Download paper'); ?>:</strong>
 						<a href="<?php print $variables['paperDownloadLinkStart'] . $variables['paper']->getId(); ?>">
@@ -82,13 +75,13 @@
 						<br/>
 					<?php endif; ?>
 				<?php endif; ?>
-			<?php elseif (count($variables['program']) == 0) : ?>
+			<?php elseif (count($variables['programme']) == 0) : ?>
 				<span class="eca_warning"><?php print iish_t('Nothing found. Please modify your search criteria.'); ?></span>
 			<?php
 			else : ?>
-				<?php foreach ($variables['program'] as $i => $session) : ?>
-					<?php if (($i == 0) || ($session['timeId'] != $variables['program'][$i - 1]['timeId'])) : ?>
-						<div class="program_day">
+				<?php foreach ($variables['programme'] as $i => $session) : ?>
+					<?php if (($i == 0) || ($session['timeId'] != $variables['programme'][$i - 1]['timeId'])) : ?>
+						<div class="programme_day">
 							<?php print date('l j F Y', strtotime($session['day'])); ?>
 							<?php print str_replace('  ', ' ', str_replace('-', ' - ', $session['period'])); ?>
 						</div>
@@ -109,13 +102,13 @@
 
 					<br/>
 
-					<table class="program">
+					<table class="programme">
 						<tbody>
 						<tr>
 							<?php $noPlaceForNetwork = 1; ?>
 							<?php if (SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1): ?>
 								<?php $noPlaceForNetwork = 0; ?>
-								<td width="50%" class="program">
+								<td width="50%" class="programme">
 									<?php print (count($session['networks']) > 1) ?
 										t('Networks') . ':' : t('Network') . ':'; ?>
 
@@ -129,7 +122,7 @@
 							<?php endif; ?>
 
 							<?php
-								$alwaysHide = SettingsApi::getSetting(SettingsApi::HIDE_ALWAYS_IN_ONLINE_PROGRAM);
+								$alwaysHide = SettingsApi::getSetting(SettingsApi::HIDE_ALWAYS_IN_ONLINE_PROGRAMME);
 								$typesToHide = SettingsApi::getArrayOfValues($alwaysHide);
 
 								$participantsWithPaper = array();
@@ -155,9 +148,9 @@
 									$participants[] = array_shift($participantsWithoutPaper);
 								}
 
-								print '<td class="program">';
+								print '<td class="programme">';
 
-								$hideIfEmpty = SettingsApi::getSetting(SettingsApi::HIDE_IF_EMPTY_IN_ONLINE_PROGRAM);
+								$hideIfEmpty = SettingsApi::getSetting(SettingsApi::HIDE_IF_EMPTY_IN_ONLINE_PROGRAMME);
 								$typesToHide = SettingsApi::getArrayOfValues($hideIfEmpty);
 								if (count($participants) === 0) {
 									if (array_search($type->getId(), $typesToHide) === false) {
@@ -212,8 +205,7 @@
 							</a>
 						<?php endif; ?>
 
-						<?php // TODO GCU moet op een andere manier ?>
-						<?php if (SettingsApi::getSetting(SettingsApi::DOWNLOAD_PAPER_LASTDATE) == '' || SettingsApi::getSetting(SettingsApi::DOWNLOAD_PAPER_LASTDATE) >= date("Y-m-d")) : ?>
+						<?php if ($eventDate->isLastDate() && $downloadPaperIsOpen) : ?>
 							<?php if ($participant['hasDownload']) : ?>
 								&nbsp;
 								<a href="<?php print $variables['paperDownloadLinkStart'] . $participant['paperId']; ?>"
@@ -229,10 +221,10 @@
 
 					<br /><br />
 
-					<?php if ((($i + 1) < count($variables['program'])) &&
-						($session['timeId'] != $variables['program'][$i + 1]['timeId'])
+					<?php if ((($i + 1) < count($variables['programme'])) &&
+						($session['timeId'] != $variables['programme'][$i + 1]['timeId'])
 					) : ?>
-						<hr class="program_hr"/>
+						<hr class="programme_hr"/>
 					<?php endif; ?>
 				<?php endforeach; ?>
 			<?php endif; ?>

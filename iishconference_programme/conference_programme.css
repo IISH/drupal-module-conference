@@ -1,25 +1,25 @@
-table.program {
+table.programme {
     width: 100%;
     padding: 20;
     border-collapse: collapse;
 }
 
-td.program {
+td.programme {
     vertical-align: top;
     border: 1px solid white;
 }
 
-.program_day {
+.programme_day {
     font-weight: bold;
     margin-bottom: 25px;
     font-size: 125%;
 }
 
-.program_day.showing {
+.programme_day.showing {
     display: inline;
 }
 
-.program_hr {
+.programme_hr {
     margin-top: 20px;
     margin-bottom: 40px;
     background-color: #E61A3C;

@@ -1,18 +1,32 @@
 <?php
 
 /**
- * Prints the program
+ * Prints the programme
  *
- * @param $yearCode The event date for which to print the program
+ * @param $yearCode The event date for which to print the programme
  *
- * @return string The HTML for the program
+ * @return string The HTML for the programme
  */
-function iishconference_program($yearCode = null) {
-	$eventDate = iishconference_program_get_event_date($yearCode);
+function iishconference_programme($yearCode = null) {
+	$eventDate = iishconference_programme_get_event_date($yearCode);
 	if ($eventDate === null) {
-		drupal_set_message(iish_t('No program available for the given year!'), 'error');
-		drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'program');
+		drupal_set_message(iish_t('No programme available for the given year!'), 'error');
+		drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'programme');
+
 		return;
+	}
+
+	// If the programme of the last event date is still closed, show message
+	if ($eventDate->isLastDate() && !ConferenceMisc::mayLoggedInUserSeeProgramme()) {
+		drupal_set_message(iish_t('The programme is not yet available.'), 'warning');
+
+		return '';
+	}
+
+	// If the programme of the last event date is still under construction, show message
+	$underConstruction = iish_t('Under construction');
+	if ($eventDate->isLastDate() && ($underConstruction != '')) {
+		drupal_set_message($underConstruction, 'warning');
 	}
 
 	ConferenceApiClient::setYearCode($eventDate->getYearCodeURL());
@@ -20,7 +34,8 @@ function iishconference_program($yearCode = null) {
 
 	// Obtain all necessary query parameters
 	$dayId = isset($queryParameters['day']) ? EasyProtection::easyIntegerProtection($queryParameters['day']) : null;
-	$timeId = isset($queryParameters['time']) ? EasyProtection::easyIntegerProtection($queryParameters['time']) : null;
+	$timeId = isset($queryParameters['time']) ?
+		EasyProtection::easyIntegerProtection($queryParameters['time']) : null;
 	$roomId = isset($queryParameters['room']) ? EasyProtection::easyIntegerProtection($queryParameters['room']) : null;
 	$networkId =
 		isset($queryParameters['network']) ? EasyProtection::easyIntegerProtection($queryParameters['network']) : null;
@@ -46,12 +61,13 @@ function iishconference_program($yearCode = null) {
 	$types = ParticipantTypeApi::getListWithCriteria($props->get())->getResults();
 
 	// Make sure we filter out co-authors and types with papers and types configured to be hidden
-	$alwaysHide = SettingsApi::getSetting(SettingsApi::HIDE_ALWAYS_IN_ONLINE_PROGRAM);
+	$alwaysHide = SettingsApi::getSetting(SettingsApi::HIDE_ALWAYS_IN_ONLINE_PROGRAMME);
 	$typesToHide = SettingsApi::getArrayOfValues($alwaysHide);
 	foreach ($types as $i => $type) {
-		if (    ($type->getId() == ParticipantTypeApi::CO_AUTHOR_ID) ||
-				$type->getWithPaper() ||
-				(array_search($type->getId(), $typesToHide) !== false)) {
+		if (($type->getId() == ParticipantTypeApi::CO_AUTHOR_ID) ||
+			$type->getWithPaper() ||
+			(array_search($type->getId(), $typesToHide) !== false)
+		) {
 			unset($types[$i]);
 		}
 	}
@@ -145,27 +161,31 @@ function iishconference_program($yearCode = null) {
 		$backUrl = "?day=" . $dayId . "&time=" . $timeId;
 	}
 
-	$form = drupal_get_form('iishconference_program_form', $networks, $networkId, $textsearch);
+	$form = drupal_get_form('iishconference_programme_form', $networks, $networkId, $textsearch);
 
 	$highlight = new Highlighter(explode(' ', $textsearch));
 	$highlight->setOpeningTag('<span class="highlight">');
 	$highlight->setClosingTag('</span>');
 
-	$program = null;
+	$programme = null;
 	if (is_null($paper)) {
-		$programApi = new ProgramApi();
-		$program = $programApi->getProgram($dayId, $timeId, $networkId, $roomId, $textsearch);
+		$programmeApi = new ProgrammeApi();
+		$programme = $programmeApi->getProgramme($dayId, $timeId, $networkId, $roomId, $textsearch);
 	}
 
 	$paperDownloadLinkStart = variable_get('conference_base_url') . variable_get('conference_event_code') . '/' .
 		variable_get('conference_date_code') . '/' . 'userApi/downloadPaper/';
 
-	return theme('iishconference_program', array(
+	$downloadPaperLastDate = strtotime(SettingsApi::getSetting(SettingsApi::DOWNLOAD_PAPER_LASTDATE));
+	$downloadPaperIsOpen = ConferenceMisc::isOpenForLastDate($downloadPaperLastDate);
+
+	return theme('iishconference_programme', array(
+		'eventDate'              => $eventDate,
 		'form'                   => $form,
 		'days'                   => $days,
 		'date-times'             => $dateTimes,
 		'types'                  => $types,
-		'program'                => $program,
+		'programme'              => $programme,
 		'paper'                  => $paper,
 		'back-url-query'         => $backUrl,
 		'highlight'              => $highlight,
@@ -173,6 +193,7 @@ function iishconference_program($yearCode = null) {
 		'roomId'                 => $roomId,
 		'textsearch'             => $textsearch,
 		'curShowing'             => $curShowing,
+		'downloadPaperIsOpen'    => $downloadPaperIsOpen,
 		'paperDownloadLinkStart' => $paperDownloadLinkStart,
 	));
 }
@@ -180,10 +201,10 @@ function iishconference_program($yearCode = null) {
 /**
  * TODOEXPLAIN
  */
-function iishconference_program_form($form, &$form_state, $networks, $networkId, $textsearch) {
+function iishconference_programme_form($form, &$form_state, $networks, $networkId, $textsearch) {
 	$form['#method'] = 'get';
 	$form['#token'] = false;
-	$form['#after_build'] = array('iishconference_program_unset_default_form_elements');
+	$form['#after_build'] = array('iishconference_programme_unset_default_form_elements');
 
 	// create a list of select options
 	// also add empty option
@@ -198,11 +219,11 @@ function iishconference_program_form($form, &$form_state, $networks, $networkId,
 		}
 
 		$form['network'] = array(
-			'#type' => 'select',
-			'#title' => iish_t('Browse networks') . ': ',
-			'#size' => 1,
+			'#type'          => 'select',
+			'#title'         => iish_t('Browse networks') . ': ',
+			'#size'          => 1,
 			'#default_value' => is_null($networkId) ? 0 : $networkId,
-			'#options' => $selectListOfNetworks,
+			'#options'       => $selectListOfNetworks,
 		);
 	}
 
@@ -225,7 +246,7 @@ function iishconference_program_form($form, &$form_state, $networks, $networkId,
 /**
  * TODOEXPLAIN
  */
-function iishconference_program_unset_default_form_elements($form) {
+function iishconference_programme_unset_default_form_elements($form) {
 	unset($form['#build_id'], $form['form_build_id'], $form['form_id'], $form['btnSubmit']['#name']);
 
 	return $form;
@@ -233,9 +254,10 @@ function iishconference_program_unset_default_form_elements($form) {
 
 /**
  * Returns the event date that belongs to the year code, if given
+ *
  * @param string|null $yearCode The year code
  */
-function iishconference_program_get_event_date($yearCode) {
+function iishconference_programme_get_event_date($yearCode) {
 	$eventDate = null;
 	if (!empty($yearCode)) {
 		foreach (CachedConferenceApi::getEventDates() as $date) {
