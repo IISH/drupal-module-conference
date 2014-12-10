@@ -29,6 +29,8 @@ function iishconference_programme($yearCode = null) {
 		drupal_set_message($underConstruction, 'warning');
 	}
 
+	// Make sure the settings are already cached, before changing the year code
+	CachedConferenceApi::getSettings();
 	ConferenceApiClient::setYearCode($eventDate->getYearCodeURL());
 	$queryParameters = drupal_get_query_parameters();
 
