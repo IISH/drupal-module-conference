@@ -52,6 +52,8 @@ class CachedConferenceApi {
 	}
 
 	public static function setEventDate($printErrorMessage = true) {
+		ConferenceApiClient::setYearCode(null);
+
 		$eventDate = EventDateApi::getCurrent($printErrorMessage);
 		cache_set(self::$nameEventDateCache, $eventDate, 'cache', CACHE_PERMANENT);
 
@@ -59,6 +61,8 @@ class CachedConferenceApi {
 	}
 
 	public static function setEventDates($printErrorMessage = true) {
+		ConferenceApiClient::setYearCode(null);
+
 		$eventDates = EventDateApi::getAllForEvent($printErrorMessage);
 		cache_set(self::$nameEventDatesCache, $eventDates, 'cache', CACHE_PERMANENT);
 
@@ -66,6 +70,8 @@ class CachedConferenceApi {
 	}
 
 	public static function setNetworks($printErrorMessage = true) {
+		ConferenceApiClient::setYearCode(null);
+
 		$prop = new ApiCriteriaBuilder();
 		$results = NetworkApi::getListWithCriteria($prop->get(), $printErrorMessage);
 		if ($networks = $results->getResults()) {
@@ -85,6 +91,8 @@ class CachedConferenceApi {
 	}
 
 	private static function set($cacheName, $apiClassName, $printErrorMessage = true) {
+		ConferenceApiClient::setYearCode(null);
+
 		$prop = new ApiCriteriaBuilder();
 		$rm = new ReflectionMethod($apiClassName, 'getListWithCriteria');
 		$results = $rm->invoke(null, $prop->get(), $printErrorMessage);
@@ -138,6 +146,8 @@ class CachedConferenceApi {
 	}
 
 	public static function setSettings($printErrorMessage = true) {
+		ConferenceApiClient::setYearCode(null);
+
 		$settingsApi = new SettingsApi();
 		$settings = $settingsApi->settings($printErrorMessage);
 		cache_set(self::$nameSettingsCache, $settings, 'cache', CACHE_PERMANENT);
@@ -146,6 +156,8 @@ class CachedConferenceApi {
 	}
 
 	public static function setTranslations($printErrorMessage = true) {
+		ConferenceApiClient::setYearCode(null);
+
 		$translationsApi = new TranslationsApi();
 		$translations = $translationsApi->translations($printErrorMessage);
 		cache_set(self::$nameTranslationsCache, $translations, 'cache', CACHE_PERMANENT);
@@ -154,11 +166,14 @@ class CachedConferenceApi {
 	}
 
 	public static function setSessionsKeyValue($printErrorMessage = true) {
+		ConferenceApiClient::setYearCode(null);
+
 		$props = new ApiCriteriaBuilder();
 		$sessions = SessionApi::getListWithCriteria(
 			$props
 				->sort('name', 'asc')
-				->get()
+				->get(),
+			$printErrorMessage
 		)->getResults();
 		$sessionsKeyValue = CRUDApiClient::getAsKeyValueArray($sessions);
 
