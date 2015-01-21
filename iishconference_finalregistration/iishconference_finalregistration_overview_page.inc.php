@@ -31,13 +31,40 @@ function finalregistration_overview_form($form, &$form_state) {
 		'#value' => iish_t('Make online payment'),
 	);
 
-	$form['bank_transfer'] = array(
-		'#type'  => 'submit',
-		'#name'  => 'bank_transfer',
-		'#value' => iish_t('Make payment by bank transfer'),
-	);
+	if (SettingsApi::getSetting(SettingsApi::BANK_TRANSFER_ALLOWED) == 1) {
+		$form['bank_transfer'] = array(
+			'#type'  => 'submit',
+			'#name'  => 'bank_transfer',
+			'#value' => iish_t('Make payment by bank transfer'),
+		);
+	}
+
+	if (strlen(trim(SettingsApi::getSetting(SettingsApi::GENERAL_TERMS_CONDITIONS_LINK))) > 0) {
+		$link = SettingsApi::getSetting(SettingsApi::GENERAL_TERMS_CONDITIONS_LINK);
+
+		$form['terms_and_conditions'] = array(
+			'#title'         =>
+				'<a href="' . $link . '" target="_blank">' . iish_t('I accept the terms and conditions.') . '</a>',
+			'#type'          => 'checkbox',
+			'#default_value' => false,
+		);
+	}
 
 	return $form;
+}
+
+/**
+ * The actual validate handler for the final registration procedure overview
+ *
+ * @param array $form       The form description
+ * @param array $form_state The form state
+ */
+function finalregistration_overview_validate($form, &$form_state) {
+	if ((strlen(trim(SettingsApi::getSetting(SettingsApi::GENERAL_TERMS_CONDITIONS_LINK))) > 0) &&
+		($form_state['values']['terms_and_conditions'] !== 1)
+	) {
+		form_set_error('terms_and_conditions', iish_t('You have to accept our terms and conditions.'));
+	}
 }
 
 /**
@@ -51,7 +78,10 @@ function finalregistration_overview_submit($form, &$form_state) {
 	$user = LoggedInUserDetails::getUser();
 
 	$totalAmount = $participant->getTotalAmount();
-	$isPayWayTransaction = ($form_state['triggering_element']['#name'] !== 'bank_transfer');
+	$isPayWayTransaction = (
+		(SettingsApi::getSetting(SettingsApi::BANK_TRANSFER_ALLOWED) != 1) ||
+		($form_state['triggering_element']['#name'] !== 'bank_transfer')
+	);
 
 	// Create the order, if successful, redirect user to payment page
 	$createOrder = new PayWayMessage(array(

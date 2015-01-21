@@ -136,6 +136,11 @@ function getFormForCurrentStage($form, &$form_state) {
 function iishconference_finalregistration_main_form_validate($form, &$form_state) {
 	// Currently, only the main page has a validation function
 	switch ($form_state['stage']) {
+		case 'overview':
+			if ($form_state['triggering_element']['#name'] !== 'back') {
+				finalregistration_overview_validate($form, $form_state);
+			}
+			break;
 		case 'main':
 		default:
 			finalregistration_main_validate($form, $form_state);

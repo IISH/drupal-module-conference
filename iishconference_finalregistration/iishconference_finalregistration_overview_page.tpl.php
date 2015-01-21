@@ -12,7 +12,8 @@
 
 		<?php if (SettingsApi::getSetting(SettingsApi::SHOW_ACCOMPANYING_PERSONS) == 1) : ?>
 			<?php foreach ($variables['accompanying-persons'] as $accompanyingPerson) : ?>
-				<li><?php print $accompanyingPerson . ' ' . $variables['fee-amount-accompanying-person-description']; ?></li>
+				<li><?php print $accompanyingPerson . ' ' .
+						$variables['fee-amount-accompanying-person-description']; ?></li>
 			<?php endforeach; ?>
 		<?php endif; ?>
 
@@ -45,6 +46,10 @@
 			<li><?php print ConferenceMisc::getCleanHTML($variables['address']); ?></li>
 		</ul>
 	<?php endif; ?>
+
+	<?php if (strlen(trim(SettingsApi::getSetting(SettingsApi::GENERAL_TERMS_CONDITIONS_LINK))) > 0) : ?>
+		<?php print drupal_render($variables['form']['terms_and_conditions']); ?>
+	<?php endif; ?>
 </div>
 
 <?php print drupal_render($variables['form']['back']); ?>
@@ -58,12 +63,14 @@
 	<?php unset($variables['form']['confirm']); ?>
 
 	<div id="payment-buttons">
-		<?php if (!$variables['bank_transfer_open']) : ?>
-			<?php unset($variables['form']['bank_transfer']); ?>
+		<?php if (SettingsApi::getSetting(SettingsApi::BANK_TRANSFER_ALLOWED) == 1) : ?>
+			<?php if (!$variables['bank_transfer_open']) : ?>
+				<?php unset($variables['form']['bank_transfer']); ?>
 
-			<span class="eca_warning">
-				<?php print iish_t('It is no longer possible to pay via bank transfer, please make an online payment.'); ?>
-			</span>
+				<span class="eca_warning">
+                    <?php print iish_t('It is no longer possible to pay via bank transfer, please make an online payment.'); ?>
+                </span>
+			<?php endif; ?>
 		<?php endif; ?>
 
 		<?php print drupal_render_children($variables['form']); ?>

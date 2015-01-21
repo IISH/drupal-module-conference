@@ -9,6 +9,7 @@ class SettingsApi {
 	const AWARD_NAME = 'award_name';
 	const BANK_TRANSFER_LASTDATE = 'bank_transfer_lastdate';
 	const BANK_TRANSFER_INFO = 'bank_transfer_info';
+	const BANK_TRANSFER_ALLOWED = 'bank_transfer_allowed';
 	const COUNTRY_ID = 'country_id';
 	const DEFAULT_NETWORK_ID = 'default_network_id';
 	const DEFAULT_ORGANISATION_EMAIL = 'default_organisation_email';
@@ -28,6 +29,7 @@ class SettingsApi {
 	const PREREGISTRATION_SESSIONS = 'preregistration_sessions';
 	const SESSION_NAME_PLURAL = 'session_name_plural';
 	const SESSION_NAME_SINGULAR = 'session_name_singular';
+	const GENERAL_TERMS_CONDITIONS_LINK = 'general_terms_conditions_link';
 
 	// Show / hide
 	const HIDE_ALWAYS_IN_ONLINE_PROGRAMME = 'hide_always_in_online_programme';
