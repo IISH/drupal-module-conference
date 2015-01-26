@@ -44,7 +44,8 @@ function finalregistration_overview_form($form, &$form_state) {
 
 		$form['terms_and_conditions'] = array(
 			'#title'         =>
-				'<a href="' . $link . '" target="_blank">' . iish_t('I accept the terms and conditions.') . '</a>',
+				iish_t('Check the box to accept the') . ' ' .
+				'<a href="' . $link . '" target="_blank">' . iish_t('General terms and conditions') . '</a>.',
 			'#type'          => 'checkbox',
 			'#default_value' => false,
 		);
@@ -63,7 +64,7 @@ function finalregistration_overview_validate($form, &$form_state) {
 	if ((strlen(trim(SettingsApi::getSetting(SettingsApi::GENERAL_TERMS_CONDITIONS_LINK))) > 0) &&
 		($form_state['values']['terms_and_conditions'] !== 1)
 	) {
-		form_set_error('terms_and_conditions', iish_t('You have to accept our terms and conditions.'));
+		form_set_error('terms_and_conditions', iish_t('You have to accept the general terms and conditions.'));
 	}
 }
 
