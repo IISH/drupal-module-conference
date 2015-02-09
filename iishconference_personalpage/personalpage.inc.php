@@ -184,7 +184,7 @@ function conference_personalpage_create_payment_status(array &$registeredAndPaye
 	$paymentStatus = iish_t('(Final registration and payment has not started yet)');
 
 	if (module_exists('iishconference_finalregistration')) {
-		$paymentStatus = iish_t('(!link)', array('!link' => l(iish_t('Final registration and payment'),
+		$paymentStatus = iish_t('(Please go to !link)', array('!link' => l(iish_t('Final registration and payment'),
 			SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration')));
 
 		if (!is_null($participantDateDetails->getPaymentId()) && ($participantDateDetails->getPaymentId() !== 0)) {
