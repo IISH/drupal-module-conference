@@ -118,10 +118,10 @@ class ConferenceApiClient {
 	 */
 	private function call($apiName, $parameters, $printErrorMessage = true, $http_method = Client::HTTP_METHOD_GET) {
 		// See if this request was made before
-		$result = $this->requestCache->get($apiName, $parameters, $http_method);
+		$result = $this->requestCache->get($apiName, self::getYearCode(), $parameters, $http_method);
 
-		if (!$result) {
-			$url = $this->getUrl() . $apiName;
+		if ($result === null) {
+			$url = self::getUrl() . $apiName;
 
 			try {
 				$response = $this->oAuthClient->fetch($url, $parameters, $http_method);
@@ -134,10 +134,9 @@ class ConferenceApiClient {
 
 				if ($response['code'] === 200) {
 					$result = $response['result'];
-					$this->requestCache->set($apiName, $parameters, $http_method, $result);
+					$this->requestCache->set($apiName, self::getYearCode(), $parameters, $http_method, $result);
 				}
 				else {
-					// test env crashes here
 					throw new Exception('Failed to communicate with the conference API: returned ' . $response['code']);
 				}
 			}
@@ -162,8 +161,7 @@ class ConferenceApiClient {
 	 * Request a new token to access the API
 	 */
 	private function requestNewToken() {
-		$response =
-			$this->oAuthClient->getAccessToken($this->getTokenUrl(), ClientCredentials::GRANT_TYPE, array());
+		$response = $this->oAuthClient->getAccessToken(self::getTokenUrl(), ClientCredentials::GRANT_TYPE, array());
 
 		if ($response['code'] === 200) {
 			$token = $response['result']['access_token'];

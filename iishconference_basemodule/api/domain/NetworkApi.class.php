@@ -32,7 +32,7 @@ class NetworkApi extends CRUDApiClient {
 	 */
 	public static function getOnlyNetworksOfChair($networks, $chair) {
 		foreach ($networks as $i => $network) {
-			if (!array_search($chair->getId(), $network->chairs_chair_id)) {
+			if (!in_array($chair->getId(), $network->chairs_chair_id, false)) {
 				unset($networks[$i]);
 			}
 		}

@@ -33,35 +33,31 @@ function iishconference_networksforchairs_main() {
 	$form = drupal_get_form('iishconference_networksforchairs_form');
 	$output = '<div class="iishconference_container_inline">' . render($form) . '</div>';
 
-	$allNetworks = CachedConferenceApi::getNetworks();
-	if (LoggedInUserDetails::isNetworkChair()) {
-		$networks = NetworkApi::getOnlyNetworksOfChair($allNetworks, LoggedInUserDetails::getUser());
-		$links = array();
-		foreach ($networks as $network) {
-			$links[] = l($network->getName(),
-				SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) .
-				NetworkApi::getNetworkName(false, true) . 'forchairs/' . $network->getId());
-		}
-
-		$output .= theme('item_list', array(
-			'title' => iish_t('Your networks'),
-			'items' => $links,
-		));
+	$networks = CachedConferenceApi::getNetworks();
+	if (!LoggedInUserDetails::isCrew() && LoggedInUserDetails::isNetworkChair()) {
+		$networks = NetworkApi::getOnlyNetworksOfChair($networks, LoggedInUserDetails::getUser());
 	}
 
 	$links = array();
-	foreach ($allNetworks as $network) {
+	foreach ($networks as $network) {
 		$links[] = l($network->getName(),
 			SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) .
 			NetworkApi::getNetworkName(false, true) . 'forchairs/' . $network->getId());
 	}
 
 	$output .= theme('item_list', array(
-		'title' => iish_t('All networks'),
+		'title' => iish_t('Your networks'),
 		'items' => $links,
 	));
 
-	return $output;
+	if (count($links) > 0) {
+		return $output;
+	}
+	else {
+		drupal_set_message(iish_t('No networks found!'), 'warning');
+
+		return '';
+	}
 }
 
 /**

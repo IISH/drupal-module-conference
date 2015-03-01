@@ -28,26 +28,30 @@ class SimpleApiCache {
 	 * Sets a item in the cache
 	 *
 	 * @param string     $apiName     The name of the API called
+	 * @param string     $yearCode    The year code used in the API call
 	 * @param array      $parameters  The parameters send with the API call
 	 * @param string     $http_method The HTTP method used
 	 * @param array|null $response    The response
 	 */
-	public function set($apiName, $parameters, $http_method, $response) {
-		$this->requestCache[$apiName . ':' . $http_method . ':' . serialize($parameters)] = $response;
+	public function set($apiName, $yearCode, $parameters, $http_method, $response) {
+		$cacheKey = $apiName . ':' . $yearCode . ':' . $http_method . ':' . serialize($parameters);
+		$this->requestCache[$cacheKey] = $response;
 	}
 
 	/**
 	 * Returns an item from the cache, if it exists
 	 *
 	 * @param string $apiName     The name of the API called
+	 * @param string $yearCode    The year code used in the API call
 	 * @param array  $parameters  The parameters send with the API call
 	 * @param string $http_method The HTTP method used
 	 *
 	 * @return array|null The response found in the cache
 	 */
-	public function get($apiName, $parameters, $http_method) {
-		if (array_key_exists($apiName . ':' . $http_method . ':' . serialize($parameters), $this->requestCache)) {
-			return $this->requestCache[$apiName . ':' . $http_method . ':' . serialize($parameters)];
+	public function get($apiName, $yearCode, $parameters, $http_method) {
+		$cacheKey = $apiName . ':' . $yearCode . ':' . $http_method . ':' . serialize($parameters);
+		if (array_key_exists($cacheKey, $this->requestCache)) {
+			return $this->requestCache[$cacheKey];
 		}
 		else {
 			return null;

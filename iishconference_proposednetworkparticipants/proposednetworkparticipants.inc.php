@@ -22,41 +22,30 @@ function iishconference_proposednetworkparticipants_main() {
 		return '';
 	}
 
-	$allNetworks = CachedConferenceApi::getNetworks();
-	$output = '';
-
+	$networks = CachedConferenceApi::getNetworks();
 	if (!LoggedInUserDetails::isCrew() && LoggedInUserDetails::isNetworkChair()) {
-		$networks = NetworkApi::getOnlyNetworksOfChair($allNetworks, LoggedInUserDetails::getUser());
-		$links = array();
-		foreach ($networks as $network) {
-			$links[] =
-				l($network->getName(),
-					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'proposed' .
-					NetworkApi::getNetworkName(true, true) . 'participants/' .
-					$network->getId());
-		}
-
-		$output .= theme('item_list', array(
-			'title' => iish_t('Your networks'),
-			'items' => $links,
-		));
+		$networks = NetworkApi::getOnlyNetworksOfChair($networks, LoggedInUserDetails::getUser());
 	}
 
 	$links = array();
-	foreach ($allNetworks as $network) {
-		$links[] =
-			l($network->getName(),
-				SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'proposed' .
-				NetworkApi::getNetworkName(true, true) . 'participants/' .
-				$network->getId());
+	foreach ($networks as $network) {
+		$links[] = l($network->getName(),
+			SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'proposed' .
+			NetworkApi::getNetworkName(true, true) . 'participants/' . $network->getId());
 	}
 
-	$output .= theme('item_list', array(
-		'title' => iish_t('All networks'),
-		'items' => $links,
-	));
+	if (count($links) > 0) {
+		return theme('item_list',
+			array(
+				'title' => iish_t('Your networks'),
+				'items' => $links,
+			));
+	}
+	else {
+		drupal_set_message(iish_t('No networks found!'), 'warning');
 
-	return $output;
+		return '';
+	}
 }
 
 /**
@@ -133,8 +122,8 @@ function iishconference_proposednetworkparticipants_detail($network) {
 		$result .= theme('iishconference_container_field', array(
 			'label'       => '',
 			'value'       => (($user->getOrganisation() !== null) && (strlen(trim($user->getOrganisation())) > 0)) ?
-					$user->getOrganisation() :
-					'<em>(' . iish_t('Unknown affiliation') . ')</em>',
+				$user->getOrganisation() :
+				'<em>(' . iish_t('Unknown affiliation') . ')</em>',
 			'valueIsHTML' => ($user->getOrganisation() === null),
 		));
 		$result .= theme('iishconference_container_field', array(
