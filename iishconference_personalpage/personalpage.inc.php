@@ -161,6 +161,10 @@ function conference_personalpage_create_registration_info($userDetails, $partici
 				array('@conference' => CachedConferenceApi::getEventDate()->getLongNameAndYear(),
 				      '!link'       => l(iish_t('pre-registration form'),
 					      SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'pre-registration'))) . '</span>';
+
+		// TODO Should we only allow payments of finished pre-registrations? if so remove next 2 lines
+		$registeredAndPayedContent[] = '<br />';
+		conference_personalpage_create_payment_status($registeredAndPayedContent, $participantDateDetails);
 	}
 	else {
 		$registeredAndPayedContent[] = '<span class="eca_warning">' .

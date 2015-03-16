@@ -25,7 +25,9 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 				array('query' => drupal_get_destination())))));
 	}
 
-	if (!LoggedInUserDetails::isAParticipant()) {
+	// TODO Should we only allow payments of finished pre-registrations?
+//	if (!LoggedInUserDetails::isAParticipant()) {
+	if (!LoggedInUserDetails::isAParticipant() && !LoggedInUserDetails::isAParticipantWithoutConfirmation()) {
 		drupal_set_message(iish_t('You are not registered for the @conference conference. Please go to !link.',
 				array('@conference' => CachedConferenceApi::getEventDate()->getLongNameAndYear(),
 				      '!link'       => l(iish_t('pre-registration form'),
