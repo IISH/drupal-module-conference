@@ -59,7 +59,7 @@ function preregister_paper_form($form, &$form_state) {
 			'#type'          => 'select',
 			'#title'         => iish_t('Proposed network'),
 			'#options'       => CRUDApiClient::getAsKeyValueArray(CachedConferenceApi::getNetworks()),
-			'#size'          => 3,
+			'#size'          => 4,
 			'#required'      => true,
 			'#default_value' => $paper->getNetworkProposalId(),
 		);
@@ -200,7 +200,7 @@ function preregister_paper_form_submit($form, &$form_state) {
 		$paper->setSession($form_state['values']['session']);
 	}
 	else {
-		$paper->setNetworkProposal($form_state['values']['proposednetwork']);
+		$paper->setNetworkProposal($form_state['values']['proposednetwork']); // TODO: QUESTION MARK ???
 		$paper->setSessionProposal($form_state['values']['proposedsession']);
 	}
 

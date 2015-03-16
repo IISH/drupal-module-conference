@@ -182,6 +182,7 @@ function conference_personalpage_create_registration_info($userDetails, $partici
 function conference_personalpage_create_payment_status(array &$registeredAndPayedContent, $participantDateDetails) {
 	$paymentMethod = iish_t('Payment: none');
 	$paymentStatus = iish_t('(Final registration and payment has not started yet)');
+	$extraMessage = '';
 
 	if (module_exists('iishconference_finalregistration')) {
 		$paymentStatus = iish_t('(Please go to !link)', array('!link' => l(iish_t('Final registration and payment'),
@@ -209,7 +210,7 @@ function conference_personalpage_create_payment_status(array &$registeredAndPaye
 				switch ($order->get('payed')) {
 					case PayWayMessage::ORDER_NOT_PAYED:
 						$paymentStatus = iish_t('(not yet confirmed)');
-						break;
+						$extraMessage = iish_t('<br>If you have completed your payment please contact the organisation<br>else please try again !link', array('!link' => l(iish_t('Final registration and payment'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration')));						break;
 					case PayWayMessage::ORDER_PAYED:
 						$paymentStatus = iish_t('(confirmed)');
 						break;
@@ -219,6 +220,7 @@ function conference_personalpage_create_payment_status(array &$registeredAndPaye
 						break;
 					default:
 						$paymentStatus = iish_t('(status unknown)');
+						$extraMessage = iish_t('<br>If you have completed your payment please contact the organisation<br>else please try again !link', array('!link' => l(iish_t('Final registration and payment'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration')));
 				}
 			}
 			else {
@@ -228,7 +230,7 @@ function conference_personalpage_create_payment_status(array &$registeredAndPaye
 		}
 	}
 
-	$registeredAndPayedContent[] = '<span>' . trim($paymentMethod . ' ' . $paymentStatus) . '</span>';
+	$registeredAndPayedContent[] = '<span>' . trim($paymentMethod . ' ' . $paymentStatus) . $extraMessage . '</span>';
 }
 
 /**

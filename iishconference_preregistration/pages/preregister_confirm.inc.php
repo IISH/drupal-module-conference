@@ -194,11 +194,13 @@ function preregister_confirm_form($form, &$form_state) {
 			'label' => 'Title',
 			'value' => $paper->getTitle()
 		));
+
 		$paperContent[] = theme('iishconference_container_field', array(
 			'label'          => 'Abstract',
 			'value'          => $paper->getAbstr(),
 			'valueOnNewLine' => true
 		));
+
 		$paperContent[] = theme('iishconference_container_field', array(
 			'label' => 'Co-author(s)',
 			'value' => $paper->getCoAuthors()

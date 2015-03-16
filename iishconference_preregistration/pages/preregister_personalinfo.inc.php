@@ -195,7 +195,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 			'#type'          => 'select',
 			'#options'       => CRUDApiClient::getAsKeyValueArray(CachedConferenceApi::getNetworks()),
 			'#multiple'      => true,
-			'#size'          => 3,
+			'#size'          => 4,
 			'#description'   => '<i>' . iish_t('Use CTRL key to select multiple networks.') . '</i>',
 			'#states'        => array(
 				'visible' => array(
@@ -223,7 +223,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 			'#type'          => 'select',
 			'#options'       => CRUDApiClient::getAsKeyValueArray(CachedConferenceApi::getNetworks()),
 			'#multiple'      => true,
-			'#size'          => 3,
+			'#size'          => 4,
 			'#description'   => '<i>' . iish_t('Use CTRL key to select multiple networks.') . '</i>',
 			'#states'        => array(
 				'visible' => array(
@@ -271,7 +271,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 			'#type'          => 'select',
 			'#options'       => $networkOptions,
 			'#multiple'      => true,
-			'#size'          => 3,
+			'#size'          => 4,
 			'#description'   => '<i>' . iish_t('Use CTRL key to select multiple networks.') . '</i>',
 			'#states'        => array(
 				'visible' => array(
