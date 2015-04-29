@@ -51,6 +51,7 @@ class SettingsApi {
 	const SHOW_SESSION_CODES = 'show_session_codes';
 	const SHOW_STUDENT = 'show_student';
 	const SHOW_SESSION_PARTICIPANT_TYPES_REGISTRATION = 'show_session_participant_types_registration';
+	const NETWORKSFORCHAIRS_SHOWNETWORKCHAIRS = 'networksforchairs_shownetworkchairs';
 
 	// Required fields
 	const REQUIRED_CV = 'required_cv';

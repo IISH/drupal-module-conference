@@ -106,20 +106,23 @@ function iishconference_networksforchairs_sessions($networkId) {
 				. 'forchairs');
 		}
 
-		$chairLinks = array();
-		foreach ($network->getChairs() as $chair) {
-			$chairLinks[] = l($chair->getFullName(), 'mailto:' . $chair->getEmail(), array('absolute' => true));
-		}
-
 		$title = theme('iishconference_container_field', array(
 			'label' => 'Network',
 			'value' => $network->getName(),
 		));
-		$title .= theme('iishconference_container_field', array(
-			'label'       => 'Chairs in this network',
-			'value'       => ConferenceMisc::getEnumSingleLine($chairLinks),
-			'valueIsHTML' => true,
-		));
+
+		if (SettingsApi::getSetting(SettingsApi::NETWORKSFORCHAIRS_SHOWNETWORKCHAIRS) == 1) {
+			$chairLinks = array();
+			foreach ($network->getChairs() as $chair) {
+				$chairLinks[] = l($chair->getFullName(), 'mailto:' . $chair->getEmail(), array('absolute' => true));
+			}
+
+			$title .= theme('iishconference_container_field', array(
+				'label'       => 'Chairs in this network',
+				'value'       => ConferenceMisc::getEnumSingleLine($chairLinks),
+				'valueIsHTML' => true,
+			));
+		}
 	}
 
 	if ($network !== null) {
@@ -269,20 +272,25 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 
 	$title = '';
 	if ($network !== null) {
-		$chairLinks = array();
-		foreach ($network->getChairs() as $chair) {
-			$chairLinks[] = l($chair->getFullName(), 'mailto:' . $chair->getEmail(), array('absolute' => true));
-		}
 
 		$title = theme('iishconference_container_field', array(
 			'label' => 'Network',
 			'value' => $network->getName(),
 		));
-		$title .= theme('iishconference_container_field', array(
-			'label'       => 'Chairs in this network',
-			'value'       => ConferenceMisc::getEnumSingleLine($chairLinks),
-			'valueIsHTML' => true,
-		));
+
+		if (SettingsApi::getSetting(SettingsApi::NETWORKSFORCHAIRS_SHOWNETWORKCHAIRS) == 1) {
+			$chairLinks = array();
+			foreach ($network->getChairs() as $chair) {
+				$chairLinks[] = l($chair->getFullName(), 'mailto:' . $chair->getEmail(), array('absolute' => true));
+			}
+
+			$title .= theme('iishconference_container_field', array(
+				'label'       => 'Chairs in this network',
+				'value'       => ConferenceMisc::getEnumSingleLine($chairLinks),
+				'valueIsHTML' => true,
+			));
+		}
+
 		$title .= '<br />';
 	}
 
@@ -354,7 +362,7 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 			));
 		}
 
-		if ($paper) {
+		if ($paper && $type && $type->getWithPaper() ) {
 			$result .= '<br />';
 			$result .= theme('iishconference_container_field', array(
 				'label' => 'Paper',
