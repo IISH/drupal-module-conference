@@ -22,7 +22,8 @@ function iishconference_networkparticipants_main() {
 	}
 
 	$networks = CachedConferenceApi::getNetworks();
-	if (!LoggedInUserDetails::isCrew() && LoggedInUserDetails::isNetworkChair()) {
+//	if (!LoggedInUserDetails::isCrew() && LoggedInUserDetails::isNetworkChair()) {
+	if ( SettingsApi::getSetting(SettingsApi::ALLOW_NETWORK_CHAIRS_TO_SEE_ALL_NETWORKS) <> 1 && !LoggedInUserDetails::isCrew() ) {
 		$networks = NetworkApi::getOnlyNetworksOfChair($networks, LoggedInUserDetails::getUser());
 	}
 
@@ -30,13 +31,15 @@ function iishconference_networkparticipants_main() {
 	foreach ($networks as $network) {
 		$links[] = l($network->getName(),
 			SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) .
-			NetworkApi::getNetworkName(false, true) . 'participants/' . $network->getId());
+			NetworkApi::getNetworkName(false, true) . 'participants/' . $network->getId()) . ' (xls)';
 	}
 
 	if (count($links) > 0) {
 		return theme('item_list',
 			array(
-				'title' => iish_t('Your networks'),
+				'title' => iish_t('Networks'),
+				'type'  => 'ol',
+				'attributes' => array( 'class' => 'networkparticipants' ),
 				'items' => $links,
 			));
 	}

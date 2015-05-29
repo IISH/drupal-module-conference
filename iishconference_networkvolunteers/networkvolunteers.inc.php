@@ -33,7 +33,9 @@ function iishconference_networkvolunteers_main() {
 
 	if (count($links) > 0) {
 		return theme('item_list', array(
-			'title' => iish_t('Your networks'),
+			'title' => iish_t('Networks'),
+			'type'  => 'ol',
+			'attributes' => array( 'class' => 'networkvolunteers' ),
 			'items' => $links,
 		));
 	}
@@ -178,7 +180,8 @@ function iishconference_networkvolunteers_listofparticipants_details($volunteeri
  */
 function iishconference_networkvolunteers_get_networks() {
 	$networks = CachedConferenceApi::getNetworks();
-	if (!LoggedInUserDetails::isCrew() && LoggedInUserDetails::isNetworkChair()) {
+//	if (!LoggedInUserDetails::isCrew() && LoggedInUserDetails::isNetworkChair()) {
+	if ( SettingsApi::getSetting(SettingsApi::ALLOW_NETWORK_CHAIRS_TO_SEE_ALL_NETWORKS) <> 1 && !LoggedInUserDetails::isCrew() ) {
 		$networks = NetworkApi::getOnlyNetworksOfChair($networks, LoggedInUserDetails::getUser());
 	}
 

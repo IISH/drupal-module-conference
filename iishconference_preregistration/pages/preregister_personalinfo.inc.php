@@ -88,7 +88,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 		$form['personal_info']['cv'] = array(
 			'#type'          => 'textarea',
 			'#title'         => iish_t('Curriculum Vitae'),
-			'#description'   => '<em>' . iish_t('(max. 200 words)') . '</em>',
+			'#description'   => '<em>' . iish_t('(optional, max. 200 words)') . '</em>',
 			'#rows'          => 2,
 			'#required'      => SettingsApi::getSetting(SettingsApi::REQUIRED_CV) == 1,
 			'#default_value' => $user->getCv(),

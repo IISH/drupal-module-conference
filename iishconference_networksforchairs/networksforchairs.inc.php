@@ -34,7 +34,8 @@ function iishconference_networksforchairs_main() {
 	$output = '<div class="iishconference_container_inline">' . render($form) . '</div>';
 
 	$networks = CachedConferenceApi::getNetworks();
-	if (!LoggedInUserDetails::isCrew() && LoggedInUserDetails::isNetworkChair()) {
+	//if (!LoggedInUserDetails::isCrew() && LoggedInUserDetails::isNetworkChair()) {
+	if ( SettingsApi::getSetting(SettingsApi::ALLOW_NETWORK_CHAIRS_TO_SEE_ALL_NETWORKS) <> 1 && !LoggedInUserDetails::isCrew() ) {
 		$networks = NetworkApi::getOnlyNetworksOfChair($networks, LoggedInUserDetails::getUser());
 	}
 
@@ -46,7 +47,9 @@ function iishconference_networksforchairs_main() {
 	}
 
 	$output .= theme('item_list', array(
-		'title' => iish_t('Your networks'),
+		'title' => iish_t('Networks'),
+		'type'  => 'ol',
+		'attributes' => array( 'class' => 'networksforchairs' ),
 		'items' => $links,
 	));
 
@@ -147,9 +150,9 @@ function iishconference_networksforchairs_sessions($networkId) {
 		}
 
 		$links[] = l($name,
-				SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(false, true) .
-				'forchairs/' . $networkId . '/' . $session->getId(),
-				array('query' => array('search' => $search), 'html' => true)) .
+				SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(false, true) .	'forchairs/' . $networkId . '/' . $session->getId(),
+				array('query' => array('search' => $search), 'html' => true)
+			) .
 			' <em>(' . $session->getState()->getSimpleDescription() . ')</em>';
 	}
 
@@ -180,6 +183,7 @@ function iishconference_networksforchairs_sessions($networkId) {
 	$sessionLinks = theme('item_list', array(
 		'title' => iish_t('Sessions'),
 		'type'  => 'ol',
+		'attributes' => array( 'class' => 'networksforchairs' ),
 		'items' => $links,
 	));
 
@@ -386,6 +390,8 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 	$seperator = '<br/><hr /><br/>';
 
 	if (count($participantData) > 0) {
+		$participantData[] = '<div class="eca_warning">Remark: Only showing confirmed participants.</div>';
+
 		return $header . $title . $seperator . implode($seperator, $participantData);
 	}
 	else {
@@ -404,7 +410,7 @@ function iishconference_networksforchairs_form($form, &$form_state) {
 
 	$form['search'] = array(
 		'#type'      => 'textfield',
-		'#title'     => iish_t('Filter on session name'),
+		'#title'     => iish_t('Search in session name'),
 		'#size'      => 20,
 		'#maxlength' => 50,
 		'#prefix'    => '<div class="iishconference_inline">',

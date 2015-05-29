@@ -52,6 +52,7 @@ class SettingsApi {
 	const SHOW_STUDENT = 'show_student';
 	const SHOW_SESSION_PARTICIPANT_TYPES_REGISTRATION = 'show_session_participant_types_registration';
 	const NETWORKSFORCHAIRS_SHOWNETWORKCHAIRS = 'networksforchairs_shownetworkchairs';
+	const ALLOW_NETWORK_CHAIRS_TO_SEE_ALL_NETWORKS = 'allow_network_chairs_to_see_all_networks';
 
 	// Required fields
 	const REQUIRED_CV = 'required_cv';

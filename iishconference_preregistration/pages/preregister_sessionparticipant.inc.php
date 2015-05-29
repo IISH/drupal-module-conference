@@ -94,7 +94,7 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 		$form['participant']['addparticipantcv'] = array(
 			'#type'          => 'textarea',
 			'#title'         => iish_t('Curriculum Vitae'),
-			'#description'   => '<em>' . iish_t('(max. 200 words)') . '</em>',
+			'#description'   => '<em>' . iish_t('(optional, max. 200 words)') . '</em>',
 			'#rows'          => 2,
 			'#required'      => $cvRequired,
 			'#default_value' => $userCv,

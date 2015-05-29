@@ -34,6 +34,10 @@ class ParticipantsInSessionApi {
 			$sessionId = -1;
 		}
 
+//		drupal_set_message('apiName: ' . self::$apiName, 'error');
+//		drupal_set_message('networkId: ' . $networkId, 'error');
+//		drupal_set_message('sessionId: ' . $sessionId, 'error');
+
 		$response = $this->client->get(self::$apiName, array(
 			'networkId' => $networkId,
 			'sessionId' => $sessionId
