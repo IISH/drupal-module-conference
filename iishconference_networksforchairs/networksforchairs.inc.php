@@ -31,7 +31,9 @@ function iishconference_networksforchairs_main() {
 	}
 
 	$form = drupal_get_form('iishconference_networksforchairs_form');
-	$output = '<div class="iishconference_container_inline">' . render($form) . '</div>';
+	$output = '<div class="iishconference_container_inline">';
+	$output .= l('« ' . iish_t('Go back to your personal page'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page', array('fragment' => 'nclinks')) . '<br /><br />';
+	$output .= render($form) . '</div>';
 
 	$networks = CachedConferenceApi::getNetworks();
 	//if (!LoggedInUserDetails::isCrew() && LoggedInUserDetails::isNetworkChair()) {
@@ -366,7 +368,8 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 			));
 		}
 
-		if ($paper && $type && $type->getWithPaper() ) {
+		// show if type is 'with paper' of if session id lower then 0 (individual paper)
+		if ($paper && ( $type && $type->getWithPaper() || $sessionId < 0 ) ) {
 			$result .= '<br />';
 			$result .= theme('iishconference_container_field', array(
 				'label' => 'Paper',

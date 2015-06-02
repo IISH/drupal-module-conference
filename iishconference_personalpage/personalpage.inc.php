@@ -609,7 +609,7 @@ function conference_personalpage_create_language_info($participantDateDetails) {
  * @return string The links container in HTML
  */
 function conference_personalpage_create_links($participantDateDetails) {
-	$linksContent = array(theme('iishconference_container_header', array('text' => iish_t('Links'))));
+	$linksContent = array('<a name="links"></a>' . theme('iishconference_container_header', array('text' => iish_t('Links'))));
 
 	// show pre registration link if not registered or participant state is 'not finished' or 'new participant'
 	if (module_exists('iishconference_preregistration') &&
@@ -660,7 +660,7 @@ function conference_personalpage_create_links($participantDateDetails) {
 function conference_personalpage_create_links_network($participantDateDetails) {
 	if (LoggedInUserDetails::hasFullRights() || LoggedInUserDetails::isNetworkChair()) {
 		$linksNetworkContent =
-			array(theme('iishconference_container_header', array('text' => iish_t('Links for chairs of a network'))));
+			array('<a name="nclinks"></a>' . theme('iishconference_container_header', array('text' => iish_t('Links for chairs of a network'))));
 
 		if (module_exists('iishconference_networksforchairs')) {
 			$linksNetworkContent[] = '&bull; ' . l(iish_t('Networks, Sessions & Participants (and papers)'),

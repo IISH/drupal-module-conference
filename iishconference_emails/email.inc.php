@@ -34,9 +34,9 @@ function conference_email_main($email) {
 
 	$emailPage = theme('iishconference_container_inline', array(
 		'inline' => array(
-			l(iish_t('Go back to your emails'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'emails'),
+			l('« ' . iish_t('Go back to your emails'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'emails'),
 			'&nbsp;',
-			l(iish_t('Go back to your personal page'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page'),
+			l('« ' . iish_t('Go back to your personal page'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page'),
 			'<br /><br />',
 		)
 	));

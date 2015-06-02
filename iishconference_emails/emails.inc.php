@@ -106,7 +106,7 @@ function conference_emails() {
 		)
 	);
 
-	$emailsPage = l(iish_t('Go back to your personal page'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page') . '<br /><br />';
+	$emailsPage = l('« ' . iish_t('Go back to your personal page'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page', array('fragment' => 'links')) . '<br /><br />';
 	$emailsPage .= theme('iishconference_container',
 		array(
 			'fields' => array(

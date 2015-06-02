@@ -31,8 +31,10 @@ function iishconference_networkvolunteers_main() {
 			$network->getId());
 	}
 
+	$output = l('« ' . iish_t('Go back to your personal page'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page', array('fragment' => 'nclinks')) . '<br /><br />';
+
 	if (count($links) > 0) {
-		return theme('item_list', array(
+		return $output . theme('item_list', array(
 			'title' => iish_t('Networks'),
 			'type'  => 'ol',
 			'attributes' => array( 'class' => 'networkvolunteers' ),
