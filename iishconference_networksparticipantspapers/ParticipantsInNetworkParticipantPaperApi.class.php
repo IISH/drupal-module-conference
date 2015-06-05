@@ -28,16 +28,16 @@ class ParticipantsInNetworkParticipantPaperApi {
 		$response = $this->client->get(self::$apiName, array(
 			'networkId'     => $networkId,
 			'excel'         => $excel,
-			'network'       => iish_t('Network'),
-			'lastname'      => iish_t('Last name'),
-			'firstname'     => iish_t('First name'),
+			'networkName'   => iish_t('Network'),
+			'lastName'      => iish_t('Last name'),
+			'firstName'     => iish_t('First name'),
 			'email'         => iish_t('E-mail'),
 			'session'       => iish_t('Session'),
-			'sessionstate'  => iish_t('Session state'),
+			'sessionState'  => iish_t('Session state'),
 			'roles'         => iish_t('Roles'),
-			'papertitle'    => iish_t('Paper'),
-			'paperstate'    => iish_t('Paper state'),
-			'paperabstract' => iish_t('Abstract')
+			'paperTitle'    => iish_t('Paper'),
+			'paperST'       => iish_t('Paper state'),
+			'paperAbstract' => iish_t('Abstract')
 		));
 
 		return (($response !== null) && $response['success']) ? $this->processResponse($response, $excel) : false;

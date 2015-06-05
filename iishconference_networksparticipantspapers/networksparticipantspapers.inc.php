@@ -84,9 +84,8 @@ function iishconference_networksparticipantspapers_detail($network) {
 			drupal_add_http_header('Cache-Control', 'must-revalidate, post-check=0, pre-check=0');
 			drupal_add_http_header('Content-Type', 'application/vnd.ms-excel');
 			drupal_add_http_header('Content-Disposition',
-				'attachment; filename=' .
-				iish_t('Participants in network @name on @date',
-					array('@name' => $networkName, '@date' => date('m-d-Y'))) . '.xls;');
+				'attachment; filename="' . iish_t('Participants in network @name on @date (including paper info)',
+					array('@name' => $networkName, '@date' => date('Y-m-d'))) . '.xls";');
 			drupal_add_http_header('Content-Transfer-Encoding', 'binary');
 			drupal_add_http_header('Content-Length', strlen($participants));
 

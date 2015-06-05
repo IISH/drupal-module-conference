@@ -28,6 +28,7 @@ class ParticipantsInNetworkApi {
 		$response = $this->client->get(self::$apiName, array(
 			'networkId' => $networkId,
 			'excel'     => $excel,
+			'networkName'   => iish_t('Network'),
 			'firstName' => iish_t('First name'),
 			'lastName'  => iish_t('Last name'),
 			'email'     => iish_t('E-mail'),
