@@ -1,5 +1,5 @@
-name = Show networks, sessions and participants
-description = Show networks, sessions and participants
+name = Network chair links: Networks, sessions and participants
+description = Networks, sessions and participants
 package = IISH Conference
 core = 7.x
 version = 7.x-0.0.2

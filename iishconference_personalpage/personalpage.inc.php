@@ -663,15 +663,21 @@ function conference_personalpage_create_links_network($participantDateDetails) {
 			array('<a name="nclinks"></a>' . theme('iishconference_container_header', array('text' => iish_t('Links for chairs of a network'))));
 
 		if (module_exists('iishconference_networksforchairs')) {
-			$linksNetworkContent[] = '&bull; ' . l(iish_t('Networks, Sessions & Participants (and papers)'),
+			$linksNetworkContent[] = '&bull; ' . l(iish_t('Networks, Sessions & Participants (and Papers)'),
 					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(false, true) .
 					'forchairs') . '<br />';
 		}
 		if (module_exists('iishconference_networkparticipants')) {
 			$linksNetworkContent[] = '&bull; ' .
-				l(iish_t('Networks and their Participants'),
+				l(iish_t('Networks and their Participants (only names & e-mail addresses)'),
 					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(false, true) .
 					'participants') . ' (xls)<br />';
+		}
+		if (module_exists('iishconference_networksparticipantspapers')) {
+			$linksNetworkContent[] = '&bull; ' .
+				l(iish_t('Networks and their Participants (incl. papers)'),
+					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(false, true) .
+					'participantspapers') . ' (xls)<br />';
 		}
 		if (module_exists('iishconference_networkvolunteers')) {
 			$linksNetworkContent[] = '&bull; ' . l(iish_t('Networks and their Volunteers (Chair/Discussant)'),
@@ -679,7 +685,7 @@ function conference_personalpage_create_links_network($participantDateDetails) {
 					'volunteers') . '<br />';
 		}
 		if (module_exists('iishconference_proposednetworkparticipants')) {
-			$linksNetworkContent[] = '&bull; ' . l(iish_t('Participants and their proposed networks'),
+			$linksNetworkContent[] = '&bull; ' . l(iish_t('Participants and their proposed Networks'),
 					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'proposed' .
 					NetworkApi::getNetworkName(true, true) . 'participants') . '<br />';
 		}

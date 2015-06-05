@@ -7,7 +7,7 @@ function iishconference_proposednetworkparticipants_help($path, $arg) {
 	switch ($path) {
 		// Module help for the block module
 		case "admin/help#iishconference_proposednetworkparticipants":
-			return '<p><strong>About the \'Show Participants and their proposed network\' module</strong><br><br>...</p>';
+			return '<p><strong>About the \'Participants and their proposed network\' module</strong><br><br>...</p>';
 			break;
 	}
 }

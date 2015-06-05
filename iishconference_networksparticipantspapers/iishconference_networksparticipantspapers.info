@@ -1,0 +1,7 @@
+name = Network chair links: Networks, participants and their papers (xls)
+description = Allows network chairs and crew to download Excel files with participant and paper info for a specified network
+package = IISH Conference
+core = 7.x
+version = 7.x-0.0.1
+files[] = ParticipantsInNetworkParticipantPaperApi.class.php
+dependencies[] = iishconference_basemodule

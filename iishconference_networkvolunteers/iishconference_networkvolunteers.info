@@ -1,4 +1,4 @@
-name = Show networks and their volunteers
+name = Network chair links: Networks and their volunteers
 description = Allows network chairs and crew to see who volunteer and in which network
 package = IISH Conference
 core = 7.x
