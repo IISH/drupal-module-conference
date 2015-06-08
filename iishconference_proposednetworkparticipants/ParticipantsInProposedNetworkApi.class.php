@@ -1,7 +1,7 @@
 <?php
 
 /**
- * API that returns all proposed papers of participants for a single network
+ * API that returns all individual paper proposals of participants for a single network
  */
 class ParticipantsInProposedNetworkApi {
 	private static $apiName = 'participantsInProposedNetwork';

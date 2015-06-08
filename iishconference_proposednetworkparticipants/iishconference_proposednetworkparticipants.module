@@ -22,7 +22,7 @@ function iishconference_proposednetworkparticipants_menu() {
 	$networkNameSingular = NetworkApi::getNetworkName();
 
 	$items[$extraPath . 'proposed' . strtolower($networkNameSingular) . 'participants'] = array(
-		'title'           => iish_t('Participants and their proposed networks', array(), false),
+		'title'           => iish_t('Participants and their individual paper proposals', array(), false),
 		'page callback'   => 'iishconference_proposednetworkparticipants_main',
 		'type'            => MENU_NORMAL_ITEM,
 		'access callback' => true,
@@ -30,7 +30,7 @@ function iishconference_proposednetworkparticipants_menu() {
 	);
 
 	$items[$extraPath . 'proposed' . strtolower($networkNameSingular) . 'participants/%iishconference_network'] = array(
-		'title'           => iish_t('Participants and their proposed networks', array(), false),
+		'title'           => iish_t('Participants and their individual paper proposals', array(), false),
 		'page callback'   => 'iishconference_proposednetworkparticipants_detail',
 		'page arguments'  => array(2),
 		'type'            => MENU_NORMAL_ITEM,

@@ -1,0 +1,7 @@
+name = Network chair: Participants and their individual paper proposals (xls)
+description = Allows network chairs to download an Excel file with individual paper proposals
+package = IISH Conference
+core = 7.x
+version = 7.x-0.0.1
+files[] = ParticipantsInNetworkIndividualPaperApi.class.php
+dependencies[] = iishconference_basemodule

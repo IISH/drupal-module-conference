@@ -5,7 +5,7 @@
  *
  * @return string The HTML for a list of networks
  */
-function iishconference_networkparticipants_main() {
+function iishconference_networksessionpapersxls_main() {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
 		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
@@ -31,7 +31,7 @@ function iishconference_networkparticipants_main() {
 	foreach ($networks as $network) {
 		$links[] = l($network->getName(),
 			SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) .
-			NetworkApi::getNetworkName(true, true) . 'participants/' . $network->getId()) . ' (xls)';
+			NetworkApi::getNetworkName(true, true) . 'sessionpapersxls/' . $network->getId()) . ' (xls)';
 	}
 
 	$output = l('« ' . iish_t('Go back to your personal page'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page', array('fragment' => 'nclinks')) . '<br /><br />';
@@ -41,7 +41,7 @@ function iishconference_networkparticipants_main() {
 			array(
 				'title' => iish_t('Networks'),
 				'type'  => 'ol',
-				'attributes' => array( 'class' => 'networkparticipants' ),
+				'attributes' => array( 'class' => 'networksessionpapersxls' ),
 				'items' => $links,
 			));
 	}
@@ -59,7 +59,7 @@ function iishconference_networkparticipants_main() {
  *
  * @return mixed The download, or else an error message
  */
-function iishconference_networkparticipants_detail($network) {
+function iishconference_networksessionpapersxls_detail($network) {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
 		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
@@ -77,14 +77,14 @@ function iishconference_networkparticipants_detail($network) {
 
 	if (!empty($network)) {
 		$networkName = EasyProtection::easyAlphaNumericStringProtection($network->getName());
-		$participantsInNetworkApi = new ParticipantsInNetworkApi();
-		if ($participants = $participantsInNetworkApi->getParticipantsForNetwork($network, true)) {
+		$participantsApi = new ParticipantsInNetworkParticipantPaperApi();
+		if ($participants = $participantsApi->getParticipantsForNetwork($network, true)) {
 			drupal_add_http_header('Pragma', 'public');
 			drupal_add_http_header('Expires', '0');
 			drupal_add_http_header('Cache-Control', 'must-revalidate, post-check=0, pre-check=0');
 			drupal_add_http_header('Content-Type', 'application/vnd.ms-excel');
 			drupal_add_http_header('Content-Disposition',
-				'attachment; filename="' . iish_t('Participant names and email addresses in network @name on @date',
+				'attachment; filename="' . iish_t('Participants in network @name on @date (including paper info)',
 					array('@name' => $networkName, '@date' => date('Y-m-d'))) . '.xls";');
 			drupal_add_http_header('Content-Transfer-Encoding', 'binary');
 			drupal_add_http_header('Content-Length', strlen($participants));
@@ -96,5 +96,5 @@ function iishconference_networkparticipants_detail($network) {
 
 	drupal_set_message(iish_t('Failed to create an excel file for download.'), 'error');
 	drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) .
-		NetworkApi::getNetworkName(true, true) . 'participants');
+		NetworkApi::getNetworkName(false, true) . 'participants');
 }

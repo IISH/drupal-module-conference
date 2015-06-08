@@ -1,0 +1,43 @@
+<?php
+
+/**
+ * Implements hook_help
+ */
+function iishconference_networksessionpapersxls_help($path, $arg) {
+	switch ($path) {
+		// Module help for the block module
+		case "admin/help#iishconference_networksessionpapersxls":
+			return '<p><strong>About the \'Allows network chairs to download an Excel file with participant and paper info\' module</strong><br><br>...</p>';
+			break;
+	}
+}
+
+/**
+ * Implements hook_menu
+ */
+function iishconference_networksessionpapersxls_menu() {
+	$items = array();
+
+	$extraPath = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU);
+	$networkNameSingular = NetworkApi::getNetworkName();
+	$networkNamePlural = NetworkApi::getNetworkName(false);
+
+	$items[$extraPath . strtolower($networkNameSingular) . 'sessionpapersxls'] = array(
+		'title'           => iish_t('Participants and their session paper proposals', array(), false),
+		'page callback'   => 'iishconference_networksessionpapersxls_main',
+		'access callback' => true,
+		'type'            => MENU_NORMAL_ITEM,
+		'file'            => 'networksessionpapersxls.inc.php',
+	);
+
+	$items[$extraPath . strtolower($networkNameSingular) . 'sessionpapersxls/%iishconference_network'] = array(
+		'title'           => iish_t('Participants and their session paper proposals', array(), false),
+		'page callback'   => 'iishconference_networksessionpapersxls_detail',
+		'page arguments'  => array(2),
+		'access callback' => true,
+		'type'            => MENU_CALLBACK,
+		'file'            => 'networksessionpapersxls.inc.php',
+	);
+
+	return $items;
+}

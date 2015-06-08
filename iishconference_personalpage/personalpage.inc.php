@@ -662,33 +662,43 @@ function conference_personalpage_create_links_network($participantDateDetails) {
 		$linksNetworkContent =
 			array('<a name="nclinks"></a>' . theme('iishconference_container_header', array('text' => iish_t('Links for chairs of a network'))));
 
+		// names and email addresses
+		if (module_exists('iishconference_networkparticipants')) {
+			$linksNetworkContent[] = '&bull; ' . l(iish_t('Participant names and e-mail addresses'),
+					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(true, true) .
+					'participants') . ' (xls)<br />';
+		}
+		// session paper proposals
 		if (module_exists('iishconference_networksforchairs')) {
-			$linksNetworkContent[] = '&bull; ' . l(iish_t('Networks, Sessions & Participants (and Papers)'),
+			$linksNetworkContent[] = '&bull; ' . l(iish_t('Participants and their papers'),
 					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(false, true) .
 					'forchairs') . '<br />';
 		}
-		if (module_exists('iishconference_networkparticipants')) {
-			$linksNetworkContent[] = '&bull; ' .
-				l(iish_t('Networks and their Participants (only names & e-mail addresses)'),
-					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(false, true) .
-					'participants') . ' (xls)<br />';
+		// session paper proposals xls
+		if (module_exists('iishconference_networksessionpapersxls')) {
+			$linksNetworkContent[] = '&bull; ' . l(iish_t('Participants and their session paper proposals'),
+					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(true, true) .
+					'sessionpapersxls') . ' (xls)<br />';
 		}
-		if (module_exists('iishconference_networksparticipantspapers')) {
-			$linksNetworkContent[] = '&bull; ' .
-				l(iish_t('Networks and their Participants (incl. papers)'),
-					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(false, true) .
-					'participantspapers') . ' (xls)<br />';
+		// individual paper proposals
+//		if (module_exists('iishconference_proposednetworkparticipants')) {
+//			$linksNetworkContent[] = '&bull; ' . l(iish_t('Participants and their individual paper proposals'),
+//					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'proposed' .
+//					NetworkApi::getNetworkName(true, true) . 'participants') . '<br />';
+//		}
+		// individual paper proposals xls
+		if (module_exists('iishconference_networkindividualpapersxls')) {
+			$linksNetworkContent[] = '&bull; ' . l(iish_t('Participants and their individual paper proposals'),
+					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(true, true) .
+					'individualpapersxls') . ' (xls)<br />';
 		}
+		// volunteers
 		if (module_exists('iishconference_networkvolunteers')) {
-			$linksNetworkContent[] = '&bull; ' . l(iish_t('Networks and their Volunteers (Chair/Discussant)'),
+			$linksNetworkContent[] = '&bull; ' . l(iish_t('Volunteers (Chair/Discussant)'),
 					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(true, true) .
 					'volunteers') . '<br />';
 		}
-		if (module_exists('iishconference_proposednetworkparticipants')) {
-			$linksNetworkContent[] = '&bull; ' . l(iish_t('Participants and their proposed Networks'),
-					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'proposed' .
-					NetworkApi::getNetworkName(true, true) . 'participants') . '<br />';
-		}
+		// election advisory
 		if (module_exists('iishconference_electionadvisory')) {
 			$linksNetworkContent[] = '&bull; ' . l(iish_t('Election \'Advisory board\''),
 					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'election-advisory-board') . '<br />';

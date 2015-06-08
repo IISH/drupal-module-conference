@@ -1,0 +1,7 @@
+name = Network chairs: Networks, sessions and participants (xls)
+description = Allows network chairs to download an Excel file with sessions papers
+package = IISH Conference
+core = 7.x
+version = 7.x-0.0.1
+files[] = ParticipantsInNetworkSessionPaperApi.class.php
+dependencies[] = iishconference_basemodule

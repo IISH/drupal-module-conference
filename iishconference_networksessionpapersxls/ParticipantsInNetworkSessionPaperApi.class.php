@@ -4,7 +4,7 @@
  * API that returns all participants in a network
  */
 class ParticipantsInNetworkParticipantPaperApi {
-	private static $apiName = 'participantsPapersInNetwork';
+	private static $apiName = 'sessionPapersInNetworkXls';
 	private $client;
 
 	public function __construct() {

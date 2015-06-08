@@ -22,7 +22,7 @@ function iishconference_networkvolunteers_menu() {
 	$networkNameSingular = NetworkApi::getNetworkName();
 
 	$items[$extraPath . strtolower($networkNameSingular) . 'volunteers'] = array(
-		'title'           => iish_t('Networks & Volunteers', array(), false),
+		'title'           => iish_t('Volunteers (Chair/Discussant)', array(), false),
 		'page callback'   => 'iishconference_networkvolunteers_main',
 		'access callback' => true,
 		'type'            => MENU_NORMAL_ITEM,
@@ -30,7 +30,7 @@ function iishconference_networkvolunteers_menu() {
 	);
 
 	$items[$extraPath . strtolower($networkNameSingular) . 'volunteers/%iishconference_network'] = array(
-		'title'           => iish_t('Network and its volunteers', array(), false),
+		'title'           => iish_t('Volunteers (Chair/Discussant)', array(), false),
 		'page callback'   => 'iishconference_networkvolunteers_detail',
 		'page arguments'  => array(2),
 		'access callback' => true,

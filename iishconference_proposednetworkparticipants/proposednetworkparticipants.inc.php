@@ -54,7 +54,7 @@ function iishconference_proposednetworkparticipants_main() {
 }
 
 /**
- * Returns a list of all proposed papers of participants for the given network
+ * Returns a list of all individual paper proposals of participants for the given network
  *
  * @param NetworkApi|null $network The network in question
  *

@@ -393,7 +393,7 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 	$seperator = '<br/><hr /><br/>';
 
 	if (count($participantData) > 0) {
-		$participantData[] = '<div class="eca_warning">Remark: Only showing confirmed participants.</div>';
+//		$participantData[] = '<div class="eca_warning">Remark: Only showing confirmed participants.</div>';
 
 		return $header . $title . $seperator . implode($seperator, $participantData);
 	}
