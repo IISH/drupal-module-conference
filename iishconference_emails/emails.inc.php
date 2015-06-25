@@ -111,7 +111,7 @@ function conference_emails() {
 		array(
 			'fields' => array(
 				theme('iishconference_container_header',
-					array('text' => iish_t('Emails that have not been sent to you yet'))),
+					array('text' => iish_t('Emails in queue, waiting to be sent'))),
 				$tableNotSent
 			)
 		)
@@ -120,7 +120,7 @@ function conference_emails() {
 		array(
 			'fields' => array(
 				theme('iishconference_container_header',
-					array('text' => iish_t('Emails that have been sent to you'))),
+					array('text' => iish_t('Sent emails'))),
 				$tableSent
 			)
 		)

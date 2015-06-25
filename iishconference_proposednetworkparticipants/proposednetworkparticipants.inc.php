@@ -120,12 +120,12 @@ function iishconference_proposednetworkparticipants_detail($network) {
 		$session = $participant['session'];
 
 		$result = theme('iishconference_container_field', array(
-			'label'       => '',
+			'label'       => 'Participant name',
 			'value'       => l($user->getFullName(), 'mailto:' . $user->getEmail(), array('absolute' => true)),
 			'valueIsHTML' => true,
 		));
 		$result .= theme('iishconference_container_field', array(
-			'label'       => '',
+			'label'       => 'Organisation',
 			'value'       => (($user->getOrganisation() !== null) && (strlen(trim($user->getOrganisation())) > 0)) ?
 				$user->getOrganisation() :
 				'<em>(' . iish_t('Unknown affiliation') . ')</em>',

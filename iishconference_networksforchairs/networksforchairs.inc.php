@@ -332,17 +332,31 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 
 	$participantsInSessionApi = new ParticipantsInSessionApi();
 	$participantsInSession = $participantsInSessionApi->getParticipantsForSession($network, $session);
+
 	$participantData = array();
 	foreach ($participantsInSession as $participant) {
 		$user = $participant['user'];
 		$paper = $participant['paper'];
 		$type = $participant['type'];
+		$participant_date = $participant['participantDate'];
 
 		$result = theme('iishconference_container_field', array(
-			'label'       => 'Participant',
+			'label'       => 'Participant name',
 			'value'       => l($user->getFullName(), 'mailto:' . $user->getEmail(), array('absolute' => true)),
 			'valueIsHTML' => true,
 		));
+
+		#
+		if (SettingsApi::getSetting(SettingsApi::NETWORKSFORCHAIRS_SHOWPARTICIPANTSTATE) == 1) {
+			$state_pre_style = ( ( $participant_date->getStateId() == 0 || $participant_date->getStateId() == 999 ) ? '<span class="eca_warning">' : '');
+			$state_post_style = ( ( $participant_date->getStateId() == 0 || $participant_date->getStateId() == 999 ) ? '</span>' : '');
+
+			$result .= theme('iishconference_container_field', array(
+				'label'       => 'Participant state',
+				'value'       =>  $state_pre_style . SettingsApi::getSetting('participantstate' . $participant_date->getStateId()) . $state_post_style,
+				'valueIsHTML' => true,
+			));
+		}
 
 		if (($user->getOrganisation() !== null) && (strlen($user->getOrganisation()) > 0)) {
 			$result .= theme('iishconference_container_field', array(
@@ -393,8 +407,6 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 	$seperator = '<br/><hr /><br/>';
 
 	if (count($participantData) > 0) {
-//		$participantData[] = '<div class="eca_warning">Remark: Only showing confirmed participants.</div>';
-
 		return $header . $title . $seperator . implode($seperator, $participantData);
 	}
 	else {

@@ -660,7 +660,7 @@ function conference_personalpage_create_links($participantDateDetails) {
 function conference_personalpage_create_links_network($participantDateDetails) {
 	if (LoggedInUserDetails::hasFullRights() || LoggedInUserDetails::isNetworkChair()) {
 		$linksNetworkContent =
-			array('<a name="nclinks"></a>' . theme('iishconference_container_header', array('text' => iish_t('Links for chairs of a network'))));
+			array('<a name="nclinks"></a>' . theme('iishconference_container_header', array('text' => iish_t('Links for network chairs'))));
 
 		// names and email addresses
 		if (module_exists('iishconference_networkparticipants')) {

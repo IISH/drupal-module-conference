@@ -32,4 +32,15 @@ class ParticipantStateApi extends CRUDApiClient {
 	public function __toString() {
 		return $this->getState();
 	}
-} 
+
+	/**
+	 * Allows the creation of a participant type via an array with details
+	 *
+	 * @param array $type An array with participant type details
+	 *
+	 * @return ParticipantTypeApi A participant type object
+	 */
+	public static function getParticipantStateFromArray(array $state) {
+		return self::createNewInstance(__CLASS__, $state);
+	}
+}

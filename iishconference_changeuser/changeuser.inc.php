@@ -62,11 +62,12 @@ function conference_changeuser_form_submit($form, &$form_state) {
 	$userInfo = $userInfoApi->userInfo(trim($form_state['values']['user_id']));
 
 	if ($userInfo) {
-		if ($userInfo['isCrew']) {
-			form_set_error('user_id', iish_t('You cannot change into a crew member.'));
-			$form_state['rebuild'] = true;
-		}
-		else if ($userInfo['hasFullRights']) {
+//		if ($userInfo['isCrew']) {
+//			form_set_error('user_id', iish_t('You cannot change into a crew member.'));
+//			$form_state['rebuild'] = true;
+//		}
+//		else
+		if ($userInfo['hasFullRights']) {
 			form_set_error('user_id', iish_t('You cannot change into an administrator.'));
 			$form_state['rebuild'] = true;
 		}

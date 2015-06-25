@@ -35,7 +35,7 @@ class ParticipantsInNetworkParticipantPaperApi {
 			'session'       => iish_t('Session'),
 			'sessionState'  => iish_t('Session state'),
 			'roles'         => iish_t('Roles'),
-			'paperTitle'    => iish_t('Paper'),
+			'paperTitle'    => iish_t('Paper title'),
 			'paperST'       => iish_t('Paper state'),
 			'paperAbstract' => iish_t('Abstract')
 		));

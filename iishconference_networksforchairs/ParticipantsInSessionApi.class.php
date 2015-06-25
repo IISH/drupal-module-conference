@@ -57,10 +57,11 @@ class ParticipantsInSessionApi {
 		$results = array();
 		foreach ($response as $participantInfo) {
 			$user = UserApi::getUserFromArray($participantInfo[0]);
-			$paper = ($participantInfo[1] === null) ? null : PaperApi::getPaperFromArray($participantInfo[1]);
-			$type = (isset($participantInfo[2]) && ($participantInfo[2] !== null)) ? ParticipantTypeApi::getParticipantTypeFromArray($participantInfo[2]) : null;
+			$participantDate = ParticipantDateApi::getParticipantDateFromArray($participantInfo[1]);
+			$paper = ($participantInfo[2] === null) ? null : PaperApi::getPaperFromArray($participantInfo[2]);
+			$type = (isset($participantInfo[3]) && ($participantInfo[3] !== null)) ? ParticipantTypeApi::getParticipantTypeFromArray($participantInfo[3]) : null;
 
-			$results[] = array('user' => $user, 'paper' => $paper, 'type' => $type);
+			$results[] = array('user' => $user, 'paper' => $paper, 'type' => $type, 'participantDate' => $participantDate);
 		}
 
 		return $results;
