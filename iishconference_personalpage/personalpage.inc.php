@@ -674,11 +674,17 @@ function conference_personalpage_create_links_network($participantDateDetails) {
 					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(false, true) .
 					'forchairs') . '<br />';
 		}
-		// session paper proposals xls
+		// session paper proposals xls (new and accepted participants)
 		if (module_exists('iishconference_networksessionpapersxls')) {
-			$linksNetworkContent[] = '&bull; ' . l(iish_t('Participants and their session paper proposals'),
+			$linksNetworkContent[] = '&bull; ' . l(iish_t('Participants and their session paper proposals (new and accepted participants)'),
 					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(true, true) .
 					'sessionpapersxls') . ' (xls)<br />';
+		}
+		// session paper proposals xls (only accepted participants)
+		if (module_exists('iishconference_networksessionpapersacceptedxls')) {
+			$linksNetworkContent[] = '&bull; ' . l(iish_t('Participants and their session paper proposals (only accepted participants)'),
+					SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . NetworkApi::getNetworkName(true, true) .
+					'sessionpapersacceptedxls') . ' (xls)<br />';
 		}
 		// individual paper proposals
 //		if (module_exists('iishconference_proposednetworkparticipants')) {

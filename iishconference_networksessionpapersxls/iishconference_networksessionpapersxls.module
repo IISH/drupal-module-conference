@@ -23,7 +23,7 @@ function iishconference_networksessionpapersxls_menu() {
 	$networkNamePlural = NetworkApi::getNetworkName(false);
 
 	$items[$extraPath . strtolower($networkNameSingular) . 'sessionpapersxls'] = array(
-		'title'           => iish_t('Participants and their session paper proposals', array(), false),
+		'title'           => iish_t('Participants and their session paper proposals (new and accepted participants)', array(), false),
 		'page callback'   => 'iishconference_networksessionpapersxls_main',
 		'access callback' => true,
 		'type'            => MENU_NORMAL_ITEM,
@@ -31,7 +31,7 @@ function iishconference_networksessionpapersxls_menu() {
 	);
 
 	$items[$extraPath . strtolower($networkNameSingular) . 'sessionpapersxls/%iishconference_network'] = array(
-		'title'           => iish_t('Participants and their session paper proposals', array(), false),
+		'title'           => iish_t('Participants and their session paper proposals (new and accepted participants)', array(), false),
 		'page callback'   => 'iishconference_networksessionpapersxls_detail',
 		'page arguments'  => array(2),
 		'access callback' => true,

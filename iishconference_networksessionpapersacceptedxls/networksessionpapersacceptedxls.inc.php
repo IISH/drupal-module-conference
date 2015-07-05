@@ -5,7 +5,7 @@
  *
  * @return string The HTML for a list of networks
  */
-function iishconference_networksessionpapersxls_main() {
+function iishconference_networksessionpapersacceptedxls_main() {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
 		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
@@ -31,7 +31,7 @@ function iishconference_networksessionpapersxls_main() {
 	foreach ($networks as $network) {
 		$links[] = l($network->getName(),
 			SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) .
-			NetworkApi::getNetworkName(true, true) . 'sessionpapersxls/' . $network->getId()) . ' (xls)';
+			NetworkApi::getNetworkName(true, true) . 'sessionpapersacceptedxls/' . $network->getId()) . ' (xls)';
 	}
 
 	$output = l('« ' . iish_t('Go back to your personal page'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'personal-page', array('fragment' => 'nclinks')) . '<br /><br />';
@@ -41,7 +41,7 @@ function iishconference_networksessionpapersxls_main() {
 			array(
 				'title' => iish_t('Networks'),
 				'type'  => 'ol',
-				'attributes' => array( 'class' => 'networksessionpapersxls' ),
+				'attributes' => array( 'class' => 'networksessionpapersacceptedxls' ),
 				'items' => $links,
 			));
 	}
@@ -59,7 +59,7 @@ function iishconference_networksessionpapersxls_main() {
  *
  * @return mixed The download, or else an error message
  */
-function iishconference_networksessionpapersxls_detail($network) {
+function iishconference_networksessionpapersacceptedxls_detail($network) {
 	if (!LoggedInUserDetails::isLoggedIn()) {
 		// redirect to login page
 		header('Location: ' . url(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'login',
@@ -77,14 +77,14 @@ function iishconference_networksessionpapersxls_detail($network) {
 
 	if (!empty($network)) {
 		$networkName = EasyProtection::easyAlphaNumericStringProtection($network->getName());
-		$participantsApi = new ParticipantsInNetworkParticipantPaperApi();
+		$participantsApi = new ParticipantsInNetworkParticipantPaperAcceptedApi();
 		if ($participants = $participantsApi->getParticipantsForNetwork($network, true)) {
 			drupal_add_http_header('Pragma', 'public');
 			drupal_add_http_header('Expires', '0');
 			drupal_add_http_header('Cache-Control', 'must-revalidate, post-check=0, pre-check=0');
 			drupal_add_http_header('Content-Type', 'application/vnd.ms-excel');
 			drupal_add_http_header('Content-Disposition',
-				'attachment; filename="' . iish_t('Participants in network @name on @date (new and accepted participants, including paper info)',
+				'attachment; filename="' . iish_t('Participants in network @name on @date (only accepted participants, including paper info)',
 					array('@name' => $networkName, '@date' => date('Y-m-d'))) . '.xls";');
 			drupal_add_http_header('Content-Transfer-Encoding', 'binary');
 			drupal_add_http_header('Content-Length', strlen($participants));
