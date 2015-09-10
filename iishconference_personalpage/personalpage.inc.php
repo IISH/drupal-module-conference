@@ -331,8 +331,16 @@ function conference_personalpage_create_session_info($userDetails, $participantD
 
 	$planned = CRUDApiMisc::getFirstWherePropertyEquals(new SessionRoomDateTimeApi(), 'session_id', $session->getId());
 	if ($planned !== null) {
+
+		// show session end time or only start time?
+		$sessionTime = $planned->getDateTimePeriod();
+		if ( SettingsApi::getSetting(SettingsApi::SHOW_SESSION_ENDTIME_IN_PP) == '0'  ) {
+			$sessionTime = explode('-', $sessionTime);
+			$sessionTime = $sessionTime[0];
+		}
+
 		$plannedText = '<span class="eca_warning heavy">' . $planned->getDay()
-				->getDayFormatted("l d F Y") . ' / ' . $planned->getDateTimePeriod() . ' / ' .
+				->getDayFormatted("l d F Y") . ' / ' . $sessionTime . ' / ' .
 			$planned->getRoomName() . '</span>';
 		$sessionContent[] = theme('iishconference_container_field', array(
 			'label'       => 'Session Date / Time / Room',

@@ -30,6 +30,7 @@ class SettingsApi {
 	const SESSION_NAME_PLURAL = 'session_name_plural';
 	const SESSION_NAME_SINGULAR = 'session_name_singular';
 	const GENERAL_TERMS_CONDITIONS_LINK = 'general_terms_conditions_link';
+	const ONLINE_PROGRAM_UNDER_CONSTRUCTION = 'online_program_under_construction';
 
 	// Show / hide
 	const HIDE_ALWAYS_IN_ONLINE_PROGRAMME = 'hide_always_in_online_programme';
@@ -54,6 +55,7 @@ class SettingsApi {
 	const NETWORKSFORCHAIRS_SHOWNETWORKCHAIRS = 'networksforchairs_shownetworkchairs';
 	const NETWORKSFORCHAIRS_SHOWPARTICIPANTSTATE = 'networksforchairs_showparticipantstate';
 	const ALLOW_NETWORK_CHAIRS_TO_SEE_ALL_NETWORKS = 'allow_network_chairs_to_see_all_networks';
+	const SHOW_SESSION_ENDTIME_IN_PP = 'show_session_endtime_in_pp';
 
 	// Required fields
 	const REQUIRED_CV = 'required_cv';
