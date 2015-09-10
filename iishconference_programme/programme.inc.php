@@ -24,7 +24,7 @@ function iishconference_programme($yearCode = null) {
 	}
 
 	// If the programme of the last event date is still under construction AND there is an under construction message, show message
-	$underConstruction = iish_t(SettingsApi::getSetting(SettingsApi::ONLINE_PROGRAM_UNDER_CONSTRUCTION));
+	$underConstruction = SettingsApi::getSetting(SettingsApi::ONLINE_PROGRAM_UNDER_CONSTRUCTION);
 	if ($eventDate->isLastDate() && ($underConstruction != '')) {
 		drupal_set_message($underConstruction, 'warning');
 	}

@@ -30,6 +30,7 @@ class SettingsApi {
 	const SESSION_NAME_PLURAL = 'session_name_plural';
 	const SESSION_NAME_SINGULAR = 'session_name_singular';
 	const GENERAL_TERMS_CONDITIONS_LINK = 'general_terms_conditions_link';
+	const ONLINE_PROGRAM_HEADER = 'online_program_header';
 	const ONLINE_PROGRAM_UNDER_CONSTRUCTION = 'online_program_under_construction';
 
 	// Show / hide
