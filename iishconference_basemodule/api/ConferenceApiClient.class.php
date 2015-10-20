@@ -25,6 +25,9 @@ class ConferenceApiClient {
 		if ($cachedToken = cache_get('conference_access_token_' . $clientId)) {
 			$this->oAuthClient->setAccessToken($cachedToken->data);
 		}
+        else {
+            $this->requestNewToken();
+        }
 	}
 
 	/**

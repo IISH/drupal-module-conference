@@ -27,6 +27,16 @@ td.programme {
     height: 1px;
 }
 
+.programme_key {
+    font-weight: bold;
+}
+
+.programme_paper_abstract {
+    margin-top: 10px;
+    margin-left: 10px;
+    font-style: italic;
+}
+
 .download-icon {
     display: inline-block;
     width: 12px;

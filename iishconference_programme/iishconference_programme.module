@@ -53,6 +53,7 @@ function iishconference_programme_theme() {
 				'highlight'              => null,
 				'networkId'              => null,
 				'roomId'                 => null,
+				'sessionId'              => null,
 				'textsearch'             => null,
 				'curShowing'             => null,
 				'downloadPaperIsOpen'    => null,

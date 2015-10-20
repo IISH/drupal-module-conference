@@ -18,12 +18,14 @@ class ProgrammeApi {
 	 * @param int|null    $timeId    Only return the programme for the time slot with the specified id
 	 * @param int|null    $networkId Only return the programme for sessions in the network with the specified id
 	 * @param int|null    $roomId    Only return the programme for sessions in the room with the specified id
+	 * @param int|null    $sessionId Only return the programme for a particular session with the specified id
 	 * @param string|null $terms     Only return the programme for sessions that contain one or more of the specified terms
 	 *                               (Terms are separated by a space)
 	 *
 	 * @return array|null Returns the programme
 	 */
-	public function getProgramme($dayId = null, $timeId = null, $networkId = null, $roomId = null, $terms = null) {
+	public function getProgramme($dayId = null, $timeId = null, $networkId = null, $roomId = null, $sessionId = null,
+								 $terms = null) {
 		$params = array();
 		if (is_int($dayId)) {
 			$params['dayId'] = $dayId;
@@ -36,6 +38,9 @@ class ProgrammeApi {
 		}
 		if (is_int($roomId)) {
 			$params['roomId'] = $roomId;
+		}
+		if (is_int($sessionId)) {
+			$params['sessionId'] = $sessionId;
 		}
 		if (!is_null($terms) && (strlen(trim($terms)) > 0)) {
 			$params['terms'] = trim($terms);
@@ -79,6 +84,17 @@ class ProgrammeApi {
 	}
 
 	/**
+	 * Retrieves the programme for a particular session with the specified id
+	 *
+	 * @param int|null $sessionId The session id to filter on
+	 *
+	 * @return array|null Returns the programme
+	 */
+	public function getProgrammeForSession($sessionId) {
+		return $this->getProgramme(null, null, null, null, $sessionId);
+	}
+
+	/**
 	 * Retrieves the programme for sessions that contain one or more of the specified terms
 	 *
 	 * @param string|null $terms The terms, separated by a space
@@ -86,6 +102,6 @@ class ProgrammeApi {
 	 * @return array|null Returns the programme
 	 */
 	public function getProgrammeForTerms($terms) {
-		return $this->getProgramme(null, null, null, null, $terms);
+		return $this->getProgramme(null, null, null, null, null, $terms);
 	}
 } 

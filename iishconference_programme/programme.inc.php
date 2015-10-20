@@ -43,6 +43,8 @@ function iishconference_programme($yearCode = null) {
 		isset($queryParameters['network']) ? EasyProtection::easyIntegerProtection($queryParameters['network']) : null;
 	$paperId =
 		isset($queryParameters['paper']) ? EasyProtection::easyIntegerProtection($queryParameters['paper']) : null;
+	$sessionId =
+		isset($queryParameters['session']) ? EasyProtection::easyIntegerProtection($queryParameters['session']) : null;
 	$textsearch =
 		isset($queryParameters['textsearch']) ? EasyProtection::easyStringProtection($queryParameters['textsearch']) :
 			null;
@@ -53,6 +55,7 @@ function iishconference_programme($yearCode = null) {
 	$roomId = (is_int($roomId) && ($roomId !== 0)) ? $roomId : null;
 	$networkId = (is_int($networkId) && ($networkId !== 0)) ? $networkId : null;
 	$paperId = (is_int($paperId) && ($paperId !== 0)) ? $paperId : null;
+	$sessionId = (is_int($sessionId) && ($sessionId !== 0)) ? $sessionId : null;
 	$textsearch = (!is_null($textsearch) && (strlen($textsearch) > 0)) ? urldecode($textsearch) : null;
 
 	$props = new ApiCriteriaBuilder();
@@ -172,7 +175,14 @@ function iishconference_programme($yearCode = null) {
 	$programme = null;
 	if (is_null($paper)) {
 		$programmeApi = new ProgrammeApi();
-		$programme = $programmeApi->getProgramme($dayId, $timeId, $networkId, $roomId, $textsearch);
+		$programme = null;
+
+        if (is_null($sessionId)) {
+            $programme = $programmeApi->getProgramme($dayId, $timeId, $networkId, $roomId, $sessionId, $textsearch);
+        }
+        else {
+            $programme = $programmeApi->getProgrammeForSession($sessionId);
+        }
 	}
 
 	$paperDownloadLinkStart = variable_get('conference_base_url') . variable_get('conference_event_code') . '/' .
@@ -193,6 +203,7 @@ function iishconference_programme($yearCode = null) {
 		'highlight'              => $highlight,
 		'networkId'              => $networkId,
 		'roomId'                 => $roomId,
+		'sessionId'              => $sessionId,
 		'textsearch'             => $textsearch,
 		'curShowing'             => $curShowing,
 		'downloadPaperIsOpen'    => $downloadPaperIsOpen,
