@@ -30,6 +30,7 @@ function template_preprocess_iishconference_finalregistration_overview_page_form
 	$variables['fee-amount-description'] = $participant->getFeeAmount()->getDescriptionWithoutDays();
 	$variables['extras'] = $participant->getExtrasOfFinalRegistration();
 	$variables['total-amount'] = $participant->getTotalAmount();
+	$variables['total-amount-pay-on-site'] = $participant->getTotalAmountPaymentOnSite();
 
 	if (SettingsApi::getSetting(SettingsApi::SHOW_ACCOMPANYING_PERSONS)) {
 		$feeAmountAccompanyingPerson = $participant->getFeeAmount(null, FeeStateApi::getAccompanyingPersonFee());
@@ -45,4 +46,7 @@ function template_preprocess_iishconference_finalregistration_overview_page_form
 
 	$bankTransferLastDate = strtotime(SettingsApi::getSetting(SettingsApi::BANK_TRANSFER_LASTDATE));
 	$variables['bank_transfer_open'] = ConferenceMisc::isOpenForLastDate($bankTransferLastDate);
+
+    $paymentOnSiteStartDate = strtotime(SettingsApi::getSetting(SettingsApi::PAYMENT_ON_SITE_STARTDATE));
+    $variables['payment_on_site_open'] = ConferenceMisc::isOpenForStartDate($paymentOnSiteStartDate);
 }

@@ -39,6 +39,12 @@ function finalregistration_overview_form($form, &$form_state) {
 		);
 	}
 
+    $form['on_site'] = array(
+        '#type'  => 'submit',
+        '#name'  => 'on_site',
+        '#value' => iish_t('Pay on site'),
+    );
+
 	if (strlen(trim(SettingsApi::getSetting(SettingsApi::GENERAL_TERMS_CONDITIONS_LINK))) > 0) {
 		$link = SettingsApi::getSetting(SettingsApi::GENERAL_TERMS_CONDITIONS_LINK);
 
@@ -78,11 +84,18 @@ function finalregistration_overview_submit($form, &$form_state) {
 	$participant = LoggedInUserDetails::getParticipant();
 	$user = LoggedInUserDetails::getUser();
 
-	$totalAmount = $participant->getTotalAmount();
-	$isPayWayTransaction = (
-		(SettingsApi::getSetting(SettingsApi::BANK_TRANSFER_ALLOWED) != 1) ||
-		($form_state['triggering_element']['#name'] !== 'bank_transfer')
-	);
+    $paymentMethod = PayWayMessage::ORDER_OGONE_PAYMENT;
+    if ((SettingsApi::getSetting(SettingsApi::BANK_TRANSFER_ALLOWED) == 1) &&
+        ($form_state['triggering_element']['#name'] === 'bank_transfer')) {
+        $paymentMethod = PayWayMessage::ORDER_BANK_PAYMENT;
+    }
+    if ($form_state['triggering_element']['#name'] === 'on_site') {
+        $paymentMethod = PayWayMessage::ORDER_CASH_PAYMENT;
+    }
+
+    $totalAmount = ($paymentMethod === PayWayMessage::ORDER_CASH_PAYMENT)
+        ? $participant->getTotalAmountPaymentOnSite()
+        : $participant->getTotalAmount();
 
 	// Create the order, if successful, redirect user to payment page
 	$createOrder = new PayWayMessage(array(
@@ -97,12 +110,12 @@ function finalregistration_overview_submit($form, &$form_state) {
 		'ownercty'      => ($user->getCountry() !== null) ? $user->getCountry()->getISOCode() : null,
 		'ownertelno'    => $user->getPhone(),
 		'com'           => CachedConferenceApi::getEventDate() . ' ' . iish_t('payment'),
-		'paymentmethod' => ($isPayWayTransaction) ? PayWayMessage::ORDER_OGONE_PAYMENT : PayWayMessage::ORDER_BANK_PAYMENT,
+		'paymentmethod' => $paymentMethod,
 		'userid'        => LoggedInUserDetails::getId(),
 	));
 	$order = $createOrder->send('createOrder');
 
-	// If creating a new order is successful, redirect to PayWay or to bank transfer information?
+	// If creating a new order is successful, redirect to PayWay or to bank transfer information or just succeed?
 	if (!empty($order) && $order->get('success')) {
 		$orderId = $order->get('orderid');
 
@@ -115,13 +128,15 @@ function finalregistration_overview_submit($form, &$form_state) {
 		$refreshOrderApi->refreshOrder($orderId);
 
 		// If no payment is necessary now, just confirm and send an email
-		if ($totalAmount == 0) {
-			$sendEmailApi = new SendEmailApi();
-			$sendEmailApi->sendPaymentAcceptedEmail($participant->getUserId(), $orderId);
+		if (($totalAmount == 0) || ($paymentMethod === PayWayMessage::ORDER_CASH_PAYMENT)) {
+            if ($totalAmount == 0) {
+                $sendEmailApi = new SendEmailApi();
+                $sendEmailApi->sendPaymentAcceptedEmail($participant->getUserId(), $orderId);
+            }
 
 			drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration/accept');
 		}
-		else if ($isPayWayTransaction) {
+		else if ($paymentMethod === PayWayMessage::ORDER_OGONE_PAYMENT) {
 			$payment = new PayWayMessage(array('orderid' => $orderId));
 			$payment->send('payment');
 		}

@@ -21,6 +21,11 @@
 			<span class="final-registration-overview-total">
 				<?php print iish_t('Total amount') . ':'; ?>
 				<?php print ConferenceMisc::getReadableAmount($variables['total-amount']); ?>
+
+				<?php if ($variables['payment_on_site_open']) : ?>
+					<?php print '(' . iish_t('If payed on site') . ':'; ?>
+					<?php print ConferenceMisc::getReadableAmount($variables['total-amount-pay-on-site']) . ')'; ?>
+				<?php endif; ?>
 			</span>
 		</li>
 	</ul>
@@ -72,6 +77,10 @@
                 </span>
 			<?php endif; ?>
 		<?php endif; ?>
+
+        <?php if (!$variables['payment_on_site_open']) : ?>
+            <?php unset($variables['form']['on_site']); ?>
+        <?php endif; ?>
 
 		<?php print drupal_render_children($variables['form']); ?>
 	</div>

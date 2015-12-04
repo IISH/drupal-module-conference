@@ -325,6 +325,29 @@ class ParticipantDateApi extends CRUDApiClient {
 		return $totalAmount;
 	}
 
+    /**
+     * Compute the total amount the given participant has to pay for, IF payed on site
+     * - The days
+     * - The extras
+     * - The accompanying persons
+     *
+     * @return float The total amount to pay, IF payed on site
+     */
+    public function getTotalAmountPaymentOnSite() {
+        $totalAmount = $this->getFeeAmount()->getFeeAmountOnSite();
+
+        foreach ($this->getExtrasOfFinalRegistration() as $extra) {
+            $totalAmount += $extra->getAmount();
+        }
+
+        if (SettingsApi::getSetting(SettingsApi::SHOW_ACCOMPANYING_PERSONS) == 1) {
+            $feeAmountAccompanyingPerson = $this->getFeeAmount(null, FeeStateApi::getAccompanyingPersonFee());
+            $totalAmount += (count($this->getAccompanyingPersons()) * $feeAmountAccompanyingPerson->getFeeAmountOnSite());
+        }
+
+        return $totalAmount;
+    }
+
 	/**
 	 * Returns the single best fee amount to use for this participant
 	 *

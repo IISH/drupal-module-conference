@@ -9,6 +9,7 @@ class FeeAmountApi extends CRUDApiClient {
 	protected $numDaysStart;
 	protected $numDaysEnd;
 	protected $feeAmount;
+    protected $feeAmountOnSite;
 	protected $substituteName;
 
 	private $feeState;
@@ -115,6 +116,24 @@ class FeeAmountApi extends CRUDApiClient {
 		return ConferenceMisc::getReadableAmount($this->feeAmount);
 	}
 
+    /**
+     * The fee amount (on site)
+     *
+     * @return float The fee amount (on site)
+     */
+    public function getFeeAmountOnSite() {
+        return $this->feeAmountOnSite;
+    }
+
+    /**
+     * The fee amount (on site) in a human friendly readable format
+     *
+     * @return string The fee amount (on site)
+     */
+    public function getFeeAmountOnSiteInFormat() {
+        return ConferenceMisc::getReadableAmount($this->feeAmountOnSite);
+    }
+
 	/**
 	 * The id of the fee state to which this amount belongs
 	 *
@@ -170,6 +189,8 @@ class FeeAmountApi extends CRUDApiClient {
 	 * @return string Returns the name of the fee, which days the fee is valid and the fee amount
 	 */
 	public function getDescription() {
+        $description = null;
+
 		if ($this->numDaysStart == $this->numDaysEnd) {
 			$days = $this->numDaysStart . ' ' . iish_t('day');
 		}
@@ -183,11 +204,18 @@ class FeeAmountApi extends CRUDApiClient {
 		}
 
 		if ($this->getFeeState()->isAccompanyingPersonFee()) {
-			return '(' . $days . '): ' . $this->getFeeAmountInFormat();
+            $description = '(' . $days . '): ' . $this->getFeeAmountInFormat();
 		}
 		else {
-			return $name . ' (' . $days . '): ' . $this->getFeeAmountInFormat();
+            $description = $name . ' (' . $days . '): ' . $this->getFeeAmountInFormat();
 		}
+
+        $startTimePaymentOnSite = strtotime(SettingsApi::getSetting(SettingsApi::PAYMENT_ON_SITE_STARTDATE));
+        if (ConferenceMisc::isOpenForStartDate($startTimePaymentOnSite)) {
+            $description .= ' (' . iish_t('If payed on site') . ': ' . $this->getFeeAmountOnSiteInFormat() . ')';
+        }
+
+        return $description;
 	}
 
 	/**
@@ -196,17 +224,26 @@ class FeeAmountApi extends CRUDApiClient {
 	 * @return string Returns the name of the fee and the fee amount
 	 */
 	public function getDescriptionWithoutDays() {
+        $description = null;
+
 		$name = $this->getFeeState()->getName();
 		if (!empty($this->substituteName)) {
 			$name = $this->substituteName;
 		}
 
 		if ($this->getFeeState()->isAccompanyingPersonFee()) {
-			return $this->getFeeAmountInFormat();
+            $description = $this->getFeeAmountInFormat();
 		}
 		else {
-			return $name . ': ' . $this->getFeeAmountInFormat();
+            $description = $name . ': ' . $this->getFeeAmountInFormat();
 		}
+
+        $startTimePaymentOnSite = strtotime(SettingsApi::getSetting(SettingsApi::PAYMENT_ON_SITE_STARTDATE));
+        if (ConferenceMisc::isOpenForStartDate($startTimePaymentOnSite)) {
+            $description .= ' (' . iish_t('If payed on site') . ': ' . $this->getFeeAmountOnSiteInFormat() . ')';
+        }
+
+        return $description;
 	}
 
 	public function __toString() {

@@ -24,6 +24,7 @@ class SettingsApi {
 	const ORGANIZER_REGISTRATION_LASTDATE = 'organizer_registration_lastdate';
 	const PATH_FOR_ADMIN_MENU = 'path_for_admin_menu';
 	const PATH_FOR_MENU = 'path_for_menu';
+    const PAYMENT_ON_SITE_STARTDATE = 'payment_on_site_startdate';
 	const PREREGISTRATION_LASTDATE = 'preregistration_lastdate';
 	const PREREGISTRATION_STARTDATE = 'preregistration_startdate';
 	const PREREGISTRATION_SESSIONS = 'preregistration_sessions';
