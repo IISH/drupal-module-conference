@@ -205,7 +205,7 @@ function conference_personalpage_create_payment_status(array &$registeredAndPaye
 						$paymentMethod = iish_t('Payment: bank transfer');
 						break;
 					case PayWayMessage::ORDER_CASH_PAYMENT:
-						$paymentMethod = iish_t('Payment: cash');
+						$paymentMethod = iish_t('Payment: on site');
 						break;
 					default:
 						$paymentMethod = iish_t('Payment unknown');
