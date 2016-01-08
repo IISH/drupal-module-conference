@@ -62,6 +62,7 @@
 <?php if ($variables['total-amount'] == 0) : ?>
 	<?php unset($variables['form']['payway']); ?>
 	<?php unset($variables['form']['bank_transfer']); ?>
+	<?php unset($variables['form']['on_site']); ?>
 
 	<?php print drupal_render_children($variables['form']); ?>
 <?php else : ?>
