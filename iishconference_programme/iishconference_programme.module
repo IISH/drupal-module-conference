@@ -19,7 +19,6 @@ function iishconference_programme_menu() {
 	$items = array();
 
 	$extraPath = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU);
-
 	$title = SettingsApi::getSetting(SettingsApi::ONLINE_PROGRAM_HEADER);
 
 	$items[$extraPath . 'programme'] = array(
@@ -29,7 +28,22 @@ function iishconference_programme_menu() {
 		'type'            => MENU_NORMAL_ITEM,
 		'file'            => 'programme.inc.php',
 	);
-	//'title'           => iish_t('Programme', array(), false),
+
+	$items[$extraPath . 'programme/add-session/%iishconference_session'] = array(
+		'page callback'   => 'iishconference_programme_add_session',
+		'page arguments'  => array(3),
+		'access callback' => true,
+		'type'            => MENU_CALLBACK,
+		'file'            => 'programme_ajax.inc.php',
+	);
+
+	$items[$extraPath . 'programme/remove-session/%iishconference_session'] = array(
+		'page callback'   => 'iishconference_programme_remove_session',
+		'page arguments'  => array(3),
+		'access callback' => true,
+		'type'            => MENU_CALLBACK,
+		'file'            => 'programme_ajax.inc.php',
+	);
 
 	return $items;
 }
@@ -58,6 +72,7 @@ function iishconference_programme_theme() {
 				'curShowing'             => null,
 				'downloadPaperIsOpen'    => null,
 				'paperDownloadLinkStart' => null,
+				'favoriteSessions'       => array(),
 			),
 		),
 	);

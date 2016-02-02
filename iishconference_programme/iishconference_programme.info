@@ -6,3 +6,4 @@ version = 7.x-0.0.1
 files[] = ProgrammeApi.class.php
 dependencies[] = iishconference_basemodule
 stylesheets[all][] = conference_programme.css
+scripts[] = conference_programme.js

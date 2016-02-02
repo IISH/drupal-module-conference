@@ -3,7 +3,7 @@
 /**
  * Prints the programme
  *
- * @param $yearCode The event date for which to print the programme
+ * @param string $yearCode The event date for which to print the programme
  *
  * @return string The HTML for the programme
  */
@@ -41,20 +41,19 @@ function iishconference_programme($yearCode = null) {
 	$roomId = isset($queryParameters['room']) ? EasyProtection::easyIntegerProtection($queryParameters['room']) : null;
 	$networkId =
 		isset($queryParameters['network']) ? EasyProtection::easyIntegerProtection($queryParameters['network']) : null;
-	$paperId =
-		isset($queryParameters['paper']) ? EasyProtection::easyIntegerProtection($queryParameters['paper']) : null;
 	$sessionId =
 		isset($queryParameters['session']) ? EasyProtection::easyIntegerProtection($queryParameters['session']) : null;
-	$textsearch =
-		isset($queryParameters['textsearch']) ? EasyProtection::easyStringProtection($queryParameters['textsearch']) :
-			null;
+    $participantId = (isset($queryParameters['favorites']) && LoggedInUserDetails::isLoggedIn())
+        ? LoggedInUserDetails::getParticipant()->getId() : null;
+    $textsearch =
+        isset($queryParameters['textsearch']) ? EasyProtection::easyStringProtection($queryParameters['textsearch']) :
+            null;
 
 	// Make sure the query parameters representing ids are integers and empty strings are null
 	$dayId = (is_int($dayId)) ? $dayId : null; // An id of 0 is allowed, means all days
 	$timeId = (is_int($timeId) && ($timeId !== 0)) ? $timeId : null;
 	$roomId = (is_int($roomId) && ($roomId !== 0)) ? $roomId : null;
 	$networkId = (is_int($networkId) && ($networkId !== 0)) ? $networkId : null;
-	$paperId = (is_int($paperId) && ($paperId !== 0)) ? $paperId : null;
 	$sessionId = (is_int($sessionId) && ($sessionId !== 0)) ? $sessionId : null;
 	$textsearch = (!is_null($textsearch) && (strlen($textsearch) > 0)) ? urldecode($textsearch) : null;
 
@@ -83,7 +82,7 @@ function iishconference_programme($yearCode = null) {
 	$showingTimeSlot = iish_t('all days');
 
 	// if network id, room id or text search is not empty, then show all days
-	if (!is_null($networkId) || !is_null($roomId) || !is_null($textsearch)) {
+	if (!is_null($networkId) || !is_null($roomId) || !is_null($participantId) || !is_null($textsearch)) {
 		$dayId = 0; // all days
 		$timeId = null;
 
@@ -95,6 +94,7 @@ function iishconference_programme($yearCode = null) {
 			}
 
 			$roomId = null;
+            $participantId = null;
 			$textsearch = null;
 		}
 		else if (!is_null($roomId)) {
@@ -105,14 +105,24 @@ function iishconference_programme($yearCode = null) {
 			}
 
 			$networkId = null;
+            $participantId = null;
 			$textsearch = null;
 		}
-		else if (!is_null($textsearch)) {
-			$showing = iish_t('text search') . ': ' . $textsearch;
+        else if (!is_null($participantId)) {
+            $showing = iish_t('Favorite sessions');
+            $showingTimeSlot = '';
 
-			$networkId = null;
-			$roomId = null;
-		}
+            $networkId = null;
+            $roomId = null;
+            $textsearch = null;
+        }
+        else if (!is_null($textsearch)) {
+            $showing = iish_t('text search') . ': ' . $textsearch;
+
+            $networkId = null;
+            $roomId = null;
+            $participantId = null;
+        }
 	}
 	else {
 		$showing = iish_t('all days');
@@ -149,13 +159,13 @@ function iishconference_programme($yearCode = null) {
 	$curShowing = iish_t('Showing') . ': ' . $showing;
 	$curShowing .= (strlen($showingTimeSlot) > 0) ? ' (' . $showingTimeSlot . ')' : '';
 
-	// Search for the paper
-	$paper = CRUDApiMisc::getById(new PaperApi(), $paperId);
-
 	// Create the query part for the back URL
 	if (!is_null($textsearch)) {
 		$backUrl = '?textsearch=' . urlencode($textsearch);
 	}
+    else if (!is_null($participantId)) {
+        $backUrl = '?favorites=yes';
+    }
 	else if (!is_null($roomId)) {
 		$backUrl = '?room=' . $roomId;
 	}
@@ -172,24 +182,24 @@ function iishconference_programme($yearCode = null) {
 	$highlight->setOpeningTag('<span class="highlight">');
 	$highlight->setClosingTag('</span>');
 
-	$programme = null;
-	if (is_null($paper)) {
-		$programmeApi = new ProgrammeApi();
-		$programme = null;
+    $programmeApi = new ProgrammeApi();
+    $programme = null;
 
-        if (is_null($sessionId)) {
-            $programme = $programmeApi->getProgramme($dayId, $timeId, $networkId, $roomId, $sessionId, $textsearch);
-        }
-        else {
-            $programme = $programmeApi->getProgrammeForSession($sessionId);
-        }
-	}
+    if (is_null($sessionId)) {
+        $programme = $programmeApi->getProgramme($dayId, $timeId, $networkId, $roomId, $participantId, $textsearch);
+    }
+    else {
+        $programme = $programmeApi->getProgrammeForSession($sessionId);
+    }
 
 	$paperDownloadLinkStart = variable_get('conference_base_url') . variable_get('conference_event_code') . '/' .
 		variable_get('conference_date_code') . '/' . 'userApi/downloadPaper/';
 
 	$downloadPaperLastDate = strtotime(SettingsApi::getSetting(SettingsApi::DOWNLOAD_PAPER_LASTDATE));
 	$downloadPaperIsOpen = ConferenceMisc::isOpenForLastDate($downloadPaperLastDate);
+
+    $participant = LoggedInUserDetails::getParticipant();
+    $favoriteSessions = ($participant !== null) ? $participant->getFavoriteSessionsId() : array();
 
 	return theme('iishconference_programme', array(
 		'eventDate'              => $eventDate,
@@ -198,7 +208,6 @@ function iishconference_programme($yearCode = null) {
 		'date-times'             => $dateTimes,
 		'types'                  => $types,
 		'programme'              => $programme,
-		'paper'                  => $paper,
 		'back-url-query'         => $backUrl,
 		'highlight'              => $highlight,
 		'networkId'              => $networkId,
@@ -208,6 +217,7 @@ function iishconference_programme($yearCode = null) {
 		'curShowing'             => $curShowing,
 		'downloadPaperIsOpen'    => $downloadPaperIsOpen,
 		'paperDownloadLinkStart' => $paperDownloadLinkStart,
+        'favoriteSessions'       => $favoriteSessions,
 	));
 }
 

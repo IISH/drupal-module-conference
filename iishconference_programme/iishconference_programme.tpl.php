@@ -2,7 +2,7 @@
 	<?php print drupal_render($variables['form']); ?>
 </div>
 
-<?php if (!isset($_GET['paper']) && !isset($_GET['session'])) : ?>
+<?php if (!isset($_GET['session'])) : ?>
 	<div class="programme_day showing">
 		<?php print $variables['curShowing']; ?>
 	</div>
@@ -12,9 +12,16 @@
 			<span class="download-icon"></span>
 			<?php print iish_t('Click on the icon to download the paper'); ?>
 		</div>
+		<div class="clear"></div>
 	<?php endif; ?>
 
-	<div class="clear"></div>
+	<?php if ($eventDate->isLastDate() && LoggedInUserDetails::isLoggedIn()) : ?>
+		<div class="favorite-icon-info">
+			<span class="favorite">&#9733;</span>
+			<?php print iish_t('Click on the icon to add the session to your favorites list'); ?>
+		</div>
+		<div class="clear"></div>
+	<?php endif; ?>
 <?php endif; ?>
 
 <table class="programme">
@@ -37,48 +44,19 @@
 				<?php endforeach; ?>
 				<br/>
 			<?php endforeach; ?>
+
 			<a href="?day=0"><?php print iish_t('All days'); ?></a>
+
+            <?php if (LoggedInUserDetails::isLoggedIn() && $eventDate->isLastDate()) : ?>
+                <br/>
+                <a href="?favorites=yes"><?php print iish_t('Favorite sessions'); ?></a>
+            <?php endif; ?>
 		</td>
 
 		<td class="programme">
-			<?php if (isset($_GET['paper'])) : ?>
-				<a href="<?php print $variables['back-url-query']; ?>">
-					<?php print iish_t('Go back'); ?>
-				</a>
-				<br/><br/>
-
-				<strong><?php print $variables['paper']; ?></strong>
-				<br/><br/>
-
-				<?php if (!is_null($variables['paper']->getCoAuthors()) &&
-					(strlen($variables['paper']->getCoAuthors()) > 0)
-				) : ?>
-					<strong><?php print iish_t('Co-author(s)'); ?>:</strong>
-					<?php print $variables['paper']->getCoAuthors(); ?>
-					<br/>
-				<?php endif; ?>
-
-				<strong><?php print iish_t('Author'); ?>:</strong>
-				<?php print $variables['paper']->getUser(); ?>
-				<br/><br/>
-
-				<?php print nl2br(check_plain($variables['paper']->getAbstr())); ?>
-				<br/>
-
-				<?php if ($eventDate->isLastDate() && $downloadPaperIsOpen) : ?>
-					<?php if (!is_null($variables['paper']->getFileSize()) && ($variables['paper']->getFileSize() > 0)) : ?>
-						<strong><?php print iish_t('Download paper'); ?>:</strong>
-						<a href="<?php print $variables['paperDownloadLinkStart'] . $variables['paper']->getId(); ?>">
-							<?php print $variables['paper']->getFileName(); ?>
-						</a>
-						(<?php print ConferenceMisc::getReadableFileSize($variables['paper']->getFileSize()); ?>)
-						<br/>
-					<?php endif; ?>
-				<?php endif; ?>
-			<?php elseif (count($variables['programme']) == 0) : ?>
+			<?php if (count($variables['programme']) == 0) : ?>
 				<span class="eca_warning"><?php print iish_t('Nothing found. Please modify your search criteria.'); ?></span>
-			<?php
-			else : ?>
+			<?php else : ?>
                 <?php if (isset($_GET['session'])) : ?>
                     <a href="<?php print $variables['back-url-query']; ?>">
                         <?php print iish_t('Go back'); ?>
@@ -95,6 +73,11 @@
 					<?php endif; ?>
 
 					<strong>
+                        <?php if (LoggedInUserDetails::isLoggedIn() && $eventDate->isLastDate()) : ?>
+                            <?php $favoriteClass = (in_array($session['sessionId'], $favoriteSessions)) ? 'favorite on' : 'favorite'; ?>
+                            <span class="<?php print $favoriteClass; ?>" data-session="<?php print $session['sessionId']; ?>">&#9733;</span>
+                        <?php endif; ?>
+
 						<a href="?room=<?php print $session['roomId']; ?>"><?php print $session['roomNumber']; ?></a>-<?php print $session['indexNumber']; ?>
 						-
 						<?php if (SettingsApi::getSetting(SettingsApi::SHOW_SESSION_CODES) == 1): ?>
@@ -220,25 +203,7 @@
                             :
                         </span>
 
-                        <?php if (isset($_GET['session'])) : ?>
-                            <?php print $variables['highlight']->highlight($participant['paperName']); ?>
-						<?php elseif (is_int($variables['networkId'])) : ?>
-							<a href="?day=<?php print $session['dayId']; ?>&amp;time=<?php print $session['timeId']; ?>&amp;paper=<?php print $participant['paperId'] ?>&amp;network=<?php print $variables['networkId'] ?>">
-								<?php print $variables['highlight']->highlight($participant['paperName']); ?>
-							</a>
-						<?php elseif ($variables['textsearch'] !== null) : ?>
-							<a href="?day=<?php print $session['dayId']; ?>&amp;time=<?php print $session['timeId']; ?>&amp;paper=<?php print $participant['paperId'] ?>&amp;textsearch=<?php print $variables['textsearch'] ?>">
-								<?php print $variables['highlight']->highlight($participant['paperName']); ?>
-							</a>
-						<?php elseif (is_int($variables['roomId'])) : ?>
-							<a href="?day=<?php print $session['dayId']; ?>&amp;time=<?php print $session['timeId']; ?>&amp;paper=<?php print $participant['paperId'] ?>&amp;room=<?php print $variables['roomId'] ?>">
-								<?php print $variables['highlight']->highlight($participant['paperName']); ?>
-							</a>
-						<?php else : ?>
-							<a href="?day=<?php print $session['dayId']; ?>&amp;time=<?php print $session['timeId']; ?>&amp;paper=<?php print $participant['paperId'] ?>">
-								<?php print $variables['highlight']->highlight($participant['paperName']); ?>
-							</a>
-						<?php endif; ?>
+                        <?php print $variables['highlight']->highlight($participant['paperName']); ?>
 
 						<?php if ($eventDate->isLastDate() && $downloadPaperIsOpen) : ?>
 							<?php if ($participant['hasDownload']) : ?>

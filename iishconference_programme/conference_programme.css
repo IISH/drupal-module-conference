@@ -44,7 +44,22 @@ td.programme {
     background: url('download_paper.png') left top;
 }
 
-.download-icon-info {
+.favorite {
+    color: grey;
+    font-size: 120%;
+    font-style: normal;
+    margin-right: 5px;
+}
+
+.favorite.on {
+    color: orange;
+}
+
+.programme .favorite {
+    cursor: pointer;
+}
+
+.download-icon-info, .favorite-icon-info {
     display: inline-block;
     float: right;
     font-size: 80%;

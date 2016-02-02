@@ -16,6 +16,7 @@ class ParticipantDateApi extends CRUDApiClient {
 	protected $accompanyingPersons;
 	protected $extraInfo;
 	protected $extras_id;
+    protected $favoriteSessions_id;
 	protected $addedBy_id;
 
 	private $user;
@@ -73,6 +74,35 @@ class ParticipantDateApi extends CRUDApiClient {
 	 */
 	public function getExtrasId() {
 		return is_array($this->extras_id) ? $this->extras_id : array();
+	}
+
+    /**
+     * Returns the ids of all favorite sessions selected by this participant
+     *
+     * @return int[] The ids of all favorite sessions selected by this participant
+     */
+    public function getFavoriteSessionsId() {
+        return is_array($this->favoriteSessions_id) ? $this->favoriteSessions_id : array();
+    }
+
+	/**
+	 * Set the sessions for this participants favorites list
+	 *
+	 * @param int[]|SessionApi[] $sessions The sessions (or their ids) for this participants favorites list
+	 */
+	public function setFavoriteSessionsId($sessions) {
+		$this->favoriteSessions_id = array();
+
+		foreach ($sessions as $session) {
+			if ($session instanceof SessionApi) {
+				$this->favoriteSessions_id[] = $session->getId();
+			}
+			else if (is_int($session)) {
+				$this->favoriteSessions_id[] = $session;
+			}
+		}
+
+		$this->toSave['favoriteSessions.id'] = implode(';', $this->favoriteSessions_id);
 	}
 
 	/**
@@ -300,6 +330,8 @@ class ParticipantDateApi extends CRUDApiClient {
 		if ($save) {
 			LoggedInUserDetails::invalidateParticipant();
 		}
+
+		return $save;
 	}
 
 	/**
