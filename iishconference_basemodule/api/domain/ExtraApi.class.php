@@ -10,6 +10,7 @@ class ExtraApi extends CRUDApiClient {
 	protected $secondDescription;
 	protected $amount;
 	protected $isFinalRegistration;
+	protected $maxSeats;
 	protected $sortOrder;
 
 	public static function getListWithCriteria(array $properties, $printErrorMessage = true) {
@@ -77,6 +78,15 @@ class ExtraApi extends CRUDApiClient {
 	 */
 	public function isFinalRegistration() {
 		return $this->isFinalRegistration;
+	}
+
+	/**
+	 * The maximum number of persons for this extra
+	 *
+	 * @return int|null The max number of persons or null if there is no maximum
+	 */
+	public function getMaxSeats() {
+		return $this->maxSeats;
 	}
 
 	/**
