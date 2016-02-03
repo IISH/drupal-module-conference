@@ -154,7 +154,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 	// + + + + + + + + + + + + + + + + + + + + + + + +
 	// EXTRA'S
 
-	$extras = ExtraApi::getOnlyPreRegistration(CachedConferenceApi::getExtras());
+	$extras = ExtraApi::getOnlyPreRegistrationFiltered(CachedConferenceApi::getExtras());
 	if (count($extras) > 0) {
 		$form['extras'] = array(
 			'#type'  => 'fieldset',
@@ -368,9 +368,11 @@ function preregister_personalinfo_form_submit($form, &$form_state) {
 	// Don't forget the extras for this participant
 	$extras = array();
 	foreach (ExtraApi::getOnlyPreRegistration(CachedConferenceApi::getExtras()) as $extra) {
-		$value = $form_state['values']['extras_' . $extra->getId()][$extra->getId()];
-		if ($extra->getId() == $value) {
-			$extras[] = $extra->getId();
+		if (isset($form_state['values']['extras_' . $extra->getId()][$extra->getId()])) {
+			$value = $form_state['values']['extras_' . $extra->getId()][$extra->getId()];
+			if ($extra->getId() == $value) {
+				$extras[] = $extra->getId();
+			}
 		}
 	}
 	$participant->setExtras($extras);

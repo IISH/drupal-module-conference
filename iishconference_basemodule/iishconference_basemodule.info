@@ -20,6 +20,7 @@ files[] = api/EmptyApi.class.php
 files[] = api/LoggedInUserDetails.class.php
 files[] = api/LoginApi.class.php
 files[] = api/MailNewPasswordApi.class.php
+files[] = api/NoParticipantsWithExtraApi.class.php
 files[] = api/SendEmailApi.class.php
 files[] = api/SettingsApi.class.php
 files[] = api/TranslationsApi.class.php

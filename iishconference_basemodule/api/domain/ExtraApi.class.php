@@ -99,6 +99,23 @@ class ExtraApi extends CRUDApiClient {
 	}
 
 	/**
+	 * Find out whether the maximum number of participants has been reached for this extra.
+	 *
+	 * @return bool Whether the maximum number of participants has been reached.
+	 */
+	public function hasReachedMaxParticipants() {
+		$maxSeats = $this->getMaxSeats();
+		if (($maxSeats === null) || ($maxSeats <= 0)) {
+			return false;
+		}
+
+		$noParticipantsWithExtraApi = new NoParticipantsWithExtraApi();
+		$noParticipants = $noParticipantsWithExtraApi->getNoParticipantsWithExtra($this);
+
+		return (($noParticipants !== null) && ($noParticipants >= $maxSeats));
+	}
+
+	/**
 	 * Returns only the extras for the pre-registration
 	 *
 	 * @param ExtraApi[] $allExtras All of the extras
@@ -117,6 +134,24 @@ class ExtraApi extends CRUDApiClient {
 	}
 
 	/**
+	 * Returns only the extras for the pre-registration (filtered on maximum)
+	 *
+	 * @param ExtraApi[] $allExtras All of the extras
+	 *
+	 * @return ExtraApi[] Only the extras for the pre-registration (filtered on maximum)
+	 */
+	public static function getOnlyPreRegistrationFiltered(array $allExtras = array()) {
+		$extras = array();
+		foreach (ExtraApi::getOnlyPreRegistration($allExtras) as $extra) {
+			if (!$extra->hasReachedMaxParticipants()) {
+				$extras[] = $extra;
+			}
+		}
+
+		return $extras;
+	}
+
+	/**
 	 * Returns only the extras for the final registration
 	 *
 	 * @param ExtraApi[] $allExtras All of the extras
@@ -127,6 +162,24 @@ class ExtraApi extends CRUDApiClient {
 		$extras = array();
 		foreach ($allExtras as $extra) {
 			if ($extra->isFinalRegistration()) {
+				$extras[] = $extra;
+			}
+		}
+
+		return $extras;
+	}
+
+	/**
+	 * Returns only the extras for the final registration (filtered on maximum)
+	 *
+	 * @param ExtraApi[] $allExtras All of the extras
+	 *
+	 * @return ExtraApi[] Only the extras for the final registration (filtered on maximum)
+	 */
+	public static function getOnlyFinalRegistrationFiltered(array $allExtras = array()) {
+		$extras = array();
+		foreach (ExtraApi::getOnlyFinalRegistration($allExtras) as $extra) {
+			if (!$extra->hasReachedMaxParticipants()) {
 				$extras[] = $extra;
 			}
 		}
