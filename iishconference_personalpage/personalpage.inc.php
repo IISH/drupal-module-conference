@@ -213,18 +213,28 @@ function conference_personalpage_create_payment_status(array &$registeredAndPaye
 
 				switch ($order->get('payed')) {
 					case PayWayMessage::ORDER_NOT_PAYED:
-						$paymentStatus = iish_t('(not yet confirmed)');
-						$extraMessage = iish_t('<br>If you have completed your payment please contact the organisation<br>else please try again !link', array('!link' => l(iish_t('Final registration and payment'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration')));						break;
+						$paymentStatus = iish_t('(your payment has not yet been confirmed)');
+
+						switch ($order->get('paymentmethod')) {
+							case PayWayMessage::ORDER_BANK_PAYMENT:
+								$extraMessage = iish_t('<br>When we receive your bank payment we will confirm your payment.<br />If you have completed your bank payment and it is still not visible, please contact the conference secretariat.<br />You can also still pay online !link', array('!link' => l(iish_t('Final registration and payment'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration')));
+								break;
+							case PayWayMessage::ORDER_CASH_PAYMENT:
+								$extraMessage = iish_t('<br>Your payment will be confirmed when you pay the fee at the conference.<br />You can still decide to pay online !link', array('!link' => l(iish_t('Final registration and payment'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration')));
+								break;
+						}
+
+						break;
 					case PayWayMessage::ORDER_PAYED:
-						$paymentStatus = iish_t('(confirmed)');
+						$paymentStatus = iish_t('(your payment has been confirmed)');
 						break;
 					case PayWayMessage::ORDER_REFUND_OGONE:
 					case PayWayMessage::ORDER_REFUND_BANK:
-						$paymentStatus = iish_t('(refunded)');
+						$paymentStatus = iish_t('(your payment has been refunded)');
 						break;
 					default:
-						$paymentStatus = iish_t('(status unknown)');
-						$extraMessage = iish_t('<br>If you have completed your payment please contact the organisation<br>else please try again !link', array('!link' => l(iish_t('Final registration and payment'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration')));
+						$paymentStatus = iish_t('(status of your payment is unknown)');
+						$extraMessage = iish_t('<br>If you have completed your payment please contact the conference secretariat<br />else please try again !link', array('!link' => l(iish_t('Final registration and payment'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration')));
 				}
 			}
 			else {
