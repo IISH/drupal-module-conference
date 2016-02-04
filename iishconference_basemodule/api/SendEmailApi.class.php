@@ -40,6 +40,20 @@ class SendEmailApi {
 	}
 
 	/**
+	 * Sends an email that informs the user his payment on site request has been received
+	 *
+	 * @param int|UserApi $userId  The user (id) to whom the email is addressed
+	 * @param int         $orderId The payment number / order id
+	 *
+	 * @return bool Returns whether the action was successful or not
+	 */
+	public function sendPaymentOnSiteEmail($userId, $orderId) {
+		return $this->sendEmail(SettingsApi::PAYMENT_ON_SITE_EMAIL_TEMPLATE_ID, $userId, array(
+			'orderId' => $orderId
+		));
+	}
+
+	/**
 	 * Sends an emails that details the pre registration he/she just finished
 	 *
 	 * @param int|UserApi $userId The user (id) to whom the email is addressed

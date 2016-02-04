@@ -134,6 +134,11 @@ function finalregistration_overview_submit($form, &$form_state) {
                 $sendEmailApi->sendPaymentAcceptedEmail($participant->getUserId(), $orderId);
             }
 
+			if ($paymentMethod === PayWayMessage::ORDER_CASH_PAYMENT) {
+				$sendEmailApi = new SendEmailApi();
+				$sendEmailApi->sendPaymentOnSiteEmail($participant->getUserId(), $orderId);
+			}
+
 			drupal_goto(SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration/accept');
 		}
 		else if ($paymentMethod === PayWayMessage::ORDER_OGONE_PAYMENT) {

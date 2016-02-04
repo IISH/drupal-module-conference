@@ -65,6 +65,7 @@ class SettingsApi {
 	// Email templates
 	const BANK_TRANSFER_EMAIL_TEMPLATE_ID = 'bank_transfer_email_template_id';
 	const PAYMENT_ACCEPTED_EMAIL_TEMPLATE_ID = 'payment_accepted_email_template_id';
+	const PAYMENT_ON_SITE_EMAIL_TEMPLATE_ID = 'payment_on_site_email_template_id';
 	const PRE_REGISTRATION_EMAIL_TEMPLATE_ID = 'pre_registration_email_template_id';
 
 	// PayWay
