@@ -5,7 +5,7 @@ jQuery(document).ready(function ($) {
             var session = elem.data('session');
             if (session) {
                 elem.data('locked', true);
-                var url = (elem.hasClass('on')) ? 'remove-session/' : 'add-session/';
+                var url = (elem.hasClass('on')) ? 'programme/remove-session/' : 'programme/add-session/';
                 $.getJSON(url + session, [], function (result) {
                     if (result.success) {
                         if ((elem.hasClass('on')))
