@@ -15,7 +15,7 @@
 		<div class="clear"></div>
 	<?php endif; ?>
 
-	<?php if ($eventDate->isLastDate() && LoggedInUserDetails::isLoggedIn()) : ?>
+	<?php if ($eventDate->isLastDate() && LoggedInUserDetails::isAParticipant()) : ?>
 		<div class="favorite-icon-info">
 			<span class="favorite">&#9733;</span>
 			<?php print iish_t('Click on the icon to add the session to your favorites list'); ?>
@@ -47,7 +47,7 @@
 
 			<a href="?day=0"><?php print iish_t('All days'); ?></a>
 
-            <?php if (LoggedInUserDetails::isLoggedIn() && $eventDate->isLastDate()) : ?>
+            <?php if (LoggedInUserDetails::isAParticipant() && $eventDate->isLastDate()) : ?>
                 <br/>
                 <a href="?favorites=yes"><?php print iish_t('Favorite sessions'); ?></a>
             <?php endif; ?>
@@ -73,7 +73,7 @@
 					<?php endif; ?>
 
 					<strong>
-                        <?php if (LoggedInUserDetails::isLoggedIn() && $eventDate->isLastDate()) : ?>
+                        <?php if (LoggedInUserDetails::isAParticipant() && $eventDate->isLastDate()) : ?>
                             <?php $favoriteClass = (in_array($session['sessionId'], $favoriteSessions)) ? 'favorite on' : 'favorite'; ?>
                             <span class="<?php print $favoriteClass; ?>" data-session="<?php print $session['sessionId']; ?>">&#9733;</span>
                         <?php endif; ?>
