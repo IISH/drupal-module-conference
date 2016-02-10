@@ -217,7 +217,8 @@ class LoggedInUserDetails {
 
 		if ($response !== null) {
 			$userStatus = $response['status'];
-			if ($userStatus == LoggedInUserDetails::USER_STATUS_EXISTS) {
+			if (($userStatus == LoggedInUserDetails::USER_STATUS_EXISTS)
+				|| ($userStatus == LoggedInUserDetails::USER_STATUS_EMAIL_DISCONTINUED)) {
 				$_SESSION['iish_conference']['hasFullRights'] = $response['hasFullRights'];
 				$_SESSION['iish_conference']['isNetworkChair'] = $response['isNetworkChair'];
 				$_SESSION['iish_conference']['isChair'] = $response['isChair'];
