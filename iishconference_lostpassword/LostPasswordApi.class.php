@@ -28,6 +28,6 @@ class LostPasswordApi {
 			'email' => $email,
 		));
 
-		return ($response != null) ? $response['status'] : null;
+		return (($response != null) && $response['success']) ? $response['status'] : null;
 	}
 } 

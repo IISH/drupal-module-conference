@@ -8,6 +8,7 @@ class ConfirmLostPasswordApi {
 	const ACCEPT = 1;
 	const PASSWORD_ALREADY_SENT = 2;
 	const CODE_EXPIRED = 3;
+	const ERROR = 4;
 
 	private $client;
 	private static $apiName = 'confirmLostPassword';
