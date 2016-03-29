@@ -100,6 +100,6 @@ function conference_changepassword_form_submit($form, &$form_state) {
 	}
 	else {
 		drupal_set_message(iish_t('We failed to either change your password ' .
-			'or to sent you an email, please try again later.'), 'error');
+			'or to send you an email, please try again later.'), 'error');
 	}
 }

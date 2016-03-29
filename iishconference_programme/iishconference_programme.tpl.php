@@ -48,8 +48,9 @@
 			<a href="?day=0"><?php print iish_t('All days'); ?></a>
 
             <?php if (LoggedInUserDetails::isAParticipant() && $eventDate->isLastDate()) : ?>
-                <br/>
-                <a href="?favorites=yes"><?php print iish_t('Favorite sessions'); ?></a>
+	            <br/>
+	            <br/>
+                <a href="?favorites=yes"><span class="favorite on">&#9733;</span> <?php print iish_t('Favourite sessions'); ?></a>
             <?php endif; ?>
 		</td>
 

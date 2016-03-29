@@ -109,7 +109,7 @@ function iishconference_programme($yearCode = null) {
 			$textsearch = null;
 		}
         else if (!is_null($participantId)) {
-            $showing = iish_t('Favorite sessions');
+            $showing = iish_t('Favourite sessions');
             $showingTimeSlot = '';
 
             $networkId = null;

@@ -113,7 +113,7 @@ function conference_confirmlostpassword_set_message($id, $code) {
 			drupal_set_message(iish_t('The CODE has been expired. Please request a new CODE.'), 'error');
 			break;
 		case ConfirmLostPasswordApi::ERROR:
-			drupal_set_message(iish_t('We failed to sent you an email with your new password. ' .
+			drupal_set_message(iish_t('We failed to send you an email with your new password. ' .
 				'Please try again later. We are sorry for the inconvenience.'), 'error');
 			break;
 		default:
