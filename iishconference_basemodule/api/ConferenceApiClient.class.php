@@ -130,7 +130,7 @@ class ConferenceApiClient {
 				$response = $this->oAuthClient->fetch($url, $parameters, $http_method);
 
 				// Authorization error, request a new token and try again
-				if (in_array($response['code'], array(302, 401))) {
+				if (in_array($response['code'], array(302, 401, 403))) {
 					$this->requestNewToken();
 					$response = $this->oAuthClient->fetch($url, $parameters, $http_method);
 				}
@@ -164,7 +164,9 @@ class ConferenceApiClient {
 	 * Request a new token to access the API
 	 */
 	private function requestNewToken() {
-		$response = $this->oAuthClient->getAccessToken(self::getTokenUrl(), ClientCredentials::GRANT_TYPE, array());
+		$response = $this->oAuthClient->getAccessToken(self::getTokenUrl(), ClientCredentials::GRANT_TYPE, array(
+			'scope' => 'event' // Request requires a scope, but that may be anything
+		));
 
 		if ($response['code'] === 200) {
 			$token = $response['result']['access_token'];
