@@ -27,8 +27,8 @@ function preregister_form($form, &$form_state) {
 		$form['ct1'] = array(
 			'#type'   => 'markup',
 			'#markup' => '<span class="eca_warning">' .
-				iish_t('You are already pre-registered for the @codeYear. It is not allowed to modify online ' .
-					'your data after your data has been checked by the conference organization. If you would like to ' .
+				iish_t('You are already pre-registered for the @codeYear. It is not possible to modify your pre-registration online ' .
+					' after your data has been checked by the conference organization. If you would like to ' .
 					'make some changes please send an e-mail to @code. Please go to your !link to check the data.',
 					array('@codeYear' => CachedConferenceApi::getEventDate()->getLongNameAndYear(),
 					      '@code'     => CachedConferenceApi::getEventDate()->getEvent()->getShortName(),
