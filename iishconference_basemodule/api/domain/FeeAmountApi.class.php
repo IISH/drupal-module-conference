@@ -44,7 +44,7 @@ class FeeAmountApi extends CRUDApiClient {
 			->ge('endDate', $date)
 			->sort('endDate', 'asc');
 
-		if (is_int($numDays)) {
+		if (is_int($numDays) && ($numDays > 0)) {
 			$props
 				->le('numDaysStart', $numDays)
 				->ge('numDaysEnd', $numDays);
