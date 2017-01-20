@@ -100,6 +100,10 @@ class PayWayMessage {
 					return $message;
 				}
 			}
+
+			watchdog('conference api', 'Failure communicating with the PayWay API: !result', array(
+				'!result' => var_export($result, true)
+			), WATCHDOG_ALERT);
 		}
 
 		return false;
