@@ -187,6 +187,7 @@ function conference_personalpage_create_payment_status(array &$registeredAndPaye
 	$paymentMethod = iish_t('Payment: none');
 	$paymentStatus = iish_t('(Final registration and payment has not started yet)');
 	$extraMessage = '';
+	$amount = '';
 
 	if (module_exists('iishconference_finalregistration')) {
 		$paymentStatus = iish_t('(Please go to !link)', array('!link' => l(iish_t('Final registration and payment'),
@@ -236,6 +237,9 @@ function conference_personalpage_create_payment_status(array &$registeredAndPaye
 						$paymentStatus = iish_t('(status of your payment is unknown)');
 						$extraMessage = iish_t('<br>If you have completed your payment please contact the conference secretariat<br />else please try again !link', array('!link' => l(iish_t('Final registration and payment'), SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration')));
 				}
+
+				$amount = iish_t('<br>Amount: ') . number_format($order->get('amount') / 100) . ' EUR';
+				$amount .= iish_t('<br>Order id: ') . $order->get('orderid');
 			}
 			else {
 				$paymentMethod = iish_t('Payment information is currently unavailable');
@@ -244,7 +248,7 @@ function conference_personalpage_create_payment_status(array &$registeredAndPaye
 		}
 	}
 
-	$registeredAndPayedContent[] = '<span>' . trim($paymentMethod . ' ' . $paymentStatus) . $extraMessage . '</span>';
+	$registeredAndPayedContent[] = '<span>' . trim($paymentMethod . ' ' . $paymentStatus) . $amount . $extraMessage . '</span>';
 }
 
 /**
