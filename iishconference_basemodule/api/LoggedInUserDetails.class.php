@@ -9,6 +9,8 @@ class LoggedInUserDetails {
 	const USER_STATUS_DISABLED = 2;
 	const USER_STATUS_DELETED = 3;
 	const USER_STATUS_EMAIL_DISCONTINUED = 4;
+    const USER_STATUS_PARTICIPANT_CANCELLED = 5;
+    const USER_STATUS_PARTICIPANT_DOUBLE_ENTRY = 6;
 
 	/**
 	 * Is the user currently logged in?
@@ -217,8 +219,7 @@ class LoggedInUserDetails {
 
 		if ($response !== null) {
 			$userStatus = $response['status'];
-			if (($userStatus == LoggedInUserDetails::USER_STATUS_EXISTS)
-				|| ($userStatus == LoggedInUserDetails::USER_STATUS_EMAIL_DISCONTINUED)) {
+			if ($userStatus == LoggedInUserDetails::USER_STATUS_EXISTS) {
 				$_SESSION['iish_conference']['hasFullRights'] = $response['hasFullRights'];
 				$_SESSION['iish_conference']['isNetworkChair'] = $response['isNetworkChair'];
 				$_SESSION['iish_conference']['isChair'] = $response['isChair'];
