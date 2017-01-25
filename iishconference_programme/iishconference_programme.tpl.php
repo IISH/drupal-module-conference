@@ -1,5 +1,8 @@
 <div class="container-inline bottommargin">
-	<?php print drupal_render($variables['form']); ?>
+  <?php if ($variables['network-form'] !== null) : ?>
+      <?php print drupal_render($variables['network-form']); ?>
+  <?php endif; ?>
+  <?php print drupal_render($variables['text-form']); ?>
 </div>
 
 <?php if (!isset($_GET['session'])) : ?>

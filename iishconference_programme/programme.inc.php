@@ -176,7 +176,8 @@ function iishconference_programme($yearCode = null) {
 		$backUrl = "?day=" . $dayId . "&time=" . $timeId;
 	}
 
-	$form = drupal_get_form('iishconference_programme_form', $networks, $networkId, $textsearch);
+	$networkForm = drupal_get_form('iishconference_programme_network_form', $networks, $networkId);
+    $textForm = drupal_get_form('iishconference_programme_text_form', $textsearch);
 
 	$highlight = new Highlighter(explode(' ', $textsearch));
 	$highlight->setOpeningTag('<span class="highlight">');
@@ -203,7 +204,8 @@ function iishconference_programme($yearCode = null) {
 
 	return theme('iishconference_programme', array(
 		'eventDate'              => $eventDate,
-		'form'                   => $form,
+		'network-form'           => $networkForm,
+        'text-form'              => $textForm,
 		'days'                   => $days,
 		'date-times'             => $dateTimes,
 		'types'                  => $types,
@@ -224,44 +226,33 @@ function iishconference_programme($yearCode = null) {
 /**
  * TODOEXPLAIN
  */
-function iishconference_programme_form($form, &$form_state, $networks, $networkId, $textsearch) {
+function iishconference_programme_network_form($form, &$form_state, $networks, $networkId) {
+    if (SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) != 1) {
+        return null;
+    }
+
 	$form['#method'] = 'get';
 	$form['#token'] = false;
 	$form['#after_build'] = array('iishconference_programme_unset_default_form_elements');
 
-	// create a list of select options
-	// also add empty option
-	$titleTextSearch = iish_t('Search on name');
-	if (SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) {
-		$titleTextSearch = iish_t('or search on name');
+    $selectListOfNetworks = array();
+    $selectListOfNetworks[0] = '';
+    foreach ($networks as $network) {
+        $selectListOfNetworks[$network->getId()] = $network->getName();
+    }
 
-		$selectListOfNetworks = array();
-		$selectListOfNetworks[0] = '';
-		foreach ($networks as $network) {
-			$selectListOfNetworks[$network->getId()] = $network->getName();
-		}
+    $form['network'] = array(
+        '#type'          => 'select',
+        '#title'         => iish_t('Browse networks') . ': ',
+        '#size'          => 1,
+        '#default_value' => is_null($networkId) ? 0 : $networkId,
+        '#options'       => $selectListOfNetworks,
+    );
 
-		$form['network'] = array(
-			'#type'          => 'select',
-			'#title'         => iish_t('Browse networks') . ': ',
-			'#size'          => 1,
-			'#default_value' => is_null($networkId) ? 0 : $networkId,
-			'#options'       => $selectListOfNetworks,
-		);
-	}
-
-	$form['textsearch'] = array(
-		'#type'          => 'textfield',
-		'#title'         => $titleTextSearch,
-		'#size'          => 20,
-		'#maxlength'     => 50,
-		'#default_value' => is_null($textsearch) ? '' : $textsearch,
-	);
-
-	$form['btnSubmit'] = array(
-		'#type'  => 'submit',
-		'#value' => iish_t('Go'),
-	);
+    $form['btn_network'] = array(
+        '#type'  => 'submit',
+        '#value' => iish_t('Go'),
+    );
 
 	return $form;
 }
@@ -269,8 +260,38 @@ function iishconference_programme_form($form, &$form_state, $networks, $networkI
 /**
  * TODOEXPLAIN
  */
+function iishconference_programme_text_form($form, &$form_state, $textsearch) {
+    $form['#method'] = 'get';
+    $form['#token'] = false;
+    $form['#after_build'] = array('iishconference_programme_unset_default_form_elements');
+
+    $titleTextSearch = iish_t('Search on name');
+    if (SettingsApi::getSetting(SettingsApi::SHOW_NETWORK) == 1) {
+        $titleTextSearch = iish_t('or search on name');
+    }
+
+    $form['textsearch'] = array(
+        '#type'          => 'textfield',
+        '#title'         => $titleTextSearch,
+        '#size'          => 20,
+        '#maxlength'     => 50,
+        '#default_value' => is_null($textsearch) ? '' : $textsearch,
+    );
+
+    $form['btn_text'] = array(
+        '#type'  => 'submit',
+        '#value' => iish_t('Go'),
+    );
+
+    return $form;
+}
+
+/**
+ * TODOEXPLAIN
+ */
 function iishconference_programme_unset_default_form_elements($form) {
-	unset($form['#build_id'], $form['form_build_id'], $form['form_id'], $form['btnSubmit']['#name']);
+	unset($form['#build_id'], $form['form_build_id'], $form['form_id']);
+	unset($form['btn_network']['#name'], $form['btn_text']['#name']);
 
 	return $form;
 }
