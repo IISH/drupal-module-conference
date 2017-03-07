@@ -17,15 +17,11 @@ function iishconference_finalregistration_accept() {
 		$userId = $paymentResponse->get('userid');
 		$orderId = $paymentResponse->get('orderid');
 
-		$participant = CRUDApiMisc::getFirstWherePropertyEquals(new ParticipantDateApi(), 'user_id', $userId);
-		$participant->setPaymentId($orderId);
-
-		// Make sure that cancelled participants are confirmed again
-		if ($participant->getStateId() == ParticipantStateApi::REMOVED_CANCELLED) {
-			$participant->setState(ParticipantStateApi::PARTICIPANT);
-		}
-
-		$participant->save();
+        if ($userId !== NULL) {
+            $participant = CRUDApiMisc::getFirstWherePropertyEquals(new ParticipantDateApi(), 'user_id', $userId);
+            $participant->setPaymentId($orderId);
+            $participant->save();
+        }
 
 		// Also make sure the CMS side is aware of the update of this order
 		$refreshOrderApi = new RefreshOrderApi();

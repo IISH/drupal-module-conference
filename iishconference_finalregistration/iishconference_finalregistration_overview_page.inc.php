@@ -120,7 +120,7 @@ function finalregistration_overview_submit($form, &$form_state) {
 		$orderId = $order->get('orderid');
 
 		// Save order id
-		$participant->setPaymentId($orderId);
+		$participant->setPaymentId($orderId, $participant->getId());
 		$participant->save();
 
 		// Also make sure the CMS has a copy of the order
