@@ -308,7 +308,7 @@ function iishconference_networksforchairs_papers($networkId, $sessionId) {
 	if ($session !== null) {
 		$title .= theme('iishconference_container_field', array(
 			'label' => 'Session state',
-			'value' => $session->getState()->getDescription(),
+			'value' => iish_t( $session->getState()->getDescription() ),
 		));
 
 		if ($session->getAddedBy() !== null) {

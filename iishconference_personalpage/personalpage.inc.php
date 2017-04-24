@@ -336,7 +336,7 @@ function conference_personalpage_create_session_info($userDetails, $participantD
 		}
 	}
 
-	$sessionName = $session->getName() . ' <em>(' . $session->getState()->getDescription() . ')</em>';
+	$sessionName = $session->getName() . ' <em>(' . iish_t( $session->getState()->getDescription() ) . ')</em>';
 	$sessionContent[] = theme('iishconference_container_field', array(
 		'label'       => 'Session name',
 		'value'       => $sessionName,
@@ -414,6 +414,10 @@ function conference_personalpage_create_paper_info(array &$paperContent, $paper,
 			'value' => $paper->getTitle())
 	);
 	$paperContent[] = theme('iishconference_container_field', array(
+		'label' => 'Co-author(s)',
+		'value' => $paper->getCoAuthors()
+	));
+	$paperContent[] = theme('iishconference_container_field', array(
 		'label' => 'Paper state',
 		'value' => $paper->getState()->getDescription()
 	));
@@ -422,10 +426,6 @@ function conference_personalpage_create_paper_info(array &$paperContent, $paper,
 		'value'          => ConferenceMisc::getHTMLForLongText($paper->getAbstr()),
 		'valueIsHTML'    => true,
 		'valueOnNewLine' => true
-	));
-	$paperContent[] = theme('iishconference_container_field', array(
-		'label' => 'Co-author(s)',
-		'value' => $paper->getCoAuthors()
 	));
 
 	if ((SettingsApi::getSetting(SettingsApi::SHOW_AWARD) == 1) && $participant->getStudent()) {
