@@ -120,12 +120,12 @@ function finalregistration_overview_submit($form, &$form_state) {
 		$orderId = $order->get('orderid');
 
 		// Save order id
-		$participant->setPaymentId($orderId, $participant->getId());
+		$participant->setPaymentId($orderId);
 		$participant->save();
 
 		// Also make sure the CMS has a copy of the order
 		$refreshOrderApi = new RefreshOrderApi();
-		$refreshOrderApi->refreshOrder($orderId);
+		$refreshOrderApi->refreshOrder($orderId, $participant->getId());
 
 		// If no payment is necessary now, just confirm and send an email
 		if (($totalAmount == 0) || ($paymentMethod === PayWayMessage::ORDER_CASH_PAYMENT)) {
