@@ -111,7 +111,6 @@ function finalregistration_overview_submit($form, &$form_state) {
 		'ownertelno'    => $user->getPhone(),
 		'com'           => CachedConferenceApi::getEventDate() . ' ' . iish_t('payment'),
 		'paymentmethod' => $paymentMethod,
-		'userid'        => LoggedInUserDetails::getId(),
 	));
 	$order = $createOrder->send('createOrder');
 
