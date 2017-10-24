@@ -31,12 +31,25 @@ function finalregistration_overview_form($form, &$form_state) {
 		'#value' => iish_t('Make online payment'),
 	);
 
-	if (SettingsApi::getSetting(SettingsApi::BANK_TRANSFER_ALLOWED) == 1) {
-		$form['bank_transfer'] = array(
-			'#type'  => 'submit',
-			'#name'  => 'bank_transfer',
-			'#value' => iish_t('Make payment by bank transfer'),
-		);
+	$participant = LoggedInUserDetails::getParticipant();
+	$orderId = $participant->getPaymentId();
+	if ( $orderId == '' ) {
+		$orderId = 0;
+	}
+
+	$orderDetails = new PayWayMessage(array('orderid' => $orderId));
+	$order = $orderDetails->send('orderDetails');
+
+	if ($orderId == 0 || $order->get('paymentmethod') != 1) {
+
+		if (SettingsApi::getSetting(SettingsApi::BANK_TRANSFER_ALLOWED) == 1) {
+			$form['bank_transfer'] = array(
+				'#type' => 'submit',
+				'#name' => 'bank_transfer',
+				'#value' => iish_t('Make payment by bank transfer'),
+			);
+		}
+
 	}
 
     $form['on_site'] = array(

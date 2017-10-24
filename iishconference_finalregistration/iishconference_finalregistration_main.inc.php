@@ -25,8 +25,7 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 				array('query' => drupal_get_destination())))));
 	}
 
-	// TODO Should we only allow payments of finished pre-registrations?
-//	if (!LoggedInUserDetails::isAParticipant()) {
+	// 
 	if (!LoggedInUserDetails::isAParticipant() && !LoggedInUserDetails::isAParticipantWithoutConfirmation()) {
 		drupal_set_message(iish_t('You are not registered for the @conference conference. Please go to !link.',
 				array('@conference' => CachedConferenceApi::getEventDate()->getLongNameAndYear(),
@@ -89,7 +88,7 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 					'#type'   => 'markup',
 					'#markup' =>
 						'<span class="eca_warning">' .
-						iish_t('You chose to finish your final registration by bank transfer.') . '<br />' .
+						iish_t('Last time you chose to finish your final registration by bank transfer.') . '<br />' .
 						iish_t('!link for the bank transfer information.', array('!link' => l(iish_t('Click here'),
 							SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) .
 							'final-registration/bank-transfer'))) .
