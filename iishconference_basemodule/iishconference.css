@@ -115,3 +115,11 @@ td.noborder {
 		display: none !important;
 	}
 }
+
+.eca_warning a
+, .eca_warning a:link
+, .eca_warning a:hover
+, .eca_warning a:visited {
+	border-bottom: 1px dotted #E61A3C;
+	text-decoration: none;
+}

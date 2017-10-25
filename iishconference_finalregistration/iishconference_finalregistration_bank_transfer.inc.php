@@ -25,12 +25,14 @@ function iishconference_finalregistration_bank_transfer() {
 		$order = $orderDetails->send('orderDetails');
 
 		if (!empty($order)) {
+			// ALREADY PAYED
 			if ($order->get('payed') == 1) {
 				drupal_set_message(iish_t('You have already completed your final registration and payment.'), 'status');
 
 				return '';
 			}
-			else if ($order->get('willpaybybank')) {
+			// NOT CONFIRMED BANK PAYMENT
+			elseif ( $order->get('paymentmethod') == 1 ) {
 				$bankTransferInfo = SettingsApi::getSetting(SettingsApi::BANK_TRANSFER_INFO);
 				$amount = ConferenceMisc::getReadableAmount($order->get('amount'), true);
 				$finalDate =
@@ -45,10 +47,25 @@ function iishconference_finalregistration_bank_transfer() {
 
 				return ConferenceMisc::getCleanHTML($bankTransferInfo);
 			}
+			// NOT CONFIRMED CASH PAYMENT
+			elseif ( $order->get('paymentmethod') == 2 ) {
+				$cashPaymentInfo = SettingsApi::getSetting(SettingsApi::ON_SITE_PAYMENT_INFO);
+
+				$amount = ConferenceMisc::getReadableAmount($order->get('amount'), true);
+
+				$cashPaymentInfo = str_replace('[PaymentNumber]',      $order->get('orderid'), $cashPaymentInfo);
+				$cashPaymentInfo = str_replace('[PaymentAmount]',      $amount,                $cashPaymentInfo);
+				$cashPaymentInfo = str_replace('[PaymentDescription]', $order->get('com'),     $cashPaymentInfo);
+
+				return ConferenceMisc::getCleanHTML($cashPaymentInfo);
+			}
+			// UNKNOWN PAYMENT METHOD
 			else {
-				drupal_set_message(iish_t('You have chosen another payment method. !link to change your payment method.',
-						array('!link' => l(iish_t('Click here'),
-							SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration'))),
+				drupal_set_message(iish_t('You have chosen an unknown payment method. !link to change your payment method.',
+						array('!link' => l(
+											iish_t('Click here')
+											, SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration'
+											))),
 					'error');
 
 				return '';
@@ -64,8 +81,10 @@ function iishconference_finalregistration_bank_transfer() {
 	}
 	else {
 		drupal_set_message(iish_t('You have not finished the final registration. !link.',
-			array('!link' => l(iish_t('Click here'),
-				SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration'))), 'error');
+			array('!link' => l(
+								iish_t('Click here')
+								, SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration'
+							))), 'error');
 
 		return '';
 	}
