@@ -27,9 +27,11 @@ function iishconference_finalregistration_accept() {
 		$refreshOrderApi = new RefreshOrderApi();
 		$refreshOrderApi->refreshOrder($orderId);
 
+        $participant = CRUDApiMisc::getFirstWherePropertyEquals(new ParticipantDateApi(), 'paymentId', $orderId);
+
 		// Send an email to inform the user his payment has been accepted
 		$sendEmailApi = new SendEmailApi();
-		$sendEmailApi->sendPaymentAcceptedEmail($userId, $orderId);
+		$sendEmailApi->sendPaymentAcceptedEmail($participant->getUserId(), $orderId);
 	}
 
 	return iish_t('Thank you. The procedure has been completed successfully!') . '<br />' .
