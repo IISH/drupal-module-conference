@@ -82,7 +82,7 @@ function conference_upload_paper($paper) {
 		return theme('conference_upload_paper', array(
 			'paper'             => $paper,
 			'actionUrl'         => $url,
-			'paperDownloadLink' => $paper->getDownloadURL(),
+			'paperDownloadLink' => $paper->getDownloadURL($token),
 			'maxSize'           => ConferenceMisc::getReadableFileSize($maxSize),
 			'extensions'        => $allowedExtensions,
 			'form'              => $form,

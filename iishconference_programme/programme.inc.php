@@ -196,6 +196,10 @@ function iishconference_programme($yearCode = null) {
 	$paperDownloadLinkStart = variable_get('conference_base_url') . variable_get('conference_event_code') . '/' .
 		variable_get('conference_date_code') . '/' . 'userApi/downloadPaper/';
 
+    $accessTokenApi = new AccessTokenApi();
+    $token = $accessTokenApi->accessToken(LoggedInUserDetails::getId());
+    $paperDownloadLinkEnd = '?access_token=' . $token;
+
 	$downloadPaperLastDate = strtotime(SettingsApi::getSetting(SettingsApi::DOWNLOAD_PAPER_LASTDATE));
 	$downloadPaperIsOpen = ConferenceMisc::isOpenForLastDate($downloadPaperLastDate);
 
@@ -219,6 +223,7 @@ function iishconference_programme($yearCode = null) {
 		'curShowing'             => $curShowing,
 		'downloadPaperIsOpen'    => $downloadPaperIsOpen,
 		'paperDownloadLinkStart' => $paperDownloadLinkStart,
+        'paperDownloadLinkEnd'   => $paperDownloadLinkEnd,
         'favoriteSessions'       => $favoriteSessions,
 	));
 }

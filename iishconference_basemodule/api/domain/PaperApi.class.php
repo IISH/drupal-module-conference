@@ -492,11 +492,14 @@ class PaperApi extends CRUDApiClient {
 	/**
 	 * The URL that allows the uploader paper to be downloaded
 	 *
+     * @param string $accessToken The access token to access the download
+     *
 	 * @return string The URL to fetch the uploaded paper
 	 */
-	public function getDownloadURL() {
+	public function getDownloadURL($accessToken) {
 		return variable_get('conference_base_url') . variable_get('conference_event_code') . '/' .
-			variable_get('conference_date_code') . '/' . 'userApi/downloadPaper/' . $this->getId();
+			variable_get('conference_date_code') . '/' . 'userApi/downloadPaper/' . $this->getId() .
+            '?access_token=' . $accessToken;
 	}
 
 	public function __toString() {

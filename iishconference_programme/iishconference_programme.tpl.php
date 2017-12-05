@@ -212,7 +212,7 @@
 						<?php if ($eventDate->isLastDate() && $downloadPaperIsOpen) : ?>
 							<?php if ($participant['hasDownload']) : ?>
 								&nbsp;
-								<a href="<?php print $variables['paperDownloadLinkStart'] . $participant['paperId']; ?>"
+								<a href="<?php print $variables['paperDownloadLinkStart'] . $participant['paperId'] . $variables['paperDownloadLinkEnd']; ?>"
 									alt="<?php print iish_t('Download paper'); ?>"
 									title="<?php print iish_t('Download paper'); ?>">
 										<span class="download-icon"></span>

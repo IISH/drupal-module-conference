@@ -451,13 +451,17 @@ function conference_personalpage_create_paper_info(array &$paperContent, $paper,
 
 	$uploadPaperUrl = SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) .
 		'personal-page/upload-paper/' . $paper->getId();
+
 	if ($paper->getFileName() == null) {
 		$paperContent[] = '<span class="heavy"> ' . l(iish_t('Upload paper'), $uploadPaperUrl) . '</span>';
 	}
 	else {
+        $accessTokenApi = new AccessTokenApi();
+        $token = $accessTokenApi->accessToken(LoggedInUserDetails::getId());
+
 		$paperContent[] = theme('iishconference_container_field', array(
 			'label'       => 'Uploaded paper',
-			'value'       => l($paper->getFileName(), $paper->getDownloadURL()) .
+			'value'       => l($paper->getFileName(), $paper->getDownloadURL($token)) .
 								'&nbsp; <em>(' . l(iish_t('Edit uploaded paper'), $uploadPaperUrl) . ')</em>',
 			'valueIsHTML' => true
 		));
