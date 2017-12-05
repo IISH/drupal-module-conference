@@ -10,7 +10,7 @@
 		<?php print $variables['curShowing']; ?>
 	</div>
 
-	<?php if ($eventDate->isLastDate() && $downloadPaperIsOpen) : ?>
+	<?php if ($eventDate->isLastDate() && LoggedInUserDetails::isLoggedIn() && $downloadPaperIsOpen) : ?>
 		<div class="download-icon-info">
 			<span class="download-icon"></span>
 			<?php print iish_t('Click on the icon to download the paper'); ?>
@@ -209,7 +209,7 @@
 
                         <?php print $variables['highlight']->highlight($participant['paperName']); ?>
 
-						<?php if ($eventDate->isLastDate() && $downloadPaperIsOpen) : ?>
+						<?php if ($eventDate->isLastDate() && LoggedInUserDetails::isLoggedIn() && $downloadPaperIsOpen) : ?>
 							<?php if ($participant['hasDownload']) : ?>
 								&nbsp;
 								<a href="<?php print $variables['paperDownloadLinkStart'] . $participant['paperId'] . $variables['paperDownloadLinkEnd']; ?>"
