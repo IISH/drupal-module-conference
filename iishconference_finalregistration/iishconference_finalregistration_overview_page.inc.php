@@ -37,10 +37,10 @@ function finalregistration_overview_form($form, &$form_state) {
 		$orderId = 0;
 	}
 
-	$orderDetails = new PayWayMessage(array('orderid' => $orderId));
-	$order = $orderDetails->send('orderDetails');
+//	$orderDetails = new PayWayMessage(array('orderid' => $orderId));
+//	$order = $orderDetails->send('orderDetails');
 
-	if ($orderId == 0 || $order->get('paymentmethod') != 1) {
+//	if ($orderId == 0 || $order->get('paymentmethod') != PayWayMessage::ORDER_BANK_PAYMENT) {
 
 		if (SettingsApi::getSetting(SettingsApi::BANK_TRANSFER_ALLOWED) == 1) {
 			$form['bank_transfer'] = array(
@@ -50,7 +50,7 @@ function finalregistration_overview_form($form, &$form_state) {
 			);
 		}
 
-	}
+//	}
 
     $form['on_site'] = array(
         '#type'  => 'submit',

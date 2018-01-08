@@ -32,7 +32,7 @@ function iishconference_finalregistration_bank_transfer() {
 				return '';
 			}
 			// NOT CONFIRMED BANK PAYMENT
-			elseif ( $order->get('paymentmethod') == 1 ) {
+			elseif ( $order->get('paymentmethod') == PayWayMessage::ORDER_BANK_PAYMENT ) {
 				$bankTransferInfo = SettingsApi::getSetting(SettingsApi::BANK_TRANSFER_INFO);
 				$amount = ConferenceMisc::getReadableAmount($order->get('amount'), true);
 				$finalDate =
@@ -48,7 +48,7 @@ function iishconference_finalregistration_bank_transfer() {
 				return ConferenceMisc::getCleanHTML($bankTransferInfo);
 			}
 			// NOT CONFIRMED CASH PAYMENT
-			elseif ( $order->get('paymentmethod') == 2 ) {
+			elseif ( $order->get('paymentmethod') == PayWayMessage::ORDER_CASH_PAYMENT ) {
 				$cashPaymentInfo = SettingsApi::getSetting(SettingsApi::ON_SITE_PAYMENT_INFO);
 
 				$amount = ConferenceMisc::getReadableAmount($order->get('amount'), true);

@@ -83,7 +83,7 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 
 				return '';
 			}
-			else if ($order->get('paymentmethod') == 1) {
+			else if ($order->get('paymentmethod') == PayWayMessage::ORDER_BANK_PAYMENT) {
 				$form['will-pay-by-bank'] = array(
 					'#type'   => 'markup',
 					'#markup' =>
