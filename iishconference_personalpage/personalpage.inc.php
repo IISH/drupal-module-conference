@@ -18,6 +18,7 @@ function conference_personalpage_main() {
 
 	$personlPage = conference_personalpage_create_personal_info($userDetails, $participantDateDetails);
 	$personlPage .= conference_personalpage_create_registration_info($userDetails, $participantDateDetails);
+  $personlPage .= conference_personalpage_create_opt_in($userDetails);
 	$personlPage .= conference_personalpage_create_sessions_info($userDetails, $participantDateDetails);
 	$personlPage .= conference_personalpage_create_papers_info($userDetails, $participantDateDetails);
 	$personlPage .= conference_personalpage_create_chair_discussant_info($participantDateDetails);
@@ -175,6 +176,27 @@ function conference_personalpage_create_registration_info($userDetails, $partici
 	}
 
 	return theme('iishconference_container', array('fields' => $registeredAndPayedContent));
+}
+
+/**
+ * Creates the opt-in functionality
+ *
+ * @param UserApi $userDetails The user in question
+ *
+ * @return string The opt-in container in HTML
+ */
+function conference_personalpage_create_opt_in($userDetails) {
+  if (LoggedInUserDetails::isAParticipant() && SettingsApi::getSetting(SettingsApi::SHOW_OPT_IN) == 1) {
+    $optInContent = array(theme('iishconference_container_header',
+      array('text' => iish_t('Opt-in to continue receiving communications'))));
+
+    $checked = ($userDetails->getOptIn()) ? 'checked="checked"' : '';
+    $optInContent[] = '<label><input type="checkbox" id="opt-in" name="opt-in" ' . $checked . ' /> '
+        . iish_t('I would like to continue receiving communications (including newsletters, updates and calls for papers) from the @conference.',
+        array('@conference' => CachedConferenceApi::getEventDate()->getEvent()->getShortName())) . '</label>';
+
+    return theme('iishconference_container', array('fields' => $optInContent));
+  }
 }
 
 /**

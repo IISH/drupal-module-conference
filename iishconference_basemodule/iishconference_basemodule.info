@@ -11,6 +11,7 @@ files[] = Highlighter.class.php
 
 files[] = api/AccessTokenApi.class.php
 files[] = api/ApiCriteriaBuilder.class.php
+files[] = api/AutoLoginApi.class.php
 files[] = api/CachedConferenceApi.class.php
 files[] = api/ConferenceApiClient.class.php
 files[] = api/CRUDApiClient.class.php

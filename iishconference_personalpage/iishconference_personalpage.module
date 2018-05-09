@@ -39,6 +39,13 @@ function iishconference_personalpage_menu() {
 		'file'            => 'upload_paper.inc.php',
 	);
 
+  $items[$extraPath . 'personal-page/opt-in'] = array(
+    'page callback'   => 'iishconference_personalpage_optin_toggle',
+    'access callback' => true,
+    'type'            => MENU_CALLBACK,
+    'file'            => 'personalpage_ajax.inc.php',
+  );
+
 	return $items;
 }
 

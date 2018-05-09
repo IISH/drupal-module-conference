@@ -50,6 +50,7 @@ class SettingsApi {
 	const SHOW_GENERAL_COMMENTS = 'show_general_comments';
 	const SHOW_LANGUAGE_COACH_PUPIL = 'show_language_coach_pupil';
 	const SHOW_NETWORK = 'show_network';
+  const SHOW_OPT_IN = 'show_opt_in';
 	const SHOW_ORGANIZER_REGISTRATION = 'show_organizer_registration';
 	const SHOW_PROGRAMME_ONLINE = 'show_programme_online';
 	const SHOW_SESSION_CODES = 'show_session_codes';
