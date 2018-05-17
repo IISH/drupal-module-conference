@@ -12,17 +12,17 @@ class AutoLoginApi {
 	}
 
 	/**
-	 * Allows a user to login with his email and auto login code
+	 * Allows a user to login with his id and auto login code
 	 *
-   * @param string $email         The email address of the user
+   * @param int    $id            The id of the user
 	 * @param string $autoLoginCode The auto login code of the user
 	 *
 	 * @return int The status
 	 */
-	public function login($email, $autoLoginCode) {
+	public function login($id, $autoLoginCode) {
 		$response = $this->client->get(self::$apiName, array(
-      'email' => trim($email),
-			'code'  => trim($autoLoginCode),
+      'id'   => $id,
+			'code' => trim($autoLoginCode),
 		));
 
 		return LoggedInUserDetails::setCurrentlyLoggedInWithResponse($response);
