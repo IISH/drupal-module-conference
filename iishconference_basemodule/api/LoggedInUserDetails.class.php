@@ -328,7 +328,7 @@ class LoggedInUserDetails {
    * @return int The user status of the currently logged in user
    */
   private static function autoLogin() {
-    if (isset($_GET['id']) && isset($_GET['ulogin']) && is_int($_GET['id'])) {
+    if (isset($_GET['id']) && isset($_GET['ulogin'])) {
       $autoLoginApi = new AutoLoginApi();
 
       return $autoLoginApi->login($_GET['id'], $_GET['ulogin']);
