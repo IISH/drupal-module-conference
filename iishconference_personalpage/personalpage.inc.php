@@ -286,7 +286,7 @@ function conference_personalpage_create_sessions_info($userDetails, $participant
 
 	if (LoggedInUserDetails::isAParticipant()) {
 		$papers = $userDetails->getPapers();
-		$sessions = SessionParticipantApi::getAllSessions($userDetails->getSessionParticipantInfo());
+		$sessions = CombinedSessionParticipantApi::getAllSessions($userDetails->getCombinedSessionParticipantInfo());
 
 		foreach ($sessions as $i => $session) {
 			$sessionPapers = PaperApi::getPapersWithSession($papers, $session->getId());
@@ -391,8 +391,8 @@ function conference_personalpage_create_session_info($userDetails, $participantD
 		'value' => $submittedBy
 	));
 
-	$functionsInSession = SessionParticipantApi::getAllTypesOfUserForSession(
-		$userDetails->getSessionParticipantInfo(),
+	$functionsInSession = CombinedSessionParticipantApi::getAllTypesOfUserForSession(
+		$userDetails->getCombinedSessionParticipantInfo(),
 		$userDetails->getId(),
 		$session->getId()
 	);

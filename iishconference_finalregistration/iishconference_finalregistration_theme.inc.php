@@ -9,7 +9,7 @@
  */
 function template_preprocess_iishconference_finalregistration_main_page_form(&$variables) {
 	if (SettingsApi::getSetting(SettingsApi::SHOW_DAYS_SESSION_PLANNED) == 1) {
-		$sessions = SessionParticipantApi::getAllSessions(LoggedInUserDetails::getUser()->getSessionParticipantInfo());
+		$sessions = CombinedSessionParticipantApi::getAllSessions(LoggedInUserDetails::getUser()->getCombinedSessionParticipantInfo());
 		$variables['session-days'] = SessionApi::getAllPlannedDaysForSessions($sessions);
 	}
 

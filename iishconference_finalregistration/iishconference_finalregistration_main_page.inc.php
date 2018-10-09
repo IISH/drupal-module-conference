@@ -38,7 +38,7 @@ function finalregistration_main_form($form, &$form_state) {
 	$isCountryExempt = (($userCountry !== null) && ($countryEvent !== null) &&
 		in_array($userCountry->getId(), $countryEvent->getExemptCountriesId()));
 
-	$isSessionParticipant = (count($user->getSessionParticipantInfo()) > 0);
+	$isSessionParticipant = (count($user->getCombinedSessionParticipantInfo()) > 0);
 
 	if (!$isCountryExempt && $isSessionParticipant) {
 		$form['invitation_letter'] = array(

@@ -16,12 +16,14 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 	$participant = ($participant === null) ? new ParticipantDateApi() : $participant;
 
 	$paper = PreRegistrationUtils::getPaperForSessionAndUser($state, $session, $user);
+  $paperCoAuthor = PreRegistrationUtils::getPaperCoAuthor($state, $session, $user);
 
 	$state->setFormData(array('session'              => $session,
 	                          'user'                 => $user,
 	                          'participant'          => $participant,
 	                          'paper'                => $paper,
-	                          'session_participants' => $sessionParticipants));
+	                          'paperCoAuthor'        => $paperCoAuthor,
+ 	                          'session_participants' => $sessionParticipants));
 
 	// + + + + + + + + + + + + + + + + + + + + + + + +
 	// PARTICIPANT
@@ -179,7 +181,26 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 		'#default_value' => $paper->getAbstr(),
 	);
 
-	// + + + + + + + + + + + + + + + + + + + + + + + +
+  // + + + + + + + + + + + + + + + + + + + + + + + +
+  // PARTICIPANT PAPER CO-AUTHOR
+
+  $form['participant_paper_coauthor'] = array(
+    '#type'   => 'fieldset',
+    '#title'  => iish_t('Select paper of co-author'),
+    '#states' => array('visible' => array(
+      ':input[name="addparticipanttype[' . ParticipantTypeApi::CO_AUTHOR_ID . ']"]' => array('checked' => true))
+    ),
+  );
+
+  $form['participant_paper_coauthor']['addpapercoauthor'] = array(
+    '#type'          => 'select',
+    '#title'         => iish_t('Paper'),
+    '#options'       => CRUDApiClient::getAsKeyValueArray(PreRegistrationUtils::getPapersOfSession($state, $session, $user)),
+    '#empty_option'  => '- ' . iish_t('Select a paper') . ' -',
+    '#default_value' => $paperCoAuthor->getPaperId(),
+  );
+
+  // + + + + + + + + + + + + + + + + + + + + + + + +
 
 	$form['submit_back'] = array(
 		'#type'                    => 'submit',
@@ -244,6 +265,12 @@ function preregister_sessionparticipant_form_validate($form, &$form_state) {
 		}
 	}
 
+  if (array_search(ParticipantTypeApi::CO_AUTHOR_ID, $form_state['values']['addparticipanttype']) !== false) {
+    if (strlen(trim($form_state['values']['addpapercoauthor'])) === 0) {
+      form_set_error('addpapercoauthor', iish_t('A paper is required for the co-author.'));
+    }
+  }
+
 	if (PreRegistrationUtils::useSessions()) {
 		$email = strtolower(trim($form_state['values']['addparticipantemail']));
 		$foundUser = CRUDApiMisc::getFirstWherePropertyEquals(new UserApi(), 'email', $email);
@@ -273,7 +300,8 @@ function preregister_sessionparticipant_form_submit($form, &$form_state) {
 	$user = $data['user'];
 	$participant = $data['participant'];
 	$paper = $data['paper'];
-	$allToDelete = $data['session_participants'];
+  $paperCoAuthor = $data['paperCoAuthor'];
+	$allToDelete = CombinedSessionParticipantApi::getAllSessionParticipants($data['session_participants']);
 
 	// First check if the user with the given email does not exists already
 	$email = strtolower(trim($form_state['values']['addparticipantemail']));
@@ -345,6 +373,18 @@ function preregister_sessionparticipant_form_submit($form, &$form_state) {
 		$paper->delete();
 	}
 
+  // Then save the paper co-author
+  if (array_search(ParticipantTypeApi::CO_AUTHOR_ID, $form_state['values']['addparticipanttype']) !== false) {
+    $paperCoAuthor->setUser($user);
+    $paperCoAuthor->setPaper($form_state['values']['addpapercoauthor']);
+    $paperCoAuthor->setAddedBy($preRegisterUser);
+
+    $paperCoAuthor->save();
+  }
+  else {
+    $paperCoAuthor->delete();
+  }
+
 	// Last the types
 	foreach ($form_state['values']['addparticipanttype'] as $typeId => $type) {
 		if ($typeId == $type) {
@@ -357,7 +397,7 @@ function preregister_sessionparticipant_form_submit($form, &$form_state) {
 				}
 			}
 
-			if (!$foundInstance) {
+			if (!$foundInstance && ($typeId !== ParticipantTypeApi::CO_AUTHOR_ID)) {
 				$sessionParticipant = new SessionParticipantApi();
 				$sessionParticipant->setSession($session);
 				$sessionParticipant->setUser($user);
@@ -399,7 +439,7 @@ function preregister_sessionparticipant_form_remove($form, &$form_state) {
 	$data = $state->getFormData();
 
 	$session = $data['session'];
-	$sessionParticipants = $data['session_participants'];
+	$sessionParticipants = CombinedSessionParticipantApi::getAllSessionParticipants($data['session_participants']);
 
 	foreach ($sessionParticipants as $sessionParticipant) {
 		$sessionParticipant->delete();

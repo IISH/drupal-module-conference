@@ -240,13 +240,13 @@ function preregister_confirm_form($form, &$form_state) {
 
 	$sessionsContent = array();
 	$sessionParticipants = PreRegistrationUtils::getSessionParticipantsAddedByUser($state);
-	$sessions = SessionParticipantApi::getAllSessions($sessionParticipants);
+	$sessions = CombinedSessionParticipantApi::getAllSessions($sessionParticipants);
 
 	foreach ($sessions as $i => $session) {
 		$networks = $session->getNetworks();
 
 		$sessionParticipants = PreRegistrationUtils::getSessionParticipantsAddedByUserForSession($state, $session);
-		$users = SessionParticipantApi::getAllUsers($sessionParticipants);
+		$users = CombinedSessionParticipantApi::getAllUsers($sessionParticipants);
 
 		// + + + + + + + + + + + + + + + + + + + + + + + +
 
@@ -275,7 +275,7 @@ function preregister_confirm_form($form, &$form_state) {
 		foreach ($users as $user) {
 			$participantInSession =
 				CRUDApiMisc::getFirstWherePropertyEquals(new ParticipantDateApi(), 'user_id', $user->getId());
-			$roles = SessionParticipantApi::getAllTypesOfUserForSession(
+			$roles = CombinedSessionParticipantApi::getAllTypesOfUserForSession(
 				$sessionParticipants,
 				$user->getId(),
 				$session->getId()
@@ -344,7 +344,7 @@ function preregister_confirm_form($form, &$form_state) {
 
 	foreach ($participantTypes as $participantType) {
 		$sessionParticipants = PreRegistrationUtils::getSessionParticipantsOfUserWithType($state, $participantType);
-		$sessions = SessionParticipantApi::getAllSessions($sessionParticipants);
+		$sessions = CombinedSessionParticipantApi::getAllSessions($sessionParticipants);
 
 		if (count($sessionParticipants) > 0) {
 			$sessionParticipantTypeContent = array(theme('iishconference_container_header',
@@ -455,8 +455,8 @@ function preregister_confirm_form_submit($form, &$form_state) {
 
 	// Also set the state of all session participants we added to 0
 	$sessionParticipants =
-		CRUDApiMisc::getAllWherePropertyEquals(new SessionParticipantApi(), 'addedBy_id', $user->getId())->getResults();
-	$users = SessionParticipantApi::getAllUsers($sessionParticipants);
+		CRUDApiMisc::getAllWherePropertyEquals(new CombinedSessionParticipantApi(), 'addedBy_id', $user->getId())->getResults();
+	$users = CombinedSessionParticipantApi::getAllUsers($sessionParticipants);
 	foreach ($users as $addedUser) {
 		$participant =
 			CRUDApiMisc::getFirstWherePropertyEquals(new ParticipantDateApi(), 'user_id', $addedUser->getId());
