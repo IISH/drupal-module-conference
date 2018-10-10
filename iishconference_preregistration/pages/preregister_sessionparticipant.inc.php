@@ -131,7 +131,7 @@ function preregister_sessionparticipant_form($form, &$form_state) {
 
 	$description = ParticipantTypeApi::getCombinationsNotAllowedText();
 	if (strlen(trim($description)) > 0) {
-		$description = '<br />' . ConferenceMisc::getCleanHTML($description);
+		$description = ConferenceMisc::getCleanHTML($description);
 	}
 	else {
 		$description = '';
@@ -195,6 +195,7 @@ function preregister_sessionparticipant_form($form, &$form_state) {
   $form['participant_paper_coauthor']['addpapercoauthor'] = array(
     '#type'          => 'select',
     '#title'         => iish_t('Paper'),
+    '#description'   => iish_t('First add the authors and their papers to the session. Then add the co-authors to the session.'),
     '#options'       => CRUDApiClient::getAsKeyValueArray(PreRegistrationUtils::getPapersOfSession($state, $session, $user)),
     '#empty_option'  => '- ' . iish_t('Select a paper') . ' -',
     '#default_value' => $paperCoAuthor->getPaperId(),

@@ -50,6 +50,6 @@ class CombinedSessionParticipantApi extends SessionParticipantApi {
       }
     }
 
-    return array_values(array_unique($sp));
+    return array_values($sp);
   }
 } 
