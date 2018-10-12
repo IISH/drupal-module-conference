@@ -21,11 +21,13 @@ class SettingsApi {
 	const NETWORK_NAME_PLURAL = 'network_name_plural';
 	const NETWORK_NAME_SINGULAR = 'network_name_singular';
 	const NUM_CANDIDATE_VOTES_ADVISORY_BOARD = 'num_candidate_votes_advisory_board';
+  const NUM_PAPER_KEYWORDS_FREE = 'num_paper_keywords_free';
+  const NUM_PAPER_KEYWORDS_FROM_LIST = 'num_paper_keywords_from_list';
 	const ON_SITE_PAYMENT_INFO = 'on_site_payment_info';
 	const ORGANIZER_REGISTRATION_LASTDATE = 'organizer_registration_lastdate';
 	const PATH_FOR_ADMIN_MENU = 'path_for_admin_menu';
 	const PATH_FOR_MENU = 'path_for_menu';
-    const PAYMENT_ON_SITE_STARTDATE = 'payment_on_site_startdate';
+  const PAYMENT_ON_SITE_STARTDATE = 'payment_on_site_startdate';
 	const PREREGISTRATION_LASTDATE = 'preregistration_lastdate';
 	const PREREGISTRATION_STARTDATE = 'preregistration_startdate';
 	const PREREGISTRATION_SESSIONS = 'preregistration_sessions';

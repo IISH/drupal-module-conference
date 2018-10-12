@@ -9,6 +9,7 @@ class CachedConferenceApi {
 	private static $nameNetworksCache = 'iishconference_networks';
 	private static $nameCountriesCache = 'iishconference_countries';
 	private static $nameDaysCache = 'iishconference_days';
+  private static $nameKeywordsCache = 'iishconference_keywords';
 	private static $nameSessionDateTimesCache = 'iishconference_session_date_times';
 	private static $nameParticipantTypesCache = 'iishconference_participant_types';
 	private static $nameParticipantStatesCache = 'iishconference_participant_states';
@@ -32,6 +33,7 @@ class CachedConferenceApi {
 			self::setNetworks(false);
 			self::setCountries(false);
 			self::setDays(false);
+      self::setKeywords(false);
 			self::setSessionDateTimes(false);
 			self::setParticipantTypes(false);
 			self::setParticipantStates(false);
@@ -108,6 +110,10 @@ class CachedConferenceApi {
 	public static function setDays($printErrorMessage = true) {
 		return self::set(self::$nameDaysCache, 'DayApi', $printErrorMessage);
 	}
+
+  public static function setKeywords($printErrorMessage = true) {
+    return self::set(self::$nameKeywordsCache, 'KeywordApi', $printErrorMessage);
+  }
 
 	public static function setSessionDateTimes($printErrorMessage = true) {
 		return self::set(self::$nameSessionDateTimesCache, 'SessionDateTimeApi', $printErrorMessage);
@@ -229,6 +235,10 @@ class CachedConferenceApi {
 	public static function getDays($printErrorMessage = true) {
 		return self::get(self::$nameDaysCache, 'DayApi', $printErrorMessage);
 	}
+
+  public static function getKeywords($printErrorMessage = true) {
+    return self::get(self::$nameKeywordsCache, 'KeywordApi', $printErrorMessage);
+  }
 
 	public static function getExtras($printErrorMessage = true) {
 		return self::get(self::$nameExtrasCache, 'ExtraApi', $printErrorMessage);

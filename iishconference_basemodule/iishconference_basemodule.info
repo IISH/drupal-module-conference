@@ -37,6 +37,7 @@ files[] = api/domain/EventDateApi.class.php
 files[] = api/domain/ExtraApi.class.php
 files[] = api/domain/FeeAmountApi.class.php
 files[] = api/domain/FeeStateApi.class.php
+files[] = api/domain/KeywordApi.class.php
 files[] = api/domain/NetworkApi.class.php
 files[] = api/domain/NetworkChairApi.class.php
 files[] = api/domain/PaperApi.class.php

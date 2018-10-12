@@ -221,6 +221,14 @@ function preregister_confirm_form($form, &$form_state) {
 			));
 		}
 
+    if (intval(SettingsApi::getSetting(SettingsApi::NUM_PAPER_KEYWORDS_FROM_LIST)) > 0
+      || intval(SettingsApi::getSetting(SettingsApi::NUM_PAPER_KEYWORDS_FREE)) > 0) {
+      $paperContent[] = theme('iishconference_container_field', array(
+        'label' => 'Keywords',
+        'value' => implode(', ', $paper->getKeywords())
+      ));
+    }
+
 		if (SettingsApi::getSetting(SettingsApi::SHOW_EQUIPMENT) == 1) {
 			$paperContent[] = theme('iishconference_container_field', array(
 				'label' => 'Audio/visual equipment',
