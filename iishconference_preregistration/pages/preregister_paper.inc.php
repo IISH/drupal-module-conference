@@ -128,6 +128,7 @@ function preregister_paper_form($form, &$form_state) {
 
     if ($numKeywordsFromList > 0) {
       $options = CRUDApiClient::getAsKeyValueArray(CachedConferenceApi::getKeywords());
+      asort($options);
       $defaultValues = array();
       foreach ($options as $id => $keyword) {
         if (array_search($keyword, $keywordsFromList) !== false) {
