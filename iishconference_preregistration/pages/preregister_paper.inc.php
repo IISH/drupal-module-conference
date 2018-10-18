@@ -167,8 +167,8 @@ function preregister_paper_form($form, &$form_state) {
         );
 
         $title = ($numKeywordsFree === 1)
-          ? iish_t('Free-form keyword')
-          : iish_t('Free-form keywords');
+          ? iish_t('Enter other keyword')
+          : iish_t('Enter other keywords (single keyword per line)');
         $description = ($numKeywordsFree > 1)
           ? iish_t('Please leave this field empty if you have no keywords.')
           : null;
