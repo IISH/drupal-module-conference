@@ -91,6 +91,12 @@ class PayWayMessage {
 					'headers' => array('Content-Type' => 'text/json'),
 					'method'  => 'POST',
 					'data'    => drupal_json_encode($this->message),
+          'context' => stream_context_create(array(
+            'ssl' => array(
+              'verify_peer' => FALSE,
+              'verify_peer_name' => FALSE,
+            ),
+          )),
 				)
 			);
 
