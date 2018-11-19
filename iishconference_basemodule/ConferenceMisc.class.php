@@ -347,34 +347,51 @@ document.write('<a hr'+'ef=\"'+'mai'+'lto:'+w+'@'+h1+'.'+h2+'\">'+w+'@'+h1+'.'+h
 	}
 
 	/**
-	 * Replaces all occurences of 'network' in a string with the replacement found in the setting
+	 * Replaces all occurrences of 'network' in a string with the replacement found in the setting
 	 *
 	 * @param string $string The original text string
 	 *
 	 * @return string The new text string
 	 */
 	public static function replaceNetwork($string) {
-		$string = str_replace('network', NetworkApi::getNetworkName(true, true), $string);
-		$string = str_replace('networks', NetworkApi::getNetworkName(false, true), $string);
-		$string = str_replace('Network', NetworkApi::getNetworkName(true, false), $string);
-		$string = str_replace('Networks', NetworkApi::getNetworkName(false, false), $string);
+		$string = preg_replace('/\bnetwork\b/', NetworkApi::getNetworkName(true, true), $string);
+		$string = preg_replace('/\bnetworks\b/', NetworkApi::getNetworkName(false, true), $string);
+		$string = preg_replace('/\bNetwork\b/', NetworkApi::getNetworkName(true, false), $string);
+		$string = preg_replace('/\bNetworks\b/', NetworkApi::getNetworkName(false, false), $string);
 
 		return $string;
 	}
 
 	/**
-	 * Replaces all occurences of 'session' in a string with the replacement found in the setting
+	 * Replaces all occurrences of 'session' in a string with the replacement found in the setting
 	 *
 	 * @param string $string The original text string
 	 *
 	 * @return string The new text string
 	 */
 	public static function replaceSession($string) {
-		$string = str_replace('session', SessionApi::getSessionName(true, true), $string);
-		$string = str_replace('sessions', SessionApi::getSessionName(false, true), $string);
-		$string = str_replace('Session', SessionApi::getSessionName(true, false), $string);
-		$string = str_replace('Sessions', SessionApi::getSessionName(false, false), $string);
+		$string = preg_replace('/\bsession\b/', SessionApi::getSessionName(true, true), $string);
+		$string = preg_replace('/\bsessions\b/', SessionApi::getSessionName(false, true), $string);
+		$string = preg_replace('/\bSession\b/', SessionApi::getSessionName(true, false), $string);
+		$string = preg_replace('/\bSessions\b/', SessionApi::getSessionName(false, false), $string);
 
 		return $string;
 	}
+
+  /**
+   * Replaces all occurrences of 'keyword' in a string with the replacement found in the setting
+   *
+   * @param string $string The original text string
+   * @param string $group The group of keywords
+   *
+   * @return string The new text string
+   */
+  public static function replaceKeyword($string, $group) {
+    $string = preg_replace('/\bkeyword\b/', KeywordApi::getKeywordName($group, TRUE, TRUE), $string);
+    $string = preg_replace('/\bkeywords\b/', KeywordApi::getKeywordName($group, FALSE, TRUE), $string);
+    $string = preg_replace('/\bKeyword\b/', KeywordApi::getKeywordName($group, TRUE, FALSE), $string);
+    $string = preg_replace('/\bKeywords\b/', KeywordApi::getKeywordName($group, FALSE, FALSE), $string);
+
+    return $string;
+  }
 } 

@@ -221,12 +221,17 @@ function preregister_confirm_form($form, &$form_state) {
 			));
 		}
 
-    if (intval(SettingsApi::getSetting(SettingsApi::NUM_PAPER_KEYWORDS_FROM_LIST)) > 0
-      || intval(SettingsApi::getSetting(SettingsApi::NUM_PAPER_KEYWORDS_FREE)) > 0) {
-      $paperContent[] = theme('iishconference_container_field', array(
-        'label' => 'Keywords',
-        'value' => implode(', ', $paper->getKeywords())
-      ));
+    foreach (KeywordApi::getGroups() as $group) {
+      $keywords = PaperKeywordApi::getKeywordsForPaperInGroup($paper, $group);
+
+      if (count($keywords) > 0) {
+        $plainKeywords = CRUDApiClient::getForMethod($keywords, 'getKeyword');
+
+        $paperContent[] = theme('iishconference_container_field', array(
+          'label' => ConferenceMisc::replaceKeyword('Keywords', $group),
+          'value' => implode(', ', $plainKeywords)
+        ));
+      }
     }
 
 		if (SettingsApi::getSetting(SettingsApi::SHOW_EQUIPMENT) == 1) {

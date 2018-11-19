@@ -42,6 +42,7 @@ files[] = api/domain/NetworkApi.class.php
 files[] = api/domain/NetworkChairApi.class.php
 files[] = api/domain/PaperApi.class.php
 files[] = api/domain/PaperCoAuthorApi.class.php
+files[] = api/domain/PaperKeywordApi.class.php
 files[] = api/domain/PaperStateApi.class.php
 files[] = api/domain/ParticipantDateApi.class.php
 files[] = api/domain/ParticipantStateApi.class.php

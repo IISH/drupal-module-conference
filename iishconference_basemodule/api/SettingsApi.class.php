@@ -16,6 +16,8 @@ class SettingsApi {
 	const DOWNLOAD_PAPER_LASTDATE = 'download_paper_lastdate';
 	const EMAIL_MAX_NUM_TRIES = 'email_max_num_tries';
 	const FINAL_REGISTRATION_LASTDATE = 'final_registration_lastdate';
+  const KEYWORD_NAME_PLURAL = 'keyword_name_plural';
+  const KEYWORD_NAME_SINGULAR = 'keyword_name_singular';
 	const MAX_PAPERS_PER_PERSON_PER_SESSION = 'max_papers_per_person_per_session';
 	const MAX_UPLOAD_SIZE_PAPER = 'max_upload_size_paper';
 	const NETWORK_NAME_PLURAL = 'network_name_plural';
@@ -129,4 +131,21 @@ class SettingsApi {
 	public static function getArrayOfValues($values) {
 		return (is_string($values)) ? explode(';', $values) : array();
 	}
+
+  /**
+   * Returns a map of values for the given value returned by 'getSetting'
+   *
+   * @param string|null $values The values returned by 'getSetting'
+   *
+   * @return array A map of values
+   */
+  public static function getMapOfValues($values) {
+    $map = array();
+    $list = is_string($values) ? explode(';', $values) : [];
+    foreach ($list as $item) {
+      $keyValue = explode(':', $item);
+      $map[$keyValue[0]] = $keyValue[1];
+    }
+    return $map;
+  }
 } 
