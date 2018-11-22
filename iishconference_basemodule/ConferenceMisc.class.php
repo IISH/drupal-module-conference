@@ -387,10 +387,10 @@ document.write('<a hr'+'ef=\"'+'mai'+'lto:'+w+'@'+h1+'.'+h2+'\">'+w+'@'+h1+'.'+h
    * @return string The new text string
    */
   public static function replaceKeyword($string, $group) {
-    $string = preg_replace('/\bkeyword\b/', KeywordApi::getKeywordName($group, TRUE, TRUE), $string);
-    $string = preg_replace('/\bkeywords\b/', KeywordApi::getKeywordName($group, FALSE, TRUE), $string);
-    $string = preg_replace('/\bKeyword\b/', KeywordApi::getKeywordName($group, TRUE, FALSE), $string);
-    $string = preg_replace('/\bKeywords\b/', KeywordApi::getKeywordName($group, FALSE, FALSE), $string);
+    $string = preg_replace('/\bkeyword\b/', KeywordApi::getKeywordName($group, true, true), $string);
+    $string = preg_replace('/\bkeywords\b/', KeywordApi::getKeywordName($group, false, true), $string);
+    $string = preg_replace('/\bKeyword\b/', KeywordApi::getKeywordName($group, true, false), $string);
+    $string = preg_replace('/\bKeywords\b/', KeywordApi::getKeywordName($group, false, false), $string);
 
     return $string;
   }

@@ -56,12 +56,12 @@ class KeywordApi extends CRUDApiClient {
    */
   public static function getKeywordName($group, $singular = TRUE, $lowercase = FALSE) {
     if ($singular) {
-      $keywordSingularMap = SettingsApi::getSetting(SettingsApi::KEYWORD_NAME_SINGULAR, 'map');
+      $keywordSingularMap = SettingsApi::getMapOfValues(SettingsApi::getSetting(SettingsApi::KEYWORD_NAME_SINGULAR));
       $keywordName = isset($keywordSingularMap[$group])
         ? $keywordSingularMap[$group] : 'Keyword';
     }
     else {
-      $keywordPluralMap = SettingsApi::getSetting(SettingsApi::KEYWORD_NAME_PLURAL, 'map');
+      $keywordPluralMap = SettingsApi::getMapOfValues(SettingsApi::getSetting(SettingsApi::KEYWORD_NAME_PLURAL));
       $keywordName = isset($keywordPluralMap[$group])
         ? $keywordPluralMap[$group] : 'Keywords';
     }
