@@ -18,7 +18,7 @@ function conference_personalpage_main() {
 
 	$personlPage = conference_personalpage_create_personal_info($userDetails, $participantDateDetails);
 	$personlPage .= conference_personalpage_create_registration_info($userDetails, $participantDateDetails);
-  $personlPage .= conference_personalpage_create_opt_in($userDetails);
+	$personlPage .= conference_personalpage_create_opt_in($userDetails);
 	$personlPage .= conference_personalpage_create_sessions_info($userDetails, $participantDateDetails);
 	$personlPage .= conference_personalpage_create_papers_info($userDetails, $participantDateDetails);
 	$personlPage .= conference_personalpage_create_chair_discussant_info($participantDateDetails);
@@ -186,7 +186,8 @@ function conference_personalpage_create_registration_info($userDetails, $partici
  * @return string The opt-in container in HTML
  */
 function conference_personalpage_create_opt_in($userDetails) {
-  if (LoggedInUserDetails::isAParticipant() && SettingsApi::getSetting(SettingsApi::SHOW_OPT_IN) == 1) {
+	//if (LoggedInUserDetails::isAParticipant() && SettingsApi::getSetting(SettingsApi::SHOW_OPT_IN) == 1) {
+	if (SettingsApi::getSetting(SettingsApi::SHOW_OPT_IN) == 1) {
     $optInContent = array(theme('iishconference_container_header',
       array('text' => iish_t('Opt-in to continue receiving communications'))));
 
