@@ -66,7 +66,6 @@
 
 .eca_remark {
     display: inline-block;
-	color: blue;
     margin-bottom: 15px;
 }
 
@@ -74,6 +73,7 @@
     display: inline-block;
 	color: #E61A3C;
     margin-bottom: 15px;
+	font-weight: bold;
 }
 
 .heavy {

@@ -37,6 +37,22 @@ function preregister_form($form, &$form_state) {
 				'</span>',
 		);
 
+		// show 'go to final registration' link
+		$finalRegistrationLastDate = strtotime(SettingsApi::getSetting(SettingsApi::FINAL_REGISTRATION_LASTDATE));
+		$isFinalRegistrationOpen = ConferenceMisc::isOpenForLastDate($finalRegistrationLastDate);
+		if (module_exists('iishconference_finalregistration') && $isFinalRegistrationOpen) {
+
+			$form['ct2'] = array(
+				'#type'   => 'markup',
+				'#markup' => '<br /><br />' .
+					 '<span class="eca_remark heavy">' .
+					 iish_t('Please go to !link.',
+					    array('!link' => l(iish_t('final registration and payment'),
+					        SettingsApi::getSetting(SettingsApi::PATH_FOR_MENU) . 'final-registration'))) .
+					 '</span>'
+			);
+		}
+
 		return $form;
 	}
 
