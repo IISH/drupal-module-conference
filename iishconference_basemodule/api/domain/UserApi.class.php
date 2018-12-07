@@ -19,7 +19,7 @@ class UserApi extends CRUDApiClient {
 	protected $department;
 	protected $cv;
 	protected $extraInfo;
-  protected $optIn;
+	protected $optIn;
 	protected $papers_id;
 	protected $daysPresent_day_id;
 	protected $addedBy_id;

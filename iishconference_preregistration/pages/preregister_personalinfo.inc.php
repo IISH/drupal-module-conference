@@ -76,6 +76,14 @@ function preregister_personalinfo_form($form, &$form_state) {
 		'#attributes'    => array('readonly' => 'readonly', 'class' => array('readonly-text')),
 	);
 
+	if (SettingsApi::getSetting(SettingsApi::SHOW_OPT_IN) == 1) {
+		$form['personal_info']['opt_in'] = array(
+			'#type'          => 'checkbox',
+			'#title'         => iish_t('Check if you would like to receiving communications (newsletters and calls for papers)'),
+			'#default_value' => ( $user->getId() === null ? true : $user->getOptIn() ),
+		);
+	}
+
 	if (SettingsApi::getSetting(SettingsApi::SHOW_STUDENT) == 1) {
 		$form['personal_info']['student'] = array(
 			'#type'          => 'checkbox',
@@ -352,6 +360,7 @@ function preregister_personalinfo_form_submit($form, &$form_state) {
 	$user->setCountry($form_state['values']['country']);
 	$user->setPhone($form_state['values']['phone']);
 	$user->setMobile($form_state['values']['mobile']);
+	$user->setOptIn($form_state['values']['opt_in']);
 
 	if (SettingsApi::getSetting(SettingsApi::SHOW_CV) == 1) {
 		$user->setCv($form_state['values']['cv']);
