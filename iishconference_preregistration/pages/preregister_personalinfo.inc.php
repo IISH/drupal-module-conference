@@ -360,7 +360,10 @@ function preregister_personalinfo_form_submit($form, &$form_state) {
 	$user->setCountry($form_state['values']['country']);
 	$user->setPhone($form_state['values']['phone']);
 	$user->setMobile($form_state['values']['mobile']);
-	$user->setOptIn($form_state['values']['opt_in']);
+
+	if (SettingsApi::getSetting(SettingsApi::SHOW_OPT_IN) == 1) {
+		$user->setOptIn($form_state['values']['opt_in']);
+	}
 
 	if (SettingsApi::getSetting(SettingsApi::SHOW_CV) == 1) {
 		$user->setCv($form_state['values']['cv']);
