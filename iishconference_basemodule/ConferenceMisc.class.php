@@ -172,6 +172,21 @@ class ConferenceMisc {
 	}
 
 	/**
+	 * Returns the block that informs the user how and who to contact for information
+	 *
+	 * @param int $emptyRows The number of empty rows before the block appears
+	 *
+	 * @return string The HTML generating an info block
+	 */
+	public static function getInfoBlockFinalRegistration($emptyRows = 2) {
+		return
+			str_repeat('<br />', $emptyRows) . '<div class="eca_warning">' .
+			iish_t('For any remarks or questions about final-registration, please contact: ') .
+			self::encryptEmailAddress(SettingsApi::getSetting(SettingsApi::DEFAULT_ORGANISATION_EMAIL)) .
+			'</div>';
+	}
+
+	/**
 	 * Protects again email harvesting by cutting up the email address into pieces
 	 *
 	 * @param string $email The email address in question

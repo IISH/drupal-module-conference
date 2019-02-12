@@ -40,4 +40,4 @@
 
 <?php print drupal_render_children($variables['form']); ?>
 
-<?php print ConferenceMisc::getInfoBlock(); ?>
+<?php print ConferenceMisc::getInfoBlockFinalRegistration(); ?>

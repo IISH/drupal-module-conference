@@ -79,7 +79,7 @@ function preregister_personalinfo_form($form, &$form_state) {
 	if (SettingsApi::getSetting(SettingsApi::SHOW_OPT_IN) == 1) {
 		$form['personal_info']['opt_in'] = array(
 			'#type'          => 'checkbox',
-			'#title'         => iish_t('Check if you would like to receiving communications (newsletters and calls for papers)'),
+			'#title'         => iish_t('Check if you would like to receive communications (newsletters and calls for papers)'),
 			'#default_value' => ( $user->getId() === null ? true : $user->getOptIn() ),
 		);
 	}

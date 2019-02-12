@@ -87,5 +87,5 @@
 	</div>
 <?php endif; ?>
 
-<?php print ConferenceMisc::getInfoBlock(); ?>
+<?php print ConferenceMisc::getInfoBlockFinalRegistration(); ?>
 
