@@ -32,6 +32,7 @@ class ParticipantsInNetworkApi {
 			'firstName' => iish_t('First name'),
 			'lastName'  => iish_t('Last name'),
 			'email'     => iish_t('E-mail'),
+      'organisation' => iish_t('Organisation'),
 		));
 
 		return (($response !== null) && $response['success']) ? $this->processResponse($response, $excel) : false;

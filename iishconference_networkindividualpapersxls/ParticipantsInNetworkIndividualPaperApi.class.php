@@ -32,7 +32,11 @@ class ParticipantsInNetworkIndividualPaperApi {
 			'lastName'      => iish_t('Last name'),
 			'firstName'     => iish_t('First name'),
 			'email'         => iish_t('E-mail'),
+      'organisation'  => iish_t('Organisation'),
+      'paperId'       => iish_t('Paper id'),
 			'paperTitle'    => iish_t('Paper title'),
+      'coAuthors'     => iish_t('Co-authors'),
+      'paperType'     => iish_t('Paper type'),
 			'paperST'       => iish_t('Paper state'),
 			'paperAbstract' => iish_t('Abstract')
 		));

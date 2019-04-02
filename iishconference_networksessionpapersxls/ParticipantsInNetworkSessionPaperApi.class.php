@@ -32,6 +32,7 @@ class ParticipantsInNetworkParticipantPaperApi {
 			'lastName'      => iish_t('Last name'),
 			'firstName'     => iish_t('First name'),
 			'email'         => iish_t('E-mail'),
+      'organisation'  => iish_t('Organisation'),
 			'session'       => iish_t('Session'),
 			'sessionState'  => iish_t('Session state'),
 			'roles'         => iish_t('Roles'),
