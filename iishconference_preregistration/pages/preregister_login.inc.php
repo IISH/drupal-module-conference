@@ -27,6 +27,16 @@ function preregister_login_form($form, &$form_state) {
 		'#value' => iish_t('Next'),
 	);
 
+	// Privacy Statement
+	if ( SettingsApi::getSetting(SettingsApi::SHOW_PRIVACY_STATEMENT_ON_REGISTRATION_PAGE) == '1'  ) {
+		$form['privacystatement_block'] = array(
+			'#type'   => 'markup',
+			'#markup' => '<div class="iishconference_container"><div class="eca_privacy_statement">'
+				. l( 'EuroSEAS ' . iish_t('Privacy Statement'), SettingsApi::getSetting(SettingsApi::URL_PRIVACY_STATEMENT) )
+				. '</div></div>',
+		);
+	}
+
 	$form['info_block'] = array(
 		'#type'   => 'markup',
 		'#markup' => ConferenceMisc::getInfoBlock(),

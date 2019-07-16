@@ -66,13 +66,19 @@
 
 .eca_remark {
     display: inline-block;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
+}
+
+.eca_privacy_statement {
+	display: inline-block;
+	color: #E61A3C;
+	font-weight: bold;
 }
 
 .eca_warning {
     display: inline-block;
 	color: #E61A3C;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 	font-weight: bold;
 }
 

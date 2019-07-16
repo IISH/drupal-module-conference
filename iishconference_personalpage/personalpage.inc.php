@@ -25,6 +25,7 @@ function conference_personalpage_main() {
 	$personlPage .= conference_personalpage_create_language_info($participantDateDetails);
 	$personlPage .= conference_personalpage_create_links($participantDateDetails);
 	$personlPage .= conference_personalpage_create_links_network($participantDateDetails);
+	$personlPage .= conference_personalpage_show_privacy_statement();
 
 	return $personlPage;
 }
@@ -760,6 +761,18 @@ function conference_personalpage_create_links_network($participantDateDetails) {
 		}
 
 		return theme('iishconference_container', array('fields' => $linksNetworkContent));
+	}
+
+	return '';
+}
+
+function conference_personalpage_show_privacy_statement() {
+	if (  SettingsApi::getSetting(SettingsApi::SHOW_PRIVACY_STATEMENT_ON_PERSONAL_PAGE)  == '1'  ) {
+		$linksPrivacyStatement[] = '<div class="eca_privacy_statement">'
+				. l( 'EuroSEAS ' . iish_t('Privacy Statement'), SettingsApi::getSetting(SettingsApi::URL_PRIVACY_STATEMENT) )
+				. '</div>';
+
+		return theme('iishconference_container', array('fields' => $linksPrivacyStatement));
 	}
 
 	return '';
