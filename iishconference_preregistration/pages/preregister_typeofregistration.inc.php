@@ -185,7 +185,7 @@ function preregister_typeofregistration_form($form, &$form_state) {
 
 	$form['spectator']['help_text'] = array(
 		'#type'   => 'markup',
-		'#markup' => iish_t('Then you may skip this page and go right away to the confirmation page.'),
+		'#markup' => iish_t('Then you may skip this page and go right away to the comments and confirmation page.'),
 	);
 
 	// + + + + + + + + + + + + + + + + + + + + + + + +
