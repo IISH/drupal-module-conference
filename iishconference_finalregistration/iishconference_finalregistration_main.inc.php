@@ -36,15 +36,20 @@ function iishconference_finalregistration_main_form($form, &$form_state) {
 		return '';
 	}
 
-	$finalRegistrationLastDate = strtotime(SettingsApi::getSetting(SettingsApi::FINAL_REGISTRATION_LASTDATE));
-	if (!ConferenceMisc::isOpenForLastDate($finalRegistrationLastDate)) {
-		drupal_set_message(iish_t('The final registration is closed.'), 'warning');
+	// get participant
+	$participant = LoggedInUserDetails::getParticipant();
 
+	//
+	$finalRegistrationLastDate = strtotime(SettingsApi::getSetting(SettingsApi::FINAL_REGISTRATION_LASTDATE));
+	if (
+		!ConferenceMisc::isOpenForLastDate($finalRegistrationLastDate)
+		&& $participant->getAllowLatePayment() == 0
+		) {
+		drupal_set_message(iish_t('The final registration is closed.'), 'warning');
 		return '';
 	}
 
 	// Get fee amount information
-	$participant = LoggedInUserDetails::getParticipant();
 	$feeAmounts = $participant->getFeeAmounts();
 
 	if (count($feeAmounts) === 0) {

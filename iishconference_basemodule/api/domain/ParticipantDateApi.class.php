@@ -18,6 +18,7 @@ class ParticipantDateApi extends CRUDApiClient {
 	protected $extras_id;
     protected $favoriteSessions_id;
 	protected $addedBy_id;
+	protected $allowLatePayment;
 
 	private $user;
 	private $state;
@@ -178,6 +179,15 @@ class ParticipantDateApi extends CRUDApiClient {
 	 */
 	public function getStateId() {
 		return $this->state_id;
+	}
+
+	/**
+	 * Returns allow late payment of this participant
+	 *
+	 * @return bool The participant state id
+	 */
+	public function getAllowLatePayment() {
+		return $this->allowLatePayment;
 	}
 
 	/**
