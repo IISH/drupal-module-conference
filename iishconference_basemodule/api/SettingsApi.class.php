@@ -16,7 +16,6 @@ class SettingsApi {
 	const DOWNLOAD_PAPER_LASTDATE = 'download_paper_lastdate';
 	const EMAIL_MAX_NUM_TRIES = 'email_max_num_tries';
 	const FINAL_REGISTRATION_LASTDATE = 'final_registration_lastdate';
-	const KEEP_FINAL_REGISTRATION_OPEN_FOR_IDS = 'keep_final_registration_open_for_ids';
 	const KEYWORD_NAME_PLURAL = 'keyword_name_plural';
 	const KEYWORD_NAME_SINGULAR = 'keyword_name_singular';
 	const MAX_PAPERS_PER_PERSON_PER_SESSION = 'max_papers_per_person_per_session';
